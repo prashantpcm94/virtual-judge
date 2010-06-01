@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="user" extends="struts-default"  namespace="/user">
+		<global-results>
+	        <result name="error">/index.jsp</result>
+	        <result name="sqlError">/index.jsp</result>
+	        <result name="input">/index.jsp</result>
+	    </global-results>
+	    <global-exception-mappings>
+	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />
+	        <exception-mapping result="error" exception="java.lang.Exception" />
+	    </global-exception-mappings>
+	    
+	    <!-- 跳转至登陆页面 -->
+        <action name="toLogin" class="userAction" method="toLogin">
+	        <result name="success">/user/login.jsp</result>
+	    </action>
+
+	    <!-- 登陆 -->
+        <action name="login" class="userAction" method="login">
+			<result name="success" type="redirect">${redir}</result>
+	        <result name="input">/user/login.jsp</result>
+	    </action>
+	    
+	    <!-- 登出 -->
+        <action name="logout" class="userAction" method="logout">
+			<result name="success" type="redirect">${redir}</result>
+	    </action>
+
+	    <!-- 跳转至注册页面 -->
+        <action name="toRegister" class="userAction" method="toRegister">
+	        <result name="success">/user/register.jsp</result>
+	    </action>
+
+	    <!-- 注册 -->
+        <action name="register" class="userAction" method="register">
+			<result name="success" type="redirect">${redir}</result>
+	        <result name="input">/user/register.jsp</result>
+	    </action>		
+	
+	    <!-- 跳转至更改个人信息页面 -->
+        <action name="toUpdate" class="userAction" method="toUpdate">
+	        <result name="success">/user/update.jsp</result>
+	    </action>
+
+	    <!-- 更改个人信息 -->
+        <action name="update" class="userAction" method="update">
+			<result name="success" type="redirect">${redir}</result>
+	        <result name="input">/user/update.jsp</result>
+	    </action>
+	
+	    <!-- 查看资料 -->
+        <action name="profile" class="userAction" method="profile">
+	        <result name="success">/user/profile.jsp</result>
+	    </action>		
+	</package>
+</struts>

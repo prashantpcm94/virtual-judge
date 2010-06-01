@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="problem" extends="struts-default"  namespace="/problem">
+		<global-results>
+	        <result name="error">/index.jsp</result>
+	        <result name="sqlError">/index.jsp</result>
+	        <result name="input">/error.jsp</result>
+	    </global-results>
+	    <global-exception-mappings>
+	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />
+	        <exception-mapping result="error" exception="java.lang.Exception" />
+	    </global-exception-mappings>
+	    
+		<!-- 罗列题目 -->
+		<action name="listProblem" class="problemAction" method="listProblem">
+			<result name="success">/problem/listProblem.jsp</result>
+		</action>
+	    
+		<!-- 添加题目 -->
+		<action name="addProblem" class="problemAction" method="addProblem">
+			<result name="success" type="redirect">listProblem.action</result>		
+			<result name="error" type="redirect">listProblem.action</result>		
+		</action>
+		
+		<!-- 显示题目 -->
+		<action name="viewProblem" class="problemAction" method="viewProblem">
+			<result name="success">/problem/viewProblem.jsp</result>
+			<result name="error" type="redirect">listProblem.action</result>		
+		</action>
+
+		<!-- 删除题目 -->
+		<action name="deleteProblem" class="problemAction" method="deleteProblem">
+			<result name="success" type="redirect">listProblem.action</result>		
+			<result name="error" type="redirect">listProblem.action</result>		
+		</action>
+
+		<!-- 隐藏/反隐藏题目 -->
+		<action name="toggleAccess" class="problemAction" method="toggleAccess">
+			<result name="success" type="redirect">listProblem.action</result>		
+			<result name="error" type="redirect">listProblem.action</result>		
+		</action>
+
+		<!-- 显示提交 -->
+		<action name="status" class="problemAction" method="status">
+			<result name="success">/problem/status.jsp</result>
+		</action>
+
+		<!-- 显示提交(上一页) -->
+		<action name="statusPrev" class="problemAction" method="statusPrev">
+			<result name="success">/problem/status.jsp</result>
+		</action>
+
+		<!-- 显示提交(下一页) -->
+		<action name="statusNext" class="problemAction" method="statusNext">
+			<result name="success">/problem/status.jsp</result>
+		</action>
+
+		<!-- 进入非比赛提交页面 -->
+		<action name="toSubmit" class="problemAction" method="toSubmit">
+			<result name="success">/problem/submit.jsp</result>
+			<result name="error" type="redirect">../user/toLogin.action</result>		
+		</action>
+
+		<!-- 非比赛中的提交 -->
+		<action name="submit" class="problemAction" method="submit">
+			<result name="success" type="redirect">status.action</result>		
+			<result name="error" type="redirect">../user/toLogin.action</result>		
+			<result name="input">/problem/submit.jsp</result>
+		</action>
+		
+		<!-- 进入修改题目页面 -->
+		<action name="toEditProblem" class="problemAction" method="toEditProblem">
+			<result name="success">/problem/editProblem.jsp</result>
+		</action>
+		
+		<!-- 修改题目 -->
+		<action name="editProblem" class="problemAction" method="editProblem">
+			<result name="success" type="redirectAction">
+				<param name="actionName">viewProblem</param>
+				<param name="namespace">/problem</param>
+				<param name="id">${id}</param>
+			</result>
+		</action>
+		
+		<!-- 查看代码 -->
+		<action name="viewSource" class="problemAction" method="viewSource">
+			<result name="success">/problem/viewSource.jsp</result>
+			<result name="error" type="redirect">status.action</result>		
+		</action>
+		
+		<!-- 切换代码公开性 -->
+		<action name="toggleOpen" class="problemAction" method="toggleOpen">
+			<result name="success" type="redirectAction">
+				<param name="actionName">viewSource</param>
+				<param name="namespace">/problem</param>
+				<param name="id">${id}</param>
+			</result>
+			<result name="error" type="redirect">status.action</result>		
+		</action>
+
+	</package>
+</struts>

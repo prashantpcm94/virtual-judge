@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="contest" extends="struts-default"  namespace="/contest">
+		<global-results>
+	        <result name="error">/error.jsp</result>
+	        <result name="sqlError">/error.jsp</result>
+	        <result name="input">/error.jsp</result>
+	    </global-results>
+	    <global-exception-mappings>
+	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />
+	        <exception-mapping result="error" exception="java.lang.Exception" />
+	    </global-exception-mappings>
+	    
+		<!-- 罗列比赛 -->
+		<action name="listContest" class="contestAction" method="listContest">
+			<result name="success">/contest/listContest.jsp</result>
+		</action>
+	    
+		<!-- 进入添加比赛 -->
+		<action name="toAddContest" class="contestAction" method="toAddContest">
+			<result name="success">/contest/addContest.jsp</result>
+		</action>
+
+		<!-- 添加比赛 -->
+		<action name="addContest" class="contestAction" method="addContest">
+			<result name="success" type="redirect">listContest.action</result>		
+			<result name="input">/contest/addContest.jsp</result>		
+		</action>
+
+		<!-- 进入修改比赛 -->
+		<action name="toEditContest" class="contestAction" method="toEditContest">
+			<result name="scheduled">/contest/editContest1.jsp</result>
+			<result name="running">/contest/editContest2.jsp</result>
+			<result name="error" type="redirect">listContest.action</result>		
+		</action>
+
+		<!-- 修改比赛 -->
+		<action name="editContest" class="contestAction" method="editContest">
+			<result name="success" type="redirect">listContest.action</result>		
+			<result name="scheduled">/contest/editContest1.jsp</result>
+			<result name="running">/contest/editContest2.jsp</result>
+		</action>
+
+		<!-- 删除比赛 -->
+		<action name="deleteContest" class="contestAction" method="deleteContest">
+			<result name="success" type="redirect">listContest.action</result>		
+			<result name="error" type="redirect">listContest.action</result>		
+		</action>
+
+		<!-- 进入比赛 -->
+		<action name="viewContest" class="contestAction" method="viewContest">
+			<result name="success">/contest/viewContest.jsp</result>		
+			<result name="input">/contest/loginContest.jsp</result>		
+		</action>
+
+		<!-- 登陆比赛 -->
+		<action name="loginContest" class="contestAction" method="loginContest">
+			<result name="success" type="redirectAction">
+				<param name="actionName">viewContest</param>
+				<param name="namespace">/contest</param>
+				<param name="cid">${cid}</param>
+			</result>
+			<result name="input">/contest/loginContest.jsp</result>		
+		</action>
+		
+		<!-- 查看题目 -->
+		<action name="viewProblem" class="contestAction" method="viewProblem">
+			<result name="success">/contest/viewProblem.jsp</result>
+			<result name="input">/contest/loginContest.jsp</result>		
+			<result name="notbegin" type="redirectAction">
+				<param name="actionName">viewContest</param>
+				<param name="namespace">/contest</param>
+				<param name="cid">${cid}</param>
+			</result>
+		</action>
+		
+		<!-- 进入提交页面 -->
+		<action name="toSubmit" class="contestAction" method="toSubmit">
+			<result name="success">/contest/submit.jsp</result>		
+			<result name="input">/contest/loginContest.jsp</result>		
+			<result name="error" type="redirect">../user/toLogin.action</result>		
+		</action>
+		
+		<!-- 提交 -->
+		<action name="submit" class="contestAction" method="submit">
+			<result name="success" type="redirectAction">
+				<param name="actionName">status</param>
+				<param name="namespace">/contest</param>
+				<param name="cid">${cid}</param>
+			</result>
+			<result name="login">/contest/loginContest.jsp</result>
+			<result name="input">/contest/submit.jsp</result>
+			<result name="error" type="redirect">../user/toLogin.action</result>		
+		</action>
+		
+		<!-- 显示提交 -->
+		<action name="status" class="contestAction" method="status">
+			<result name="success">/contest/status.jsp</result>
+			<result name="input">/contest/loginContest.jsp</result>		
+		</action>
+
+		<!-- 显示提交(上一页) -->
+		<action name="statusPrev" class="contestAction" method="statusPrev">
+			<result name="success">/contest/status.jsp</result>
+			<result name="input">/contest/loginContest.jsp</result>		
+		</action>
+
+		<!-- 显示提交(下一页) -->
+		<action name="statusNext" class="contestAction" method="statusNext">
+			<result name="success">/contest/status.jsp</result>
+			<result name="input">/contest/loginContest.jsp</result>		
+		</action>
+
+		<!-- 排名页面 -->
+		<action name="standing" class="contestAction" method="standing">
+			<result name="success">/contest/standing.jsp</result>
+			<result name="input">/contest/loginContest.jsp</result>		
+		</action>
+		
+		<!-- 查看代码 -->
+		<action name="viewSource" class="contestAction" method="viewSource">
+			<result name="success">/contest/viewSource.jsp</result>
+			<result name="error" type="redirect">status.action?cid=${cid}</result>		
+		</action>
+		
+		<!-- 切换代码公开性 -->
+		<action name="toggleOpen" class="contestAction" method="toggleOpen">
+			<result name="success" type="redirectAction">
+				<param name="actionName">viewSource</param>
+				<param name="namespace">/contest</param>
+				<param name="id">${id}</param>
+			</result>
+			<result name="error" type="redirect">status.action</result>		
+		</action>
+		
+		<!-- 重判代码 -->
+		<action name="rejudge" class="contestAction" method="rejudge">
+			<result name="success">/index.jsp</result>
+		</action>
+		
+	</package>
+</struts>

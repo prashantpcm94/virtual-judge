@@ -1,0 +1,148 @@
+a:link {
+	COLOR: blue;
+	TEXT-TRANSFORM: none;
+	TEXT-DECORATION: none
+}
+
+a:visited {
+	COLOR: blue;
+	TEXT-TRANSFORM: none;
+	TEXT-DECORATION: none
+}
+
+a:hover {
+	COLOR: red;
+	TEXT-DECORATION: underline
+}
+
+div.ptt {
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18pt;
+	font-weight: bold;
+	color: blue;
+}
+
+div.ptx {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 12pt;
+}
+
+p.pst {
+	text-align: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18pt;
+	font-weight: bold;
+	color: blue;
+}
+
+pre.sio {
+	font-family: Courier New, Courier, monospace;
+	font-size: 12pt;
+}
+
+#standing th {
+	text-align: center;
+}
+
+#standing td {
+	text-align: center;
+}
+
+.center {
+	text-align: center;
+	width: 150px;
+}
+
+.title {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.time {
+	text-align: center;
+	width: 155px;
+}
+
+.textBG {
+	background-color: #EAEBFF;
+	padding: 10px;
+}
+
+.sioBG {
+	background-color: #EAEBFF;
+	padding-left: 10px;
+}
+
+div.plm {
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12pt;
+}
+
+.blue {
+	color: blue;
+}
+
+.red {
+	color: red;
+}
+
+.banner{
+	background-color:#D3D6FF;
+	font-weight: bold;
+}
+
+.id {
+	text-align: center;
+	width: 50px;
+}
+
+.status{
+	width: 80px;
+}
+
+.type{
+	width: 80px;
+}
+
+.select{
+	width: 180px;
+}
+
+.opr {
+	width: 60px;
+}
+
+.form_title {
+	padding: 10px 0px;
+	vertical-align: top;
+}
+
+.description{
+	text-align: center;
+	background-color: #F8F8F8;
+	MARGIN-RIGHT: auto;
+	MARGIN-LEFT: auto;
+	MARGIN-top: 20px;
+	width: 960px;
+}
+
+.errorMessage {
+	font-weight: bold;
+	color: red;
+}
+
+.white {
+	background-color: #FFFFFF;
+	color: black;
+}
+
+.green {
+	background-color: #DDFFDD;
+	color: black;
+}
+
+.red {
+	background-color: #FFDDDD;
+	color: black;
+}
