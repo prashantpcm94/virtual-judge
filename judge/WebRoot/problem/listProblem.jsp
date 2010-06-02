@@ -69,7 +69,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						</s:else>
 					</td>
 					<td class="center">
-						<s:if test="dataList[#stat.index][3] == 0 || dataList[#stat.index][4] == #session.visitor.id">
+						<s:if test="dataList[#stat.index][3] == 0 || dataList[#stat.index][4] == #session.visitor.id || #session.visitor.sup == 1">
 							<a href="<s:property value='dataList[#stat.index][7]' />">
 								<s:property value='dataList[#stat.index][5]' />
 								<s:property value='dataList[#stat.index][6]' />

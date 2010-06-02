@@ -123,8 +123,8 @@ public class ZOJSubmitter extends Submitter {
 //					System.out.println("###" + result.trim() + "###");
 	    			if (!result.contains("ing") || result.contains("oating")){
 	    				if (result.equals("Accepted")){
-		    				submission.setMemory(Integer.parseInt(m.group(2)));
-		    				submission.setTime(Integer.parseInt(m.group(3)));
+		    				submission.setMemory(Integer.parseInt(m.group(3)));
+		    				submission.setTime(Integer.parseInt(m.group(2)));
 	    				}
 	    				baseService.modify(submission);
 	    				return;
