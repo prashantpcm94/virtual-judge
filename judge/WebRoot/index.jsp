@@ -52,6 +52,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<li>2010-05-10 : HDU OJ is added.</li>
 			</ul>
 		</div>
+		
 		<s:include value="/bottom.jsp" />
 	</body>
 </html>
