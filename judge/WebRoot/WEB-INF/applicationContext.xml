@@ -85,6 +85,9 @@
 	<bean id="mainAction" class="judge.action.MainAction" scope="prototype">
 	</bean>
 	
+	<bean id="graphAction" class="judge.action.GraphAction" scope="prototype">
+	</bean>
+
 	
 	<!-- 配置Spider部分 -->
 	<bean id="spider" class="judge.spider.Spider">
