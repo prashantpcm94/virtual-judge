@@ -33,10 +33,11 @@ public class GraphAction extends ActionSupport {
     public Chart getOfcChart() {
         return ofcChart;
     }
+    
 	
 	public String draw() {
 		PieChart c2 = new PieChart(); // 饼图
-
+		
 		for (int i = 0; i < 10; i++) {
 			c2.addSlice(i * i, i + "");
 		}
@@ -49,7 +50,7 @@ public class GraphAction extends ActionSupport {
 				"0x9999FF", "0x0066CC", "0x99CCCC", "0x999999", "0xFFCC00",
 				"0x009999", "0x99CC33", "0xFF9900", "0x999966", "0x66CCCC",
 				"0x339966", "0xCCCC33" });// 饼图每块的颜色
-		c2.setTooltip("#val#  /  #total#<br>占百分之 #percent#\n 角度 = #radius#"); // 鼠标移动上去后提示内容
+		c2.setTooltip("#val#  /  #total#<br>占百分之 #percent# #label#\n 角度 = #radius#"); // 鼠标移动上去后提示内容
 		ofcChart = new Chart("企业性质排序" + 2010 + "年"); // 整个图的标题
 		ofcChart.addElements(c2); // 把饼图加入到图表
 		return SUCCESS;

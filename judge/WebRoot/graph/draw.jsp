@@ -17,7 +17,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script type="text/javascript" language="javascript">
 		$(document).ready(function(){
 			var url = 'graph/draw.action';
-			swfobject.embedSWF("open-flash-chart.swf", "chart", "900", "900", "9.0.0", "expressInstall.swf", {"data-file":url});
+			swfobject.embedSWF("open-flash-chart.swf", "chart", "400", "400", "9.0.0", "expressInstall.swf", {"data-file":url});
 		});
 	</script> 
 

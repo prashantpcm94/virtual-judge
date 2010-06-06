@@ -20,6 +20,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<p>
 				All Copyright Reserved ©2010 <a href="http://acm.hust.edu.cn">HUST ACM/ICPC</a> TEAM<br>
 				Anything about the OJ, Please Contact Author:<a href="mailto:is.un@qq.com">Isun</a><br>
+				<a href="graph/draw.jsp">ofc</a>
 			</p>
 		</center>
 	</body>

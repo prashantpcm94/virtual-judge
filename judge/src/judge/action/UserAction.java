@@ -146,6 +146,7 @@ public class UserAction extends ActionSupport {
 			this.addActionError("Username and password don't match!");
 			return INPUT;
 		}
+		
 		session.put("visitor", user);
 		return SUCCESS;
 	}

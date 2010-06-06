@@ -45,6 +45,7 @@
 				<value>judge/bean/Problem.hbm.xml</value>
 				<value>judge/bean/Submission.hbm.xml</value>
 				<value>judge/bean/User.hbm.xml</value>
+				<value>judge/bean/Vlog.hbm.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -63,6 +64,10 @@
 	</bean>
 
 	<bean id="userService" class="judge.service.imp.UserService">
+	    <property name="baseDao" ref="baseDao" />
+	</bean>
+
+	<bean id="logService" class="judge.service.LogService">
 	    <property name="baseDao" ref="baseDao" />
 	</bean>
 

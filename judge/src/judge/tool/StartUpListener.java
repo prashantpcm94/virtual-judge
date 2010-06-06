@@ -7,6 +7,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import judge.service.LogService;
+
 
 public class StartUpListener implements ServletContextListener {
 
@@ -118,6 +120,9 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("4", "Pascal");
 		languageList.put("5", "Java");
 		sc.setAttribute("HDU", languageList);
+		
+		MyFilter.setLogService((LogService) SpringBean.getBean("logService", sc));
+		SessionListener.setLogService((LogService) SpringBean.getBean("logService", sc));
 
 	}
 
