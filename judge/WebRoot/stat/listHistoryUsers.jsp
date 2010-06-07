@@ -39,7 +39,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 			<s:iterator value="dataList" status="stat">
 				<tr>
-					<td class="id"><s:property value="ip" /></td>
+					<td class="id">
+						<a href="stat/viewHU.action?id=<s:property value="id" />">
+							<s:property value="ip" />
+						</a>	
+					</td>
 					<td class="time"><s:date name="createTime" format="yyyy-MM-dd HH:mm:ss" /></td>
 					<td class="time"><s:property value="duration" /></td>
 				</tr>
@@ -53,6 +57,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				[<a href="stat/nextHU.action">Next Page</a>]&nbsp;&nbsp; 
 			</font>
 		</p>
+
+		<br /><a href="stat/listOL.action">OnlineUsers</a>
+		<br /><a href="stat/listHU.action">HistoryUsers</a>
+		<br /><a href="stat/toListBrowser.action">Browser</a>
+		<br /><a href="stat/toListOS.action">OS</a>
+		<br /><a href="stat/toShowStayTime.action">Stay Time</a>
+
 
 		<s:include value="/bottom.jsp" />
 	</body>

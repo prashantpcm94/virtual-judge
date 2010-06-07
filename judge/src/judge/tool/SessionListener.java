@@ -32,7 +32,7 @@ public class SessionListener implements HttpSessionListener {
 //		ServletContext application = session.getServletContext();
 		
 		Vlog vlog = statService.getBySessionId(session.getId());
-		vlog.setDuration(new Date().getTime() - session.getCreationTime());
+		vlog.setDuration(new Date().getTime() - session.getCreationTime() - 1800000);
 		statService.modify(vlog);
 
 		synchronized (StatService.sessions) {

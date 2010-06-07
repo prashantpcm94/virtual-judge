@@ -2,7 +2,7 @@
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
-	<package name="stat" extends="struts-default"  namespace="/stat">
+	<package name="stat" extends="ofc2-default"  namespace="/stat">
 		<global-results>
 	        <result name="error">/index.jsp</result>
 	        <result name="sqlError">/index.jsp</result>
@@ -19,6 +19,11 @@
 	    </action>		
 
 	    <!-- 查看历史用户 -->
+        <action name="viewHU" class="statAction" method="viewHU">
+	        <result name="success">/stat/viewHU.jsp</result>
+	    </action>	
+
+	    <!-- 列出历史用户 -->
         <action name="listHU" class="statAction" method="listHistoryUsers">
 	        <result name="success">/stat/listHistoryUsers.jsp</result>
 	    </action>	
@@ -32,6 +37,40 @@
         <action name="nextHU" class="statAction" method="nextHistoryUsers">
 	        <result name="success">/stat/listHistoryUsers.jsp</result>
 	    </action>		
+
+	    <!-- 去查看浏览器分布 -->
+        <action name="toListBrowser" class="statAction" method="toListBrowser">
+	        <result name="success">/stat/listBrowser.jsp</result>
+	    </action>
+
+	    <!-- 查看浏览器分布 -->
+        <action name="listBrowser" class="statAction" method="listBrowser">
+			<result type="ofc2"></result>
+	    </action>
+
+	    <!-- 去查看操作系统分布 -->
+        <action name="toListOS" class="statAction" method="toListOS">
+	        <result name="success">/stat/listOS.jsp</result>
+	    </action>
+
+	    <!-- 查看操作系统分布 -->
+        <action name="listOS" class="statAction" method="listOS">
+			<result type="ofc2"></result>
+	    </action>
+	    
+	    <!-- 去查看停留时间分布 -->
+        <action name="toShowStayTime" class="statAction" method="toShowStayTime">
+	        <result name="success">/stat/showStayTime.jsp</result>
+	    </action>
+
+	    <!-- 查看停留时间分布 -->
+        <action name="showStayTime" class="statAction" method="showStayTime">
+			<result type="ofc2"></result>
+	    </action>
+	    
+	    
+	    
+
 
 	</package>
 </struts>

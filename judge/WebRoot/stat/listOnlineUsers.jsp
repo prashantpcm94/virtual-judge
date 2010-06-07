@@ -56,7 +56,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</s:iterator>
 		</table>
 
-		<a href="stat/listHU.action">HistoryUsers</a>
+		<br /><a href="stat/listOL.action">OnlineUsers</a>
+		<br /><a href="stat/listHU.action">HistoryUsers</a>
+		<br /><a href="stat/toListBrowser.action">Browser</a>
+		<br /><a href="stat/toListOS.action">OS</a>
+		<br /><a href="stat/toShowStayTime.action">Stay Time</a>
 
 		<s:include value="/bottom.jsp" />
 	</body>
