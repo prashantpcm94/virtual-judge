@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="stat" extends="struts-default"  namespace="/stat">
+		<global-results>
+	        <result name="error">/index.jsp</result>
+	        <result name="sqlError">/index.jsp</result>
+	        <result name="input">/index.jsp</result>
+	    </global-results>
+	    <global-exception-mappings>
+	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />
+	        <exception-mapping result="error" exception="java.lang.Exception" />
+	    </global-exception-mappings>
+	    
+	    <!-- 查看在线用户 -->
+        <action name="listOL" class="statAction" method="listOnlineUsers">
+	        <result name="success">/stat/listOnlineUsers.jsp</result>
+	    </action>		
+
+	    <!-- 查看历史用户 -->
+        <action name="listHU" class="statAction" method="listHistoryUsers">
+	        <result name="success">/stat/listHistoryUsers.jsp</result>
+	    </action>	
+
+	    <!-- 查看历史用户上一页 -->
+        <action name="prevHU" class="statAction" method="prevHistoryUsers">
+	        <result name="success">/stat/listHistoryUsers.jsp</result>
+	    </action>		
+
+	    <!-- 查看历史用户下一页 -->
+        <action name="nextHU" class="statAction" method="nextHistoryUsers">
+	        <result name="success">/stat/listHistoryUsers.jsp</result>
+	    </action>		
+
+	</package>
+</struts>
