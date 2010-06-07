@@ -67,7 +67,7 @@
 	    <property name="baseDao" ref="baseDao" />
 	</bean>
 
-	<bean id="logService" class="judge.service.LogService">
+	<bean id="statService" class="judge.service.StatService">
 	    <property name="baseDao" ref="baseDao" />
 	</bean>
 
@@ -90,7 +90,8 @@
 	<bean id="mainAction" class="judge.action.MainAction" scope="prototype">
 	</bean>
 	
-	<bean id="graphAction" class="judge.action.GraphAction" scope="prototype">
+	<bean id="statAction" class="judge.action.StatAction" scope="prototype">
+		<property name="statService" ref="statService" />
 	</bean>
 
 	

@@ -14,7 +14,7 @@ public class Vlog {
 	private String sessionId;
 	private String ip;
 	private Date createTime;
-	private Date destroyTime;
+	private long duration;
 	private String referer;
 	private String userAgent;
 	
@@ -42,11 +42,11 @@ public class Vlog {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
-	public Date getDestroyTime() {
-		return destroyTime;
+	public long getDuration() {
+		return duration;
 	}
-	public void setDestroyTime(Date destroyTime) {
-		this.destroyTime = destroyTime;
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 	public String getReferer() {
 		return referer;

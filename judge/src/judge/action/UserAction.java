@@ -13,6 +13,7 @@ import org.apache.struts2.ServletActionContext;
 import judge.bean.User;
 import judge.service.IBaseService;
 import judge.service.IUserService;
+import judge.service.StatService;
 import judge.tool.MD5;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -146,7 +147,6 @@ public class UserAction extends ActionSupport {
 			this.addActionError("Username and password don't match!");
 			return INPUT;
 		}
-		
 		session.put("visitor", user);
 		return SUCCESS;
 	}

@@ -19,8 +19,8 @@
         <property name="createTime" type="java.sql.Timestamp">
  		    <column name="C_CREATETIME" length="7" />
 		</property>
-        <property name="destroyTime" type="java.sql.Timestamp">
- 		    <column name="C_DESTROYTIME" length="7" />
+        <property name="duration" type="java.lang.Long">
+ 		    <column name="C_DURATION" length="20" />
 		</property>
         <property name="referer" type="java.lang.String">
             <column name="C_REFERER" length="500"/>

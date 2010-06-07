@@ -16,12 +16,12 @@ import javax.servlet.http.HttpSession;
 import antlr.collections.List;
 
 import judge.bean.Vlog;
-import judge.service.LogService;
+import judge.service.StatService;
 
 
 public class MyFilter implements Filter{
 	
-	static private LogService logService;
+	static private StatService statService;
 	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
@@ -30,14 +30,16 @@ public class MyFilter implements Filter{
 			HttpSession httpSession = request.getSession();
 
 			String sessionId = httpSession.getId();
-			if (!logService.checkSessionId(sessionId)){
+			if (!statService.checkSessionId(sessionId)){
 				Vlog vlog = new Vlog();
 				vlog.setSessionId(sessionId);
 				vlog.setIp(request.getRemoteAddr());
 				vlog.setReferer((String) request.getHeader("referer"));
 				vlog.setUserAgent((String) request.getHeader("user-agent"));
 				vlog.setCreateTime(new Date(httpSession.getCreationTime()));
-				logService.add(vlog);
+				System.out.println("URL: " + request.getRequestURL());
+				System.out.println("sessionId: " + sessionId);
+				statService.add(vlog);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -52,14 +54,15 @@ public class MyFilter implements Filter{
 	public void init(FilterConfig filterConfig) throws ServletException {
 	}
 
-	public LogService getLogService() {
-		return logService;
+	public static StatService getStatService() {
+		return statService;
 	}
 
-	static public void setLogService(LogService logService) {
-		MyFilter.logService = logService;
+	public static void setStatService(StatService statService) {
+		MyFilter.statService = statService;
 	}
-	
+
+
 	
 
 }

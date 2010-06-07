@@ -1,11 +1,18 @@
 package judge.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpSession;
 
 import judge.bean.Vlog;
 import judge.service.imp.BaseService;
 
-public class LogService extends BaseService {
+public class StatService extends BaseService {
+	
+	static public HashSet<HttpSession> sessions = new HashSet<HttpSession>();
+	
 	
 	// ==============================================================
 	// 函数名：getBySessionId
