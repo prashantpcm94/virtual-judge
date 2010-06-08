@@ -68,6 +68,16 @@
 			<result type="ofc2"></result>
 	    </action>
 	    
+	    <!-- 去查看日访问量 -->
+        <action name="toShowDayVisits" class="statAction" method="toShowDayVisits">
+	        <result name="success">/stat/showDayVisits.jsp</result>
+	    </action>
+
+	    <!-- 查看停留时间分布 -->
+        <action name="showDayVisits" class="statAction" method="showDayVisits">
+			<result type="ofc2"></result>
+	    </action>
+	    
 	    
 	    
 

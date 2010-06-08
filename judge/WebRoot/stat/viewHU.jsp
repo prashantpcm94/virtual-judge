@@ -29,6 +29,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				</td>
 			</tr>
 			<tr>
+				<td>User name:</td>
+				<td>
+					<a href="user/profile.action?uid=<s:property value="vlog.loginer"/>">
+						<s:property value="username"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
 				<td>create Time:</td>
 				<td><s:date name="vlog.createTime" format="yyyy-MM-dd HH:mm:ss" /></td>
 			</tr>
@@ -38,7 +46,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</tr>
 			<tr>
 				<td>Referer:</td>
-				<td><s:property value="vlog.referer"/></td>
+				<td>
+					<a href="${vlog.referer}" >
+						<s:property value="vlog.referer"/>
+					</a>
+				</td>
 			</tr>
 			<tr>
 				<td>User Agent:</td>

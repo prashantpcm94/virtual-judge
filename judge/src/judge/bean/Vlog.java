@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Set;
 
 /**
- * 用户,即OJ账号
+ * session信息
  * @author Isun
  *
  */
@@ -17,6 +17,7 @@ public class Vlog {
 	private long duration;
 	private String referer;
 	private String userAgent;
+	private int loginer;
 	
 	public int getId() {
 		return id;
@@ -59,6 +60,12 @@ public class Vlog {
 	}
 	public void setUserAgent(String userAgent) {
 		this.userAgent = userAgent;
+	}
+	public int getLoginer() {
+		return loginer;
+	}
+	public void setLoginer(int loginer) {
+		this.loginer = loginer;
 	}
 	
 

@@ -4,11 +4,15 @@
 
 package judge.action;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,9 +24,11 @@ import org.apache.struts2.ServletActionContext;
 import sun.awt.color.CMM.CSAccessor;
 
 import jofc2.model.Chart;
+import jofc2.model.Text;
 import jofc2.model.axis.XAxis;
 import jofc2.model.axis.YAxis;
 import jofc2.model.elements.BarChart;
+import jofc2.model.elements.LineChart;
 import jofc2.model.elements.PieChart;
 import jofc2.model.elements.BarChart.Bar;
 import judge.bean.User;
@@ -45,6 +51,7 @@ public class StatAction extends ActionSupport {
     private List dataList;
     private int unique, id;
     private Vlog vlog;
+    private String username;
     
     public String findBrowser(String ref){
     	ref = ref.toUpperCase();
@@ -108,7 +115,7 @@ public class StatAction extends ActionSupport {
     public String listHistoryUsers() {
 		Map session = ActionContext.getContext().getSession();
 		session.put("pageIndex", 0);
-		dataList = statService.list("select vlog from Vlog vlog order by vlog.createTime desc", 0, 25);
+		dataList = statService.list("select vlog, user.username from Vlog vlog, User user where user.id = vlog.loginer order by vlog.createTime desc", 0, 25);
 		return SUCCESS;
 	}
     
@@ -137,6 +144,10 @@ public class StatAction extends ActionSupport {
     
     public String viewHU(){
     	vlog = (Vlog) statService.query(Vlog.class, id);
+    	if (vlog.getLoginer() > 0){
+	    	User user = (User) statService.query(User.class, vlog.getLoginer());
+	    	username = user.getUsername();
+    	}
     	return SUCCESS;
     }
     
@@ -174,7 +185,7 @@ public class StatAction extends ActionSupport {
 				"0x9999FF", "0x0066CC", "0x99CCCC", "0x999999", "0xFFCC00",
 				"0x009999", "0x99CC33", "0xFF9900", "0x999966", "0x66CCCC",
 				"0x339966", "0xCCCC33" });// 饼图每块的颜色
-		c2.setTooltip("#val#  /  #total# -- #percent#<br /> #label#\n"); // 鼠标移动上去后提示内容
+		c2.setTooltip("#val#  /  #total# -- #percent#\n#label#\n"); // 鼠标移动上去后提示内容
 		ofcChart = new Chart("Browser Distribution" + (unique>0?"(By IP)":"(By Session)")); // 整个图的标题
 		ofcChart.addElements(c2); // 把饼图加入到图表
 		return SUCCESS;
@@ -215,7 +226,7 @@ public class StatAction extends ActionSupport {
 				"0x9999FF", "0x0066CC", "0x99CCCC", "0x999999", "0xFFCC00",
 				"0x009999", "0x99CC33", "0xFF9900", "0x999966", "0x66CCCC",
 				"0x339966", "0xCCCC33" });// 饼图每块的颜色
-		c2.setTooltip("#val#  /  #total# -- #percent#<br /> #label#\n"); // 鼠标移动上去后提示内容
+		c2.setTooltip("#val#  /  #total# -- #percent#\n #label#\n"); // 鼠标移动上去后提示内容
 		ofcChart = new Chart("OS Distribution" + (unique>0?"(By IP)":"(By Session)")); // 整个图的标题
 		ofcChart.addElements(c2); // 把饼图加入到图表
 		return SUCCESS;
@@ -226,9 +237,6 @@ public class StatAction extends ActionSupport {
 	}
     
 	public String showStayTime() {
-		try {
-			
-		
 		BarChart c2 = new BarChart(BarChart.Style.GLASS); // 柱状图
 		if (unique == 0){
 			dataList = statService.query("select vlog.duration from Vlog vlog");
@@ -257,9 +265,10 @@ public class StatAction extends ActionSupport {
 		for(int i = 0; i < 51; i++){  
 			Bar bar = new Bar(cnt[i], 0);			//条标题，显示在x轴上  
 			bar.setColour("0x336699");				// 颜色
-			bar.setTooltip(cnt[i] + " sessions");	//鼠标移动上去后的提示  
-			System.out.println("cnt = " + i + " " + cnt[i]);
-			c2.addBars(bar);   
+			long s = maxx * i / 50000;
+			bar.setTooltip("stay time: " + (s>60?(s/60+"min"):"") + s%60 + "sec\n" + cnt[i] + (unique>0?" IPs":" sessions"));	//鼠标移动上去后的提示  
+//			System.out.println("cnt = " + i + " " + cnt[i]);
+			c2.addBars(bar);
 			x.addLabels(maxx * i / 50 / 60000 + "");//x轴的文字  
 		}
 		ofcChart = new Chart("Stay time distribution"); // 整个图的标题
@@ -270,15 +279,82 @@ public class StatAction extends ActionSupport {
 		ofcChart.setXAxis(x);
 		ofcChart.addElements(c2); // 把饼图加入到图表
 		System.out.println("\n" + ofcChart.toString());
+		return SUCCESS;
+	}
+	
+	public String toShowDayVisits() {
+		return SUCCESS;
+	}
+
+	public String showDayVisits(){
+		List<LineChart.Dot> data1 = new ArrayList<LineChart.Dot>(), data2 = new ArrayList<LineChart.Dot>();
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		Date begin = new Date(new Date().getTime() - 30 * 86400 * 1000L);
+		try {
+			
+		
+		dataList = statService.query("select count(*), day(vlog.createTime), month(vlog.createTime) from Vlog vlog group by day(vlog.createTime), month(vlog.createTime), year(vlog.createTime)" +
+				" where vlog.createTime > " + f.format(begin));
+		for (int i = 0; i < dataList.size(); i++){
+			Object[] o = (Object[]) dataList.get(i);
+			for (int j = 0; j < o.length; j++){
+				System.out.print(o[j] + " ");
+			}
+			System.out.println("");
+		}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return SUCCESS;
 
+		for(double i=0;i<6.2;i+=0.2){
+			// line 1 dot
+			LineChart.Dot dot1 = new LineChart.Dot(Math.sin(i)*1.9+10);
+			dot1.setDotSize(5);            // 点大小
+			dot1.setColour("#f00000");    // 设置点颜色
+			data1.add(dot1);
+
+			// line 2 dot
+			LineChart.Dot dot2 = new LineChart.Dot(Math.sin(i)*1.9+7);
+			dot2.setDotSize(3);
+			dot2.setHaloSize(1);        // 点外空白大小
+			dot2.setColour("#3D5C56");
+			data2.add(dot2);
+
+		}
+
+		Date date = new Date();
+		Locale locale = new Locale("zh","CN");
+		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL, locale);
+
+		// line 1
+		LineChart line1 = new LineChart();
+//		line1.setDotStyle(new LineChart.Style(LineChart.Style.Type.DOT));
+		line1.setWidth(1);            // 线宽
+		line1.addDots(data1);        // 增加数据
+
+		// line 2
+		LineChart line2 = new LineChart();
+//		line2.setDotStyle(new LineChart.Style(LineChart.Style.Type.DOT));
+		line2.setColour("#3D5C56");
+		line2.setWidth(2);
+		line2.addDots(data2);
+
+		YAxis y = new YAxis();
+		y.setRange(0, 15, 5);        // 设置Y柚范围，参数依次为最小值、最大值、间隔
+
+		ofcChart = new Chart();
+		ofcChart.setTitle(new Text(dateFormat.format(date)));    // 设置标题
+		ofcChart.addElements(line1);                            // 增加线到图表
+		ofcChart.addElements(line2);
+		ofcChart.setYAxis(y);                                    // 设置Y柚
+
+		return SUCCESS;
 	}
+
 	
-    public Chart getOfcChart() {
+	
+	public Chart getOfcChart() {
         return ofcChart;
     }
 
@@ -329,6 +405,14 @@ public class StatAction extends ActionSupport {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 

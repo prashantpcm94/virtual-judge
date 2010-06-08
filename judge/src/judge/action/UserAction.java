@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 import org.apache.struts2.ServletActionContext;
 
 import judge.bean.User;
+import judge.bean.Vlog;
 import judge.service.IBaseService;
 import judge.service.IUserService;
 import judge.service.StatService;
@@ -38,10 +39,16 @@ public class UserAction extends ActionSupport {
 	private String repassword;
 	private String newpassword;
 	private String redir;
-	private IBaseService baseService;
 	private IUserService userService;
+	private StatService statService;
 	
 	
+	public StatService getStatService() {
+		return statService;
+	}
+	public void setStatService(StatService statService) {
+		this.statService = statService;
+	}
 	public String getNewpassword() {
 		return newpassword;
 	}
@@ -114,12 +121,6 @@ public class UserAction extends ActionSupport {
 	public void setUserService(IUserService userService) {
 		this.userService = userService;
 	}
-	public IBaseService getBaseService() {
-		return baseService;
-	}
-	public void setBaseService(IBaseService baseService) {
-		this.baseService = baseService;
-	}
 	public String getUsername() {
 		return username;
 	}
@@ -135,7 +136,6 @@ public class UserAction extends ActionSupport {
 	
 	
 	public String toLogin(){
-		Map session = ActionContext.getContext().getSession();
 		redir = ServletActionContext.getRequest().getHeader("Referer");
 		return SUCCESS;
 	}
@@ -148,6 +148,9 @@ public class UserAction extends ActionSupport {
 			return INPUT;
 		}
 		session.put("visitor", user);
+		Vlog vlog = statService.getBySessionId(ServletActionContext.getRequest().getSession().getId());
+		vlog.setLoginer(user.getId());
+		statService.modify(vlog);
 		return SUCCESS;
 	}
 	
@@ -201,14 +204,14 @@ public class UserAction extends ActionSupport {
 		user.setEmail(email);
 		user.setBlog(blog);
 		user.setShare(share);
-		baseService.add(user);
+		userService.add(user);
 		Map session = ActionContext.getContext().getSession();
 		session.put("visitor", user);
 		return SUCCESS;
 	}
 	
 	public String toUpdate(){
-		user = (User) baseService.query(User.class, uid);
+		user = (User) userService.query(User.class, uid);
 		username = user.getUsername();
 		nickname = user.getNickname();
 		school = user.getSchool();
@@ -223,7 +226,7 @@ public class UserAction extends ActionSupport {
 
 	
 	public String update(){
-		user = (User) baseService.query(User.class, uid);
+		user = (User) userService.query(User.class, uid);
 		Map session = ActionContext.getContext().getSession();
 		User cUser = (User) session.get("visitor");
 		if (user == null || cUser == null || cUser.getId() != user.getId()){
@@ -262,14 +265,14 @@ public class UserAction extends ActionSupport {
 		user.setEmail(email);
 		user.setBlog(blog);
 		user.setShare(share);
-		baseService.modify(user);
+		userService.modify(user);
 		session.put("visitor", user);
 		return SUCCESS;
 	}
 
 	
 	public String profile() {
-		user = (User) baseService.query(User.class, uid);
+		user = (User) userService.query(User.class, uid);
 		return SUCCESS;		
 	}
 

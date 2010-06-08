@@ -32,10 +32,10 @@
 				<prop key="hibernate.query.factory_class">
 					org.hibernate.hql.classic.ClassicQueryTranslatorFactory
 				</prop>
-<!--
+
                 <prop key="hibernate.show_sql">true</prop>  
 				<prop key="hibernate.format_sql">true</prop>
---> 
+ 
 			</props>
 		</property>
 		<property name="mappingResources">
@@ -75,8 +75,8 @@
 	<!-- 配置Action部分 -->
 	<!-- 主配置文件struts.xml -->
 	<bean id="userAction" class="judge.action.UserAction" scope="prototype">
-		<property name="baseService" ref="baseService" />
 		<property name="userService" ref="userService" />
+		<property name="statService" ref="statService" />
 	</bean>
 	
 	<bean id="problemAction" class="judge.action.ProblemAction" scope="prototype">
