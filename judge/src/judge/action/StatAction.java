@@ -286,72 +286,101 @@ public class StatAction extends ActionSupport {
 		return SUCCESS;
 	}
 
+	@SuppressWarnings("deprecation")
 	public String showDayVisits(){
-		List<LineChart.Dot> data1 = new ArrayList<LineChart.Dot>(), data2 = new ArrayList<LineChart.Dot>();
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-		Date begin = new Date(new Date().getTime() - 30 * 86400 * 1000L);
 		try {
 			
 		
-		dataList = statService.query("select count(*), day(vlog.createTime), month(vlog.createTime) from Vlog vlog group by day(vlog.createTime), month(vlog.createTime), year(vlog.createTime)" +
+		
+		List<LineChart.Dot> data1 = new ArrayList<LineChart.Dot>(), data2 = new ArrayList<LineChart.Dot>();
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		Date begin = new Date(new Date().getTime() - 30 * 86400 * 1000L);
+		
+		int[] cnt1 = new int[35];
+		int[] cnt2 = new int[35];
+		int maxy = 0;
+		dataList = statService.query("select count(*), day(vlog.createTime), month(vlog.createTime), year(vlog.createTime) from Vlog vlog group by day(vlog.createTime), month(vlog.createTime), year(vlog.createTime)" +
 				" where vlog.createTime > " + f.format(begin));
 		for (int i = 0; i < dataList.size(); i++){
 			Object[] o = (Object[]) dataList.get(i);
-			for (int j = 0; j < o.length; j++){
-				System.out.print(o[j] + " ");
+			int dif = (int) (((new Date((Integer)o[3]-1900, (Integer)o[2]-1, (Integer)o[1])).getTime() - begin.getTime()) / 86400000);
+			System.out.println("dif = " + dif);
+			cnt1[dif] = ((Long)o[0]).intValue();
+			if (maxy < cnt1[dif]){
+				maxy = cnt1[dif];
 			}
-			System.out.println("");
 		}
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		dataList = statService.query("select vlog.id, day(vlog.createTime), month(vlog.createTime), year(vlog.createTime) from Vlog vlog group by vlog.ip, day(vlog.createTime), month(vlog.createTime), year(vlog.createTime)" +
+				" where vlog.createTime > " + f.format(begin));
+		for (int i = 0; i < dataList.size(); i++){
+			Object[] o = (Object[]) dataList.get(i);
+			int dif = (int) (((new Date((Integer)o[3]-1900, (Integer)o[2]-1, (Integer)o[1])).getTime() - begin.getTime()) / 86400000);
+			System.out.println("dif = " + dif);
+			cnt2[dif] ++;
 		}
-
-		for(double i=0;i<6.2;i+=0.2){
+		
+		for(int i = 0; i < 30; i++){
 			// line 1 dot
-			LineChart.Dot dot1 = new LineChart.Dot(Math.sin(i)*1.9+10);
+			LineChart.Dot dot1 = new LineChart.Dot(cnt1[i]);
 			dot1.setDotSize(5);            // 点大小
 			dot1.setColour("#f00000");    // 设置点颜色
 			data1.add(dot1);
 
 			// line 2 dot
-			LineChart.Dot dot2 = new LineChart.Dot(Math.sin(i)*1.9+7);
+			LineChart.Dot dot2 = new LineChart.Dot(cnt2[i]);
 			dot2.setDotSize(3);
 			dot2.setHaloSize(1);        // 点外空白大小
 			dot2.setColour("#3D5C56");
 			data2.add(dot2);
-
 		}
 
-		Date date = new Date();
 		Locale locale = new Locale("zh","CN");
 		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL, locale);
 
 		// line 1
 		LineChart line1 = new LineChart();
+		line1.setTooltip("#x_label#\n#val# visits");
+		line1.setText("visits statistics");
 //		line1.setDotStyle(new LineChart.Style(LineChart.Style.Type.DOT));
 		line1.setWidth(1);            // 线宽
 		line1.addDots(data1);        // 增加数据
 
 		// line 2
 		LineChart line2 = new LineChart();
+		line2.setTooltip("#x_label#\n#val# IPs");
+		line2.setText("IPs statistics");
 //		line2.setDotStyle(new LineChart.Style(LineChart.Style.Type.DOT));
 		line2.setColour("#3D5C56");
 		line2.setWidth(2);
 		line2.addDots(data2);
 
 		YAxis y = new YAxis();
-		y.setRange(0, 15, 5);        // 设置Y柚范围，参数依次为最小值、最大值、间隔
+		y.setRange(0, maxy+1, (maxy+1)/4.0);        // 设置Y柚范围，参数依次为最小值、最大值、间隔
 
+
+		XAxis x = new XAxis(); // X 轴
+		for(int i = 0; i < 30; i++){
+			begin = new Date(begin.getTime() + 86400000);
+			int month = begin.getMonth();
+			int date = begin.getDate();
+			x.addLabels((month+1) + "." + date);
+		}
+		
 		ofcChart = new Chart();
-		ofcChart.setTitle(new Text(dateFormat.format(date)));    // 设置标题
+		ofcChart.setTitle(new Text(dateFormat.format(new Date())));    // 设置标题
 		ofcChart.addElements(line1);                            // 增加线到图表
 		ofcChart.addElements(line2);
 		ofcChart.setYAxis(y);                                    // 设置Y柚
+		ofcChart.setXAxis(x);                                    // 设置Y柚
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
 		return SUCCESS;
 	}
-
 	
 	
 	public Chart getOfcChart() {

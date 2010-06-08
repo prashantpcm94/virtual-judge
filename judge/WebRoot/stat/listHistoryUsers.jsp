@@ -65,6 +65,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<br /><a href="stat/toListBrowser.action">Browser</a>
 		<br /><a href="stat/toListOS.action">OS</a>
 		<br /><a href="stat/toShowStayTime.action">Stay Time</a>
+		<br /><a href="stat/toShowDayVisits.action">30Days visits</a>
 
 
 		<s:include value="/bottom.jsp" />

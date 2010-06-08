@@ -22,7 +22,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<s:if test="#session.visitor.sup == 1">
 					<a href="stat/listOL.action"><img style="text-decoration: none;" height="15px" src="images/statistics.gif" /></a>
 				</s:if>
-				<a href="stat/listOL.action"><img style="text-decoration: none;" height="15px" src="images/statistics.gif" /></a>
 				<br>Anything about the OJ, Please Contact Author:<a href="mailto:is.un@qq.com">Isun</a><br>
 				<a href="graph/draw.jsp">ofc</a>
 			</p>

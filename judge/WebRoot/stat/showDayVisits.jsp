@@ -22,10 +22,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<s:include value="/top.jsp" />
 		<s:actionerror />
 
-		<div class="ptt">Browser Distribution</div>
-		<br />
-		
-		<s:select name="unique" list="#{'0':'By session','1':'By IP'}" value="%{unique}" onchange="refresh();"></s:select>
+		<div class="ptt">Past 30 Days visits</div>
 		<br />
 		
 		<div style="text-align:center;">
@@ -47,8 +44,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 		function refresh(){
 			var unique = $("#unique").val();
-			var url = 'stat/listBrowser.action?unique=' + unique;  
-			swfobject.embedSWF("open-flash-chart.swf", "chart", "600", "600", "9.0.0", "expressInstall.swf", {"data-file":url});
+			var url = 'stat/showDayVisits.action';  
+			swfobject.embedSWF("open-flash-chart.swf", "chart", "1000", "600", "9.0.0", "expressInstall.swf", {"data-file":url});
 		}
 	</script> 
 
