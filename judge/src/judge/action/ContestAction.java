@@ -26,7 +26,6 @@ import judge.bean.User;
 import judge.service.IBaseService;
 import judge.submitter.Submitter;
 import judge.tool.MD5;
-import judge.tool.OnlineTool;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
@@ -34,6 +33,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class ContestAction extends ActionSupport {
 
 	private static final long serialVersionUID = -3594499743692326065L;
+	@SuppressWarnings("unchecked")
 	private List dataList, tList;
 	private Contest contest;
 	private Problem problem;

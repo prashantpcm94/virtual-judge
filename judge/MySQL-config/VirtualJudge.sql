@@ -2,15 +2,15 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
-CREATE SCHEMA IF NOT EXISTS `vhoj` ;
+CREATE SCHEMA IF NOT EXISTS `vhoj` DEFAULT CHARACTER SET latin1 ;
 USE `vhoj`;
 
 -- -----------------------------------------------------
--- Table `vhoj`.`T_USER`
+-- Table `vhoj`.`t_user`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `vhoj`.`T_USER` ;
+DROP TABLE IF EXISTS `vhoj`.`t_user` ;
 
-CREATE  TABLE IF NOT EXISTS `vhoj`.`T_USER` (
+CREATE  TABLE IF NOT EXISTS `vhoj`.`t_user` (
   `C_ID` INT(10) NOT NULL AUTO_INCREMENT ,
   `C_USERNAME` VARCHAR(40) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL ,
   `C_NICKNAME` VARCHAR(100) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL ,
@@ -30,11 +30,11 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `vhoj`.`T_CONTEST`
+-- Table `vhoj`.`t_contest`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `vhoj`.`T_CONTEST` ;
+DROP TABLE IF EXISTS `vhoj`.`t_contest` ;
 
-CREATE  TABLE IF NOT EXISTS `vhoj`.`T_CONTEST` (
+CREATE  TABLE IF NOT EXISTS `vhoj`.`t_contest` (
   `C_ID` INT(10) NOT NULL AUTO_INCREMENT ,
   `C_TITLE` VARCHAR(100) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL ,
   `C_DESCRIPTION` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL ,
@@ -46,7 +46,7 @@ CREATE  TABLE IF NOT EXISTS `vhoj`.`T_CONTEST` (
   INDEX `C_MANAGERID` (`C_MANAGERID` ASC) ,
   CONSTRAINT `C_MANAGERID`
     FOREIGN KEY (`C_MANAGERID` )
-    REFERENCES `vhoj`.`T_USER` (`C_ID` )
+    REFERENCES `vhoj`.`t_user` (`C_ID` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -56,11 +56,11 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `vhoj`.`T_PROBLEM`
+-- Table `vhoj`.`t_problem`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `vhoj`.`T_PROBLEM` ;
+DROP TABLE IF EXISTS `vhoj`.`t_problem` ;
 
-CREATE  TABLE IF NOT EXISTS `vhoj`.`T_PROBLEM` (
+CREATE  TABLE IF NOT EXISTS `vhoj`.`t_problem` (
   `C_ID` INT(10) NOT NULL AUTO_INCREMENT ,
   `C_TITLE` VARCHAR(100) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL ,
   `C_DESCRIPTION` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL ,
@@ -86,11 +86,11 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `vhoj`.`T_CPROBLEM`
+-- Table `vhoj`.`t_cproblem`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `vhoj`.`T_CPROBLEM` ;
+DROP TABLE IF EXISTS `vhoj`.`t_cproblem` ;
 
-CREATE  TABLE IF NOT EXISTS `vhoj`.`T_CPROBLEM` (
+CREATE  TABLE IF NOT EXISTS `vhoj`.`t_cproblem` (
   `C_ID` INT(10) NOT NULL AUTO_INCREMENT ,
   `C_PROBLEMID` INT(10) NULL DEFAULT NULL ,
   `C_CONTESTID` INT(10) NULL DEFAULT NULL ,
@@ -100,12 +100,12 @@ CREATE  TABLE IF NOT EXISTS `vhoj`.`T_CPROBLEM` (
   INDEX `C_CONTESTID` (`C_CONTESTID` ASC) ,
   CONSTRAINT `C_CONTESTID`
     FOREIGN KEY (`C_CONTESTID` )
-    REFERENCES `vhoj`.`T_CONTEST` (`C_ID` )
+    REFERENCES `vhoj`.`t_contest` (`C_ID` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `C_PROBLEMID`
     FOREIGN KEY (`C_PROBLEMID` )
-    REFERENCES `vhoj`.`T_PROBLEM` (`C_ID` )
+    REFERENCES `vhoj`.`t_problem` (`C_ID` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -115,11 +115,11 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `vhoj`.`T_SUBMISSION`
+-- Table `vhoj`.`t_submission`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `vhoj`.`T_SUBMISSION` ;
+DROP TABLE IF EXISTS `vhoj`.`t_submission` ;
 
-CREATE  TABLE IF NOT EXISTS `vhoj`.`T_SUBMISSION` (
+CREATE  TABLE IF NOT EXISTS `vhoj`.`t_submission` (
   `C_ID` INT(10) NOT NULL AUTO_INCREMENT ,
   `C_STATUS` VARCHAR(40) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL ,
   `C_TIME` INT(10) UNSIGNED NULL DEFAULT NULL ,
@@ -137,18 +137,39 @@ CREATE  TABLE IF NOT EXISTS `vhoj`.`T_SUBMISSION` (
   INDEX `C_CPROBLEMID` USING BTREE (`C_CONTESTID` ASC) ,
   CONSTRAINT `C_PROBLEMID2`
     FOREIGN KEY (`C_PROBLEMID` )
-    REFERENCES `vhoj`.`T_PROBLEM` (`C_ID` )
+    REFERENCES `vhoj`.`t_problem` (`C_ID` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `C_USERID`
     FOREIGN KEY (`C_USERID` )
-    REFERENCES `vhoj`.`T_USER` (`C_ID` )
+    REFERENCES `vhoj`.`t_user` (`C_ID` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1000
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
+
+
+-- -----------------------------------------------------
+-- Table `vhoj`.`t_vlog`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `vhoj`.`t_vlog` ;
+
+CREATE  TABLE IF NOT EXISTS `vhoj`.`t_vlog` (
+  `C_ID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `C_SESSIONID` VARCHAR(40) NULL DEFAULT NULL ,
+  `C_IP` VARCHAR(40) NULL DEFAULT NULL ,
+  `C_CREATETIME` DATETIME NULL DEFAULT NULL ,
+  `C_DURATION` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  `C_REFERER` VARCHAR(500) NULL DEFAULT NULL ,
+  `C_USERAGENT` VARCHAR(500) NULL DEFAULT NULL ,
+  `C_LOGINER` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  PRIMARY KEY (`C_ID`) ,
+  INDEX `Index_2` USING HASH (`C_SESSIONID` ASC) )
+ENGINE = InnoDB
+AUTO_INCREMENT = 1000
+DEFAULT CHARACTER SET = latin1;
 
 
 

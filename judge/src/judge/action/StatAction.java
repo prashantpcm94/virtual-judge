@@ -1,5 +1,5 @@
 /**
- * ofc
+ * 用于统计网站数据
  */
 
 package judge.action;
@@ -10,18 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-
-import org.apache.struts2.ServletActionContext;
-
-import sun.awt.color.CMM.CSAccessor;
 
 import jofc2.model.Chart;
 import jofc2.model.Text;
@@ -33,10 +26,7 @@ import jofc2.model.elements.PieChart;
 import jofc2.model.elements.BarChart.Bar;
 import judge.bean.User;
 import judge.bean.Vlog;
-import judge.service.IBaseService;
-import judge.service.IUserService;
 import judge.service.StatService;
-import judge.tool.MD5;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
@@ -87,8 +77,6 @@ public class StatAction extends ActionSupport {
 
     public String listOnlineUsers() {
     	
-    	try {
-			
 		List userInfo;
 		Vlog vlog;
 		User user;
@@ -105,9 +93,6 @@ public class StatAction extends ActionSupport {
 			userInfo.add(user != null ? user.getId() : "");
 			userInfo.add(vlog.getCreateTime());
 			dataList.add(userInfo);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return SUCCESS;
 	}
@@ -272,9 +257,9 @@ public class StatAction extends ActionSupport {
 			x.addLabels(maxx * i / 50 / 60000 + "");//x轴的文字  
 		}
 		ofcChart = new Chart("Stay time distribution"); // 整个图的标题
-		YAxis y = new YAxis();  //y 轴  
-		y.setMax(maxy+1.0); //y轴最大值  
-		y.setSteps(maxy/10.0); //步进 
+		YAxis y = new YAxis();  //y 轴
+		y.setMax(maxy/2.0+1.0); //y轴最大值  
+		y.setSteps(maxy/10.0); //步进
 		ofcChart.setYAxis(y);
 		ofcChart.setXAxis(x);
 		ofcChart.addElements(c2); // 把饼图加入到图表
@@ -288,10 +273,6 @@ public class StatAction extends ActionSupport {
 
 	@SuppressWarnings("deprecation")
 	public String showDayVisits(){
-		try {
-			
-		
-		
 		List<LineChart.Dot> data1 = new ArrayList<LineChart.Dot>(), data2 = new ArrayList<LineChart.Dot>();
 		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 		Date begin = new Date(new Date().getTime() - 30 * 86400 * 1000L);
@@ -358,7 +339,6 @@ public class StatAction extends ActionSupport {
 		YAxis y = new YAxis();
 		y.setRange(0, maxy+1, (maxy+1)/4.0);        // 设置Y柚范围，参数依次为最小值、最大值、间隔
 
-
 		XAxis x = new XAxis(); // X 轴
 		for(int i = 0; i < 30; i++){
 			begin = new Date(begin.getTime() + 86400000);
@@ -374,11 +354,6 @@ public class StatAction extends ActionSupport {
 		ofcChart.setYAxis(y);                                    // 设置Y柚
 		ofcChart.setXAxis(x);                                    // 设置Y柚
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		
 		return SUCCESS;
 	}
 	
