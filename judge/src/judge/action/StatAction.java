@@ -44,6 +44,8 @@ public class StatAction extends ActionSupport {
     private String username;
     
     public String findBrowser(String ref){
+    	if (ref == null)
+    		return "Unknown";
     	ref = ref.toUpperCase();
     	if (ref.contains("MSIE")){
     		return "IE";
@@ -61,6 +63,8 @@ public class StatAction extends ActionSupport {
     }
 
     public String findOS(String ref){
+    	if (ref == null)
+    		return "Unknown";
     	ref = ref.toUpperCase();
     	if (ref.contains("WINDOWS")){
     		return "Windows";
@@ -110,7 +114,7 @@ public class StatAction extends ActionSupport {
 		if (pageIndex < 0){
 			pageIndex = 0;
 		}
-		dataList = statService.list("select vlog from Vlog vlog order by vlog.createTime desc", pageIndex*25, 25);
+		dataList = statService.list("select vlog, user.username from Vlog vlog, User user where user.id = vlog.loginer order by vlog.createTime desc", pageIndex*25, 25);
 		session.put("pageIndex", pageIndex);
 		return SUCCESS;
 	}
@@ -118,10 +122,10 @@ public class StatAction extends ActionSupport {
     public String nextHistoryUsers() {
 		Map session = ActionContext.getContext().getSession();
 		int pageIndex = (Integer)session.get("pageIndex") + 1;
-		dataList = statService.list("select vlog from Vlog vlog order by vlog.createTime desc", pageIndex*25, 25);
+		dataList = statService.list("select vlog, user.username from Vlog vlog, User user where user.id = vlog.loginer order by vlog.createTime desc", pageIndex*25, 25);
 		if (dataList.size() == 0){
 			pageIndex--;
-			dataList = statService.list("select vlog from Vlog vlog order by vlog.createTime desc", pageIndex*25, 25);
+			dataList = statService.list("select vlog, user.username from Vlog vlog, User user where user.id = vlog.loginer order by vlog.createTime desc", pageIndex*25, 25);
 		}
 		session.put("pageIndex", pageIndex);
 		return SUCCESS;

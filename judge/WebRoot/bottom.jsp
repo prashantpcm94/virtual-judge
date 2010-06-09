@@ -23,7 +23,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<a href="stat/listOL.action"><img style="text-decoration: none;" height="15px" src="images/statistics.gif" /></a>
 				</s:if>
 				<br>Anything about the OJ, Please Contact Author:<a href="mailto:is.un@qq.com">Isun</a><br>
-				<a href="graph/draw.jsp">ofc</a>
 			</p>
 		</center>
 	</body>
