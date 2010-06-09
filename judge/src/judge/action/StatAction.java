@@ -222,13 +222,14 @@ public class StatAction extends ActionSupport {
 	}
     
 	public String showStayTime() {
+		
 		BarChart c2 = new BarChart(BarChart.Style.GLASS); // 柱状图
 		if (unique == 0){
 			dataList = statService.query("select vlog.duration from Vlog vlog");
 		} else {
 			dataList = statService.query("select avg(vlog.duration) from Vlog vlog group by vlog.ip");
 		}
-		long maxx = 0, maxy = 0;
+		long maxx = 1, maxy = 1;
 		for (int i = 0; i < dataList.size(); i++){
 			long tmp = unique > 0 ? ((Double)dataList.get(i)).longValue() : (Long)dataList.get(i);
 			if (maxx < tmp){
@@ -263,7 +264,8 @@ public class StatAction extends ActionSupport {
 		ofcChart.setYAxis(y);
 		ofcChart.setXAxis(x);
 		ofcChart.addElements(c2); // 把饼图加入到图表
-		System.out.println("\n" + ofcChart.toString());
+//		System.out.println("\n" + ofcChart.toString());
+
 		return SUCCESS;
 	}
 	
