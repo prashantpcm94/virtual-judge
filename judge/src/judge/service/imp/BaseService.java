@@ -11,25 +11,17 @@
 // ========================================================================
 package judge.service.imp;
 
-import java.awt.Font;
 import java.io.Serializable;
 import java.util.List;
 
 import judge.dao.IBaseDao;
 import judge.service.IBaseService;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.chart.title.TextTitle;
-import org.jfree.data.general.DefaultPieDataset;
 
 
 public class BaseService implements IBaseService {
 
 	static private IBaseDao baseDao;
-	private JFreeChart chart;
 
 	public IBaseDao getBaseDao() {
 		return baseDao;
@@ -84,38 +76,5 @@ public class BaseService implements IBaseService {
 		return BaseService.baseDao.query(queryString, FirstResult, MaxResult);
 	}
 	
-	// ==============================================================
-	// 方法名: getStatisticChart
-	// 方法描述: 本方法用来统计数据，将统计结果存放在数据集中,并根据数据
-	// 集生成统计图
-	// 返回值:
-	// chart:统计图
-	// ==============================================================
-	@SuppressWarnings("unchecked")
-	public JFreeChart getStatisticChart(String title, String hql) {
-		try {
-			DefaultPieDataset dataset = new DefaultPieDataset();
-			List statisticList = this.query(hql);
-			int n = statisticList.size();
-			for (int i = 0; i < n; i++) {
-				Object[] o = (Object[]) statisticList.get(i);
-				boolean b = o[1] == null;
-				if (!b) {
-					dataset.setValue(o[0].toString(), (Number) o[1]);
-				}
-			}
-			chart = ChartFactory.createPieChart(title, dataset, true, false,
-					false);
-			chart.setTitle(new TextTitle(title, new Font("黑体", Font.BOLD, 15)));
-			LegendTitle legend = chart.getLegend(0);
-			legend.setItemFont(new Font("黑体", Font.BOLD, 10));
-			PiePlot plot = (PiePlot) chart.getPlot();
-			plot.setLabelFont(new Font("黑体", Font.BOLD, 10));
-			plot.setBackgroundAlpha(0.1f);
-			plot.setForegroundAlpha(0.8f);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return chart;
-	}
+
 }

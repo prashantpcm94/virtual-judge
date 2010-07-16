@@ -3,8 +3,6 @@ package judge.service;
 import java.io.Serializable;
 import java.util.List;
 
-import org.jfree.chart.JFreeChart;
-
 public interface IBaseService {
 	/**
 	 * 添加实体
@@ -47,6 +45,4 @@ public interface IBaseService {
 	@SuppressWarnings("unchecked")
 	public List list(String queryString, int FirstResult, int MaxResult);
 	
-
-	public JFreeChart getStatisticChart(String title, String hql);
 }
