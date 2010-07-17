@@ -58,15 +58,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<s:property value="dataList[#stat.index][0]" />
 					</td>
 					<td class="title">
-						<s:if test="dataList[#stat.index][3] == 0 || #session.visitor.sup != 0 || dataList[#stat.index][4] == #session.visitor.id">
-							<a href="problem/viewProblem.action?id=<s:property value='dataList[#stat.index][0]' />">
-								<s:property value="dataList[#stat.index][1]" />
-							</a>
-							<s:if test="dataList[#stat.index][3] == 1"><font color="red">(Hidden)</font></s:if>
-						</s:if>
-						<s:else>
-							<font color="red">-- This problem is temporarily hidden by the creator! -- </font>
-						</s:else>
+						<a href="problem/viewProblem.action?id=<s:property value='dataList[#stat.index][0]' />">
+							<s:property value="dataList[#stat.index][1]" />
+						</a>
+						<s:if test="dataList[#stat.index][3] == 1"><font color="red">(Hidden)</font></s:if>
 					</td>
 					<td class="center">
 						<s:if test="dataList[#stat.index][3] == 0 || dataList[#stat.index][4] == #session.visitor.id || #session.visitor.sup == 1">

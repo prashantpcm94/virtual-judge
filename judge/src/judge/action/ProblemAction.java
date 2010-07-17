@@ -201,8 +201,15 @@ public class ProblemAction extends ActionSupport{
 
 
 	public String listProblem() {
-		dataList = baseService.list("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem " + (id > 0 ? "where problem.id = " + id : "") + " order by problem.addTime asc", 0, 10000);
 		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
+		if (user == null){
+			dataList = baseService.list("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem where problem.hidden = 0 order by problem.addTime asc", 0, 10000);
+		} else if (user.getSup() > 0){
+			dataList = baseService.list("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem order by problem.addTime asc", 0, 10000);
+		} else {
+			dataList = baseService.list("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem where problem.hidden = 0 or problem.creatorId = " + user.getId() + " order by problem.addTime asc", 0, 10000);
+		}
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
 		OJId = (String) session.get("OJId");
