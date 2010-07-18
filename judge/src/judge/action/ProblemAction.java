@@ -107,7 +107,7 @@ public class ProblemAction extends ActionSupport{
 		lf.put("URAL", "%I64d & %I64u");
 		lf.put("HUST", "%lld & %llu");
 		lf.put("SPOJ", "%lld & %llu");
-		lf.put("URAL", "%I64d & %I64u");
+		lf.put("HDU", "%I64d & %I64u");
 	}
 
 	

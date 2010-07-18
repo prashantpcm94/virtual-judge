@@ -20,6 +20,7 @@ public class UVALiveSubmitter extends Submitter {
 			clientList[i] = new HttpClient();
 		}
 	}
+	int maxRunId = 0;
 	
 	static private boolean using[] = new boolean[5];
 	
@@ -40,6 +41,35 @@ public class UVALiveSubmitter extends Submitter {
 	};
 	
 	private String submit(HttpClient httpClient, int idx){
+        GetMethod getMethod = new GetMethod("http://acmicpc-live-archive.uva.es/nuevoportal/status.php");
+        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+        while (true){
+	        try {
+	            int statusCode = httpClient.executeMethod(getMethod);
+	            if(statusCode != HttpStatus.SC_OK) {
+	                System.err.println("Method failed: "+getMethod.getStatusLine());
+	            }
+	            byte[] responseBody = getMethod.getResponseBody();
+	            String tLine = new String(responseBody, "UTF-8");
+	    		Pattern p = Pattern.compile("<td>&nbsp;(\\d+)&nbsp;");
+	    		Matcher m = p.matcher(tLine);
+	    		if (m.find()){
+	    			maxRunId = Integer.parseInt(m.group(1));
+	    			break;
+	    		}
+	        }
+	        catch(Exception e) {
+				e.printStackTrace();
+	            getMethod.releaseConnection();
+	        }
+	        try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        System.out.println("maxRunId : " + maxRunId);
+		
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
 		
         PostMethod postMethod = new PostMethod("http://acmicpc-live-archive.uva.es/nuevoportal/mailer.php");
@@ -64,46 +94,49 @@ public class UVALiveSubmitter extends Submitter {
 	}
 	
 	public void getResult(String username){
-		String reg = "class=\"V_\\w{2,5}\">([\\s\\S]*?)<td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://acmicpc-live-archive.uva.es/nuevoportal/status.php?u=" + username);
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        while (true){
-	        try {
+		String reg = "<td>&nbsp;(\\d+)&nbsp;[\\s\\S]*?class=\"V_\\w{2,5}\">([\\s\\S]*?)<td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
+		HttpClient httpClient = new HttpClient();
+		GetMethod getMethod = new GetMethod("http://acmicpc-live-archive.uva.es/nuevoportal/status.php?u=" + username);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		int tryNum = 0;
+		while (tryNum < 100){
+		    try {
 				System.out.println("getResult...");
-	            int statusCode = httpClient.executeMethod(getMethod);
-	            if(statusCode != HttpStatus.SC_OK) {
-	                System.err.println("Method failed: "+getMethod.getStatusLine());
-	            }
-	            byte[] responseBody = getMethod.getResponseBody();
-	            String tLine = new String(responseBody, "UTF-8");
-	    		Pattern p = Pattern.compile(reg);
-	    		Matcher m = p.matcher(tLine);
-	    		if (m.find()){
-	    			result = m.group(1).replaceAll("<[\\s\\S]*?>", "").trim();
-    				submission.setStatus(result);
-	    			if (!result.contains("ing")){
-	    				if (result.equals("Accepted")){
-		    				submission.setMemory(m.group(3).equals("Minimum") ? 0 : Integer.parseInt(m.group(3)));
-		    				submission.setTime((int)(1000 * Double.parseDouble(m.group(2))));
+		        int statusCode = httpClient.executeMethod(getMethod);
+		        if(statusCode != HttpStatus.SC_OK) {
+		            System.err.println("Method failed: "+getMethod.getStatusLine());
+		        }
+		        byte[] responseBody = getMethod.getResponseBody();
+		        String tLine = new String(responseBody, "UTF-8");
+				Pattern p = Pattern.compile(reg);
+				Matcher m = p.matcher(tLine);
+				if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
+					result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
+					submission.setStatus(result);
+					if (!result.contains("ing")){
+						if (result.equals("Accepted")){
+		    				submission.setMemory(m.group(4).equals("Minimum") ? 0 : Integer.parseInt(m.group(4)));
+		    				submission.setTime((int)(1000 * Double.parseDouble(m.group(3))));
 //		    				System.out.println(username + " " + submission.getMemory() + "KB " + submission.getTime() + "ms");
-	    				}
-	    				baseService.modify(submission);
-	    				return;
-	    			}
-    				baseService.modify(submission);
-	    		}
-	        }
-	        catch(Exception e) {
+						}
+						baseService.modify(submission);
+						return;
+					}
+					baseService.modify(submission);
+				}
+		    }
+		    catch(Exception e) {
 				e.printStackTrace();
-	            getMethod.releaseConnection();
-	        }
-	        try {
+		        getMethod.releaseConnection();
+		    }
+		    try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-        }
+		}
+		submission.setStatus("Judging Error");
+		baseService.modify(submission);
 	}
 
 	public void run() {
@@ -132,7 +165,7 @@ public class UVALiveSubmitter extends Submitter {
 		submission.setStatus("Running & Judging");
 		baseService.modify(submission);
 		try {
-			Thread.sleep(15000);
+			Thread.sleep(4000);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
