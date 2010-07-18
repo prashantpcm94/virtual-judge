@@ -44,7 +44,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					</td>
 				</tr>
 				<tr>
-					<td class="form_title">password:</td>
+					<td class="form_title">Password:</td>
 					<td>
 						<s:password name="contest.password" value="%{contest.password}" theme="simple" />
 						<font color="green">Leave it blank if you want to make it public<font color="green">
