@@ -28,7 +28,8 @@ public class UVALiveSpider extends Spider {
 			return;
 		}
 
-		tLine = tLine.replaceAll("(SRC=\")|(src=\")", "src=\"http://acmicpc-live-archive.uva.es/nuevoportal/data/");
+		tLine = tLine.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://acmicpc-live-archive.uva.es/nuevoportal/data/");
+		tLine = tLine.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://acmicpc-live-archive.uva.es/nuevoportal/data/");
 
 		problem.setTitle(regFind(tLine,	"<title>\\d{3,} - ([\\s\\S]*?)</title>"));
 		problem.setTimeLimit(0);
