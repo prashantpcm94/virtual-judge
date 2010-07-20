@@ -48,8 +48,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<li>2010-05-04 : Put into use.</li>
 				<li>2010-05-10 : Remember the last language selected.</li>
 				<li>2010-05-10 : Remember the OJ of the last problem selected.</li>
-				<li>2010-05-10 : Optimize the crawling of ZOJ.</li>
-				<li>2010-05-10 : HDU OJ is added.</li>
+				<li>2010-05-10 : Optimize the crawling of <a href="http://acm.zju.edu.cn/onlinejudge/">ZOJ</a>.</li>
+				<li>2010-05-10 : <a href="http://acm.hdu.edu.cn">HDU OJ</a> is added.</li>
+				<li>2010-06-01 : Host Virtual Judge on <a href="http://code.google.com/p/virtual-judge">Google Code</a>.</li>
+				<li>2010-07-18 : Use <a href="http://ckeditor.com">CKEditor</a> in problem editing.</li>
+				<li>2010-07-20 : Implement syntax highlighting in source viewing by using <a href="http://shjs.sourceforge.net">SHJS</a>.</li>
 			</ul>
 		</div>
 		

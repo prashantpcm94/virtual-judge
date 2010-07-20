@@ -11,6 +11,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	<base href="<%=basePath%>" />
 	    <title>Virtual Judge</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<link rel="shortcut icon" href="<%=basePath%>images/logo.ico" />
 		<link rel="stylesheet" type="text/css" href="css/global.css" />
 	</head>
 
