@@ -1,8 +1,10 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ page import="org.apache.struts2.ServletActionContext" %>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -11,10 +13,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	<base href="<%=basePath%>" />
 	    <title>Virtual Judge -- Source code</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<script type="text/javascript" src="shjs/sh_main.min.js" ></script>
+		<script type="text/javascript" src="<%=langFile%>" ></script>
+		<link type="text/css" rel="stylesheet" href="shjs/css/sh_style.min.css" />
 		<script type="text/javascript" src="javascript/common.js"></script>
 	</head>
 
-	<body>
+	<body onload="sh_highlightDocument();">
 		<s:include value="/top.jsp" />
 		
 		<center><font color=#333399 size=5 >Source Code</font></center><br />
@@ -70,7 +75,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				&nbsp;
 			</s:else>
 		</p>
-		<pre style="font-family:Courier New,Courier,monospace">${submission.source}</pre>
+		<pre class="${language}" style="font-family:Courier New,Courier,monospace">${submission.source}</pre>
 	</body>
 	<s:include value="/bottom.jsp" />
 </html>

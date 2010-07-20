@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.transaction.Transaction;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -524,6 +525,10 @@ public class ProblemAction extends ActionSupport{
 		user = (User) baseService.query(User.class, submission.getUserId());
 		uid = user.getId();
 		un = user.getUsername();
+
+		//这里language用作为shjs提供语言识别所需要的class名
+		language = findClass4SHJS(submission.getLanguage());
+
 		return SUCCESS;
 	}
 
@@ -539,5 +544,57 @@ public class ProblemAction extends ActionSupport{
 		baseService.modify(submission);
 		return SUCCESS;
 	}
-
+	
+	private String findClass4SHJS(String srcLang) {
+		srcLang = " " + srcLang.toLowerCase() + " ";
+		if (srcLang.contains("c++") || srcLang.contains("cpp") || srcLang.contains("g++")){
+			return "sh_cpp";
+		} else if (srcLang.contains(" c ") || srcLang.contains("gcc")){
+			return "sh_c";
+		} else if (srcLang.contains("c#")){
+			return "sh_csharp";
+		} else if (srcLang.contains("java ")){
+			return "sh_java";
+		} else if (srcLang.contains("pascal") || srcLang.contains("fpc")){
+			return "sh_pascal";
+		} else if (srcLang.contains("tcl")){
+			return "sh_tcl";
+		} else if (srcLang.contains("scala")){
+			return "sh_scala";
+		} else if (srcLang.contains("perl")){
+			return "sh_perl";
+		} else if (srcLang.contains("python")){
+			return "sh_python";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("php")){
+			return "sh_php";
+		} else if (srcLang.contains("prolog")){
+			return "sh_prolog";
+		} else if (srcLang.contains("javascript")){
+			return "sh_javascript";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else {
+			return "sh_c";
+		}
+	}
 }
