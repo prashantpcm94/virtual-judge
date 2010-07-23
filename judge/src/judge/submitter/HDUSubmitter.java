@@ -87,7 +87,8 @@ public class HDUSubmitter extends Submitter {
         HttpClient httpClient = new HttpClient();
         GetMethod getMethod = new GetMethod("http://acm.hdu.edu.cn/status.php?user=" + username);
         getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        while (true){
+		int tryNum = 0;
+		while (tryNum++ < 100){
 	        try {
 				System.out.println("getResult...");
 	            int statusCode = httpClient.executeMethod(getMethod);
@@ -128,11 +129,14 @@ public class HDUSubmitter extends Submitter {
 	public void run() {
 		int idx = -1;
 		while(true) {
+			int length = usernameList.length;
+			int begIdx = (int) (System.currentTimeMillis() % length);
 			synchronized (using) {
-				for (int i = 0; i < 5; i++) {
-					if (!using[i]) {
-						idx = i;
-						using[i] = true;
+				for (int i = begIdx; i < begIdx + length; i++) {
+					int j = i % length;
+					if (!using[j]) {
+						idx = j;
+						using[j] = true;
 						break;
 					}
 				}
