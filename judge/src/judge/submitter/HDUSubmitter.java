@@ -48,7 +48,7 @@ public class HDUSubmitter extends Submitter {
         postMethod.addParameter("problemid", problem.getOriginProb());
         postMethod.addParameter("usercode", submission.getSource());
         postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        httpClient.getParams().setContentCharset("UTF-8"); 
+        httpClient.getParams().setContentCharset("UTF-8");
         try {
 			System.out.println("submit...");
 			httpClient.executeMethod(postMethod);

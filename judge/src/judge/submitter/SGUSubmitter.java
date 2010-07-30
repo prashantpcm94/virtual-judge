@@ -142,7 +142,7 @@ public class SGUSubmitter extends Submitter {
 		int idx = -1;
 		while(true) {
 			int length = usernameList.length;
-			int begIdx = (int) (System.currentTimeMillis() % length);
+			int begIdx = (int) (Math.random() * length);
 			synchronized (using) {
 				for (int i = begIdx; i < begIdx + length; i++) {
 					int j = i % length;
