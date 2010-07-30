@@ -23,7 +23,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 		<div class="ptt">Contest Standing -- <s:property value="contest.title" /></div>
 
-		<table cellpadding="0" cellspacing="0" border="0" class="display" id="standing">
+		<table cellpadding="0" cellspacing="1" border="0" class="display" id="standing">
 			<thead>
 				<tr>
 					<th>Rank</th>
@@ -48,7 +48,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<td>
 						<a href="user/profile.action?uid=${userId}">
 							<s:property value="handle" />
-						</a>	
+						</a>
 					</td>
 					<td>
 						<s:property value="solCnt" />
