@@ -54,11 +54,11 @@ public class StartUpListener implements ServletContextListener {
 		sc.setAttribute("SGU", languageList);
 		
 		languageList = new HashMap<String, String>();
-		languageList.put("1", "C");
-		languageList.put("2", "C++");
+		languageList.put("9", "C");
+		languageList.put("10", "C++");
 		languageList.put("3", "Pascal");
-		languageList.put("4", "Java");
-		languageList.put("5", "C#");
+		languageList.put("7", "Java");
+		languageList.put("8", "C#");
 		sc.setAttribute("URAL", languageList);
 
 		languageList = new HashMap<String, String>();

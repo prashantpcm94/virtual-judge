@@ -18,6 +18,7 @@ public class URALSubmitter extends Submitter {
 	static {
 		for (int i = 0; i < clientList.length; i++){
 			clientList[i] = new HttpClient();
+			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
 		}
 	}
 	
@@ -80,6 +81,7 @@ public class URALSubmitter extends Submitter {
 	            }
 	            byte[] responseBody = getMethod.getResponseBody();
 	            String tLine = new String(responseBody, "UTF-8");
+	            System.out.println(tLine);
 	    		Pattern p = Pattern.compile(reg);
 	    		Matcher m = p.matcher(tLine);
 	    		if (m.find()){
