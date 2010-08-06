@@ -144,6 +144,13 @@ public class URALSubmitter extends Submitter {
 			e1.printStackTrace();
 		}
 		getResult(passwordList[idx]);
+
+		//ural oj限制每两次提交之间至少隔X秒
+		try {
+			Thread.sleep(6000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		
 		synchronized (using) {
 			using[idx] = false;

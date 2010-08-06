@@ -174,6 +174,12 @@ public class POJSubmitter extends Submitter {
 			e1.printStackTrace();
 		}
 		getResult(usernameList[idx]);
+		//POJ限制每两次提交之间至少隔3秒
+		try {
+			Thread.sleep(6000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		
 		synchronized (using) {
 			using[idx] = false;

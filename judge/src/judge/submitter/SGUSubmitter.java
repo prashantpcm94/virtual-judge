@@ -173,6 +173,13 @@ public class SGUSubmitter extends Submitter {
 			e1.printStackTrace();
 		}
 		getResult(usernameList[idx]);
+
+		//sgu限制每两次提交之间至少隔30秒
+		try {
+			Thread.sleep(26000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		
 		synchronized (using) {
 			using[idx] = false;

@@ -173,6 +173,13 @@ public class HUSTSubmitter extends Submitter {
 		}
 		
 		getResult(usernameList[idx]);
+
+		//hust oj限制每两次提交之间至少隔10秒
+		try {
+			Thread.sleep(6000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		
 		synchronized (using) {
 			using[idx] = false;
