@@ -3,7 +3,7 @@ $(document).ready(function() {
 		"aaSorting": [[ 2, "asc" ]],
 		"bPaginate": false,
 		"bLengthChange": false,
-		"bFilter": false,
+//		"bFilter": false,
 //		"bSort": false,
 		"bInfo": false,
 		"bAutoWidth": false,
