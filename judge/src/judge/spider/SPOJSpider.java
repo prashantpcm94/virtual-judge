@@ -43,7 +43,7 @@ public class SPOJSpider extends Spider {
 		problem.setInput(regFind(tLine, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
 		problem.setOutput(regFind(tLine, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
 		problem.setSampleInput(regFind(tLine, "<h3[^<>]*>Example</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
-		problem.setHint(regFind(tLine, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)<hr>", 1));
+		problem.setHint(regFind(tLine, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)<hr>", 1) + regFind(tLine, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)<hr>", 1));
 		problem.setSource(regFind(tLine, "Resource:</td><td>([\\s\\S]*?)</td></tr>", 1));
 		problem.setUrl("http://www.spoj.pl/problems/" + problem.getOriginProb());
 		baseService.modify(problem);
