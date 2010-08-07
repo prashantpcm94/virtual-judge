@@ -40,7 +40,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<br /><br />
 
 		<center>
-			<h1>Error occured!</h1>
+			<h1>悲剧啊，<font color="red">404</font>!</h1>
 			<br/><img src="images/beiju.jpg" />
 			<br/><img src="images/lr.gif" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<img src="images/beat.gif" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -48,4 +48,14 @@
 		<welcome-file>/welcome.jsp</welcome-file>
 	</welcome-file-list>
 	
+	<error-page>
+		<error-code>404</error-code>
+		<location>/errorpages/404.jsp</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/errorpages/exception.jsp</location>
+	</error-page>
+	
 </web-app>
