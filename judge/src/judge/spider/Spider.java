@@ -26,7 +26,7 @@ public class Spider extends Thread implements Cloneable {
 		Matcher m = p.matcher(text);
 		if (m.find()){
 			String res = m.group(1);
-			System.out.println("RESULT : " + res);
+//			System.out.println("RESULT : " + res);
 			return res;
 		}
 		return null;
@@ -37,7 +37,7 @@ public class Spider extends Thread implements Cloneable {
 		Matcher m = p.matcher(text);
 		if (m.find()){
 			String res = m.group(1);
-			System.out.println("RESULT : " + res);
+//			System.out.println("RESULT : " + res);
 			return res;
 		}
 		return null;
