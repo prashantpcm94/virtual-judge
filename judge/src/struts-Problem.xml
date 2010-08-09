@@ -45,16 +45,19 @@
 		<!-- 显示提交 -->
 		<action name="status" class="problemAction" method="status">
 			<result name="success">/problem/status.jsp</result>
+			<result name="input">/problem/status.jsp</result>
 		</action>
 
 		<!-- 显示提交(上一页) -->
 		<action name="statusPrev" class="problemAction" method="statusPrev">
 			<result name="success">/problem/status.jsp</result>
+			<result name="input">/problem/status.jsp</result>
 		</action>
 
 		<!-- 显示提交(下一页) -->
 		<action name="statusNext" class="problemAction" method="statusNext">
 			<result name="success">/problem/status.jsp</result>
+			<result name="input">/problem/status.jsp</result>
 		</action>
 
 		<!-- 进入非比赛提交页面 -->

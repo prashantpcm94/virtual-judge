@@ -44,7 +44,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<font color="orange">Current Server Time : <s:date name="curDate" format="yyyy-MM-dd HH:mm:ss" /></font>
 			<br /><br /><br />
 
-			<s:form action="loginContest" namespace="/contest" theme="simple">
+			<s:form action="loginContest" namespace="/contest" theme="simple" method="get">
 				Password:<s:password name="password" cssClass="input_login" />
 				<input type="hidden" name="cid" value="${cid}" />
 				<input class="bnt1" type="submit" value="Login" />

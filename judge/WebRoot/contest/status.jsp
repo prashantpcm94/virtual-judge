@@ -22,7 +22,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<s:include value="/contest/top.jsp" />
 		<s:actionerror/>
 
-		<s:form id="filter" action="status" namespace="/contest">
+		<s:form id="filter" action="status" namespace="/contest" method="get">
 			Username:<s:textfield name="un" value="%{un}" theme="simple"/>
 			&nbsp;&nbsp;Problem Num:<s:textfield name="num" value="%{num}" theme="simple"/>
 			<input type="hidden" name="cid" value="${cid}"/>

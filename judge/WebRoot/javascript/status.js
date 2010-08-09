@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$('#status').dataTable({
+	var oTable = $('#status').dataTable({
 		"aaSorting": [[ 1, "asc" ]],
 		"bPaginate": false,
 		"bLengthChange": false,

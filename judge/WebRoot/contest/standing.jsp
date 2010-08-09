@@ -31,44 +31,26 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<th>Solve</th>
 					<th class="penalty">Penalty</th>
 					<s:iterator value="tList" status="stat">
-						<th>
-							<a href="contest/viewProblem.action?pid=${id}">
-								<s:property value="num" />
-							</a>
-						</th>
-					</s:iterator>	
+						<th><a href="contest/viewProblem.action?pid=${id}"><s:property value="num" /></a></th>
+					</s:iterator>
 				</tr>
 			</thead>
 
 			<s:iterator value="dataList" status="stat">
 				<tr>
-					<td>
-						<s:property value="#stat.index + 1" />
-					</td>
-					<td>
-						<a href="user/profile.action?uid=${userId}">
-							<s:property value="handle" />
-						</a>
-					</td>
-					<td>
-						<s:property value="solCnt" />
-					</td>
-					<td class="penalty">
-						<s:property value="sPenalty" />
-					</td>
+					<td><s:property value="#stat.index + 1" /></td>
+					<td><a href="user/profile.action?uid=${userId}"><s:property value="handle" /></a></td>
+					<td><s:property value="solCnt" /></td>
+					<td class="penalty"><s:property value="sPenalty" /></td>
 					<s:iterator value="sACtime" status="stat1">
 						<s:if test="ACtime[#stat1.index] gt 0">
-							<td class="green">
-								<s:property value="sACtime[#stat1.index]" /><s:if test="attempts[#stat1.index] gt 0">(-<s:property value="attempts[#stat1.index]" />)</s:if>
-							</td>
+							<td class="green"><s:property value="sACtime[#stat1.index]" /><s:if test="attempts[#stat1.index] gt 0">(-<s:property value="attempts[#stat1.index]" />)</s:if></td>
 						</s:if>
 						<s:elseif test="attempts[#stat1.index] == 0">
 							<td class="white" />
 						</s:elseif>
 						<s:else>
-							<td class="red">
-								-<s:property value="attempts[#stat1.index]" />
-							</td>
+							<td class="red">-<s:property value="attempts[#stat1.index]" /></td>
 						</s:else>
 					</s:iterator>
 				</tr>
