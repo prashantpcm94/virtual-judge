@@ -16,7 +16,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.springframework.web-3.0.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/antlr-2.7.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjrt.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/cglib-2.1.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
@@ -67,5 +66,10 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xwork-1.2.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jofc2-1.0-0.jar" sourcepath="F:/Code/Workspaces/plugin/jofc2-1.0-0/jofc2-1.0-0-src.zip"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xstream-1.3.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/struts2-json-plugin-2.1.8.1.jar" sourcepath="F:/Code/Workspaces/plugin/struts-2.1.8.1-all.zip"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/json-lib-2.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-beanutils-1.7.0.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ezmorph-1.0.3.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/cglib-2.1.3.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>

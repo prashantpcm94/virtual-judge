@@ -1,6 +1,5 @@
 package judge.bean;
 
-import java.util.Set;
 
 /**
  * 用户,即OJ账号

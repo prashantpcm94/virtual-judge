@@ -30,10 +30,10 @@ import judge.tool.MD5;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
+@SuppressWarnings("unchecked")
 public class ContestAction extends ActionSupport {
 
 	private static final long serialVersionUID = -3594499743692326065L;
-	@SuppressWarnings("unchecked")
 	private List dataList, tList;
 	private Contest contest;
 	private Problem problem;
@@ -361,18 +361,28 @@ public class ContestAction extends ActionSupport {
 			cproblem.setProblemId(Integer.parseInt(pl.get(i)));
 			cproblem.setNum((char)('A' + i) + "");
 			baseService.add(cproblem);
+
+			problem = (Problem) baseService.query(Problem.class, Integer.parseInt(pl.get(i)));
+			problem.setHidden(1);
 		}
 
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String viewContest() {
 		Map session = ActionContext.getContext().getSession();
 		User user = (User)session.get("visitor");
 		int uid = user != null ? user.getId() : -1;
 		contest = (Contest) baseService.query(Contest.class, cid);
+
 		curDate = new Date();
+		Date endDate = contest.getEndTime();
+		//如果比赛已结束且比赛结束未超过半小时，则将该比赛所有题目取消hidden，方便在题库练习
+		//(后一条件基于如下设想：如果比赛刚结束后没有一个人想再看题目，说明关注度不够，这些题目也没有必要再公开了)
+		if (curDate.getTime() - endDate.getTime() > 0 && curDate.getTime() - endDate.getTime() < 1800000){
+			openProblems(cid);
+		}
+		
 		if (contest.getPassword() == null || user != null && user.getSup() == 1){
 			session.put("C" + cid, 1);
 		}
@@ -401,7 +411,6 @@ public class ContestAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String loginContest(){
 		contest = (Contest) baseService.query(Contest.class, cid);
 		if (MD5.getMD5(password).equals(contest.getPassword())){
@@ -415,7 +424,6 @@ public class ContestAction extends ActionSupport {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public String viewProblem(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -461,7 +469,6 @@ public class ContestAction extends ActionSupport {
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	public String toSubmit(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -487,7 +494,6 @@ public class ContestAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String submit(){
 		Map session = ActionContext.getContext().getSession();
 		cproblem = (Cproblem) baseService.query(Cproblem.class, pid);
@@ -550,7 +556,6 @@ public class ContestAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String status(){
 		Map session = ActionContext.getContext().getSession();
 		session.put("pageIndex", 0);
@@ -580,7 +585,6 @@ public class ContestAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String statusPrev(){
 		Map session = ActionContext.getContext().getSession();
 		int pageIndex = (Integer)session.get("pageIndex") - 1;
@@ -607,7 +611,6 @@ public class ContestAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String statusNext(){
 		Map session = ActionContext.getContext().getSession();
 		int pageIndex = (Integer)session.get("pageIndex") + 1;
@@ -637,10 +640,16 @@ public class ContestAction extends ActionSupport {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public String standing(){
 		Map session = ActionContext.getContext().getSession();
 		contest = (Contest) baseService.query(Contest.class, cid);
+		
+		curDate = new Date();
+		Date endDate = contest.getEndTime();
+		if (curDate.getTime() - endDate.getTime() > 0 && curDate.getTime() - endDate.getTime() < 1800000){
+			openProblems(cid);
+		}
+
 		if (session.get("C" + cid) == null){
 			if (contest.getPassword() == null){
 				session.put("C" + cid, 1);
@@ -725,7 +734,6 @@ public class ContestAction extends ActionSupport {
 		return (d > 0 ? (d + "天") : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;    
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String deleteContest(){
 		Map session = ActionContext.getContext().getSession();
 		contest = (Contest) baseService.query(Contest.class, cid);
@@ -746,7 +754,7 @@ public class ContestAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings("deprecation")
 	public String toEditContest(){
 		Map session = ActionContext.getContext().getSession();
 		contest = (Contest) baseService.query(Contest.class, cid);
@@ -773,7 +781,7 @@ public class ContestAction extends ActionSupport {
 		return contest.getBeginTime().compareTo(curDate) < 0 ? "running" : "scheduled";
 	}
 	
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings("deprecation")
 	public String editContest(){
 		boolean beiju = false;
 		Map session = ActionContext.getContext().getSession();
@@ -785,7 +793,7 @@ public class ContestAction extends ActionSupport {
 		}
 		curDate = new Date();
 		Date originBegin = mContest.getBeginTime();
-		Date originEnd = mContest.getEndTime();
+//		Date originEnd = mContest.getEndTime();
 
 		if (curDate.compareTo(originBegin) > 0){
 			long dur = d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L;
@@ -921,7 +929,6 @@ public class ContestAction extends ActionSupport {
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	public String viewSource(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -971,7 +978,6 @@ public class ContestAction extends ActionSupport {
 		return SUCCESS;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String toggleOpen(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -985,7 +991,6 @@ public class ContestAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String rejudge(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -1026,6 +1031,21 @@ public class ContestAction extends ActionSupport {
 			}
 		}
 		return SUCCESS;
+	}
+	
+	/**
+	 * 公开比赛中的所有题目
+	 * @param cid ContestID
+	 */
+	private void openProblems(int cid) {
+		dataList = baseService.list("select problem from Cproblem cproblem, Problem problem where cproblem.contestId = '" + cid + "' and problem.id = cproblem.problemId", 0, 100);
+		for (Object o : dataList) {
+			Problem p = (Problem) o;
+			if (p.getHidden() != 0){
+				p.setHidden(0);
+				baseService.modify(p);
+			}
+		}
 	}
 	
 	private String findClass4SHJS(String srcLang) {

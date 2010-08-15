@@ -3,6 +3,7 @@ package judge.dao;
 import java.io.Serializable;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public interface IBaseDao {
 	public Serializable add(Object entity);
 	public void delete(Object entity);

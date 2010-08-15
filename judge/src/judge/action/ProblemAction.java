@@ -4,6 +4,7 @@
 
 package judge.action;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,11 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.transaction.Transaction;
-
 import org.apache.struts2.ServletActionContext;
 
-
+import judge.bean.DataTablesPage;
 import judge.bean.Problem;
 import judge.bean.Submission;
 import judge.bean.User;
@@ -40,12 +39,10 @@ import judge.submitter.UVALiveSubmitter;
 import judge.submitter.ZOJSubmitter;
 
 import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
 
-@SuppressWarnings("unchecked")
-public class ProblemAction extends ActionSupport{
+@SuppressWarnings({ "unchecked", "serial" })
+public class ProblemAction extends BaseAction{
 	
-	private static final long serialVersionUID = 664739917599930835L;
 	private IBaseService baseService;
 	
 	private int id;
@@ -60,8 +57,8 @@ public class ProblemAction extends ActionSupport{
 	private String source;
 	private String redir;
 	private String un;
+	private DataTablesPage dataTablesPage;
 	private Map<Object, String> languageList;
-	
 	
 	static private List<String> OJList = new ArrayList<String>();
 	static {
@@ -111,109 +108,72 @@ public class ProblemAction extends ActionSupport{
 		lf.put("HDU", "%I64d & %I64u");
 	}
 
+	public String toListProblem() {
+		return SUCCESS;
+	}
 	
-	public int getUid() {
-		return uid;
-	}
-	public void setUid(int uid) {
-		this.uid = uid;
-	}
-	public Submission getSubmission() {
-		return submission;
-	}
-	public void setSubmission(Submission submission) {
-		this.submission = submission;
-	}
-	public int getIsOpen() {
-		return isOpen;
-	}
-	public void setIsOpen(int isOpen) {
-		this.isOpen = isOpen;
-	}
-	public String getUn() {
-		return un;
-	}
-	public void setUn(String un) {
-		this.un = un;
-	}
-	public List getDataList() {
-		return dataList;
-	}
-	public void setDataList(List dataList) {
-		this.dataList = dataList;
-	}
-	public List<String> getOJList() {
-		return OJList;
-	}
-	public Map<Object, String> getLanguageList() {
-		return languageList;
-	}
-	public void setLanguageList(Map<Object, String> languageList) {
-		this.languageList = languageList;
-	}
-	public String getRedir() {
-		return redir;
-	}
-	public void setRedir(String redir) {
-		this.redir = redir;
-	}
-	public String getLanguage() {
-		return language;
-	}
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-	public String getSource() {
-		return source;
-	}
-	public void setSource(String source) {
-		this.source = source;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public Problem getProblem() {
-		return problem;
-	}
-	public void setProblem(Problem problem) {
-		this.problem = problem;
-	}
-	public String getOJId() {
-		return OJId;
-	}
-	public void setOJId(String id) {
-		OJId = id;
-	}
-	public String getProbNum() {
-		return probNum;
-	}
-	public void setProbNum(String probNum) {
-		this.probNum = probNum;
-	}
-	public IBaseService getBaseService() {
-		return baseService;
-	}
-	public void setBaseService(IBaseService baseService) {
-		this.baseService = baseService;
-	}
-
-
 	public String listProblem() {
+		try {
+			
+		
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
+		StringBuffer hql = new StringBuffer("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem where");
 		if (user == null){
-			dataList = baseService.list("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem where problem.hidden = 0 order by problem.addTime asc", 0, 10000);
-		} else if (user.getSup() > 0){
-			dataList = baseService.list("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem order by problem.addTime asc", 0, 10000);
+			hql.append(" problem.hidden = 0");
+		} else if (user.getSup() == 0){
+			hql.append(" problem.hidden = 0 or problem.creatorId = " + user.getId());
 		} else {
-			dataList = baseService.list("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem where problem.hidden = 0 or problem.creatorId = " + user.getId() + " order by problem.addTime asc", 0, 10000);
+			hql.append(" problem.id > 0");
 		}
+		long cnt = baseService.count(hql.toString());
+		dataTablesPage = new DataTablesPage();
+		dataTablesPage.setITotalDisplayRecords(cnt);
+		dataTablesPage.setITotalRecords(cnt);
+		if (sSearch != null && !sSearch.trim().isEmpty()){
+			sSearch = sSearch.toLowerCase().trim();
+			hql.append(" and problem.title like '%" + sSearch + "%' or problem.originOJ like '%" + sSearch + "%' or problem.originProb like '%" + sSearch + "%'");
+			if (sSearch.matches("\\d+")){
+				hql.append(" or problem.id = " + sSearch);
+			}
+			dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
+		}
+
+		hql.append(" order by problem.addTime asc");
+		List<Object[]> tmp = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
+		List aaData =  new ArrayList();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		for (Object[] o : tmp) {
+			boolean userHasAccess = user != null && (user.getSup() != 0 || user.getId() == (Integer)o[4]);
+			Object[] res = {
+					o[0],
+					"<a href='problem/viewProblem.action?id=" + o[0] + "'>" + o[1] + "</a>" + ((Integer)o[3] != 0 ? "<font color='red'>(Hidden)</font>" : ""),
+					"<a href='" + o[7] + "'>" + o[5] + " " + o[6] + "</a>",
+					sdf.format((Date)o[2]),
+					userHasAccess ? "<a href='problem/toEditProblem.action?id=" + o[0] + "'>Edit</a>" : "",
+					userHasAccess ? "<a href='javascript:void(0)' onclick='comfirmDeleteProblem(" + o[0] + ")'>Delete</a>" : "",
+					userHasAccess ? "<a href='problem/toggleAccess.action?id=" + o[0] + "'>" + ((Integer)o[3] != 0 ? "Reveal" : "Hide") + "</a>" : "",
+			};
+			aaData.add(res);
+		}
+		dataTablesPage.setAaData(aaData);
+//		dataTablesPage.setSColumns("id,title,addTime,hidden,creatorId,originOJ,originProb,url");
+		
+		System.out.println(iDisplayStart + " - " + iDisplayLength);
+		System.out.println("sSearch : " + sSearch);
+
+		System.out.println(dataTablesPage.getITotalDisplayRecords() + " ----- " + dataTablesPage.getITotalRecords() + " -- " + dataTablesPage.getAaData().size());
+		
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
 		OJId = (String) session.get("OJId");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+		System.out.println("SUCCESS");
 		return SUCCESS;
 	}
 	
@@ -240,7 +200,7 @@ public class ProblemAction extends ActionSupport{
 		problem.setOriginOJ(OJId.trim());
 		problem.setOriginProb(probNum.trim());
 		problem.setTitle("Crawling……");
-		problem.setHidden(1);
+		problem.setHidden(0);
 		baseService.add(problem);
 		spider.setProblem(problem);
 		try {
@@ -597,4 +557,105 @@ public class ProblemAction extends ActionSupport{
 			return "sh_c";
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
+	public Submission getSubmission() {
+		return submission;
+	}
+	public void setSubmission(Submission submission) {
+		this.submission = submission;
+	}
+	public int getIsOpen() {
+		return isOpen;
+	}
+	public void setIsOpen(int isOpen) {
+		this.isOpen = isOpen;
+	}
+	public String getUn() {
+		return un;
+	}
+	public void setUn(String un) {
+		this.un = un;
+	}
+	public List getDataList() {
+		return dataList;
+	}
+	public void setDataList(List dataList) {
+		this.dataList = dataList;
+	}
+	public List<String> getOJList() {
+		return OJList;
+	}
+	public Map<Object, String> getLanguageList() {
+		return languageList;
+	}
+	public void setLanguageList(Map<Object, String> languageList) {
+		this.languageList = languageList;
+	}
+	public String getRedir() {
+		return redir;
+	}
+	public void setRedir(String redir) {
+		this.redir = redir;
+	}
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	public String getSource() {
+		return source;
+	}
+	public void setSource(String source) {
+		this.source = source;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public Problem getProblem() {
+		return problem;
+	}
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
+	public String getOJId() {
+		return OJId;
+	}
+	public void setOJId(String id) {
+		OJId = id;
+	}
+	public String getProbNum() {
+		return probNum;
+	}
+	public void setProbNum(String probNum) {
+		this.probNum = probNum;
+	}
+	public IBaseService getBaseService() {
+		return baseService;
+	}
+	public void setBaseService(IBaseService baseService) {
+		this.baseService = baseService;
+	}
+	public DataTablesPage getDataTablesPage() {
+		return dataTablesPage;
+	}
+	public void setDataTablesPage(DataTablesPage dataTablesPage) {
+		this.dataTablesPage = dataTablesPage;
+	}
+
 }

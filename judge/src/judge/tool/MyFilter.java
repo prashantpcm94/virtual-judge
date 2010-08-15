@@ -2,7 +2,6 @@ package judge.tool;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,8 +11,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import antlr.collections.List;
 
 import judge.bean.Vlog;
 import judge.service.StatService;

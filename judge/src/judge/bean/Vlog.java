@@ -1,7 +1,6 @@
 package judge.bean;
 
 import java.util.Date;
-import java.util.Set;
 
 /**
  * session信息

@@ -1,6 +1,5 @@
 package judge.bean;
 
-import java.util.Set;
 
 /**
  * 比赛题目类，用于表示题目和比赛的多对多关系

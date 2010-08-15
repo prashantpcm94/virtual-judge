@@ -1,8 +1,5 @@
 package judge.spider;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -12,9 +9,7 @@ public class POJSpider extends Spider {
 	
 	public void run() {
 		
-		String tLine = "", reg;
-		Pattern p;
-		Matcher m;
+		String tLine = "";
         HttpClient httpClient = new HttpClient();
         GetMethod getMethod = new GetMethod("http://acm.pku.edu.cn/JudgeOnline/problem?id=" + problem.getOriginProb());
         getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());

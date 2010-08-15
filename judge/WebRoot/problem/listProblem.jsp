@@ -51,7 +51,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<th></th>
 				</tr>
 			</thead>
+			<tbody>
+				<tr>
+					<td colspan="7">Loading data from server</td>
+				</tr>
+			</tbody>
 
+
+<!-- 
 			<s:iterator value="dataList" status="stat">
 				<tr>
 					<td class="center">
@@ -94,6 +101,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					</td>
 				</tr>
 			</s:iterator>	
+ -->
+
 		</table>
 		<s:include value="/bottom.jsp" />
 	</body>

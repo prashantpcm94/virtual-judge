@@ -2,7 +2,7 @@
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
-	<package name="problem" extends="struts-default"  namespace="/problem">
+	<package name="problem" extends="json-default" namespace="/problem">
 		<global-results>
 	        <result name="error">/index.jsp</result>
 	        <result name="sqlError">/index.jsp</result>
@@ -14,32 +14,41 @@
 	    </global-exception-mappings>
 	    
 		<!-- 罗列题目 -->
-		<action name="listProblem" class="problemAction" method="listProblem">
+		<action name="toListProblem" class="problemAction" method="listProblem">
 			<result name="success">/problem/listProblem.jsp</result>
+		</action>
+
+		<action name="listProblem" class="problemAction" method="listProblem">
+			<result type="json">
+				<param name="root">dataTablesPage</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">false</param>
+				<param name="contentType">application/json-rpc</param>
+			</result>
 		</action>
 	    
 		<!-- 添加题目 -->
 		<action name="addProblem" class="problemAction" method="addProblem">
-			<result name="success" type="redirect">listProblem.action</result>		
-			<result name="error" type="redirect">listProblem.action</result>		
+			<result name="success" type="redirect">toListProblem.action</result>		
+			<result name="error" type="redirect">toListProblem.action</result>		
 		</action>
 		
 		<!-- 显示题目 -->
 		<action name="viewProblem" class="problemAction" method="viewProblem">
 			<result name="success">/problem/viewProblem.jsp</result>
-			<result name="error" type="redirect">listProblem.action</result>		
+			<result name="error" type="redirect">toListProblem.action</result>		
 		</action>
 
 		<!-- 删除题目 -->
 		<action name="deleteProblem" class="problemAction" method="deleteProblem">
-			<result name="success" type="redirect">listProblem.action</result>		
-			<result name="error" type="redirect">listProblem.action</result>		
+			<result name="success" type="redirect">toListProblem.action</result>		
+			<result name="error" type="redirect">toListProblem.action</result>		
 		</action>
 
 		<!-- 隐藏/反隐藏题目 -->
 		<action name="toggleAccess" class="problemAction" method="toggleAccess">
-			<result name="success" type="redirect">listProblem.action</result>		
-			<result name="error" type="redirect">listProblem.action</result>		
+			<result name="success" type="redirect">toListProblem.action</result>		
+			<result name="error" type="redirect">toListProblem.action</result>		
 		</action>
 
 		<!-- 显示提交 -->
