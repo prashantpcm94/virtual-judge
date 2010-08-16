@@ -413,8 +413,9 @@ public class ContestAction extends ActionSupport {
 	
 	public String loginContest(){
 		contest = (Contest) baseService.query(Contest.class, cid);
-		if (MD5.getMD5(password).equals(contest.getPassword())){
-			Map session = ActionContext.getContext().getSession();
+		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
+		if ((user != null && user.getSup() != 0) || MD5.getMD5(password).equals(contest.getPassword())){
 			session.put("C" + cid, 1);
 			return SUCCESS;
 		}
