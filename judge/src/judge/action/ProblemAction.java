@@ -113,9 +113,6 @@ public class ProblemAction extends BaseAction{
 	}
 	
 	public String listProblem() {
-		try {
-			
-		
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		StringBuffer hql = new StringBuffer("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem where");
@@ -132,14 +129,22 @@ public class ProblemAction extends BaseAction{
 		dataTablesPage.setITotalRecords(cnt);
 		if (sSearch != null && !sSearch.trim().isEmpty()){
 			sSearch = sSearch.toLowerCase().trim();
-			hql.append(" and problem.title like '%" + sSearch + "%' or problem.originOJ like '%" + sSearch + "%' or problem.originProb like '%" + sSearch + "%'");
-			if (sSearch.matches("\\d+")){
-				hql.append(" or problem.id = " + sSearch);
-			}
+			hql.append(" and (problem.title like '%" + sSearch + "%' or problem.originOJ like '%" + sSearch + "%' or problem.originProb like '%" + sSearch + "%'" + (sSearch.matches("\\d+") ? " or problem.id = " + sSearch : "") + ") ");
 			dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
 		}
+		System.out.println("iSortCol_0 = " + iSortCol_0);
+		if (iSortCol_0 != null){
+			if (iSortCol_0 == 0){
+				hql.append(" order by problem.id " + sSortDir_0);
+			} else if (iSortCol_0 == 1){
+				hql.append(" order by problem.title " + sSortDir_0);
+			} else if (iSortCol_0 == 2){
+				hql.append(" order by problem.originOJ " + sSortDir_0 + ", problem.originProb " + sSortDir_0);
+			} else if (iSortCol_0 == 3){
+				hql.append(" order by problem.addTime " + sSortDir_0);
+			}
+		}
 
-		hql.append(" order by problem.addTime asc");
 		List<Object[]> tmp = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
 		List aaData =  new ArrayList();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -152,7 +157,7 @@ public class ProblemAction extends BaseAction{
 					sdf.format((Date)o[2]),
 					userHasAccess ? "<a href='problem/toEditProblem.action?id=" + o[0] + "'>Edit</a>" : "",
 					userHasAccess ? "<a href='javascript:void(0)' onclick='comfirmDeleteProblem(" + o[0] + ")'>Delete</a>" : "",
-					userHasAccess ? "<a href='problem/toggleAccess.action?id=" + o[0] + "'>" + ((Integer)o[3] != 0 ? "Reveal" : "Hide") + "</a>" : "",
+					userHasAccess ? "<a href='javascript:void(0)' onclick='toggleAccess(" + o[0] + ", $(this))'>" + ((Integer)o[3] != 0 ? "Reveal" : "Hide") + "</a>" : "",
 			};
 			aaData.add(res);
 		}
@@ -168,12 +173,6 @@ public class ProblemAction extends BaseAction{
 		session.remove("error");
 		OJId = (String) session.get("OJId");
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		
-		System.out.println("SUCCESS");
 		return SUCCESS;
 	}
 	

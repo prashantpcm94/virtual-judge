@@ -11,12 +11,14 @@ public class BaseAction extends ActionSupport{
 
 	private static final long serialVersionUID = 1L;
 
-	protected Integer iDisplayStart;
-	protected Integer iDisplayLength;
+	protected Integer iDisplayStart = 0;
+	protected Integer iDisplayLength = 25;
 	protected Integer iColumns;
 	protected String sSearch;
 	protected Boolean bEscapeRegex;
 	protected Integer iSortingCols;
+	protected Integer iSortCol_0;
+	protected String sSortDir_0;
 	protected String sEcho;
 	
 	public Integer getIDisplayStart() {
@@ -60,6 +62,18 @@ public class BaseAction extends ActionSupport{
 	}
 	public void setSEcho(String echo) {
 		sEcho = echo;
+	}
+	public Integer getISortCol_0() {
+		return iSortCol_0;
+	}
+	public void setISortCol_0(Integer sortCol_0) {
+		iSortCol_0 = sortCol_0;
+	}
+	public String getSSortDir_0() {
+		return sSortDir_0;
+	}
+	public void setSSortDir_0(String sortDir_0) {
+		sSortDir_0 = sortDir_0;
 	}
 
 	

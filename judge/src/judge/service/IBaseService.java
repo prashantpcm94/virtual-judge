@@ -45,4 +45,6 @@ public interface IBaseService {
 	@SuppressWarnings("unchecked")
 	public List list(String queryString, int FirstResult, int MaxResult);
 	
+	public int toggleAccess(int id);
+
 }

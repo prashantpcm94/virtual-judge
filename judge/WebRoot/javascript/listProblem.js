@@ -1,5 +1,7 @@
+var oTable;
+
 $(document).ready(function() {
-	$('#listProblem').dataTable({
+	oTable = $('#listProblem').dataTable({
 		"bProcessing": true,
 		"bServerSide": true,
 		"sAjaxSource": "problem/listProblem.action",
@@ -23,3 +25,15 @@ $(document).ready(function() {
 		              ]
 	});
 } );
+
+var $gLoc;
+
+function toggleAccess(id, $loc){
+	$gLoc = $loc;
+	baseService.toggleAccess(id, callback);
+}
+
+function callback(hidden){
+	var title = $gLoc.parent()[0].innerHtml; 
+	alert(title);
+}

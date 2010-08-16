@@ -14,6 +14,7 @@ package judge.service.imp;
 import java.io.Serializable;
 import java.util.List;
 
+import judge.bean.Problem;
 import judge.dao.IBaseDao;
 import judge.service.IBaseService;
 
@@ -76,5 +77,12 @@ public class BaseService implements IBaseService {
 		return BaseService.baseDao.query(queryString, FirstResult, MaxResult);
 	}
 	
+	public int toggleAccess(int id){
+		Problem problem = (Problem) this.query(Problem.class, id);
+		System.out.println("title = " + problem.getTitle());
+		problem.setHidden(1 - problem.getHidden());
+		this.modify(problem);
+		return problem.getHidden();
+	}
 
 }
