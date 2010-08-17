@@ -4,6 +4,7 @@
 	<allow>
 		<create javascript="baseService" creator="spring">
 			<param name="beanName" value="baseService" />
+			<include method="toggleAccess"/>
 		</create>
 	</allow>
 </dwr>
