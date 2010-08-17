@@ -1,5 +1,6 @@
 package judge.submitter;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -101,8 +102,9 @@ public class SGUSubmitter extends Submitter {
         HttpClient httpClient = new HttpClient();
         GetMethod getMethod = new GetMethod("http://acm.sgu.ru/status.php?idmode=1&id=" + username);
         getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		int tryNum = 0;
-		while (tryNum++ < 1000){
+		long cur = new Date().getTime();
+		long interval = 2000;
+		while (new Date().getTime() - cur < 600000){
 	        try {
 				System.out.println("getResult...");
 	            int statusCode = httpClient.executeMethod(getMethod);
@@ -132,11 +134,14 @@ public class SGUSubmitter extends Submitter {
 	            getMethod.releaseConnection();
 	        }
 	        try {
-				Thread.sleep(2000);
+				Thread.sleep(interval);
+				interval += 500;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
         }
+		submission.setStatus("Judging Error");
+		baseService.modify(submission);
 	}
 
 	public void run() {
