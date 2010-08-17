@@ -35,6 +35,10 @@ public class SGUSpider extends Spider {
 //		System.out.println(tLine);
 		
 		problem.setTitle(regFind(tLine, "\\d{3}\\. ([\\s\\S]*?)[\n<]"));
+		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+			baseService.delete(problem);
+			return;
+		}
 		
 		String tl = regFind(tLine, "ime limit per test: ([\\d\\.]*)");
 		if (tl != null){

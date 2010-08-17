@@ -25,16 +25,21 @@ public class POJSpider extends Spider {
             getMethod.releaseConnection();
         }
 
-        if (tLine.contains("<li>Can not find problem")){
-        	baseService.delete(problem);
-        	return;
-        }
+		if (tLine.contains("<li>Can not find problem")){
+			baseService.delete(problem);
+			return;
+		}
         
         tLine = tLine.replaceAll("src=images", "src=http://acm.pku.edu.cn/JudgeOnline/images");
 		tLine = tLine.replaceAll("src='images", "src='http://acm.pku.edu.cn/JudgeOnline/images");
 		tLine = tLine.replaceAll("src=\"images", "src=\"http://acm.pku.edu.cn/JudgeOnline/images");
 		
 		problem.setTitle(regFind(tLine, "<title>\\d{3,} -- ([\\s\\S]*?)</title>"));
+		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+			baseService.delete(problem);
+			return;
+		}
+		
 		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "<b>Time Limit:</b> (\\d{3,})MS</td>")));
 		problem.setMemoryLimit(Integer.parseInt(regFind(tLine, "<b>Memory Limit:</b> (\\d{2,})K</td>")));
 		problem.setDescription(regFind(tLine, "<p class=\"pst\">Description</p>([\\s\\S]*?)<p class=\"pst\">"));
@@ -49,6 +54,7 @@ public class POJSpider extends Spider {
 		problem.setHint(regFind(tLine, "<p class=\"pst\">Hint</p>([\\s\\S]*?)<p class=\"pst\">"));
 		problem.setUrl("http://acm.timus.ru/problem.aspx?space=1&num=" + problem.getOriginProb());
 		problem.setUrl("http://acm.pku.edu.cn/JudgeOnline/problem?id=" + problem.getOriginProb());
+
 		baseService.modify(problem);
 	}
 

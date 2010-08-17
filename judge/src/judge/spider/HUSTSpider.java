@@ -35,6 +35,11 @@ public class HUSTSpider extends Spider {
 		tLine = tLine.replaceAll("src='\\.", "src='http://acm.hust.edu.cn/thx");
 		
 		problem.setTitle(regFind(tLine, "<title>[\\s\\S]*?-- ([\\s\\S]*?)</title>"));
+		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+			baseService.delete(problem);
+			return;
+		}
+		
 		problem.setTimeLimit(1000 * Integer.parseInt(regFind(tLine, "Time Limit: </b>([\\d\\.]*?) Sec")));
 		problem.setMemoryLimit(1024 * Integer.parseInt(regFind(tLine, "Memory Limit: </b>([\\d\\.]*?) MB")));
 		problem.setDescription(regFind(tLine, "<h2>Description</h2>([\\s\\S]*?)<h2>"));

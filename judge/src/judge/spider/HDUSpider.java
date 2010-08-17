@@ -33,6 +33,11 @@ public class HDUSpider extends Spider {
 		System.out.println(tLine);
 		
 		problem.setTitle(regFind(tLine, "color:#1A5CC8'>([\\s\\S]*?)</h1>"));
+		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+			baseService.delete(problem);
+			return;
+		}
+		
 		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "(\\d*) MS")));
 		problem.setMemoryLimit(Integer.parseInt(regFind(tLine, "/(\\d*) K")));
 		problem.setDescription(regFind(tLine, "Problem Description</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));

@@ -35,6 +35,10 @@ public class ZOJSpider extends Spider {
 		tLine = tLine.replaceAll("showImage\\.do", "http://acm.zju.edu.cn/onlinejudge/showImage.do");
 		
 		problem.setTitle(regFind(tLine, "<span class=\"bigProblemTitle\">([\\s\\S]*?)</span>"));
+		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+			baseService.delete(problem);
+			return;
+		}
 		problem.setTimeLimit(1000 * Integer.parseInt(regFind(tLine, "Time Limit: </font> ([\\s\\S]*?) Second")));
 		problem.setMemoryLimit(Integer.parseInt(regFind(tLine, "Memory Limit: </font> ([\\s\\S]*?) KB")));
 		if (tLine.contains("Input<") && tLine.contains("Output<") && tLine.contains("Sample Input<") && tLine.contains("Sample Output<")){
@@ -49,7 +53,6 @@ public class ZOJSpider extends Spider {
 		problem.setSource(regFind(tLine, "Source: <strong>([\\s\\S]*?)</strong><br>"));
 		problem.setUrl("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
 		baseService.modify(problem);
-
 	}
 
 }

@@ -364,6 +364,7 @@ public class ContestAction extends ActionSupport {
 
 			problem = (Problem) baseService.query(Problem.class, Integer.parseInt(pl.get(i)));
 			problem.setHidden(1);
+			baseService.modify(problem);
 		}
 
 		return SUCCESS;
@@ -510,10 +511,12 @@ public class ContestAction extends ActionSupport {
 				return "login";
 			}
 		}
-		if (contest.getEndTime().compareTo(new Date()) < 0){
+
+/*		if (contest.getEndTime().compareTo(new Date()) < 0){
 			this.addActionError("Contest has finished!");
 			return INPUT;
 		}
+*/
 		if (contest.getBeginTime().compareTo(new Date()) > 0){
 			this.addActionError("Contest has not began!");
 			return INPUT;
@@ -539,7 +542,9 @@ public class ContestAction extends ActionSupport {
 		Submission submission = new Submission();
 		submission.setSubTime(new Date());
 		submission.setProblemId(problem.getId());
-		submission.setContestId(cid);
+		if (contest.getEndTime().compareTo(new Date()) > 0){
+			submission.setContestId(cid);
+		}
 		submission.setUserId(user.getId());
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
@@ -554,7 +559,7 @@ public class ContestAction extends ActionSupport {
 			e.printStackTrace();
 			return ERROR;
 		}
-		return SUCCESS;
+		return contest.getEndTime().compareTo(new Date()) > 0 ? SUCCESS : "practice";
 	}
 	
 	public String status(){
@@ -923,6 +928,10 @@ public class ContestAction extends ActionSupport {
 			cproblem.setProblemId(Integer.parseInt(pl.get(i)));
 			cproblem.setNum((char)('A' + i) + "");
 			baseService.add(cproblem);
+
+			problem = (Problem) baseService.query(Problem.class, Integer.parseInt(pl.get(i)));
+			problem.setHidden(1);
+			baseService.modify(problem);
 		}
 		System.out.println("mContest = " + mContest);
 		baseService.modify(mContest);

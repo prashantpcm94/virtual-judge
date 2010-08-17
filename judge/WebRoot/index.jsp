@@ -53,6 +53,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<li>2010-06-01 : Host Virtual Judge on <a href="http://code.google.com/p/virtual-judge">Google Code</a>.</li>
 				<li>2010-07-18 : Use <a href="http://ckeditor.com">CKEditor</a> in problem editing.</li>
 				<li>2010-07-20 : Implement syntax highlighting in source viewing by using <a href="http://shjs.sourceforge.net">SHJS</a>.</li>
+				<li>2010-08-17 : Use AJAX pagination in problem list to avoid overload.</li>
+				<li>2010-08-17 : Post-contest submitting is enabled. Try it yourself :)</li>
 			</ul>
 		</div>
 		

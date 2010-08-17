@@ -132,7 +132,7 @@ public class ProblemAction extends BaseAction{
 			hql.append(" and (problem.title like '%" + sSearch + "%' or problem.originOJ like '%" + sSearch + "%' or problem.originProb like '%" + sSearch + "%'" + (sSearch.matches("\\d+") ? " or problem.id = " + sSearch : "") + ") ");
 			dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
 		}
-		System.out.println("iSortCol_0 = " + iSortCol_0);
+//		System.out.println("iSortCol_0 = " + iSortCol_0);
 		if (iSortCol_0 != null){
 			if (iSortCol_0 == 0){
 				hql.append(" order by problem.id " + sSortDir_0);
@@ -164,10 +164,10 @@ public class ProblemAction extends BaseAction{
 		dataTablesPage.setAaData(aaData);
 //		dataTablesPage.setSColumns("id,title,addTime,hidden,creatorId,originOJ,originProb,url");
 		
-		System.out.println(iDisplayStart + " - " + iDisplayLength);
-		System.out.println("sSearch : " + sSearch);
+//		System.out.println(iDisplayStart + " - " + iDisplayLength);
+//		System.out.println("sSearch : " + sSearch);
 
-		System.out.println(dataTablesPage.getITotalDisplayRecords() + " ----- " + dataTablesPage.getITotalRecords() + " -- " + dataTablesPage.getAaData().size());
+//		System.out.println(dataTablesPage.getITotalDisplayRecords() + " ----- " + dataTablesPage.getITotalRecords() + " -- " + dataTablesPage.getAaData().size());
 		
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
@@ -199,7 +199,7 @@ public class ProblemAction extends BaseAction{
 		problem.setOriginOJ(OJId.trim());
 		problem.setOriginProb(probNum.trim());
 		problem.setTitle("Crawling……");
-		problem.setHidden(0);
+		problem.setHidden(1);
 		baseService.add(problem);
 		spider.setProblem(problem);
 		try {

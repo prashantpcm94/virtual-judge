@@ -35,6 +35,10 @@ public class SPOJSpider extends Spider {
 		tLine = tLine.replaceAll("src=\"/", "src=\"http://www.spoj.pl/");
 		
 		problem.setTitle(regFind(tLine, "<h1>\\d+\\.([\\s\\S]*?)</h1>"));
+		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+			baseService.delete(problem);
+			return;
+		}
 		if (problem.getTitle() != null){
 			problem.setTitle(problem.getTitle().trim());
 		}
@@ -46,6 +50,7 @@ public class SPOJSpider extends Spider {
 		problem.setHint(regFind(tLine, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)<hr>", 1) + regFind(tLine, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)<hr>", 1));
 		problem.setSource(regFind(tLine, "Resource:</td><td>([\\s\\S]*?)</td></tr>", 1));
 		problem.setUrl("http://www.spoj.pl/problems/" + problem.getOriginProb());
+
 		baseService.modify(problem);
 	}
 

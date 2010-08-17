@@ -90,6 +90,10 @@
 				<param name="namespace">/contest</param>
 				<param name="cid">${cid}</param>
 			</result>
+			<result name="practice" type="redirectAction">
+				<param name="actionName">status</param>
+				<param name="namespace">/problem</param>
+			</result>
 			<result name="login">/contest/loginContest.jsp</result>
 			<result name="input">/contest/submit.jsp</result>
 			<result name="error" type="redirect">../user/toLogin.action</result>		

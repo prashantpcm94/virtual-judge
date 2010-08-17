@@ -35,6 +35,10 @@ public class URALSpider extends Spider {
 		tLine = tLine.replaceAll("SRC=\"", "SRC=\"http://acm.timus.ru");
 		
 		problem.setTitle(regFind(tLine, "problem_title\">\\d{4}. ([\\s\\S]*?)</H2>"));
+		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+			baseService.delete(problem);
+			return;
+		}
 		problem.setTimeLimit((int)(1000 * Double.parseDouble(regFind(tLine, "Time Limit: ([\\d\\.]*?) second"))));
 		problem.setMemoryLimit(1024 * Integer.parseInt(regFind(tLine, "Memory Limit: ([\\d\\.]*?) MB")));
 		problem.setDescription(regFind(tLine, "problem_text\">([\\s\\S]*?)<H3 CLASS=\"problem_subtitle\">Input"));
@@ -45,6 +49,7 @@ public class URALSpider extends Spider {
 		problem.setSource(regFind(tLine, "<DIV CLASS=\"problem_source\">([\\s\\S]*?)</DIV></DIV>"));
 		problem.setHint(regFind(tLine, "problem_subtitle\">Hint</H3>([\\s\\S]*?)<DIV CLASS=\"problem_source"));
 		problem.setUrl("http://acm.timus.ru/problem.aspx?space=1&num=" + problem.getOriginProb());
+
 		baseService.modify(problem);
 	}
 
