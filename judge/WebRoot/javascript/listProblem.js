@@ -15,14 +15,16 @@ $(document).ready(function() {
 		"bStateSave": true,
 		"aaSorting": [[ 3, "desc" ]],
 		"aoColumns": [
-			              {"sType": "numeric", "sClass": "center"},
-			              {"sType": "html", "sClass": "title"},
 			              {"sClass": "center"},
-			              {"sType": "date", "sClass": "time"},
+			              {"sClass": "title"},
+			              {"sClass": "center"},
+			              {"sClass": "time"},
 			              {"sClass": "opr"},
 			              {"sClass": "opr"},
 			              {"sClass": "opr"}
-		              ]
+		              ],
+		"bJQueryUI": true,
+		"sPaginationType": "full_numbers"
 	});
 } );
 
