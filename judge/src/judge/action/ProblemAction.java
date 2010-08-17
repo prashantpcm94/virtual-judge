@@ -147,7 +147,7 @@ public class ProblemAction extends BaseAction{
 
 		List<Object[]> tmp = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
 		List aaData =  new ArrayList();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		for (Object[] o : tmp) {
 			boolean userHasAccess = user != null && (user.getSup() != 0 || user.getId() == (Integer)o[4]);
 			Object[] res = {
