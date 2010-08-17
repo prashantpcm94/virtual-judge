@@ -13,9 +13,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
-		<script type="text/javascript" language="javascript" src="javascript/jquery.js"></script>
-		<script type="text/javascript" language="javascript" src="javascript/jquery.dataTables.js"></script>
-		<script type="text/javascript" language="javascript" src="javascript/FixedHeader.js"></script>
+		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
+		<script type="text/javascript" src="javascript/FixedHeader.js"></script>
 		<script type="text/javascript" src="javascript/status.js"></script>
 	</head>
 
@@ -23,7 +23,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<s:include value="/top.jsp" />
 		<s:actionerror/>
 		
-		<s:form id="filter" action="status" namespace="/problem" method="get">
+		<s:form id="filter" action="status" namespace="/problem" theme="simple" method="get">
 			Username:<s:textfield name="un" value="%{un}" theme="simple"/>
 			&nbsp;&nbsp;Problem ID:
 			<s:if test="id == 0">

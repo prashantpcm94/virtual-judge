@@ -43,7 +43,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 		<div class="plm">
 			<s:if test="#session.visitor != null">
-				<s:form id="addProblem" action="addProblem" namespace="/problem">
+				<s:form id="addProblem" action="addProblem" namespace="/problem" theme="simple">
 					Add a problem:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJList" theme="simple" cssClass="select" />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Problem number:<s:textfield id="ProbNum" name="ProbNum" theme="simple" />
 					<input type="submit" value="Add"/>
