@@ -34,6 +34,13 @@ function toggleAccess(id, $loc){
 }
 
 function callback(hidden){
-	var title = $gLoc.parent()[0].innerHtml; 
-	alert(title);
+	var title = $gLoc.parent().prev().prev().prev().prev().prev()[0];
+	var here = $gLoc[0];
+	if (!hidden){
+		title.innerHTML = title.innerHTML.replace(/<font.*?font>/i, '');
+		here.innerHTML = here.innerHTML.replace(/Reveal/, 'Hide');
+	} else {
+		title.innerHTML = title.innerHTML + "<font color=\"red\">(Hidden)<\/font>";
+		here.innerHTML = here.innerHTML.replace(/Hide/, 'Reveal');
+	}
 }
