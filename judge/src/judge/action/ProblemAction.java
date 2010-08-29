@@ -197,15 +197,17 @@ public class ProblemAction extends BaseAction{
 		problem.setCreatorId(user.getId());
 		problem.setAddTime(new Date());
 		problem.setOriginOJ(OJId.trim());
-		problem.setOriginProb(probNum.trim());
+		problem.setOriginProb(probNum.replaceAll("\\s+", ""));
 		problem.setTitle("Crawling……");
 		problem.setHidden(1);
+		problem.setTimeLimit(1);
 		baseService.add(problem);
 		spider.setProblem(problem);
 		try {
 			spider.start();
 		} catch (Exception e) {
 			e.printStackTrace();
+			baseService.delete(problem);
 			return ERROR;
 		}
 		return SUCCESS;
@@ -268,8 +270,15 @@ public class ProblemAction extends BaseAction{
 			return ERROR;
 		}
 		problem = (Problem) session.get("problem");
+		ServletContext sc = ServletActionContext.getServletContext();
+		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
+
 		if (problem == null){
 			this.addActionError("Please submit via usual approach!");
+			return INPUT;
+		}
+		if (problem.getTimeLimit() == 1){
+			this.addActionError("Crawling has not finished!");
 			return INPUT;
 		}
 
@@ -278,8 +287,6 @@ public class ProblemAction extends BaseAction{
 			return INPUT;
 		}
 		
-		ServletContext sc = ServletActionContext.getServletContext();
-		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
 
 /*		
 		dataList = baseService.query("select contest.beginTime, contest.endTime from Contest contest, Cproblem cproblem where cproblem.contestId = contest.id and cproblem.problemId = " + problem.getId());

@@ -234,7 +234,7 @@ public class ContestAction extends ActionSupport {
 
 	public String listContest() {
 		curDate = new Date();
-		dataList = baseService.list("select contest from Contest contest order by contest.beginTime desc, contest.id desc", 0, 100);
+		dataList = baseService.list("select contest from Contest contest order by contest.beginTime desc, contest.id desc", 0, 1000);
 		Map session = ActionContext.getContext().getSession();
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
@@ -294,7 +294,7 @@ public class ContestAction extends ActionSupport {
 		} else {
 			for (int i = 0; i < pl.size(); i++) {
 				problem = (Problem) baseService.query(Problem.class, Integer.parseInt(pl.get(i)));
-				if (problem == null) {
+				if (problem == null || problem.getTimeLimit() == 1) {
 					this.addActionError("Problem " + pl.get(i) + " doesn't exist!");
 					beiju = true;
 				} else if (problem.getHidden() == 1 && user.getId() != problem.getCreatorId() && user.getSup() != 1){

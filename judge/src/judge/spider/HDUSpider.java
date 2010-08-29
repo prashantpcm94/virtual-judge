@@ -21,7 +21,10 @@ public class HDUSpider extends Spider {
             tLine = new String(responseBody, "GB2312");
         }
         catch(Exception e) {
-            getMethod.releaseConnection();
+			getMethod.releaseConnection();
+			e.printStackTrace();
+			baseService.delete(problem);
+			return;
         }
 
         if (tLine.contains("<DIV>No such problem")){

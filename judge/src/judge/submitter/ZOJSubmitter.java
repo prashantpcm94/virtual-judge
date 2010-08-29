@@ -66,40 +66,25 @@ public class ZOJSubmitter extends Submitter {
 		postMethod.addParameter("source", submission.getSource());
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.getParams().setContentCharset("UTF-8"); 
-        try {
-			System.out.println("submit...");
-			statusCode = httpClient.executeMethod(postMethod);
-			System.out.println("statusCode = " + statusCode);
-            responseBody = postMethod.getResponseBody();
-            tLine = new String(responseBody, "UTF-8");
-//          System.out.println("resp: " + tLine);
-			return tLine.contains("Submit Successfully") ? "success" : null;
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		    postMethod.releaseConnection();
-		   	return null;
-		}
+		System.out.println("submit...");
+		statusCode = httpClient.executeMethod(postMethod);
+		System.out.println("statusCode = " + statusCode);
+        responseBody = postMethod.getResponseBody();
+        tLine = new String(responseBody, "UTF-8");
+		return tLine.contains("Submit Successfully") ? "success" : null;
 	}
 	
-	private String login(HttpClient httpClient, String username, String password){
+	private String login(HttpClient httpClient, String username, String password) throws HttpException, IOException{
         PostMethod postMethod = new PostMethod("http://acm.zju.edu.cn/onlinejudge/login.do");
  
         postMethod.addParameter("handle", username);
         postMethod.addParameter("password", password);
         postMethod.addParameter("rememberMe", "on");
         postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-			System.out.println("login...");
-			int statusCode = httpClient.executeMethod(postMethod);
-			System.out.println("statusCode = " + statusCode);
-			return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ? "success" : null;
-        }
-        catch(Exception e) {
-        	e.printStackTrace();
-            postMethod.releaseConnection();
-           	return null;
-        }
+		System.out.println("login...");
+		int statusCode = httpClient.executeMethod(postMethod);
+		System.out.println("statusCode = " + statusCode);
+		return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ? "success" : null;
 	}
 	
 	public void getResult(String username){
@@ -193,7 +178,8 @@ public class ZOJSubmitter extends Submitter {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			baseService.delete(submission);
+			submission.setStatus("Judging Error");
+			baseService.modify(submission);
 			return;
 		}
 		submission.setStatus("Running & Judging");

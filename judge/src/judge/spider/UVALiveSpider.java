@@ -21,6 +21,9 @@ public class UVALiveSpider extends Spider {
 			tLine = new String(responseBody, "UTF-8");
 		} catch (Exception e) {
 			getMethod.releaseConnection();
+			e.printStackTrace();
+			baseService.delete(problem);
+			return;
 		}
 
 		if (tLine.contains("<title>Problem not found</title>")) {

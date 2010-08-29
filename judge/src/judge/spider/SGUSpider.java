@@ -24,7 +24,10 @@ public class SGUSpider extends Spider {
             tLine = new String(responseBody, "UTF-8");
         }
         catch(Exception e) {
-            getMethod.releaseConnection();
+			getMethod.releaseConnection();
+			e.printStackTrace();
+			baseService.delete(problem);
+			return;
         }
 
         if (tLine.contains("<h4>no such problem</h4>")){

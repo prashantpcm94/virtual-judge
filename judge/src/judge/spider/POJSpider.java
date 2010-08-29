@@ -22,8 +22,11 @@ public class POJSpider extends Spider {
             tLine = new String(responseBody, "UTF-8");
         }
         catch(Exception e) {
-            getMethod.releaseConnection();
-        }
+			e.printStackTrace();
+			getMethod.releaseConnection();
+			baseService.delete(problem);
+			return;
+       }
 
 		if (tLine.contains("<li>Can not find problem")){
 			baseService.delete(problem);

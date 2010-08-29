@@ -24,7 +24,10 @@ public class SPOJSpider extends Spider {
             tLine = new String(responseBody, "UTF-8");
         }
         catch(Exception e) {
-            getMethod.releaseConnection();
+			getMethod.releaseConnection();
+			e.printStackTrace();
+			baseService.delete(problem);
+			return;
         }
         
         if (tLine.contains("Wrong problem code!") || !tLine.contains("<h2>SPOJ Problem Set (classical)</h2>")){

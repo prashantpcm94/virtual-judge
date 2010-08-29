@@ -6,6 +6,7 @@ $(document).ready(function() {
 //		"bFilter": false,
 //		"bSort": false,
 		"bInfo": false,
+		"bStateSave": true,
 		"bAutoWidth": false,
 		"aoColumns": [{"sType": "numeric"},
 		              {"sType": "html"},

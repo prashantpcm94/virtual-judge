@@ -146,9 +146,9 @@ public class UserAction extends ActionSupport {
 			return INPUT;
 		}
 		session.put("visitor", user);
-		Vlog vlog = statService.getBySessionId(ServletActionContext.getRequest().getSession().getId());
-		vlog.setLoginer(user.getId());
-		statService.modify(vlog);
+//		Vlog vlog = statService.getBySessionId(ServletActionContext.getRequest().getSession().getId());
+//		vlog.setLoginer(user.getId());
+//		statService.modify(vlog);
 		return SUCCESS;
 	}
 	
