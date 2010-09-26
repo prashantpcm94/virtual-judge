@@ -119,7 +119,7 @@ public class ProblemAction extends BaseAction{
 		if (user == null){
 			hql.append(" problem.hidden = 0");
 		} else if (user.getSup() == 0){
-			hql.append(" problem.hidden = 0 or problem.creatorId = " + user.getId());
+			hql.append(" (problem.hidden = 0 or problem.creatorId = " + user.getId() + " ) ");
 		} else {
 			hql.append(" problem.id > 0");
 		}
