@@ -44,7 +44,7 @@ public class POJSubmitter extends Submitter {
 	private String submit(HttpClient httpClient){
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
 		
-        PostMethod postMethod = new PostMethod("http://acm.pku.edu.cn/JudgeOnline/submit");
+        PostMethod postMethod = new PostMethod("http://poj.org/submit");
         postMethod.addParameter("language", submission.getLanguage());
         postMethod.addParameter("problem_id", problem.getOriginProb());
         postMethod.addParameter("source", submission.getSource());
@@ -55,6 +55,7 @@ public class POJSubmitter extends Submitter {
 			System.out.println("submit...");
 			int statusCode = httpClient.executeMethod(postMethod);
 			System.out.println("statusCode = " + statusCode);
+
 			return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ? "success" : null;
 		}
 		catch(Exception e) {
@@ -65,16 +66,17 @@ public class POJSubmitter extends Submitter {
 	}
 	
 	private String login(HttpClient httpClient, String username, String password){
-        PostMethod postMethod = new PostMethod("http://acm.pku.edu.cn/JudgeOnline/login");
+        PostMethod postMethod = new PostMethod("http://poj.org/login");
         postMethod.addParameter("B1", "login");
         postMethod.addParameter("password1", password);
-        postMethod.addParameter("url", "/JudgeOnline/");
+        postMethod.addParameter("url", "/");
         postMethod.addParameter("user_id1", username);
         postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
         try {
 			System.out.println("login...");
 			int statusCode = httpClient.executeMethod(postMethod);
 			System.out.println("statusCode = " + statusCode);
+
 			return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ? "success" : null;
         }
         catch(Exception e) {
@@ -87,7 +89,7 @@ public class POJSubmitter extends Submitter {
 	public void getResult(String username){
 		String reg = "<td>\\d{7,}</td>[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font>[\\s\\S]*?<td>([\\s\\S]*?)</td><td>([\\s\\S]*?)</td>", result;
         HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://acm.pku.edu.cn/JudgeOnline/status?user_id=" + username);
+        GetMethod getMethod = new GetMethod("http://poj.org/status?user_id=" + username);
         getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime();
 		long interval = 2000;

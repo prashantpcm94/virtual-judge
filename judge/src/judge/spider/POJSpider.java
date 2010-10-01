@@ -11,7 +11,7 @@ public class POJSpider extends Spider {
 		
 		String tLine = "";
         HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://acm.pku.edu.cn/JudgeOnline/problem?id=" + problem.getOriginProb());
+        GetMethod getMethod = new GetMethod("http://poj.org/problem?id=" + problem.getOriginProb());
         getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
         try {
             int statusCode = httpClient.executeMethod(getMethod);
@@ -33,9 +33,9 @@ public class POJSpider extends Spider {
 			return;
 		}
         
-        tLine = tLine.replaceAll("src=images", "src=http://acm.pku.edu.cn/JudgeOnline/images");
-		tLine = tLine.replaceAll("src='images", "src='http://acm.pku.edu.cn/JudgeOnline/images");
-		tLine = tLine.replaceAll("src=\"images", "src=\"http://acm.pku.edu.cn/JudgeOnline/images");
+        tLine = tLine.replaceAll("src=images", "src=http://poj.org/images");
+		tLine = tLine.replaceAll("src='images", "src='http://poj.org/images");
+		tLine = tLine.replaceAll("src=\"images", "src=\"http://poj.org/images");
 		
 		problem.setTitle(regFind(tLine, "<title>\\d{3,} -- ([\\s\\S]*?)</title>"));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
@@ -52,11 +52,10 @@ public class POJSpider extends Spider {
 		problem.setSampleOutput(regFind(tLine, "<p class=\"pst\">Sample Output</p>([\\s\\S]*?)<p class=\"pst\">"));
 		problem.setSource(regFind(tLine, "<p class=\"pst\">Source</p>([\\s\\S]*?)</td></tr></table>"));
 		if (problem.getSource() != null){
-			problem.setSource(problem.getSource().replaceAll("<a href=\"searchproblem", "<a href=\"http://acm.pku.edu.cn/JudgeOnline/searchproblem"));
+			problem.setSource(problem.getSource().replaceAll("<a href=\"searchproblem", "<a href=\"http://poj.org/searchproblem"));
 		}
 		problem.setHint(regFind(tLine, "<p class=\"pst\">Hint</p>([\\s\\S]*?)<p class=\"pst\">"));
-		problem.setUrl("http://acm.timus.ru/problem.aspx?space=1&num=" + problem.getOriginProb());
-		problem.setUrl("http://acm.pku.edu.cn/JudgeOnline/problem?id=" + problem.getOriginProb());
+		problem.setUrl("http://poj.org/problem?id=" + problem.getOriginProb());
 
 		baseService.modify(problem);
 	}
