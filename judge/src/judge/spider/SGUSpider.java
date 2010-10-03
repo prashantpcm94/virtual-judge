@@ -35,9 +35,7 @@ public class SGUSpider extends Spider {
         	return;
         }
         
-//		System.out.println(tLine);
-		
-		problem.setTitle(regFind(tLine, "\\d{3}\\. ([\\s\\S]*?)[\n<]"));
+		problem.setTitle(regFind(tLine, "\\d{3}\\. ([\\s\\S]*?)</title>"));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
 			baseService.delete(problem);
 			return;
