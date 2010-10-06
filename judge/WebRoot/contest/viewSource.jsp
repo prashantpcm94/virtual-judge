@@ -61,7 +61,7 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 							<b>Public: </b>
 						</td>
 						<td colspan="2">
-							<s:radio name="" list="#{'0':'No', '1':'Yes'}" value="%{submission.isOpen}" theme="simple" onchange="toggleOpen('%{submission.id}', 1);"></s:radio>
+							<s:radio name="" list="#{'0':'No', '1':'Yes'}" value="%{submission.isOpen}" theme="simple" onclick="this.blur()" onchange="toggleOpen('%{submission.id}', 1);"></s:radio>
 						</td>
 					</tr>
 				</s:if>
