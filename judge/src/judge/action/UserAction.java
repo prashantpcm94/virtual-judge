@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.struts2.ServletActionContext;
 
 import judge.bean.User;
-import judge.bean.Vlog;
 import judge.service.IUserService;
 import judge.service.StatService;
 import judge.tool.MD5;

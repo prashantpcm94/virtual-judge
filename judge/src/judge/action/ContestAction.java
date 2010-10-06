@@ -30,7 +30,6 @@ import judge.submitter.Submitter;
 import judge.tool.MD5;
 
 import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
 
 @SuppressWarnings("unchecked")
 public class ContestAction extends BaseAction {
@@ -251,7 +250,7 @@ public class ContestAction extends BaseAction {
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		int userId = user != null ? user.getId() : -1;
-		int sup = user.getSup();
+		int sup = user != null ? user.getSup() : 0;
 		
 		StringBuffer hql = new StringBuffer("select contest, user from Contest contest, User user where contest.managerId = user.id and contest.id > 0 ");
 		long cnt = baseService.count(hql.toString());
