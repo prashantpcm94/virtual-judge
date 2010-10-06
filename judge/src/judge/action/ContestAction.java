@@ -4,6 +4,7 @@
 
 package judge.action;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +21,7 @@ import org.apache.struts2.ServletActionContext;
 
 import judge.bean.Contest;
 import judge.bean.Cproblem;
+import judge.bean.DataTablesPage;
 import judge.bean.Problem;
 import judge.bean.Submission;
 import judge.bean.User;
@@ -31,7 +33,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 @SuppressWarnings("unchecked")
-public class ContestAction extends ActionSupport {
+public class ContestAction extends BaseAction {
 
 	private static final long serialVersionUID = -3594499743692326065L;
 	private List dataList, tList;
@@ -52,6 +54,8 @@ public class ContestAction extends ActionSupport {
 	private Date curDate;
 	private Map<Object, String> languageList;
 	
+	private DataTablesPage dataTablesPage;
+	
 	class ContestInfo{
 		public String handle;
 		public int userId;
@@ -63,6 +67,12 @@ public class ContestAction extends ActionSupport {
 		public int[] attempts;
 	}
 	
+	public DataTablesPage getDataTablesPage() {
+		return dataTablesPage;
+	}
+	public void setDataTablesPage(DataTablesPage dataTablesPage) {
+		this.dataTablesPage = dataTablesPage;
+	}
 	public int getUid() {
 		return uid;
 	}
@@ -231,13 +241,65 @@ public class ContestAction extends ActionSupport {
 	public void setDataList(List dataList) {
 		this.dataList = dataList;
 	}
+	
+	public String toListContest(){
+		curDate = new Date();
+		return SUCCESS;
+	}
 
 	public String listContest() {
-		curDate = new Date();
-		dataList = baseService.list("select contest from Contest contest order by contest.beginTime desc, contest.id desc", 0, 1000);
 		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
+		int userId = user != null ? user.getId() : -1;
+		int sup = user.getSup();
+		
+		StringBuffer hql = new StringBuffer("select contest, user from Contest contest, User user where contest.managerId = user.id and contest.id > 0 ");
+		long cnt = baseService.count(hql.toString());
+		dataTablesPage = new DataTablesPage();
+		dataTablesPage.setITotalDisplayRecords(cnt);
+		dataTablesPage.setITotalRecords(cnt);
+		if (sSearch != null && !sSearch.trim().isEmpty()){
+			sSearch = sSearch.toLowerCase().trim();
+			hql.append(" and (contest.title like '%" + sSearch + "%' or user.username like '%" + sSearch + "%') ");
+			dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
+		}
+//		System.out.println("iSortCol_0 = " + iSortCol_0);
+		if (iSortCol_0 != null){
+			if (iSortCol_0 == 0){			//按id
+				hql.append(" order by contest.id " + sSortDir_0);
+			} else if (iSortCol_0 == 1){	//按标题
+				hql.append(" order by contest.title " + sSortDir_0);
+			} else if (iSortCol_0 == 2){	//按开始时间
+				hql.append(" order by contest.beginTime " + sSortDir_0 + ", contest.id " + sSortDir_0);
+			} else if (iSortCol_0 == 6){	//按管理员用户名
+				hql.append(" order by user.username " + sSortDir_0);
+			}
+		}
+
+		List<Object[]> tmp = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
+		List aaData =  new ArrayList();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		curDate = new Date();
+		for (Object[] o : tmp) {
+			contest = (Contest) o[0];
+			user = (User) o[1];
+			Object[] res = {
+					contest.getId(),
+					contest.getTitle(),
+					sdf.format(contest.getBeginTime()),
+					trans(contest.getEndTime().getTime() - contest.getBeginTime().getTime()),
+					curDate.compareTo(contest.getBeginTime()) < 0 ? "Scheduled" : curDate.compareTo(contest.getEndTime()) < 0 ? "Running" : "Ended",
+					contest.getPassword() == null ? "Public" : "Private",
+					user.getUsername(),
+					user.getId(),
+					sup > 0 || user.getId() == userId ? 1 : 0
+			};
+			aaData.add(res);
+		}
+		dataTablesPage.setAaData(aaData);
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
+
 		return SUCCESS;
 	}
 

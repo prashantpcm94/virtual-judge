@@ -1,17 +1,12 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
 	    <title>Virtual Judge</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<link rel="shortcut icon" href="<%=basePath%>images/logo.ico" />
+		<link rel="shortcut icon" href="images/logo.ico" />
 		<link rel="stylesheet" type="text/css" href="css/global.css" />
 	</head>
 
@@ -29,12 +24,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<a href="problem/status.action">Status</a>
 				</td>
 				<td>
-					<a href="contest/listContest.action">Contest</a>
+					<a href="contest/toListContest.action">Contest</a>
 				</td>
 				<td>
 					<s:if test="#session.visitor != null">
 						[<a href="user/toUpdate.action?uid=<s:property value="#session.visitor.id" />"><s:property value="#session.visitor.username" /></a>]
-					</s:if>	
+					</s:if>
 					<s:else>
 						<a href="user/toRegister.action">Register</a>
 					</s:else> 

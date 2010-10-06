@@ -5,6 +5,7 @@ $(document).ready(function() {
 		"bProcessing": true,
 		"bServerSide": true,
 		"sAjaxSource": "problem/listProblem.action",
+		"iDisplayLength": 25,
 		
 //		"bPaginate": false,
 //		"bLengthChange": false,

@@ -2,7 +2,7 @@
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
-	<package name="contest" extends="struts-default"  namespace="/contest">
+	<package name="contest" extends="json-default"  namespace="/contest">
 		<global-results>
 	        <result name="error">/error.jsp</result>
 	        <result name="sqlError">/error.jsp</result>
@@ -14,10 +14,19 @@
 	    </global-exception-mappings>
 	    
 		<!-- 罗列比赛 -->
-		<action name="listContest" class="contestAction" method="listContest">
+		<action name="toListContest" class="contestAction" method="toListContest">
 			<result name="success">/contest/listContest.jsp</result>
 		</action>
-	    
+
+		<action name="listContest" class="contestAction" method="listContest">
+			<result type="json">
+				<param name="root">dataTablesPage</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">false</param>
+				<param name="contentType">application/json-rpc</param>
+			</result>
+		</action>
+
 		<!-- 进入添加比赛 -->
 		<action name="toAddContest" class="contestAction" method="toAddContest">
 			<result name="success">/contest/addContest.jsp</result>
@@ -25,7 +34,7 @@
 
 		<!-- 添加比赛 -->
 		<action name="addContest" class="contestAction" method="addContest">
-			<result name="success" type="redirect">listContest.action</result>		
+			<result name="success" type="redirect">toListContest.action</result>		
 			<result name="input">/contest/addContest.jsp</result>		
 		</action>
 
@@ -33,20 +42,20 @@
 		<action name="toEditContest" class="contestAction" method="toEditContest">
 			<result name="scheduled">/contest/editContest1.jsp</result>
 			<result name="running">/contest/editContest2.jsp</result>
-			<result name="error" type="redirect">listContest.action</result>		
+			<result name="error" type="redirect">toListContest.action</result>		
 		</action>
 
 		<!-- 修改比赛 -->
 		<action name="editContest" class="contestAction" method="editContest">
-			<result name="success" type="redirect">listContest.action</result>		
+			<result name="success" type="redirect">toListContest.action</result>		
 			<result name="scheduled">/contest/editContest1.jsp</result>
 			<result name="running">/contest/editContest2.jsp</result>
 		</action>
 
 		<!-- 删除比赛 -->
 		<action name="deleteContest" class="contestAction" method="deleteContest">
-			<result name="success" type="redirect">listContest.action</result>		
-			<result name="error" type="redirect">listContest.action</result>		
+			<result name="success" type="redirect">toListContest.action</result>		
+			<result name="error" type="redirect">toListContest.action</result>		
 		</action>
 
 		<!-- 进入比赛 -->

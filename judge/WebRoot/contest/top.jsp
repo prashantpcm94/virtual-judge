@@ -23,7 +23,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<a href="toIndex.action">Home</a>
 				</td>
 				<td>
-					<a href="contest/listContest.action">Contests</a>
+					<a href="contest/toListContest.action">Contests</a>
 				</td>
 				<td>
 					<a href="contest/viewContest.action?cid=${cid}">Problems</a>

@@ -146,3 +146,52 @@ div.plm {
 	background-color: #FFDDDD;
 	color: black;
 }
+
+/********************listContest*********************/
+tr.Ended.odd {
+	background-color:#DDFFDD;
+}
+
+tr.Ended.even {
+	background-color:#EEFFEE;
+}
+
+tr.Running.odd {
+	background-color:#FFDDDD;
+}
+
+tr.Running.even {
+	background-color:#FFEEEE;
+}
+
+tr.Scheduled.odd {
+	background-color:#E2E4FF;
+}
+
+tr.Scheduled.even {
+	background-color:#EAEBFF;
+}
+
+td.Public {
+	color: blue;
+}
+
+td.Private {
+	color: red;
+}
+
+td.Ended {
+	color: green;
+}
+
+td.Running {
+	color: red;
+}
+
+td.Scheduled {
+	color: blue;
+}
+
+
+
+
