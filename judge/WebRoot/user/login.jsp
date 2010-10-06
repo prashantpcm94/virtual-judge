@@ -1,8 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String basePath = (String)application.getAttribute("basePath");
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -15,15 +14,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 	<body>
 		<s:include value="/top.jsp" />
-		<s:form action="login" namespace="/user" theme="simple">
+		<form action="user/login.action">
 			<table border="0" style="MARGIN-RIGHT:auto;MARGIN-LEFT: auto;">
 				<tr>
 					<td>Username :</td>
-					<td><s:textfield name="username" cssClass="input_login" /> *</td>
+					<td><input type="text" name="username" class="input_login" /> *</td>
 				</tr>
 				<tr>
 					<td>Password :</td>
-					<td><s:password name="password" cssClass="input_login" /> *</td>
+					<td><input type="password" name="password" class="input_login" /> *</td>
 				</tr>
 				<tr>
 					<td></td>
@@ -34,7 +33,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				</tr>
 			</table>
 			<center><s:actionerror /></center>
-		</s:form>
+		</form>
 		<s:include value="/bottom.jsp" />
 	</body>
 </html>

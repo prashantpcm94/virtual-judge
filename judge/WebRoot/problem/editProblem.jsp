@@ -1,8 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String basePath = (String)application.getAttribute("basePath");
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -26,7 +25,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<body>
 		<s:include value="/top.jsp" />
 		<div id="topSpace"></div>
-		<s:form id="editorsForm" action="editProblem" namespace="/problem">
+		<form id="editorsForm" action="problem/editProblem.action">
 			<table>
 				<tr>
 					<td>Title:</td>
@@ -77,7 +76,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				</tr>
 			</table>
 			<s:actionerror />
-		</s:form>
+		</form>
 		<div id="bottomSpace"></div>
 
 		<script type="text/javascript">

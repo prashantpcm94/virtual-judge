@@ -1,9 +1,9 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String basePath = (String)application.getAttribute("basePath");
 %>
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -44,11 +44,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<font color="orange">Current Server Time : <s:date name="curDate" format="yyyy-MM-dd HH:mm:ss" /></font>
 			<br /><br /><br />
 
-			<s:form action="loginContest" namespace="/contest" theme="simple" method="get">
+			<form action="contest/loginContest.action" method="get">
 				Password:<s:password name="password" cssClass="input_login" />
 				<input type="hidden" name="cid" value="${cid}" />
 				<input class="bnt1" type="submit" value="Login" />
-			</s:form>
+			</form>
 			<s:actionerror />
 
 		</div>

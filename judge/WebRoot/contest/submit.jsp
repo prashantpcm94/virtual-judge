@@ -1,9 +1,9 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String basePath = (String)application.getAttribute("basePath");
 %>
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -16,7 +16,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<body>
 		<s:include value="/contest/top.jsp" />
 		<div style="width:800px;MARGIN-RIGHT:auto;MARGIN-LEFT:auto;">
-			<s:form action="submit" namespace="/contest">
+			<form action="contest/submit.action">
 				<table>
 					<tr>
 						<td>Problem:</td>
@@ -38,7 +38,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<input type="hidden" value="${pid}" name="pid" />
 				<input type="submit" value="Submit" class="btn" />
 				<s:actionerror />
-			</s:form>
+			</form>
 		</div>
 		<s:include value="/bottom.jsp" />
 	</body>

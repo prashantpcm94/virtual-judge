@@ -1,7 +1,13 @@
 package judge.tool;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -123,7 +129,17 @@ public class StartUpListener implements ServletContextListener {
 		
 		MyFilter.setStatService((StatService) SpringBean.getBean("statService", sc));
 		SessionListener.setStatService((StatService) SpringBean.getBean("statService", sc));
-
+		
+        Properties prop = new Properties();
+        FileInputStream in;
+		try {
+			in = new FileInputStream(sc.getRealPath("WEB-INF" + File.separator + "web.properties"));
+            prop.load(in);
+            String basePath = prop.getProperty("basePath").trim();
+            sc.setAttribute("basePath", basePath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/* 监听服务器关闭 */

@@ -1,8 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String basePath = (String)application.getAttribute("basePath");
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -43,11 +42,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 		<div class="plm">
 			<s:if test="#session.visitor != null">
-				<s:form id="addProblem" action="addProblem" namespace="/problem" theme="simple">
+				<form id="addProblem" action="problem/addProblem.action">
 					Add a problem:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJList" theme="simple" cssClass="select" />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Problem number:<s:textfield id="ProbNum" name="ProbNum" theme="simple" />
 					<input type="submit" value="Add"/>
-				</s:form>
+				</form>
 			</s:if>
 			<s:else>
 				<a href="user/toLogin.action"><font color="red">Login to add problems!</font></a>

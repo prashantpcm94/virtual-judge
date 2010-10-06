@@ -2,8 +2,7 @@
 <%@ page import="org.apache.struts2.ServletActionContext" %>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String basePath = (String)application.getAttribute("basePath");
 String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 %>
 

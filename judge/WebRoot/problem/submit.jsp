@@ -1,8 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String basePath = (String)application.getAttribute("basePath");
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -16,7 +15,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<body>
 		<s:include value="/top.jsp" />
 		<div style="width:800px;MARGIN-RIGHT:auto;MARGIN-LEFT:auto;">
-			<s:form action="submit" namespace="/problem">
+			<form action="problem/submit.action">
 				<table>
 					<tr>
 						<td>Problem:</td>
@@ -39,7 +38,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<input type="button" value="Cancel" onclick="history.go(-1);" />
 				<input type="hidden" value="${problem.id}" name="problem.id" />
 				<s:actionerror />
-			</s:form>
+			</form>
 		</div>	
 		<s:include value="/bottom.jsp" />
 	</body>

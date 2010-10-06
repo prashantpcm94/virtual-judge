@@ -1,10 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ page import="org.apache.struts2.ServletActionContext" %>
-<%@ page import="java.util.Date" %>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+String basePath = (String)application.getAttribute("basePath");
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -68,73 +65,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				</tr>
 			</tbody>
 		</table>
-
-
-<!--		
-		<table cellpadding="0" cellspacing="0" border="0" class="display" id="listContest">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Title</th>
-					<th>Begin Time</th>
-					<th>End Time</th>
-					<th>Status</th>
-					<th>Type</th>
-					<th></th>
-					<th></th>
-				</tr>
-			</thead>
-
-			<s:iterator value="dataList" status="stat">
-				<tr>
-					<td class="id">
-						<s:property value="id" />
-					</td>
-					<td class="title">
-						<a href="contest/viewContest.action?cid=<s:property value='id' />">
-							<s:property value="title" />
-						</a>
-					</td>
-					<td class="time">
-						<s:date name="beginTime" format="yyyy-MM-dd HH:mm:ss" />
-					</td>
-					<td class="time">
-						<s:date name="endTime" format="yyyy-MM-dd HH:mm:ss" />
-					</td>
-					<td class="center status">
-						<%
-							Date date = new Date();
-							long now = date.getTime();
-							long begin = ((Date)(request.getAttribute("beginTime"))).getTime();
-							long end = ((Date)(request.getAttribute("endTime"))).getTime();
-							if (now < begin){
-								out.println("<font color=\"blue\">Scheduled</font>");
-							} else if (now < end) {
-								out.println("<font color=\"red\">Running</font>");
-							} else {
-								out.println("<font color=\"green\">Ended</font>");
-							}
-						%>
-					</td>
-					<td class="center type">
-						<s:if test="password == null"><font color="blue">Public</font></s:if>
-						<s:else><font color="red">Private</font></s:else>
-					</td>
-
-					<td class="opr">
-						<s:if test="managerId == #session.visitor.id || #session.visitor.sup == 1">
-							<a href="contest/toEditContest.action?cid=<s:property value='id' />">Edit</a>
-						</s:if>
-					</td>
-					<td class="opr">
-						<s:if test="managerId == #session.visitor.id || #session.visitor.sup == 1">
-							<a href="javascript:void(0)" onclick="comfirmDeleteContest('${id}')">Delete</a>
-						</s:if>
-					</td>
-				</tr>
-			</s:iterator>
-		</table>
- -->
 
 		<s:include value="/bottom.jsp" />
 		<script type="text/javascript" src="javascript/listContest.js"></script>
