@@ -25,7 +25,7 @@ String basePath = (String)application.getAttribute("basePath");
 	<body>
 		<s:include value="/top.jsp" />
 		<div id="topSpace"></div>
-		<form id="editorsForm" action="problem/editProblem.action">
+		<form id="editorsForm" action="problem/editProblem.action" method="post">
 			<table>
 				<tr>
 					<td>Title:</td>

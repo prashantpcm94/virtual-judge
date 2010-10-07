@@ -42,7 +42,7 @@ String basePath = (String)application.getAttribute("basePath");
 
 		<div class="plm">
 			<s:if test="#session.visitor != null">
-				<form id="addProblem" action="problem/addProblem.action">
+				<form id="addProblem" action="problem/addProblem.action" method="post">
 					Add a problem:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJList" theme="simple" cssClass="select" />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Problem number:<s:textfield id="ProbNum" name="ProbNum" theme="simple" />
 					<input type="submit" value="Add"/>
