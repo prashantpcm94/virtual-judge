@@ -54,6 +54,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<li>2010-07-20 : Implement syntax highlighting in source viewing by using <a href="http://shjs.sourceforge.net">SHJS</a>.</li>
 				<li>2010-08-17 : Use AJAX pagination in problem list to avoid overload.</li>
 				<li>2010-08-17 : Post-contest submitting is enabled. Try it yourself :)</li>
+				<li>2010-10-07 : Refer to <a href="http://code.google.com/p/virtual-judge/source/list">this page</a>, and this section will not update.</li>
 			</ul>
 		</div>
 		
