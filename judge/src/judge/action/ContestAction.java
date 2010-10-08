@@ -53,6 +53,7 @@ public class ContestAction extends BaseAction {
 	private Date curDate;
 	private Map<Object, String> languageList;
 	
+	private boolean s, r, e;	//比赛进行状态
 	private DataTablesPage dataTablesPage;
 	
 	class ContestInfo{
@@ -66,6 +67,24 @@ public class ContestAction extends BaseAction {
 		public int[] attempts;
 	}
 	
+	public boolean isS() {
+		return s;
+	}
+	public void setS(boolean s) {
+		this.s = s;
+	}
+	public boolean isR() {
+		return r;
+	}
+	public void setR(boolean r) {
+		this.r = r;
+	}
+	public boolean isE() {
+		return e;
+	}
+	public void setE(boolean e) {
+		this.e = e;
+	}
 	public DataTablesPage getDataTablesPage() {
 		return dataTablesPage;
 	}
@@ -247,21 +266,40 @@ public class ContestAction extends BaseAction {
 	}
 
 	public String listContest() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 		
-		StringBuffer hql = new StringBuffer("select contest, user from Contest contest, User user where contest.managerId = user.id and contest.id > 0 ");
+		StringBuffer hql = new StringBuffer("select contest, user from Contest contest, User user where contest.managerId = user.id ");
 		long cnt = baseService.count(hql.toString());
 		dataTablesPage = new DataTablesPage();
-		dataTablesPage.setITotalDisplayRecords(cnt);
 		dataTablesPage.setITotalRecords(cnt);
 		if (sSearch != null && !sSearch.trim().isEmpty()){
 			sSearch = sSearch.toLowerCase().trim();
 			hql.append(" and (contest.title like '%" + sSearch + "%' or user.username like '%" + sSearch + "%') ");
-			dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
 		}
+
+		curDate = new Date();
+		String curDateString = "'" + sdf.format(curDate) + "'";
+		if (s && !r && !e){
+			hql.append(" and contest.beginTime > " + curDateString);
+		} else if (!s && r && !e) {
+			hql.append(" and contest.beginTime < " + curDateString + " and  contest.endTime > " + curDateString);
+		} else if (!s && !r && e) {
+			hql.append(" and contest.endTime < " + curDateString);
+		} else if (s && r && !e) {
+			hql.append(" and contest.endTime > " + curDateString);
+		} else if (!s && r && e) {
+			hql.append(" and contest.beginTime < " + curDateString);
+		} else if (s && !r && e) {
+			hql.append(" and (contest.beginTime > " + curDateString + " or contest.endTime < " + curDateString + ") ");
+		} else if (!s && !r && !e) {
+			hql.append(" and 1 = 0 ");
+		}
+		dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
+		
 //		System.out.println("iSortCol_0 = " + iSortCol_0);
 		if (iSortCol_0 != null){
 			if (iSortCol_0 == 0){			//按id
@@ -277,8 +315,6 @@ public class ContestAction extends BaseAction {
 
 		List<Object[]> tmp = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
 		List aaData =  new ArrayList();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		curDate = new Date();
 		for (Object[] o : tmp) {
 			contest = (Contest) o[0];
 			user = (User) o[1];

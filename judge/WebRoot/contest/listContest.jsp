@@ -66,6 +66,12 @@ String basePath = (String)application.getAttribute("basePath");
 			</tbody>
 		</table>
 
+		<div id="status" style="display:none">
+			<span class="Scheduled">Scheduled:</span><s:checkbox name="scheduled" value="true" fieldValue="1"/>  
+			<span class="Running">&nbsp;&nbsp;Running:</span><s:checkbox name="running" value="true" fieldValue="2"/>  
+			<span class="Ended">&nbsp;&nbsp;Ended:</span><s:checkbox name="ended" value="true" fieldValue="3"/>  
+		</div>
+
 		<s:include value="/bottom.jsp" />
 		<script type="text/javascript" src="javascript/listContest.js"></script>
 		<script type="text/javascript" src="javascript/common.js"></script>

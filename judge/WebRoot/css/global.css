@@ -180,18 +180,14 @@ td.Private {
 	color: red;
 }
 
-td.Ended {
+td.Ended, span.Ended {
 	color: green;
 }
 
-td.Running {
+td.Running, span.Running {
 	color: red;
 }
 
-td.Scheduled {
+td.Scheduled, span.Scheduled {
 	color: blue;
 }
-
-
-
-

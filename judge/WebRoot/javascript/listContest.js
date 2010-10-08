@@ -7,6 +7,7 @@ $(document).ready(function() {
 		"bAutoWidth": false,
 		"bStateSave": true,
 		"aaSorting": [[ 2, "desc" ]],
+		"sDom": '<"H"lf<"head_status">r>t<"F"ip><"clear">',
 
 		"aoColumns": [
 		  			{ 
@@ -56,6 +57,13 @@ $(document).ready(function() {
 		  			}
 		  		],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
+			var s = $("[name='scheduled']").attr("checked");
+			var r = $("[name='running']").attr("checked");
+			var e = $("[name='ended']").attr("checked");
+		
+			aoData.push( { "name": "s", "value": s } );
+			aoData.push( { "name": "r", "value": r } );
+			aoData.push( { "name": "e", "value": e } );
 			$.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
@@ -73,4 +81,13 @@ $(document).ready(function() {
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers"
 	});
+	
+	$("div.head_status").html($("#status").html());
+	$("div.head_status").css("float", "right");
+	$("div.dataTables_filter").css("width", "250px");
+	
+	$("input[type='checkbox']").change(function(){
+		oTable.fnDraw();
+	});
+	
 } );
