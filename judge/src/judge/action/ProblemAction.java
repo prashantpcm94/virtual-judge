@@ -21,6 +21,7 @@ import judge.bean.User;
 import judge.service.IBaseService;
 import judge.spider.HDUSpider;
 import judge.spider.HUSTSpider;
+import judge.spider.HYSBZSpider;
 import judge.spider.POJSpider;
 import judge.spider.SGUSpider;
 import judge.spider.SPOJSpider;
@@ -30,6 +31,7 @@ import judge.spider.UVALiveSpider;
 import judge.spider.ZOJSpider;
 import judge.submitter.HDUSubmitter;
 import judge.submitter.HUSTSubmitter;
+import judge.submitter.HYSBZSubmitter;
 import judge.submitter.POJSubmitter;
 import judge.submitter.SGUSubmitter;
 import judge.submitter.SPOJSubmitter;
@@ -70,6 +72,7 @@ public class ProblemAction extends BaseAction{
 		OJList.add("HUST");
 		OJList.add("SPOJ");
 		OJList.add("HDU");
+		OJList.add("HYSBZ");
 	}
 	
 	static public Map<String, Spider> spiderMap = new HashMap<String, Spider>();
@@ -82,6 +85,7 @@ public class ProblemAction extends BaseAction{
 		spiderMap.put("HUST", new HUSTSpider());
 		spiderMap.put("SPOJ", new SPOJSpider());
 		spiderMap.put("HDU", new HDUSpider());
+		spiderMap.put("HYSBZ", new HYSBZSpider());
 	}
 	
 	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
@@ -94,6 +98,7 @@ public class ProblemAction extends BaseAction{
 		submitterMap.put("HUST", new HUSTSubmitter());
 		submitterMap.put("SPOJ", new SPOJSubmitter());
 		submitterMap.put("HDU", new HDUSubmitter());
+		submitterMap.put("HYSBZ", new HYSBZSubmitter());
 	}
 	
 	static public Map<String, String> lf = new HashMap<String, String>();
@@ -106,6 +111,7 @@ public class ProblemAction extends BaseAction{
 		lf.put("HUST", "%lld & %llu");
 		lf.put("SPOJ", "%lld & %llu");
 		lf.put("HDU", "%I64d & %I64u");
+		lf.put("HYSBZ", "%I64d & %I64u");
 	}
 
 	public String toListProblem() {
@@ -563,11 +569,6 @@ public class ProblemAction extends BaseAction{
 			return "sh_c";
 		}
 	}
-	
-	
-	
-	
-	
 	
 	
 	public int getUid() {

@@ -8,7 +8,6 @@ import judge.bean.Problem;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -41,105 +40,99 @@ public class SPOJSubmitter extends Submitter {
 		"xiaotuliangliang"
 	};
 	
-	private String submit(HttpClient httpClient, int idx){
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
-        PostMethod postMethod = new PostMethod("http://www.spoj.pl/submit/complete/");
+	private void getMaxRunId() throws Exception {
+		// 获取当前最大RunID
+		GetMethod getMethod = new GetMethod("http://www.spoj.pl/status");
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		Pattern p = Pattern.compile("id=\"max_id\" value=\"(\\d+)");
 
-        postMethod.addParameter("lang", submission.getLanguage());
-        postMethod.addParameter("login_user", usernameList[idx]);
-        postMethod.addParameter("password", passwordList[idx]);
-        postMethod.addParameter("problemcode", problem.getOriginProb());
-        postMethod.addParameter("file", submission.getSource());
-        postMethod.addParameter("submit", "Send");
-        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        httpClient.getParams().setContentCharset("UTF-8"); 
-        try {
-			System.out.println("submit...");
-			int statusCode = httpClient.executeMethod(postMethod);
-			System.out.println("statusCode = " + statusCode);
-            byte[] responseBody = postMethod.getResponseBody();
-            String tLine = new String(responseBody, "UTF-8");
-//          System.out.println("\n" + tLine + "\n");
-            if (tLine.contains("submit in this language for this problem")){
-            	baseService.delete(submission);
-            	submission = null;
-            }
-			return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ? "success" : null;
+		httpClient.executeMethod(getMethod);
+		byte[] responseBody = getMethod.getResponseBody();
+		String tLine = new String(responseBody, "UTF-8");
+		Matcher m = p.matcher(tLine);
+		if (m.find()) {
+			maxRunId = Integer.parseInt(m.group(1));
+			System.out.println("maxRunId : " + maxRunId);
+		} else {
+			throw new Exception();
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-		    postMethod.releaseConnection();
-		   	return null;
+	}
+
+	
+	private void submit(String username, String password) throws Exception{
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		PostMethod postMethod = new PostMethod("http://www.spoj.pl/submit/complete/");
+
+		postMethod.addParameter("lang", submission.getLanguage());
+		postMethod.addParameter("login_user", username);
+		postMethod.addParameter("password", password);
+		postMethod.addParameter("problemcode", problem.getOriginProb());
+		postMethod.addParameter("file", submission.getSource());
+		postMethod.addParameter("submit", "Send");
+		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		httpClient.getParams().setContentCharset("UTF-8"); 
+
+		System.out.println("submit...");
+		int statusCode = httpClient.executeMethod(postMethod);
+		System.out.println("statusCode = " + statusCode);
+		byte[] responseBody = postMethod.getResponseBody();
+		String tLine = new String(responseBody, "UTF-8");
+		if (tLine.contains("submit in this language for this problem")){
+			submission.setStatus("Language Error");
+			baseService.modify(submission);
+			throw new Exception();
 		}
+		//注意:此处判断登陆成功条件并不充分,相当于默认成功
 	}
 	
-	public void getResult(String username){
-		String reg = "<td class=\"statusres\"[\\s\\S]*?>([\\s\\S]*?)</td>\n<td[\\s\\S]*?>([\\s\\S]*?)</td>\n<td[\\s\\S]*?>([\\s\\S]*?)</td>", result;
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://www.spoj.pl/status/" + username);
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		long cur = new Date().getTime();
-		long interval = 2000;
+	public void getResult(String username) throws Exception{
+		String reg = "id=\"max_id\" value=\"(\\d+)[\\s\\S]*?<td class=\"statusres\"[\\s\\S]*?>([\\s\\S]*?)</td>\n<td[\\s\\S]*?>([\\s\\S]*?)</td>\n<td[\\s\\S]*?>([\\s\\S]*?)</td>", result;
+		Pattern p = Pattern.compile(reg);
+		GetMethod getMethod = new GetMethod("http://www.spoj.pl/status/" + username);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
-	        try {
-				System.out.println("getResult...");
-	            int statusCode = httpClient.executeMethod(getMethod);
-	            if(statusCode != HttpStatus.SC_OK) {
-	                System.err.println("Method failed: "+getMethod.getStatusLine());
-	            }
-	            byte[] responseBody = getMethod.getResponseBody();
-	            String tLine = new String(responseBody, "UTF-8");
-	    		Pattern p = Pattern.compile(reg);
-	    		Matcher m = p.matcher(tLine);
-	    		if (m.find()){
-	    			result = m.group(1).replaceAll("<[\\s\\S]*?>", "").trim();
-    				submission.setStatus(result);
-	    			if (!result.contains("ing")){
-	    				if (result.equals("accepted")){
-		    				submission.setStatus("Accepted");
-		    				result = m.group(3).trim();
-		    				int mul = result.contains("M") ? 1024 : 1;
-		    				submission.setMemory((int)(mul * Double.parseDouble(result.replaceAll("[Mk]", ""))));
-		    				submission.setTime((int)(1000 * Double.parseDouble(m.group(2).replaceAll("<[\\s\\S]*?>", "").trim())));
-	    				}
-	    				baseService.modify(submission);
-	    				return;
-	    			}
-    				baseService.modify(submission);
-	    		}
-	        }
-	        catch(Exception e) {
-				e.printStackTrace();
-	            getMethod.releaseConnection();
-	        }
-	        try {
-				Thread.sleep(interval);
-				interval += 500;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			System.out.println("getResult...");
+			httpClient.executeMethod(getMethod);
+			byte[] responseBody = getMethod.getResponseBody();
+			String tLine = new String(responseBody, "UTF-8");
+			Matcher m = p.matcher(tLine);
+			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
+				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
+				submission.setStatus(result);
+				if (!result.contains("ing")){
+					if (result.equals("accepted")){
+						submission.setStatus("Accepted");
+						result = m.group(4).trim();
+						int mul = result.contains("M") ? 1024 : 1;
+						submission.setMemory((int)(0.5 + mul * Double.parseDouble(result.replaceAll("[Mk]", ""))));
+						submission.setTime((int)(0.5 + 1000 * Double.parseDouble(m.group(3).replaceAll("<[\\s\\S]*?>", "").trim())));
+					}
+					baseService.modify(submission);
+					return;
+				}
+				baseService.modify(submission);
 			}
-        }
-		submission.setStatus("Judging Error");
-		baseService.modify(submission);
+			Thread.sleep(interval);
+			interval += 500;
+		}
+		throw new Exception();
 	}
+	
+	private int getIdleClient() {
+		int length = usernameList.length;
+		int begIdx = (int) (Math.random() * length);
 
-	public void run() {
-		int idx = -1;
 		while(true) {
-			int length = usernameList.length;
-			int begIdx = (int) (Math.random() * length);
 			synchronized (using) {
-				for (int i = begIdx; i < begIdx + length; i++) {
-					int j = i % length;
+				for (int i = begIdx, j; i < begIdx + length; i++) {
+					j = i % length;
 					if (!using[j]) {
-						idx = j;
 						using[j] = true;
-						break;
+						httpClient = clientList[j];
+						return j;
 					}
 				}
-			}
-			if (idx >= 0){
-				break;
 			}
 			try {
 				Thread.sleep(2000);
@@ -147,24 +140,35 @@ public class SPOJSubmitter extends Submitter {
 				e.printStackTrace();
 			}
 		}
-		
-		submit(clientList[idx], idx);
-		
-		if (submission != null) {
+	}
+
+	public void run() {
+		int idx = getIdleClient();
+
+		try {
+			getMaxRunId();
+				
+			submit(usernameList[idx], passwordList[idx]);	//非登陆式,只需交一次
 			submission.setStatus("Running & Judging");
 			baseService.modify(submission);
-			try {
-				Thread.sleep(4000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
+			Thread.sleep(2000);
 			getResult(usernameList[idx]);
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (!"Language Error".equals(submission.getStatus())){
+				submission.setStatus("Judging Error");
+				baseService.modify(submission);
+			}
 		}
 		
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}	//client冷却时间
 		synchronized (using) {
 			using[idx] = false;
 		}
-		
 	}
 
 }

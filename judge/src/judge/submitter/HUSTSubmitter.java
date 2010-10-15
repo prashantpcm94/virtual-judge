@@ -41,7 +41,24 @@ public class HUSTSubmitter extends Submitter {
 		"xiaotuliangliang"
 	};
 	
-	private String submit(HttpClient httpClient){
+	private void getMaxRunId() throws Exception {
+		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/status.php");
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		Pattern p = Pattern.compile("class='evenrow'><td>(\\d+)");
+
+		httpClient.executeMethod(getMethod);
+		byte[] responseBody = getMethod.getResponseBody();
+		String tLine = new String(responseBody, "UTF-8");
+		Matcher m = p.matcher(tLine);
+		if (m.find()) {
+			maxRunId = Integer.parseInt(m.group(1));
+			System.out.println("maxRunId : " + maxRunId);
+		} else {
+			throw new Exception();
+		}
+	}
+	
+	private void submit() throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
 		
         PostMethod postMethod = new PostMethod("http://acm.hust.edu.cn/thx/submit.php");
@@ -50,146 +67,120 @@ public class HUSTSubmitter extends Submitter {
         postMethod.addParameter("source", submission.getSource());
         postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
         httpClient.getParams().setContentCharset("UTF-8"); 
-        try {
-			System.out.println("submit...");
-			int statusCode = httpClient.executeMethod(postMethod);
-			System.out.println("statusCode = " + statusCode);
-			return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ? "success" : null;
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		    postMethod.releaseConnection();
-		   	return null;
+		System.out.println("submit...");
+		int statusCode = httpClient.executeMethod(postMethod);
+		System.out.println("statusCode = " + statusCode);
+		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
+			throw new Exception();
 		}
 	}
 	
-	private String login(HttpClient httpClient, String username, String password){
+	private void login(String username, String password) throws Exception{
         PostMethod postMethod = new PostMethod("http://acm.hust.edu.cn/thx/login.php");
   
         postMethod.addParameter("password", password);
         postMethod.addParameter("submit", "Submit");
         postMethod.addParameter("user_id", username);
         postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-			System.out.println("login...");
-			int statusCode = httpClient.executeMethod(postMethod);
-			System.out.println("statusCode = " + statusCode);
-			return "success";
-        }
-        catch(Exception e) {
-        	e.printStackTrace();
-            postMethod.releaseConnection();
-           	return null;
-        }
+
+        System.out.println("login...");
+		httpClient.executeMethod(postMethod);
+		byte[] responseBody = postMethod.getResponseBody();
+		String tLine = new String(responseBody, "UTF-8");
+		if (!tLine.contains("history.go(-2)")){
+			throw new Exception();
+		}
 	}
 	
-	public void getResult(String username){
-		String reg = username + "[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font><td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/status.php?user_id=" + username);
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		long cur = new Date().getTime();
-		long interval = 2000;
+	public void getResult(String username) throws Exception{
+		String reg = "class='evenrow'><td>(\\d+)[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font><td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
+		Pattern p = Pattern.compile(reg);
+		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/status.php?user_id=" + username);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
-	        try {
-				System.out.println("getResult...");
-	            int statusCode = httpClient.executeMethod(getMethod);
-	            if(statusCode != HttpStatus.SC_OK) {
-	                System.err.println("Method failed: "+getMethod.getStatusLine());
-	            }
-	            byte[] responseBody = getMethod.getResponseBody();
-	            String tLine = new String(responseBody, "UTF-8");
-	    		Pattern p = Pattern.compile(reg);
-	    		Matcher m = p.matcher(tLine);
-	    		if (m.find()){
-	    			result = m.group(1).replaceAll("<[\\s\\S]*?>", "").trim();
-    				submission.setStatus(result);
-	    			if (!result.contains("ing")){
-	    				if (result.equals("Accepted")){
-		    				submission.setMemory(Integer.parseInt(m.group(2).replaceAll(" <font[\\s\\S]*?font>", "")));
-		    				submission.setTime(Integer.parseInt(m.group(3).replaceAll(" <font[\\s\\S]*?font>", "")));
-	    				}
-	    				baseService.modify(submission);
-	    				return;
-	    			}
-    				baseService.modify(submission);
-	    		}
-	        }
-	        catch(Exception e) {
-				e.printStackTrace();
-	            getMethod.releaseConnection();
-	        }
-	        try {
-				Thread.sleep(interval);
-				interval += 500;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			System.out.println("getResult...");
+			httpClient.executeMethod(getMethod);
+			byte[] responseBody = getMethod.getResponseBody();
+			String tLine = new String(responseBody, "UTF-8");
+
+			Matcher m = p.matcher(tLine);
+			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
+				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
+				submission.setStatus(result);
+				if (!result.contains("ing")){
+					if (result.equals("Accepted")){
+						submission.setMemory(Integer.parseInt(m.group(3).replaceAll(" <font[\\s\\S]*?font>", "")));
+						submission.setTime(Integer.parseInt(m.group(4).replaceAll(" <font[\\s\\S]*?font>", "")));
+					}
+					baseService.modify(submission);
+					return;
+				}
+				baseService.modify(submission);
 			}
+			Thread.sleep(interval);
+			interval += 500;
         }
-		submission.setStatus("Judging Error");
-		baseService.modify(submission);
+    	throw new Exception();
 	}
 
-	public void run() {
-		int idx = -1;
+	private int getIdleClient() {
+		int length = usernameList.length;
+		int begIdx = (int) (Math.random() * length);
+
 		while(true) {
-			int length = usernameList.length;
-			int begIdx = (int) (Math.random() * length);
 			synchronized (using) {
-				for (int i = begIdx; i < begIdx + length; i++) {
-					int j = i % length;
+				for (int i = begIdx, j; i < begIdx + length; i++) {
+					j = i % length;
 					if (!using[j]) {
-						idx = j;
 						using[j] = true;
-						break;
+						httpClient = clientList[j];
+						return j;
 					}
 				}
 			}
-			if (idx >= 0){
-				break;
-			}
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		if (submit(clientList[idx]) == null){
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			login(clientList[idx], usernameList[idx], passwordList[idx]);
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			submit(clientList[idx]);
-		}
-		submission.setStatus("Running & Judging");
-		baseService.modify(submission);
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		
-		getResult(usernameList[idx]);
+	}
 
-		//hust oj限制每两次提交之间至少隔10秒
+	public void run() {
+		int idx = getIdleClient();
+
 		try {
-			Thread.sleep(6000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+			getMaxRunId();
+			try {
+				//第一次尝试提交
+				submit();
+			} catch (Exception e1) {
+				//失败,认为是未登录所致
+				e1.printStackTrace();
+				Thread.sleep(2000);
+				login(usernameList[idx], passwordList[idx]);
+				Thread.sleep(2000);
+				submit();
+			}
+			submission.setStatus("Running & Judging");
+			baseService.modify(submission);
+			Thread.sleep(2000);
+			getResult(usernameList[idx]);
+		} catch (Exception e) {
+			e.printStackTrace();
+			submission.setStatus("Judging Error");
+			baseService.modify(submission);
 		}
 		
+		try {
+			Thread.sleep(12000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}	//host oj限制每两次提交之间至少隔10秒
 		synchronized (using) {
 			using[idx] = false;
 		}
-		
 	}
 
 }

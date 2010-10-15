@@ -65,7 +65,7 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("10", "C++");
 		languageList.put("3", "Pascal");
 		languageList.put("7", "Java");
-		languageList.put("8", "C#");
+		languageList.put("11", "C#");
 		sc.setAttribute("URAL", languageList);
 
 		languageList = new HashMap<String, String>();
@@ -127,6 +127,12 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("4", "Pascal");
 		languageList.put("5", "Java");
 		sc.setAttribute("HDU", languageList);
+		
+		languageList = new HashMap<String, String>();
+		languageList.put("0", "G++");
+		languageList.put("1", "GCC");
+		languageList.put("2", "Pascal");
+		sc.setAttribute("HYSBZ", languageList);
 		
 		MyFilter.setStatService((StatService) SpringBean.getBean("statService", sc));
 		SessionListener.setStatService((StatService) SpringBean.getBean("statService", sc));

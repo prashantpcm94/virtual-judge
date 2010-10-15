@@ -3,6 +3,8 @@ package judge.submitter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.HttpClient;
+
 import judge.bean.Submission;
 import judge.service.IBaseService;
 
@@ -10,6 +12,9 @@ public class Submitter extends Thread implements Cloneable {
 	public Submission submission;
 	static public IBaseService baseService;
 	
+	protected HttpClient httpClient;
+	protected int maxRunId = 0;
+
 	public Submission getSubmission() {
 		return submission;
 	}

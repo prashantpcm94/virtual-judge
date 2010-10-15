@@ -41,8 +41,25 @@ public class URALSubmitter extends Submitter {
 		"93144DO"
 	};
 	
+	private void getMaxRunId() throws Exception {
+		GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx");
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		Pattern p = Pattern.compile("<TD class=\"id\">(\\d+)");
+
+		httpClient.executeMethod(getMethod);
+		byte[] responseBody = getMethod.getResponseBody();
+		String tLine = new String(responseBody, "UTF-8");
+		Matcher m = p.matcher(tLine);
+		if (m.find()) {
+			maxRunId = Integer.parseInt(m.group(1));
+			System.out.println("maxRunId : " + maxRunId);
+		} else {
+			throw new Exception();
+		}
+	}
 	
-	private String submit(HttpClient httpClient, int idx){
+	
+	private void submit(String password) throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
 		
         PostMethod postMethod = new PostMethod("http://acm.timus.ru/submit.aspx");
@@ -50,88 +67,65 @@ public class URALSubmitter extends Submitter {
 		postMethod.addParameter("Language", submission.getLanguage());
 		postMethod.addParameter("ProblemNum", problem.getOriginProb());
 		postMethod.addParameter("Source", submission.getSource());
-		postMethod.addParameter("JudgeID", passwordList[idx]);
+		postMethod.addParameter("JudgeID", password);
 		postMethod.addParameter("SpaceID", "1");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
         httpClient.getParams().setContentCharset("UTF-8"); 
-        try {
-			System.out.println("submit...");
-			int statusCode = httpClient.executeMethod(postMethod);
-			System.out.println("statusCode = " + statusCode);
-			return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ? "success" : null;
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		    postMethod.releaseConnection();
-		   	return null;
+
+        System.out.println("submit...");
+		int statusCode = httpClient.executeMethod(postMethod);
+		System.out.println("statusCode = " + statusCode);
+		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
+			throw new Exception();
 		}
 	}
 	
-	public void getResult(String username){
-		String reg = "<TD class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
-        HttpClient httpClient = new HttpClient();
+	public void getResult(String username) throws Exception{
+		String reg = "aspx/(\\d+)\\.txt[\\s\\S]*?class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
+        Pattern p = Pattern.compile(reg);
         GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx?author=" + username.substring(0, 5));
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		long cur = new Date().getTime();
-		long interval = 2000;
+        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
-	        try {
-				System.out.println("getResult...");
-	            int statusCode = httpClient.executeMethod(getMethod);
-	            if(statusCode != HttpStatus.SC_OK) {
-	                System.err.println("Method failed: "+getMethod.getStatusLine());
-	            }
-	            byte[] responseBody = getMethod.getResponseBody();
-	            String tLine = new String(responseBody, "UTF-8");
-	            System.out.println(tLine);
-	    		Pattern p = Pattern.compile(reg);
-	    		Matcher m = p.matcher(tLine);
-	    		if (m.find()){
-	    			result = m.group(1).replaceAll("<[\\s\\S]*?>", "").trim();
-    				submission.setStatus(result);
-	    			if (!result.contains("ing")){
-	    				if (result.equals("Accepted")){
-		    				submission.setMemory(Integer.parseInt(m.group(3).replaceAll(" ", "")));
-		    				submission.setTime((int)(1000 * Double.parseDouble(m.group(2))));
-	    				}
-	    				baseService.modify(submission);
-	    				return;
-	    			}
+			System.out.println("getResult...");
+	        httpClient.executeMethod(getMethod);
+	        byte[] responseBody = getMethod.getResponseBody();
+	        String tLine = new String(responseBody, "UTF-8");
+			Matcher m = p.matcher(tLine);
+			
+			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
+    			result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
+				submission.setStatus(result);
+    			if (!result.contains("ing")){
+    				if (result.equals("Accepted")){
+	    				submission.setMemory(Integer.parseInt(m.group(4).replaceAll(" ", "")));
+	    				submission.setTime((int)(0.5 + 1000 * Double.parseDouble(m.group(3))));
+    				}
     				baseService.modify(submission);
-	    		}
-	        }
-	        catch(Exception e) {
-				e.printStackTrace();
-	            getMethod.releaseConnection();
-	        }
-	        try {
-				Thread.sleep(interval);
-				interval += 500;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+    				return;
+    			}
+				baseService.modify(submission);
+    		}
+			Thread.sleep(interval);
+			interval += 500;
         }
-		submission.setStatus("Judging Error");
-		baseService.modify(submission);
+		throw new Exception();
 	}
+	
+	private int getIdleClient() {
+		int length = usernameList.length;
+		int begIdx = (int) (Math.random() * length);
 
-	public void run() {
-		int idx = -1;
 		while(true) {
-			int length = usernameList.length;
-			int begIdx = (int) (Math.random() * length);
 			synchronized (using) {
-				for (int i = begIdx; i < begIdx + length; i++) {
-					int j = i % length;
+				for (int i = begIdx, j; i < begIdx + length; i++) {
+					j = i % length;
 					if (!using[j]) {
-						idx = j;
 						using[j] = true;
-						break;
+						httpClient = clientList[j];
+						return j;
 					}
 				}
-			}
-			if (idx >= 0){
-				break;
 			}
 			try {
 				Thread.sleep(2000);
@@ -139,28 +133,34 @@ public class URALSubmitter extends Submitter {
 				e.printStackTrace();
 			}
 		}
-		
-		submit(clientList[idx], idx);
-		submission.setStatus("Running & Judging");
-		baseService.modify(submission);
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		getResult(passwordList[idx]);
+	}
+	
+	
+	public void run() {
+		int idx = getIdleClient();
 
-		//ural oj限制每两次提交之间至少隔X秒
 		try {
-			Thread.sleep(6000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+			getMaxRunId();
+				
+			submit(passwordList[idx]);	//非登陆式,只需交一次
+			submission.setStatus("Running & Judging");
+			baseService.modify(submission);
+			Thread.sleep(2000);
+			getResult(passwordList[idx]);
+		} catch (Exception e) {
+			e.printStackTrace();
+			submission.setStatus("Judging Error");
+			baseService.modify(submission);
 		}
 		
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}	//ural oj限制每两次提交之间至少隔X秒
 		synchronized (using) {
 			using[idx] = false;
 		}
-		
 	}
 
 }
