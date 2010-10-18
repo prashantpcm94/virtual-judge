@@ -57,16 +57,13 @@
 			<result name="input">/problem/status.jsp</result>
 		</action>
 
-		<!-- 显示提交(上一页) -->
-		<action name="statusPrev" class="problemAction" method="statusPrev">
-			<result name="success">/problem/status.jsp</result>
-			<result name="input">/problem/status.jsp</result>
-		</action>
-
-		<!-- 显示提交(下一页) -->
-		<action name="statusNext" class="problemAction" method="statusNext">
-			<result name="success">/problem/status.jsp</result>
-			<result name="input">/problem/status.jsp</result>
+		<action name="fetchStatus" class="problemAction" method="fetchStatus">
+			<result type="json">
+				<param name="root">dataTablesPage</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">false</param>
+				<param name="contentType">application/json-rpc</param>
+			</result>
 		</action>
 
 		<!-- 进入非比赛提交页面 -->

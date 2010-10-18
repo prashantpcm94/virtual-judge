@@ -191,3 +191,9 @@ td.Running, span.Running {
 td.Scheduled, span.Scheduled {
 	color: blue;
 }
+
+/********************Status*********************/
+.shared {
+	font-family: Arial, Helvetica, sans-serif;
+	color: green;
+}
