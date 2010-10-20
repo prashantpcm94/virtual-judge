@@ -12,21 +12,20 @@ $(document).ready(function() {
 		"bStateSave": true,
 
 		"aoColumns": [
-		  			{ 
-		  				"sClass": "id"
-		  			},
+		  			{},
 		  			{
 		  				"fnRender": function ( oObj ) {
 			  				return "<a href='user/profile.action?uid=" + oObj.aData[9] + "'>" + oObj.aData[1] + "</a>";
 		  				},
-		  				"sClass": "title"
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
 			  				return "<a href='problem/viewProblem.action?id=" + oObj.aData[2] + "'>" + oObj.aData[2] + "</a>";
 		  				}
 		  			},
-		  			{},
+		  			{
+		  				"sClass": "result"
+					},
 		  			{
 		  				"fnRender": function ( oObj ) {
 		  					return oObj.aData[4] == null ? '' : oObj.aData[4] + " KB";
@@ -70,7 +69,7 @@ $(document).ready(function() {
 			} );
 		},
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-		    $(nRow).addClass(aData[3]=="Accepted" ? "yes" : aData[3].indexOf("ing") > 0 ? "pending" : "no");
+		    $(nRow).addClass(aData[3]=="Accepted" ? "yes" : aData[3].indexOf("ing") < 0 || aData[3].indexOf("rror") >= 0 ? "no" : "pending");
 			return nRow;
 		},
 		"sPaginationType": "full_numbers"

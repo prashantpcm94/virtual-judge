@@ -14,7 +14,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import org.apache.struts2.ServletActionContext;
 
-import judge.bean.Contest;
 import judge.bean.DataTablesPage;
 import judge.bean.Problem;
 import judge.bean.Submission;
@@ -351,8 +350,10 @@ public class ProblemAction extends BaseAction{
 		int sup = user != null ? user.getSup() : 0;
 		
 		StringBuffer hql = new StringBuffer("select s.id, u.username, s.problemId, s.status, s.memory, s.time, s.language, length(s.source), s.subTime, u.id, s.isOpen, p.originOJ, s.userId from User u, Submission s, Problem p where s.contestId = 0 and s.userId = u.id and s.problemId = p.id ");
+
 //		long cnt = baseService.count(hql.toString());
 		dataTablesPage = new DataTablesPage();
+
 		dataTablesPage.setITotalRecords(baseService.count(hql.toString()));
 
 		if (un != null && !un.trim().isEmpty()){
@@ -371,11 +372,11 @@ public class ProblemAction extends BaseAction{
 		} else if (res == 3) {
 			hql.append(" and s.status like 'time%' ");
 		} else if (res == 4) {
-			hql.append(" and (s.status like 'runtime%' or s.status like 'segment%' or s.status like '%crash%') ");
+			hql.append(" and (s.status like 'runtime%' or s.status like 'segment%' or s.status like 'crash%') ");
 		} else if (res == 5) {
 			hql.append(" and (s.status like 'presentation%' or s.status like 'format%') ");
 		} else if (res == 6) {
-			hql.append(" and s.status like 'compli%error' ");
+			hql.append(" and s.status like 'compli%' ");
 		} else if (res == 7) {
 			hql.append(" and s.status = 'Judging Error' ");
 		}
@@ -383,7 +384,7 @@ public class ProblemAction extends BaseAction{
 		if (sup == 0){
 			hql.append(" and (p.hidden = 0 or p.creatorId = " + userId + ") ");
 		}
-		hql.append(" order by p.id desc ");
+		hql.append(" order by s.id desc ");
 		
 
 //		curDate = new Date();
@@ -401,63 +402,6 @@ public class ProblemAction extends BaseAction{
 			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[12] == userId ? 1 : 0; 
 		}
 		dataTablesPage.setAaData(aaData);
-		this.addActionError((String) session.get("error"));
-		session.remove("error");
-		return SUCCESS;
-	}
-	
-	public String _status(){
-		Map session = ActionContext.getContext().getSession();
-		session.put("pageIndex", 0);
-		ServletContext sc = ServletActionContext.getServletContext();
-		if (un != null){
-			un = un.trim();
-		}
-		dataList = baseService.list("select submission.id, user.username, submission.problemId, submission.status, submission.memory, submission.time, submission.language, length(submission.source), submission.subTime, problem.originOJ, submission.status, user.id, submission.isOpen, problem.hidden from Submission submission, User user, Problem problem where submission.contestId = 0 and submission.userId = user.id and submission.problemId = problem.id " + (id > 0 ? "and problem.id = " + id : "") + (un != null && !un.isEmpty() ? " and user.username = '" + un + "'" : "") + " order by submission.subTime desc", 0, 20);
-		for (int i = 0; i < dataList.size(); i++){
-			((Object [])dataList.get(i))[6] = ((Map<String, String>)sc.getAttribute((String) ((Object [])dataList.get(i))[9])).get(((Object [])dataList.get(i))[6]);
-			String st = ((String)((Object [])dataList.get(i))[3]);
-			((Object [])dataList.get(i))[10] = st.equals("Accepted") ? "yes" : st.contains("ing") ? "pending" : "no";
-		}
-		this.addActionError((String) session.get("error"));
-		session.remove("error");
-		return SUCCESS;
-	}
-	
-	public String statusPrev(){
-		Map session = ActionContext.getContext().getSession();
-		int pageIndex = (Integer)session.get("pageIndex") - 1;
-		if (pageIndex < 0){
-			pageIndex = 0;
-		}
-		session.put("pageIndex", pageIndex);
-		ServletContext sc = ServletActionContext.getServletContext();
-		dataList = baseService.list("select submission.id, user.username, submission.problemId, submission.status, submission.memory, submission.time, submission.language, length(submission.source), submission.subTime, problem.originOJ, submission.status, user.id, submission.isOpen, problem.hidden from Submission submission, User user, Problem problem where submission.contestId = 0 and submission.userId = user.id and submission.problemId = problem.id " + (id > 0 ? "and problem.id = " + id : "") + (un != null && !un.isEmpty() ? " and user.username = '" + un + "'" : "") + " order by submission.subTime desc", pageIndex * 20, 20);
-		for (int i = 0; i < dataList.size(); i++){
-			((Object [])dataList.get(i))[6] = ((Map<String, String>)sc.getAttribute((String) ((Object [])dataList.get(i))[9])).get(((Object [])dataList.get(i))[6]);
-			String st = ((String)((Object [])dataList.get(i))[3]);
-			((Object [])dataList.get(i))[10] = st.equals("Accepted") ? "yes" : st.contains("ing") ? "pending" : "no";
-		}
-		this.addActionError((String) session.get("error"));
-		session.remove("error");
-		return SUCCESS;
-	}
-	
-	public String statusNext(){
-		Map session = ActionContext.getContext().getSession();
-		int pageIndex = (Integer)session.get("pageIndex") + 1;
-		ServletContext sc = ServletActionContext.getServletContext();
-		dataList = baseService.list("select submission.id, user.username, submission.problemId, submission.status, submission.memory, submission.time, submission.language, length(submission.source), submission.subTime, problem.originOJ, submission.status, user.id, submission.isOpen, problem.hidden from Submission submission, User user, Problem problem where submission.contestId = 0 and submission.userId = user.id and submission.problemId = problem.id " + (id > 0 ? "and problem.id = " + id : "") + (un != null && !un.isEmpty() ? " and user.username = '" + un + "'" : "") + " order by submission.subTime desc", pageIndex * 20, 20);
-		if (dataList.size() == 0){
-			pageIndex--;
-			dataList = baseService.list("select submission.id, user.username, submission.problemId, submission.status, submission.memory, submission.time, submission.language, length(submission.source), submission.subTime, problem.originOJ, submission.status, user.id, submission.isOpen, problem.hidden from Submission submission, User user, Problem problem where submission.contestId = 0 and submission.userId = user.id and submission.problemId = problem.id " + (id > 0 ? "and problem.id = " + id : "") + (un != null && !un.isEmpty() ? " and user.username = '" + un + "'" : "") + " order by submission.subTime desc", pageIndex * 20, 20);
-		}
-		for (int i = 0; i < dataList.size(); i++){
-			((Object [])dataList.get(i))[6] = ((Map<String, String>)sc.getAttribute((String) ((Object [])dataList.get(i))[9])).get(((Object [])dataList.get(i))[6]);
-			String st = ((String)((Object [])dataList.get(i))[3]);
-			((Object [])dataList.get(i))[10] = st.equals("Accepted") ? "yes" : st.contains("ing") ? "pending" : "no";
-		}
-		session.put("pageIndex", pageIndex);
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
 		return SUCCESS;
