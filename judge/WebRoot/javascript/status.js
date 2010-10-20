@@ -7,9 +7,9 @@ $(document).ready(function() {
 		"bLengthChange": false,
 		"bFilter": false,
 		"bSort": false,
-//		"bInfo": false,
+		"bInfo": false,
 		"bAutoWidth": false,
-		"bStateSave": true,
+//		"bStateSave": true,
 
 		"aoColumns": [
 		  			{},
@@ -75,7 +75,11 @@ $(document).ready(function() {
 		"sPaginationType": "full_numbers"
 	});
 
-	$("#filter").click(function(){
-		oTable.fnDraw();
+	$("#form_status").submit(function(){
+		var id = $("[name='id']").val();
+		if (!id || parseInt(id)) {
+			oTable.fnDraw();
+		}
+		return false;
 	});
 });

@@ -376,7 +376,7 @@ public class ProblemAction extends BaseAction{
 		} else if (res == 5) {
 			hql.append(" and (s.status like 'presentation%' or s.status like 'format%') ");
 		} else if (res == 6) {
-			hql.append(" and s.status like 'compli%' ");
+			hql.append(" and s.status like 'compil%' ");
 		} else if (res == 7) {
 			hql.append(" and s.status = 'Judging Error' ");
 		}
