@@ -93,7 +93,7 @@ public class HUSTSubmitter extends Submitter {
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "class='evenrow'><td>(\\d+)[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font><td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
+		String reg = "class='evenrow'><td>(\\d+)[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font>[\\s\\S]*?<td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
 		Pattern p = Pattern.compile(reg);
 		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/status.php?user_id=" + username);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
