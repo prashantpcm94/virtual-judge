@@ -32,6 +32,9 @@ public class Submission {
 	private String source;		//源代码
 	private int isOpen;			//代码是否公开
 	
+	private String dispLanguage;//用于显示的语言
+	private String username;	//提交者用户名
+	
 
 	public int getIsOpen() {
 		return isOpen;
@@ -98,6 +101,18 @@ public class Submission {
 	}
 	public void setContestId(int contestId) {
 		this.contestId = contestId;
+	}
+	public String getDispLanguage() {
+		return dispLanguage;
+	}
+	public void setDispLanguage(String dispLanguage) {
+		this.dispLanguage = dispLanguage;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 

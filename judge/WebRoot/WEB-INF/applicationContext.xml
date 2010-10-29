@@ -94,7 +94,6 @@
 		<property name="statService" ref="statService" />
 	</bean>
 
-	
 	<!-- 配置Spider部分 -->
 	<bean id="spider" class="judge.spider.Spider">
 		<property name="baseService" ref="baseService" />
@@ -102,6 +101,10 @@
 	
 	<!-- 配置Submitter部分 -->
 	<bean id="submitter" class="judge.submitter.Submitter">
+		<property name="baseService" ref="baseService" />
+	</bean>
+
+	<bean id="customize" class="judge.tool.Customize" >
 		<property name="baseService" ref="baseService" />
 	</bean>
 

@@ -41,13 +41,11 @@ String basePath = (String)application.getAttribute("basePath");
 					<th>Submit Time</th>
 					<th></th>
 					<th></th>
-					<th></th>
-					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td colspan="9">Loading data from server</td>
+					<td colspan="11">Loading data from server</td>
 				</tr>
 			</tbody>
 		</table>

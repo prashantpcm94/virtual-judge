@@ -20,6 +20,8 @@ public class StartUpListener implements ServletContextListener {
 		System.out.println("系统启动");
 		
 		ServletContext sc = event.getServletContext();
+		Customize.sc = sc;
+		
 		Map<String, String> languageList;
 		
 		languageList = new HashMap<String, String>();

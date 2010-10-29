@@ -349,16 +349,15 @@ public class ProblemAction extends BaseAction{
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 		
-		StringBuffer hql = new StringBuffer("select s.id, u.username, s.problemId, s.status, s.memory, s.time, s.language, length(s.source), s.subTime, u.id, s.isOpen, p.originOJ, s.userId from User u, Submission s, Problem p where s.contestId = 0 and s.userId = u.id and s.problemId = p.id ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen from Submission s where 1=1 ");
 
-//		long cnt = baseService.count(hql.toString());
 		dataTablesPage = new DataTablesPage();
 
-		dataTablesPage.setITotalRecords(baseService.count(hql.toString()));
+		dataTablesPage.setITotalRecords(9999999L);
 
 		if (un != null && !un.trim().isEmpty()){
 			un = un.toLowerCase().trim();
-			hql.append(" and u.username = '" + un + "' ");
+			hql.append(" and s.username = '" + un + "' ");
 		}
 		
 		if (id != 0){
@@ -381,29 +380,23 @@ public class ProblemAction extends BaseAction{
 			hql.append(" and s.status = 'Judging Error' ");
 		}
 		
-		if (sup == 0){
-			hql.append(" and (p.hidden = 0 or p.creatorId = " + userId + ") ");
-		}
 		hql.append(" order by s.id desc ");
 		
-
-//		curDate = new Date();
-//		String curDateString = "'" + sdf.format(curDate) + "'";
-
-		dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
+		dataTablesPage.setITotalDisplayRecords(9999999L);
 		
 //		System.out.println("iSortCol_0 = " + iSortCol_0);
 
 		List<Object[]> aaData = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
-		ServletContext sc = ServletActionContext.getServletContext();
+
 		for (Object[] o : aaData) {
-			o[6] = ((Map<String, String>)sc.getAttribute((String) o[11])).get(o[6]);
 			o[8] = sdf.format((Date)o[8]);
-			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[12] == userId ? 1 : 0; 
+			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0; 
 		}
+
 		dataTablesPage.setAaData(aaData);
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
+
 		return SUCCESS;
 	}
 	
@@ -558,26 +551,6 @@ public class ProblemAction extends BaseAction{
 			return "sh_prolog";
 		} else if (srcLang.contains("javascript")){
 			return "sh_javascript";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
 		} else {
 			return "sh_c";
 		}

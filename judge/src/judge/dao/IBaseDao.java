@@ -1,6 +1,7 @@
 package judge.dao;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -13,5 +14,7 @@ public interface IBaseDao {
 	public List query(String hql);
 	public List query(String queryString, int FirstResult, int MaxResult);
 	public Object query(Class entityClass, Serializable id);
-	
+	public void addOrModify(Object entity);
+	public void addOrModify(Collection entity);
+
 }

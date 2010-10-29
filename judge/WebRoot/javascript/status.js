@@ -9,7 +9,8 @@ $(document).ready(function() {
 		"bSort": false,
 		"bInfo": false,
 		"bAutoWidth": false,
-//		"bStateSave": true,
+		"bStateSave": true,
+		"sPaginationType": "full_numbers",
 
 		"aoColumns": [
 		  			{},
@@ -48,8 +49,6 @@ $(document).ready(function() {
 		  			},
 		  			{},
 		  			{"bVisible": false},
-		  			{"bVisible": false},
-		  			{"bVisible": false},
 		  			{"bVisible": false}
 		  		],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
@@ -60,6 +59,7 @@ $(document).ready(function() {
 			aoData.push( { "name": "un", "value": un } );
 			aoData.push( { "name": "id", "value": id } );
 			aoData.push( { "name": "res", "value": res } );
+
 			$.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
@@ -71,9 +71,10 @@ $(document).ready(function() {
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		    $(nRow).addClass(aData[3]=="Accepted" ? "yes" : aData[3].indexOf("ing") < 0 || aData[3].indexOf("rror") >= 0 ? "no" : "pending");
 			return nRow;
-		},
-		"sPaginationType": "full_numbers"
+		}
 	});
+	
+	$("#status_last").remove();
 
 	$("#form_status").submit(function(){
 		var id = $("[name='id']").val();

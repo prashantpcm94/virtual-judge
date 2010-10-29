@@ -43,5 +43,12 @@
 		    <column name="C_ISOPEN" precision="10" scale="0"/>
 		</property>
 
+		<property name="dispLanguage" type="java.lang.String">
+		    <column name="C_DISP_LANGUAGE" length="100"/>
+		</property>
+		<property name="username" type="java.lang.String">
+		    <column name="C_USERNAME" length="40"/>
+		</property>
+
     </class>
 </hibernate-mapping>

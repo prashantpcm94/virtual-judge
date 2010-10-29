@@ -1,6 +1,7 @@
 package judge.dao;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -8,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
+@SuppressWarnings("unchecked")
 public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 	
 	public Serializable add(Object entity) {
@@ -19,7 +21,6 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		this.getHibernateTemplate().delete(entity);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void delete(Class entityClass, Serializable id) {
 		Object entity = (Object) this.getHibernateTemplate().get(entityClass, id);
 		this.getHibernateTemplate().merge(entity);
@@ -30,18 +31,34 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		this.getHibernateTemplate().update(entity);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void modify(Class entityClass, Serializable id) {
 		Object entity = (Object) this.getHibernateTemplate().get(entityClass, id);
 		this.getHibernateTemplate().update(entity);
 	}
 
-	@SuppressWarnings("unchecked")
+	public void addOrModify(Object entity) {
+		this.getHibernateTemplate().saveOrUpdate(entity);
+	}
+	
+	public void addOrModify(Collection entity) {
+		Session session = this.getHibernateTemplate().getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		tx.begin();
+		try {
+			for (Object o : entity){
+				session.saveOrUpdate(o);
+			}
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		}
+	}
+
 	public List query(String queryString) {
 		return this.getHibernateTemplate().find(queryString);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List query(String queryString, int FirstResult, int MaxResult) {
 
 		Session session = this.getHibernateTemplate().getSessionFactory()
@@ -58,7 +75,6 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Object query(Class entityClass, Serializable id) {
 		Object entity = (Object) this.getHibernateTemplate().get(entityClass, id);
 		if (entity != null)

@@ -8,6 +8,7 @@
 package judge.service.imp;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import judge.bean.Problem;
@@ -15,7 +16,7 @@ import judge.dao.IBaseDao;
 import judge.service.IBaseService;
 
 
-
+@SuppressWarnings("unchecked")
 public class BaseService implements IBaseService {
 
 	static private IBaseDao baseDao;
@@ -36,7 +37,6 @@ public class BaseService implements IBaseService {
 		BaseService.baseDao.delete(entity);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void delete(Class entityClass, Serializable id) {
 		BaseService.baseDao.delete(entityClass, id);
 	}
@@ -45,12 +45,18 @@ public class BaseService implements IBaseService {
 		BaseService.baseDao.modify(entity);
 	}
 
-	@SuppressWarnings("unchecked")
+	public void addOrModify(Object entity) {
+		BaseService.baseDao.addOrModify(entity);
+	}
+
+	public void addOrModify(Collection entity) {
+		BaseService.baseDao.addOrModify(entity);
+	}
+
 	public Object query(Class entityClass, Serializable id) {
 		return BaseService.baseDao.query(entityClass, id);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List query(String queryString) {
 		return BaseService.baseDao.query(queryString);
 	}
@@ -68,7 +74,6 @@ public class BaseService implements IBaseService {
 		return re;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List list(String queryString, int FirstResult, int MaxResult) {
 		return BaseService.baseDao.query(queryString, FirstResult, MaxResult);
 	}

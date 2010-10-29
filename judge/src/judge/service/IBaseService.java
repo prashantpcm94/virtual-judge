@@ -1,6 +1,7 @@
 package judge.service;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 public interface IBaseService {
@@ -30,7 +31,21 @@ public interface IBaseService {
 	 */
 	public void modify(Object entity);
 	
+	/**
+	 * 添加/修改实体
+	 * @param entity 实体的类
+	 * @return 返回实体添加后的ID
+	 */
+	public void addOrModify(Object entity);
 
+	/**
+	 * 添加/修改实体集合
+	 * @param entity 实体的类
+	 */
+	@SuppressWarnings("unchecked")
+	public void addOrModify(Collection entity);
+
+	
 	@SuppressWarnings("unchecked")
 	public Object query(Class entityClass, Serializable id);
 	
