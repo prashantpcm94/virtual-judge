@@ -98,10 +98,12 @@
 				<param name="actionName">status</param>
 				<param name="namespace">/contest</param>
 				<param name="cid">${cid}</param>
+				<param name="reset">1</param>
 			</result>
 			<result name="practice" type="redirectAction">
 				<param name="actionName">status</param>
 				<param name="namespace">/problem</param>
+				<param name="reset">1</param>
 			</result>
 			<result name="login">/contest/loginContest.jsp</result>
 			<result name="input">/contest/submit.jsp</result>
@@ -112,6 +114,15 @@
 		<action name="status" class="contestAction" method="status">
 			<result name="success">/contest/status.jsp</result>
 			<result name="input">/contest/loginContest.jsp</result>		
+		</action>
+
+		<action name="fetchStatus" class="contestAction" method="fetchStatus">
+			<result type="json">
+				<param name="root">dataTablesPage</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">false</param>
+				<param name="contentType">application/json-rpc</param>
+			</result>
 		</action>
 
 		<!-- 显示提交(上一页) -->

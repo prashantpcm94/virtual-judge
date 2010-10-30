@@ -341,6 +341,12 @@ public class ProblemAction extends BaseAction{
 	}
 	
 	public String status() {
+		Map session = ActionContext.getContext().getSession();
+		if (session.containsKey("error")){
+			this.addActionError((String) session.get("error"));
+		}
+		session.remove("error");
+
 		return SUCCESS;
 	}
 
@@ -386,8 +392,6 @@ public class ProblemAction extends BaseAction{
 		
 		dataTablesPage.setITotalDisplayRecords(9999999L);
 		
-//		System.out.println("iSortCol_0 = " + iSortCol_0);
-
 		List<Object[]> aaData = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
 
 		for (Object[] o : aaData) {
@@ -396,8 +400,6 @@ public class ProblemAction extends BaseAction{
 		}
 
 		dataTablesPage.setAaData(aaData);
-		this.addActionError((String) session.get("error"));
-		session.remove("error");
 
 		return SUCCESS;
 	}

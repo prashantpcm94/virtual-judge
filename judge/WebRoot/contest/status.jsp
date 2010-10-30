@@ -15,19 +15,22 @@ String basePath = (String)application.getAttribute("basePath");
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
 		<script type="text/javascript" language="javascript" src="javascript/jquery.js"></script>
 		<script type="text/javascript" language="javascript" src="javascript/jquery.dataTables.js"></script>
-		<script type="text/javascript" src="javascript/status_old.js"></script>
+
+	    <script type="text/javascript" src="dwr/interface/baseService.js"></script>
+		<script type='text/javascript' src='dwr/engine.js'></script>
+	    <script type='text/javascript' src='dwr/util.js'></script>
 	</head>
 
 	<body>
 		<s:include value="/contest/top.jsp" />
 		<s:actionerror/>
 
-		<form id="filter" action="contest/status.action" method="get">
-			Username:<s:textfield name="un" value="%{un}" theme="simple"/>
-			&nbsp;&nbsp;Problem Num:<s:textfield name="num" value="%{num}" theme="simple"/>
-			<input type="hidden" name="cid" value="${cid}"/>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Filter"/>
-			<br /><br />
+		<form id="form_status">
+			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
+			Problem:<s:select name="num" list="%{numList}" cssStyle="width:90px" />&nbsp;&nbsp;
+			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Judge Error'}" />&nbsp;&nbsp;
+			<input type="submit" value="Filter"/>&nbsp;&nbsp;
+			<input type="button" value="Reset" id="reset" />
 		</form>
 
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="status" style="text-align:center">
@@ -42,71 +45,19 @@ String basePath = (String)application.getAttribute("basePath");
 					<th>Language</th>
 					<th>Code Length</th>
 					<th>Submit Time</th>
+					<th></th>
+					<th></th>
+					<th></th>
 				</tr>
 			</thead>
-			<s:iterator value="dataList" status="stat">
-				<tr class="<s:property value='dataList[#stat.index][11]' />">
-					<td>
-						<s:property value="dataList[#stat.index][0]" />
-					</td>
-					<td>
-						<a href="user/profile.action?uid=<s:property value='dataList[#stat.index][13]' />" >
-							<s:property value="dataList[#stat.index][1]" />
-						</a>
-					</td>
-					<td>
-						<a href="contest/viewProblem.action?pid=<s:property value="dataList[#stat.index][10]" />" >
-							<s:property value="dataList[#stat.index][2]" />
-						</a>
-					</td>
-					<td style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;">
-						<s:property value="dataList[#stat.index][3]" />
-					</td>
-					<td>
-						<s:if test="dataList[#stat.index][3] == 'Accepted'">
-							<s:property value="dataList[#stat.index][4]" /> KB
-						</s:if>
-					</td>
-					<td>
-						<s:if test="dataList[#stat.index][3] == 'Accepted'">
-							<s:property value="dataList[#stat.index][5]" /> ms
-						</s:if>
-					</td>
-					<td>
-						<s:if test="dataList[#stat.index][12] == 0 && (#session.visitor == null || #session.visitor.sup == 0 && #session.visitor.id != dataList[#stat.index][13])">
-							<s:property value="dataList[#stat.index][6]" />
-						</s:if>
-						<s:else>
-							<s:if test="dataList[#stat.index][12] != 0">
-								<a href="contest/viewSource.action?id=<s:property value="dataList[#stat.index][0]" />" style="font-family:Arial,Helvetica,sans-serif;color:green;">
-									<s:property value="dataList[#stat.index][6]" />
-								</a>
-							</s:if>
-							<s:else>
-								<a href="contest/viewSource.action?id=<s:property value="dataList[#stat.index][0]" />">
-									<s:property value="dataList[#stat.index][6]" />
-								</a>
-							</s:else>
-						</s:else>
-					</td>
-					<td>
-						<s:property value="dataList[#stat.index][7]" /> B
-					</td>
-					<td>
-						<s:date name="dataList[#stat.index][8]"	format="yyyy-MM-dd HH:mm:ss" />
-					</td>
+			<tbody>
+				<tr>
+					<td colspan="11">Loading data from server</td>
 				</tr>
-			</s:iterator>	
+			</tbody>
 		</table>
 
-		<p align="center">
-			<font size="3" color="#333399">
-				[<a href="contest/status.action?cid=${cid}&un=${un}&num=${num}">Top</a>]&nbsp;&nbsp;
-				[<a href="contest/statusPrev.action?cid=${cid}&un=${un}&num=${num}">Prev Page</a>]&nbsp;&nbsp;
-				[<a href="contest/statusNext.action?cid=${cid}&un=${un}&num=${num}">Next Page</a>]&nbsp;&nbsp; 
-			</font>
-		</p>
 		<s:include value="/bottom.jsp" />
-
+		<script type="text/javascript" src="javascript/contest_status.js"></script>
 	</body>
 </html>

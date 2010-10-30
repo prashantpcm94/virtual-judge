@@ -44,6 +44,7 @@ public class ContestAction extends BaseAction {
 
 	private int year, month, date, hour, minute, d_day, d_hour, d_minute;
 	private int id, pid, cid, uid;
+	private int res;	//result
 	private int isOpen;
 	private String password;
 	private String problemList;
@@ -51,6 +52,7 @@ public class ContestAction extends BaseAction {
 	private String source;
 	private String un, num;
 	private Date curDate;
+	private List numList;
 	private Map<Object, String> languageList;
 	
 	private boolean s, r, e;	//比赛进行状态
@@ -67,198 +69,7 @@ public class ContestAction extends BaseAction {
 		public int[] attempts;
 	}
 	
-	public boolean isS() {
-		return s;
-	}
-	public void setS(boolean s) {
-		this.s = s;
-	}
-	public boolean isR() {
-		return r;
-	}
-	public void setR(boolean r) {
-		this.r = r;
-	}
-	public boolean isE() {
-		return e;
-	}
-	public void setE(boolean e) {
-		this.e = e;
-	}
-	public DataTablesPage getDataTablesPage() {
-		return dataTablesPage;
-	}
-	public void setDataTablesPage(DataTablesPage dataTablesPage) {
-		this.dataTablesPage = dataTablesPage;
-	}
-	public int getUid() {
-		return uid;
-	}
-	public void setUid(int uid) {
-		this.uid = uid;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public Submission getSubmission() {
-		return submission;
-	}
-	public void setSubmission(Submission submission) {
-		this.submission = submission;
-	}
-	public int getIsOpen() {
-		return isOpen;
-	}
-	public void setIsOpen(int isOpen) {
-		this.isOpen = isOpen;
-	}
-	public String getUn() {
-		return un;
-	}
-	public void setUn(String un) {
-		this.un = un;
-	}
-	public String getNum() {
-		return num;
-	}
-	public void setNum(String num) {
-		this.num = num;
-	}
-	public List getTList() {
-		return tList;
-	}
-	public void setTList(List list) {
-		tList = list;
-	}
-	public Cproblem getCproblem() {
-		return cproblem;
-	}
-	public void setCproblem(Cproblem cproblem) {
-		this.cproblem = cproblem;
-	}
-	public String getSource() {
-		return source;
-	}
-	public void setSource(String source) {
-		this.source = source;
-	}
-	public String getLanguage() {
-		return language;
-	}
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-	public Map<Object, String> getLanguageList() {
-		return languageList;
-	}
-	public void setLanguageList(Map<Object, String> languageList) {
-		this.languageList = languageList;
-	}
-	public Problem getProblem() {
-		return problem;
-	}
-	public void setProblem(Problem problem) {
-		this.problem = problem;
-	}
-	public int getPid() {
-		return pid;
-	}
-	public void setPid(int pid) {
-		this.pid = pid;
-	}
-	public int getCid() {
-		return cid;
-	}
-	public void setCid(int cid) {
-		this.cid = cid;
-	}
-	public String getProblemList() {
-		return problemList;
-	}
-	public void setProblemList(String problemList) {
-		this.problemList = problemList;
-	}
-	public Date getCurDate() {
-		return curDate;
-	}
-	public void setCurDate(Date curDate) {
-		this.curDate = curDate;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public int getYear() {
-		return year;
-	}
-	public void setYear(int year) {
-		this.year = year;
-	}
-	public int getMonth() {
-		return month;
-	}
-	public void setMonth(int month) {
-		this.month = month;
-	}
-	public int getDate() {
-		return date;
-	}
-	public void setDate(int date) {
-		this.date = date;
-	}
-	public int getHour() {
-		return hour;
-	}
-	public void setHour(int hour) {
-		this.hour = hour;
-	}
-	public int getMinute() {
-		return minute;
-	}
-	public void setMinute(int minute) {
-		this.minute = minute;
-	}
-	public int getD_day() {
-		return d_day;
-	}
-	public void setD_day(int d_day) {
-		this.d_day = d_day;
-	}
-	public int getD_hour() {
-		return d_hour;
-	}
-	public void setD_hour(int d_hour) {
-		this.d_hour = d_hour;
-	}
-	public int getD_minute() {
-		return d_minute;
-	}
-	public void setD_minute(int d_minute) {
-		this.d_minute = d_minute;
-	}
-	public Contest getContest() {
-		return contest;
-	}
-	public void setContest(Contest contest) {
-		this.contest = contest;
-	}
-	public IBaseService getBaseService() {
-		return baseService;
-	}
-	public void setBaseService(IBaseService baseService) {
-		this.baseService = baseService;
-	}
-	public List getDataList() {
-		return dataList;
-	}
-	public void setDataList(List dataList) {
-		this.dataList = dataList;
-	}
+
 	
 	public String toListContest(){
 		curDate = new Date();
@@ -663,87 +474,87 @@ public class ContestAction extends BaseAction {
 	
 	public String status(){
 		Map session = ActionContext.getContext().getSession();
-		session.put("pageIndex", 0);
+		User user = (User) session.get("visitor");
 		
 		if (session.get("C" + cid) == null){
 			contest = (Contest) baseService.query(Contest.class, cid);
-			if (contest.getPassword() == null){
+			if (contest.getPassword() == null || user != null && user.getSup() == 1){
 				session.put("C" + cid, 1);
 			} else {
 				return INPUT;
 			}
 		}
-		if (un != null){
-			un = un.trim();
+		
+		numList = new ArrayList<String>();
+		numList.add("All");
+		List<Object[]> tmpList = baseService.query("select cp.num, p.title from Cproblem cp, Problem p where p.id = cp.problemId and cp.contestId = " + cid + " order by cp.num asc");
+		for (Object[] o : tmpList) {
+			numList.add(o[0] + " - " + o[1]);
 		}
 
-		ServletContext sc = ServletActionContext.getServletContext();
-		dataList = baseService.list("select submission.id, user.username, cproblem.num, submission.status, submission.memory, submission.time, submission.language, length(submission.source), submission.subTime, problem.originOJ, cproblem.id, submission.id, submission.isOpen, submission.userId from Submission submission, User user, Problem problem, Cproblem cproblem " +
-				" where submission.contestId = " + cid + (un != null && !un.isEmpty() ? " and user.username = '" + un + "' " : " ") + (num != null && !num.isEmpty() ? " and cproblem.num = '" + num + "'" : "") + " and submission.userId = user.id and submission.problemId = problem.id and submission.problemId = cproblem.problemId and submission.contestId = cproblem.contestId order by submission.subTime desc", 0, 20);
-		for (int i = 0; i < dataList.size(); i++){
-			((Object [])dataList.get(i))[6] = ((Map<String, String>)sc.getAttribute((String) ((Object [])dataList.get(i))[9])).get(((Object [])dataList.get(i))[6]);
-			String st = ((String)((Object [])dataList.get(i))[3]);
-			((Object [])dataList.get(i))[11] = st.equals("Accepted") ? "yes" : st.contains("ing") ? "pending" : "no";
+		if (session.containsKey("error")){
+			this.addActionError((String) session.get("error"));
 		}
+		session.remove("error");
+
+		return SUCCESS;
+	}
+	
+	public String fetchStatus() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
+		int userId = user != null ? user.getId() : -1;
+		int sup = user != null ? user.getSup() : 0;
+		
+		StringBuffer hql = new StringBuffer("select s.id, s.username, cp.num, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen, cp.id from Submission s, Cproblem cp where s.contestId = " + cid + " and s.problemId = cp.problemId and s.contestId = cp.contestId ");
+
+		dataTablesPage = new DataTablesPage();
+
+		dataTablesPage.setITotalRecords(9999999L);
+
+		if (un != null && !un.trim().isEmpty()){
+			un = un.toLowerCase().trim();
+			hql.append(" and s.username = '" + un + "' ");
+		}
+		
+		if (!num.equals("All")){
+			hql.append(" and cp.num = '" + num.charAt(0) + "' ");
+		}
+		
+		if (res == 1){
+			hql.append(" and s.status = 'Accepted' ");
+		} else if (res == 2) {
+			hql.append(" and s.status like 'wrong%' ");
+		} else if (res == 3) {
+			hql.append(" and s.status like 'time%' ");
+		} else if (res == 4) {
+			hql.append(" and (s.status like 'runtime%' or s.status like 'segment%' or s.status like 'crash%') ");
+		} else if (res == 5) {
+			hql.append(" and (s.status like 'presentation%' or s.status like 'format%') ");
+		} else if (res == 6) {
+			hql.append(" and s.status like 'compil%' ");
+		} else if (res == 7) {
+			hql.append(" and s.status = 'Judging Error' ");
+		}
+		
+		hql.append(" order by s.id desc ");
+		
+		dataTablesPage.setITotalDisplayRecords(9999999L);
+		
+		List<Object[]> aaData = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
+
+		for (Object[] o : aaData) {
+			o[8] = sdf.format((Date)o[8]);
+			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0;
+		}
+
+		dataTablesPage.setAaData(aaData);
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
+
 		return SUCCESS;
 	}
-	
-	public String statusPrev(){
-		Map session = ActionContext.getContext().getSession();
-		int pageIndex = (Integer)session.get("pageIndex") - 1;
-		if (pageIndex < 0){
-			pageIndex = 0;
-		}
-		session.put("pageIndex", pageIndex);
-		if (session.get("C" + cid) == null){
-			contest = (Contest) baseService.query(Contest.class, cid);
-			if (contest.getPassword() == null){
-				session.put("C" + cid, 1);
-			} else {
-				return INPUT;
-			}
-		}
-		ServletContext sc = ServletActionContext.getServletContext();
-		dataList = baseService.list("select submission.id, user.username, cproblem.num, submission.status, submission.memory, submission.time, submission.language, length(submission.source), submission.subTime, problem.originOJ, cproblem.id, submission.id, submission.isOpen, submission.userId from Submission submission, User user, Problem problem, Cproblem cproblem " +
-				" where submission.contestId = " + cid + (un != null && !un.isEmpty() ? " and user.username = '" + un + "' " : " ") + (num != null && !num.isEmpty() ? " and cproblem.num = '" + num + "'" : "") + " and submission.userId = user.id and submission.problemId = problem.id and submission.problemId = cproblem.problemId and submission.contestId = cproblem.contestId order by submission.subTime desc", pageIndex * 20, 20);
-		for (int i = 0; i < dataList.size(); i++){
-			((Object [])dataList.get(i))[6] = ((Map<String, String>)sc.getAttribute((String) ((Object [])dataList.get(i))[9])).get(((Object [])dataList.get(i))[6]);
-			String st = ((String)((Object [])dataList.get(i))[3]);
-			((Object [])dataList.get(i))[11] = st.equals("Accepted") ? "yes" : st.contains("ing") ? "pending" : "no";
-		}
-		return SUCCESS;
-	}
-	
-	public String statusNext(){
-		Map session = ActionContext.getContext().getSession();
-		int pageIndex = (Integer)session.get("pageIndex") + 1;
-		if (session.get("C" + cid) == null){
-			contest = (Contest) baseService.query(Contest.class, cid);
-			if (contest.getPassword() == null){
-				session.put("C" + cid, 1);
-			} else {
-				return INPUT;
-			}
-		}
-		ServletContext sc = ServletActionContext.getServletContext();
-		dataList = baseService.list("select submission.id, user.username, cproblem.num, submission.status, submission.memory, submission.time, submission.language, length(submission.source), submission.subTime, problem.originOJ, cproblem.id, submission.id, submission.isOpen, submission.userId from Submission submission, User user, Problem problem, Cproblem cproblem " +
-				" where submission.contestId = " + cid + (un != null && !un.isEmpty() ? " and user.username = '" + un + "' " : " ") + (num != null && !num.isEmpty() ? " and cproblem.num = '" + num + "'" : "") + " and submission.userId = user.id and submission.problemId = problem.id and submission.problemId = cproblem.problemId and submission.contestId = cproblem.contestId order by submission.subTime desc", pageIndex * 20, 20);
-		if (dataList.size() == 0){
-			pageIndex--;
-			dataList = baseService.list("select submission.id, user.username, cproblem.num, submission.status, submission.memory, submission.time, submission.language, length(submission.source), submission.subTime, problem.originOJ, cproblem.id, submission.id, submission.isOpen, submission.userId from Submission submission, User user, Problem problem, Cproblem cproblem " +
-					" where submission.contestId = " + cid + (un != null && !un.isEmpty() ? " and user.username = '" + un + "' " : " ") + (num != null && !num.isEmpty() ? " and cproblem.num = '" + num + "'" : "") + " and submission.userId = user.id and submission.problemId = problem.id and submission.problemId = cproblem.problemId and submission.contestId = cproblem.contestId order by submission.subTime desc", pageIndex * 20, 20);
-		}
-		session.put("pageIndex", pageIndex);
-		for (int i = 0; i < dataList.size(); i++){
-			((Object [])dataList.get(i))[6] = ((Map<String, String>)sc.getAttribute((String) ((Object [])dataList.get(i))[9])).get(((Object [])dataList.get(i))[6]);
-			String st = ((String)((Object [])dataList.get(i))[3]);
-			((Object [])dataList.get(i))[11] = st.equals("Accepted") ? "yes" : st.contains("ing") ? "pending" : "no";
-		}
-		return SUCCESS;
-	}
-	
 	
 	public String standing(){
 		Map session = ActionContext.getContext().getSession();
@@ -1185,29 +996,215 @@ public class ContestAction extends BaseAction {
 			return "sh_prolog";
 		} else if (srcLang.contains("javascript")){
 			return "sh_javascript";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
 		} else {
 			return "sh_c";
 		}
+	}
+	
+	
+	public int getRes() {
+		return res;
+	}
+	public void setRes(int res) {
+		this.res = res;
+	}
+	public boolean isS() {
+		return s;
+	}
+	public void setS(boolean s) {
+		this.s = s;
+	}
+	public boolean isR() {
+		return r;
+	}
+	public void setR(boolean r) {
+		this.r = r;
+	}
+	public boolean isE() {
+		return e;
+	}
+	public void setE(boolean e) {
+		this.e = e;
+	}
+	public DataTablesPage getDataTablesPage() {
+		return dataTablesPage;
+	}
+	public void setDataTablesPage(DataTablesPage dataTablesPage) {
+		this.dataTablesPage = dataTablesPage;
+	}
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public Submission getSubmission() {
+		return submission;
+	}
+	public void setSubmission(Submission submission) {
+		this.submission = submission;
+	}
+	public int getIsOpen() {
+		return isOpen;
+	}
+	public void setIsOpen(int isOpen) {
+		this.isOpen = isOpen;
+	}
+	public String getUn() {
+		return un;
+	}
+	public void setUn(String un) {
+		this.un = un;
+	}
+	public String getNum() {
+		return num;
+	}
+	public void setNum(String num) {
+		this.num = num;
+	}
+	public List getTList() {
+		return tList;
+	}
+	public void setTList(List list) {
+		tList = list;
+	}
+	public Cproblem getCproblem() {
+		return cproblem;
+	}
+	public void setCproblem(Cproblem cproblem) {
+		this.cproblem = cproblem;
+	}
+	public String getSource() {
+		return source;
+	}
+	public void setSource(String source) {
+		this.source = source;
+	}
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	public Map<Object, String> getLanguageList() {
+		return languageList;
+	}
+	public void setLanguageList(Map<Object, String> languageList) {
+		this.languageList = languageList;
+	}
+	public Problem getProblem() {
+		return problem;
+	}
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
+	public int getPid() {
+		return pid;
+	}
+	public void setPid(int pid) {
+		this.pid = pid;
+	}
+	public int getCid() {
+		return cid;
+	}
+	public void setCid(int cid) {
+		this.cid = cid;
+	}
+	public String getProblemList() {
+		return problemList;
+	}
+	public void setProblemList(String problemList) {
+		this.problemList = problemList;
+	}
+	public Date getCurDate() {
+		return curDate;
+	}
+	public void setCurDate(Date curDate) {
+		this.curDate = curDate;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public int getYear() {
+		return year;
+	}
+	public void setYear(int year) {
+		this.year = year;
+	}
+	public int getMonth() {
+		return month;
+	}
+	public void setMonth(int month) {
+		this.month = month;
+	}
+	public int getDate() {
+		return date;
+	}
+	public void setDate(int date) {
+		this.date = date;
+	}
+	public int getHour() {
+		return hour;
+	}
+	public void setHour(int hour) {
+		this.hour = hour;
+	}
+	public int getMinute() {
+		return minute;
+	}
+	public void setMinute(int minute) {
+		this.minute = minute;
+	}
+	public int getD_day() {
+		return d_day;
+	}
+	public void setD_day(int d_day) {
+		this.d_day = d_day;
+	}
+	public int getD_hour() {
+		return d_hour;
+	}
+	public void setD_hour(int d_hour) {
+		this.d_hour = d_hour;
+	}
+	public int getD_minute() {
+		return d_minute;
+	}
+	public void setD_minute(int d_minute) {
+		this.d_minute = d_minute;
+	}
+	public Contest getContest() {
+		return contest;
+	}
+	public void setContest(Contest contest) {
+		this.contest = contest;
+	}
+	public IBaseService getBaseService() {
+		return baseService;
+	}
+	public void setBaseService(IBaseService baseService) {
+		this.baseService = baseService;
+	}
+	public List getDataList() {
+		return dataList;
+	}
+	public void setDataList(List dataList) {
+		this.dataList = dataList;
+	}
+	public List getNumList() {
+		return numList;
+	}
+	public void setNumList(List numList) {
+		this.numList = numList;
 	}
 	
 }

@@ -27,8 +27,9 @@ String basePath = (String)application.getAttribute("basePath");
 		<form id="form_status">
 			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
 			Problem ID:<s:if test="id == 0"><input type="text" name="id" /></s:if><s:else><input type="text" name="id" value="${id}" /></s:else>&nbsp;&nbsp;
-			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Judge Error'}" />
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Filter"/>
+			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Judge Error'}" />&nbsp;&nbsp;
+			<input type="submit" value="Filter"/>&nbsp;&nbsp;
+			<input type="button" value="Reset" id="reset" />
 		</form>
 		
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="status" style="text-align:center">
@@ -55,7 +56,7 @@ String basePath = (String)application.getAttribute("basePath");
 		</table>
 
 		<s:include value="/bottom.jsp" />
-		<script type="text/javascript" src="javascript/status.js"></script>
+		<script type="text/javascript" src="javascript/problem_status.js"></script>
 	</body>
 
 </html>

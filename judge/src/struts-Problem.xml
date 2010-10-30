@@ -74,8 +74,8 @@
 
 		<!-- 非比赛中的提交 -->
 		<action name="submit" class="problemAction" method="submit">
-			<result name="success" type="redirect">status.action</result>		
-			<result name="error" type="redirect">../user/toLogin.action</result>		
+			<result name="success" type="redirect">status.action?reset=1</result>		
+			<result name="error" type="redirect">../user/toLogin.action</result>	
 			<result name="input">/problem/submit.jsp</result>
 		</action>
 		
