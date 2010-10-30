@@ -29,13 +29,15 @@ $(document).ready(function() {
 					},
 		  			{
 		  				"fnRender": function ( oObj ) {
-		  					return oObj.aData[4] == null ? '' : oObj.aData[4] + " KB";
-		  				}
+		  					return oObj.aData[3] == 'Accepted' ? oObj.aData[4] + " KB" : "";
+		  				},
+						"sClass": "memory"
 		  			},
 		  			{ 
 		  				"fnRender": function ( oObj ) {
-		  					return oObj.aData[5] == null ? '' : oObj.aData[5] + " ms";
-		  				}
+		  					return oObj.aData[3] == 'Accepted' ? oObj.aData[5] + " ms" : "";
+		  				},
+		  				"sClass": "time"
 		  			},
 		  			{ 
 		  				"fnRender": function ( oObj ) {
@@ -59,7 +61,7 @@ $(document).ready(function() {
 			aoData.push( { "name": "un", "value": un } );
 			aoData.push( { "name": "id", "value": id } );
 			aoData.push( { "name": "res", "value": res } );
-
+			
 			$.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
@@ -70,6 +72,12 @@ $(document).ready(function() {
 		},
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		    $(nRow).addClass(aData[3]=="Accepted" ? "yes" : aData[3].indexOf("ing") < 0 || aData[3].indexOf("rror") >= 0 ? "no" : "pending");
+		    $(nRow).attr("id", aData[0]);
+		    
+		    if ($(nRow).hasClass("pending")){
+		    	getResult(aData[0]);
+		    }
+		    
 			return nRow;
 		}
 	});
@@ -79,8 +87,35 @@ $(document).ready(function() {
 	$("#form_status").submit(function(){
 		var id = $("[name='id']").val();
 		if (!id || parseInt(id)) {
+//			oTable.oSettings._iDisplayStart = 1;
 			oTable.fnDraw();
 		}
 		return false;
 	});
 });
+
+function getResult(id){
+	baseService.getResult(id, cb);
+}
+
+function cb(back){
+	var id = back[0];
+	var result = back[1];
+	var memory = back[2];
+	var time = back[3];
+	var $row = $("#" + id);
+	if ($row.length){
+		$(".result", $row).html(result);
+		if (result.indexOf("ing") >= 0 && result.indexOf("rror") < 0){
+			setTimeout("getResult(" + id + ")", 1000);
+		} else if (result == "Accepted"){
+			$row.removeClass("pending");
+			$row.addClass("yes");
+			$(".memory", $row).html(memory + " KB");
+			$(".time", $row).html(time + " ms");
+		} else {
+			$row.removeClass("pending");
+			$row.addClass("no");
+		}
+	}
+}

@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 import judge.bean.Problem;
+import judge.bean.Submission;
 import judge.dao.IBaseDao;
 import judge.service.IBaseService;
 
@@ -84,6 +85,21 @@ public class BaseService implements IBaseService {
 		problem.setHidden(1 - problem.getHidden());
 		this.modify(problem);
 		return problem.getHidden();
+	}
+	
+	/**
+	 * 根据提交ID查询结果
+	 * @param id
+	 * @return 0:ID 1:结果 2:内存 3:时间
+	 */
+	public Object[] getResult(int id){
+		Object[] ret = new Object[4];
+		Submission s = (Submission) query(Submission.class, id);
+		ret[0] = id;
+		ret[1] = s.getStatus();
+		ret[2] = s.getMemory();
+		ret[3] = s.getTime();
+		return ret;
 	}
 
 }

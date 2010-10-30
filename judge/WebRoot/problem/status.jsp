@@ -14,6 +14,10 @@ String basePath = (String)application.getAttribute("basePath");
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
 		<script type="text/javascript" src="javascript/jquery.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
+
+	    <script type="text/javascript" src="dwr/interface/baseService.js"></script>
+		<script type='text/javascript' src='dwr/engine.js'></script>
+	    <script type='text/javascript' src='dwr/util.js'></script>
 	</head>
 
 	<body>

@@ -647,6 +647,8 @@ public class ContestAction extends BaseAction {
 		submission.setLanguage(language);
 		submission.setSource(source);
 		submission.setIsOpen(isOpen);
+		submission.setDispLanguage(((Map<String, String>)sc.getAttribute(problem.getOriginOJ())).get(language));
+		submission.setUsername(user.getUsername());
 		baseService.add(submission);
 		try {
 			Submitter submitter = (Submitter) ProblemAction.submitterMap.get(problem.getOriginOJ()).clone();

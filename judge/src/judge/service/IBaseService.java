@@ -61,5 +61,12 @@ public interface IBaseService {
 	public List list(String queryString, int FirstResult, int MaxResult);
 	
 	public int toggleAccess(int id);
+	
+	/**
+	 * 根据提交ID查询结果
+	 * @param id
+	 * @return 0:ID 1:结果 2:内存 3:时间
+	 */
+	public Object[] getResult(int id);
 
 }

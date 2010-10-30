@@ -326,6 +326,8 @@ public class ProblemAction extends BaseAction{
 		submission.setLanguage(language);
 		submission.setSource(source);
 		submission.setIsOpen(isOpen);
+		submission.setDispLanguage(((Map<String, String>)sc.getAttribute(problem.getOriginOJ())).get(language));
+		submission.setUsername(user.getUsername());
 		baseService.add(submission);
 		try {
 			Submitter submitter = (Submitter) submitterMap.get(problem.getOriginOJ()).clone();
@@ -349,7 +351,7 @@ public class ProblemAction extends BaseAction{
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 		
-		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen from Submission s where 1=1 ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen from Submission s where s.contestId = 0 ");
 
 		dataTablesPage = new DataTablesPage();
 

@@ -5,6 +5,7 @@
 		<create javascript="baseService" creator="spring">
 			<param name="beanName" value="baseService" />
 			<include method="toggleAccess"/>
+			<include method="getResult"/>
 		</create>
 	</allow>
 </dwr>
