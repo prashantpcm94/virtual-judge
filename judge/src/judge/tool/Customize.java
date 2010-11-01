@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.apache.struts2.ServletActionContext;
-
 import judge.bean.Problem;
 import judge.bean.Submission;
 import judge.bean.User;

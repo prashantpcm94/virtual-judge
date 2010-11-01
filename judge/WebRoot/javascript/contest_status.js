@@ -21,7 +21,7 @@ $(document).ready(function() {
 		  			{
 		  				"fnRender": function ( oObj ) {
 			  				return "<a href='user/profile.action?uid=" + oObj.aData[9] + "'>" + oObj.aData[1] + "</a>";
-		  				},
+		  				}
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {

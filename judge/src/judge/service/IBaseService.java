@@ -3,7 +3,9 @@ package judge.service;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public interface IBaseService {
 	/**
 	 * 添加实体
@@ -22,7 +24,6 @@ public interface IBaseService {
 	 * @param entityClass
 	 * @param id
 	 */
-	@SuppressWarnings("unchecked")
 	public void delete(Class entityClass, Serializable id);
 	
 	/**
@@ -42,22 +43,18 @@ public interface IBaseService {
 	 * 添加/修改实体集合
 	 * @param entity 实体的类
 	 */
-	@SuppressWarnings("unchecked")
 	public void addOrModify(Collection entity);
 
 	
-	@SuppressWarnings("unchecked")
 	public Object query(Class entityClass, Serializable id);
 	
 
-	@SuppressWarnings("unchecked")
 	public List query(String queryString);
 	
 
 	public long count(String hql);
 	
 
-	@SuppressWarnings("unchecked")
 	public List list(String queryString, int FirstResult, int MaxResult);
 	
 	public int toggleAccess(int id);
@@ -69,4 +66,9 @@ public interface IBaseService {
 	 */
 	public Object[] getResult(int id);
 
+	public List query(String queryString, Map parMap) ;
+
+	public List list(String hql, Map parMap, int FirstResult, int MaxResult);
+
+	public long count(String hql, Map parMap);
 }

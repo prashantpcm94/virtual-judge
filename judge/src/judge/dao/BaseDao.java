@@ -2,8 +2,11 @@ package judge.dao;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -80,5 +83,63 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		if (entity != null)
 			this.getHibernateTemplate().refresh(entity);
 		return entity;
+	}
+	
+	public List query(String hql, Map parMap, int FirstResult, int MaxResult) {
+		Session session = this.getHibernateTemplate().getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		t.begin();
+		Query queryObject = session.createQuery(hql); 
+		if (parMap != null) {
+			for (Iterator i = parMap.entrySet().iterator(); i.hasNext();) {
+				Map.Entry entry = (Map.Entry) i.next();
+				try {
+					if (entry.getValue() instanceof List) {
+						queryObject.setParameterList((String) entry.getKey(), (List) entry.getValue());
+					} else if (entry.getValue() instanceof String[]) {
+						queryObject.setParameterList((String) entry.getKey(), (String[]) entry.getValue());
+					} else {
+						queryObject.setParameter((String) entry.getKey(), entry.getValue());
+					}
+				} catch (HibernateException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		queryObject.setFirstResult(FirstResult);
+		queryObject.setMaxResults(MaxResult);
+		List list = queryObject.list();
+		t.commit();
+		session.clear();
+		session.close();
+		return list;
+	}
+	
+	public List query(String hql, Map parMap) {
+		Session session = this.getHibernateTemplate().getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		t.begin();
+		Query queryObject = session.createQuery(hql); 
+		if (parMap != null) {
+			for (Iterator i = parMap.entrySet().iterator(); i.hasNext();) {
+				Map.Entry entry = (Map.Entry) i.next();
+				try {
+					if (entry.getValue() instanceof List) {
+						queryObject.setParameterList((String) entry.getKey(), (List) entry.getValue());
+					} else if (entry.getValue() instanceof String[]) {
+						queryObject.setParameterList((String) entry.getKey(), (String[]) entry.getValue());
+					} else {
+						queryObject.setParameter((String) entry.getKey(), entry.getValue());
+					}
+				} catch (HibernateException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		List list = queryObject.list();
+		t.commit();
+		session.clear();
+		session.close();
+		return list;
 	}
 }

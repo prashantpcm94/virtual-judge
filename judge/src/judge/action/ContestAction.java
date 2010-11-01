@@ -87,9 +87,11 @@ public class ContestAction extends BaseAction {
 		long cnt = baseService.count(hql.toString());
 		dataTablesPage = new DataTablesPage();
 		dataTablesPage.setITotalRecords(cnt);
+		Map paraMap = new HashMap();
 		if (sSearch != null && !sSearch.trim().isEmpty()){
 			sSearch = sSearch.toLowerCase().trim();
-			hql.append(" and (contest.title like '%" + sSearch + "%' or user.username like '%" + sSearch + "%') ");
+			paraMap.put("keyword", "%" + sSearch + "%");
+			hql.append(" and (contest.title like :keyword or user.username like :keyword) ");
 		}
 
 		curDate = new Date();
@@ -109,7 +111,7 @@ public class ContestAction extends BaseAction {
 		} else if (!s && !r && !e) {
 			hql.append(" and 1 = 0 ");
 		}
-		dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
+		dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString(), paraMap));
 		
 //		System.out.println("iSortCol_0 = " + iSortCol_0);
 		if (iSortCol_0 != null){
@@ -124,7 +126,7 @@ public class ContestAction extends BaseAction {
 			}
 		}
 
-		List<Object[]> tmp = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
+		List<Object[]> tmp = baseService.list(hql.toString(), paraMap, iDisplayStart, iDisplayLength);
 		List aaData =  new ArrayList();
 		for (Object[] o : tmp) {
 			contest = (Contest) o[0];

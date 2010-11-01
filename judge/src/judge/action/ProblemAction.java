@@ -134,10 +134,12 @@ public class ProblemAction extends BaseAction{
 		dataTablesPage = new DataTablesPage();
 		dataTablesPage.setITotalDisplayRecords(cnt);
 		dataTablesPage.setITotalRecords(cnt);
+		Map paraMap = new HashMap();
 		if (sSearch != null && !sSearch.trim().isEmpty()){
 			sSearch = sSearch.toLowerCase().trim();
-			hql.append(" and (problem.title like '%" + sSearch + "%' or problem.originOJ like '%" + sSearch + "%' or problem.originProb like '%" + sSearch + "%'" + (sSearch.matches("\\d+") ? " or problem.id = " + sSearch : "") + ") ");
-			dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString()));
+			paraMap.put("keyword", "%" + sSearch + "%");
+			hql.append(" and (problem.title like :keyword or problem.originOJ like :keyword or problem.originProb like :keyword " + (sSearch.matches("\\d+") ? " or problem.id = " + sSearch : "") + ") ");
+			dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString(), paraMap));
 		}
 //		System.out.println("iSortCol_0 = " + iSortCol_0);
 		if (iSortCol_0 != null){
@@ -152,7 +154,7 @@ public class ProblemAction extends BaseAction{
 			}
 		}
 
-		List<Object[]> tmp = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
+		List<Object[]> tmp = baseService.list(hql.toString(), paraMap, iDisplayStart, iDisplayLength);
 		List aaData =  new ArrayList();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		for (Object[] o : tmp) {

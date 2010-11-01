@@ -10,6 +10,7 @@ package judge.service.imp;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import judge.bean.Problem;
 import judge.bean.Submission;
@@ -78,7 +79,35 @@ public class BaseService implements IBaseService {
 	public List list(String queryString, int FirstResult, int MaxResult) {
 		return BaseService.baseDao.query(queryString, FirstResult, MaxResult);
 	}
+
+	public List list(String hql, Map parMap, int FirstResult, int MaxResult) {
+		return BaseService.baseDao.query(hql, parMap, FirstResult, MaxResult);
+	}
 	
+	public List query(String queryString, Map parMap) {
+		return BaseService.baseDao.query(queryString, parMap);
+	}
+	
+	public long count(String hql, Map parMap) {
+		if(hql.contains("union")){
+			String hql1 = "select count(*) from (" + hql + ")";
+			long re;
+			re = ((Number)this.query(hql1, parMap).get(0)).longValue();
+			return re;
+		}else{
+			String hql1 = hql.substring(hql.indexOf("from"));
+			hql1 = "select count(*) " + hql1;
+			long re;
+			//根据hql中是否有group by和distinct来选择计算方法
+			if (hql.contains("group by")||hql.contains("distinct")){
+				re = this.query(hql, parMap).size();
+			}else{
+				re = ((Number)this.query(hql1, parMap).get(0)).longValue();
+			}
+			return re;
+		}
+	}
+
 	public int toggleAccess(int id){
 		Problem problem = (Problem) this.query(Problem.class, id);
 		System.out.println("title = " + problem.getTitle());
