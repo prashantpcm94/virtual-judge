@@ -1,8 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%
-String basePath = (String)application.getAttribute("basePath");
-%>
+<% String basePath = (String)application.getAttribute("basePath"); %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -31,6 +29,12 @@ String basePath = (String)application.getAttribute("basePath");
 	<body>
 		<s:include value="/top.jsp" />
 		<s:actionerror />
+		
+		<div class="head_status" style="float:right;display:none">
+			<span class="Scheduled">Scheduled:</span><s:checkbox name="scheduled" value="true" fieldValue="1"/>  
+			<span class="Running">&nbsp;&nbsp;Running:</span><s:checkbox name="running" value="true" fieldValue="2"/>  
+			<span class="Ended">&nbsp;&nbsp;Ended:</span><s:checkbox name="ended" value="true" fieldValue="3"/>  
+		</div>
 		
 		<div class="ptt">Contest List</div>
 		<div class="plm">
@@ -66,16 +70,8 @@ String basePath = (String)application.getAttribute("basePath");
 			</tbody>
 		</table>
 
-		<div id="status" style="display:none">
-			<span class="Scheduled">Scheduled:</span><s:checkbox name="scheduled" value="true" fieldValue="1"/>  
-			<span class="Running">&nbsp;&nbsp;Running:</span><s:checkbox name="running" value="true" fieldValue="2"/>  
-			<span class="Ended">&nbsp;&nbsp;Ended:</span><s:checkbox name="ended" value="true" fieldValue="3"/>  
-		</div>
-
 		<s:include value="/bottom.jsp" />
 		<script type="text/javascript" src="javascript/listContest.js"></script>
 		<script type="text/javascript" src="javascript/common.js"></script>
 	</body>
-
-
 </html>

@@ -44,7 +44,7 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 	}
 	
 	public void addOrModify(Collection entity) {
-		Session session = this.getHibernateTemplate().getSessionFactory().openSession();
+		Session session = super.getSession();
 		Transaction tx = session.beginTransaction();
 		tx.begin();
 		try {
@@ -56,6 +56,7 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 			e.printStackTrace();
 			tx.rollback();
 		}
+		super.releaseSession(session); 
 	}
 
 	public List query(String queryString) {
@@ -63,9 +64,7 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 	}
 
 	public List query(String queryString, int FirstResult, int MaxResult) {
-
-		Session session = this.getHibernateTemplate().getSessionFactory()
-				.openSession();
+		Session session = super.getSession();
 		Transaction t = session.beginTransaction();
 		t.begin();
 		Query queryObject = session.createQuery(queryString);
@@ -73,8 +72,7 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		queryObject.setMaxResults(MaxResult);
 		List list = queryObject.list();
 		t.commit();
-		session.clear();
-		session.close();
+		super.releaseSession(session); 
 		return list;
 	}
 
@@ -86,7 +84,7 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 	}
 	
 	public List query(String hql, Map parMap, int FirstResult, int MaxResult) {
-		Session session = this.getHibernateTemplate().getSessionFactory().openSession();
+		Session session = super.getSession();
 		Transaction t = session.beginTransaction();
 		t.begin();
 		Query queryObject = session.createQuery(hql); 
@@ -110,13 +108,12 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		queryObject.setMaxResults(MaxResult);
 		List list = queryObject.list();
 		t.commit();
-		session.clear();
-		session.close();
+		super.releaseSession(session); 
 		return list;
 	}
 	
 	public List query(String hql, Map parMap) {
-		Session session = this.getHibernateTemplate().getSessionFactory().openSession();
+		Session session = super.getSession();
 		Transaction t = session.beginTransaction();
 		t.begin();
 		Query queryObject = session.createQuery(hql); 
@@ -138,8 +135,7 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		}
 		List list = queryObject.list();
 		t.commit();
-		session.clear();
-		session.close();
+		super.releaseSession(session); 
 		return list;
 	}
 }

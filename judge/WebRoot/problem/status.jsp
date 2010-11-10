@@ -26,7 +26,8 @@ String basePath = (String)application.getAttribute("basePath");
 		
 		<form id="form_status">
 			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
-			Problem ID:<s:if test="id == 0"><input type="text" name="id" /></s:if><s:else><input type="text" name="id" value="${id}" /></s:else>&nbsp;&nbsp;
+			OJ:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJList4Status" />&nbsp;&nbsp;
+			Problem ID:<s:textfield name="probNum" />&nbsp;&nbsp;
 			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Judge Error'}" />&nbsp;&nbsp;
 			<input type="submit" value="Filter"/>&nbsp;&nbsp;
 			<input type="button" value="Reset" id="reset" />
@@ -46,11 +47,13 @@ String basePath = (String)application.getAttribute("basePath");
 					<th>Submit Time</th>
 					<th></th>
 					<th></th>
+					<th></th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td colspan="11">Loading data from server</td>
+					<td colspan="13">Loading data from server</td>
 				</tr>
 			</tbody>
 		</table>

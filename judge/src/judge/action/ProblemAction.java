@@ -114,6 +114,12 @@ public class ProblemAction extends BaseAction{
 		lf.put("HDU", "%I64d & %I64u");
 		lf.put("HYSBZ", "%I64d & %I64u");
 	}
+	
+	static private List<String> OJList4Status = new ArrayList<String>();
+	static {
+		OJList4Status.add("All");
+		OJList4Status.addAll(OJList);
+	}
 
 	public String toListProblem() {
 		return SUCCESS;
@@ -343,6 +349,12 @@ public class ProblemAction extends BaseAction{
 	}
 	
 	public String status() {
+		if (id != 0){
+			problem = (Problem) baseService.query(Problem.class, id);
+			OJId = problem.getOriginOJ();
+			probNum = problem.getOriginProb();
+		}
+		
 		Map session = ActionContext.getContext().getSession();
 		if (session.containsKey("error")){
 			this.addActionError((String) session.get("error"));
@@ -359,7 +371,7 @@ public class ProblemAction extends BaseAction{
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 		
-		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen from Submission s where s.contestId = 0 ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen, p.originOJ, p.originProb from Submission s, Problem p where s.problemId = p.id and s.contestId = 0 ");
 
 		dataTablesPage = new DataTablesPage();
 
@@ -371,7 +383,14 @@ public class ProblemAction extends BaseAction{
 		}
 		
 		if (id != 0){
-			hql.append(" and s.problemId = " + id);
+			hql.append(" and p.id = " + id);
+		} else {
+			if (OJList.contains(OJId)){
+				hql.append(" and p.originOJ = '" + OJId + "' ");
+			}
+			if (!probNum.isEmpty()){
+				hql.append(" and p.originProb = '" + probNum + "' ");
+			}
 		}
 		
 		if (res == 1){
@@ -395,7 +414,7 @@ public class ProblemAction extends BaseAction{
 		dataTablesPage.setITotalDisplayRecords(9999999L);
 		
 		List<Object[]> aaData = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
-
+		
 		for (Object[] o : aaData) {
 			o[8] = sdf.format((Date)o[8]);
 			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0; 
@@ -662,5 +681,8 @@ public class ProblemAction extends BaseAction{
 	}
 	public void setUn(String un) {
 		this.un = un;
+	}
+	public List<String> getOJList4Status() {
+		return OJList4Status;
 	}
 }

@@ -2,9 +2,9 @@ package judge.tool;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -24,7 +24,7 @@ public class StartUpListener implements ServletContextListener {
 		
 		Map<String, String> languageList;
 		
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("0", "G++");
 		languageList.put("1", "GCC");
 		languageList.put("2", "Java");
@@ -34,7 +34,7 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("6", "Fortran");
 		sc.setAttribute("POJ", languageList);
 		
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("1", "C (gcc 4.4.5)");
 		languageList.put("2", "C++ (g++ 4.4.5)");
 		languageList.put("3", "FPC (fpc 2.4.0)");
@@ -45,14 +45,14 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("8", "PHP (PHP 5.3.2)");
 		sc.setAttribute("ZOJ", languageList);
 	
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("C", "C");
 		languageList.put("C++", "C++");
 		languageList.put("Pascal", "Pascal");
 		languageList.put("Java", "Java");
 		sc.setAttribute("UVALive", languageList);
 		
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("GNU C (MinGW, GCC 4)", "GNU C (MinGW, GCC 4)");
 		languageList.put("GNU CPP (MinGW, GCC 4)", "GNU CPP (MinGW, GCC 4)");
 		languageList.put("Visual Studio 8 C++", "Visual Studio 8 C++");
@@ -62,7 +62,7 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("Delphi 7.0", "Delphi 7.0");
 		sc.setAttribute("SGU", languageList);
 		
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("9", "C");
 		languageList.put("10", "C++");
 		languageList.put("3", "Pascal");
@@ -70,14 +70,14 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("11", "C#");
 		sc.setAttribute("URAL", languageList);
 
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("0", "C");
 		languageList.put("1", "C++");
 		languageList.put("2", "Pascal");
 		languageList.put("3", "Java");
 		sc.setAttribute("HUST", languageList);
 
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("11", "C (gcc 4.3.2)");
 		languageList.put("34", "C99 strict (gcc 4.3.2)");
 		languageList.put("1", "C++ (g++ 4.0.0-8)");
@@ -121,7 +121,7 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("35", "JavaScript (rhino 1.7R1-2)");
 		sc.setAttribute("SPOJ", languageList);
 
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("0", "G++");
 		languageList.put("1", "GCC");
 		languageList.put("2", "C++");
@@ -130,7 +130,7 @@ public class StartUpListener implements ServletContextListener {
 		languageList.put("5", "Java");
 		sc.setAttribute("HDU", languageList);
 		
-		languageList = new HashMap<String, String>();
+		languageList = new TreeMap<String, String>();
 		languageList.put("0", "G++");
 		languageList.put("1", "GCC");
 		languageList.put("2", "Pascal");

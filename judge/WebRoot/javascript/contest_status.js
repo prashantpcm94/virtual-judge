@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	
-	var href = location.href;
-	var cid = href.substring(href.indexOf("cid") + 4);
+	var href = location.href.match(/cid=\d+/g).toString();
+	var cid = href.substring(4);
 	
 	oTable = $('#status').dataTable({
 		"bProcessing": true,

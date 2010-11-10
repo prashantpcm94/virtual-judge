@@ -7,7 +7,6 @@ $(document).ready(function() {
 		"bAutoWidth": false,
 		"bStateSave": true,
 		"aaSorting": [[ 2, "desc" ]],
-		"sDom": '<"H"lf<"head_status">r>t<"F"ip><"clear">',
 
 		"aoColumns": [
 		  			{ 
@@ -82,11 +81,11 @@ $(document).ready(function() {
 		"sPaginationType": "full_numbers"
 	});
 	
-	$("div.head_status").html($("#status").html());
-	$("div.head_status").css("float", "right");
+	$("div.head_status").clone().insertBefore("div#listContest_processing").show();
 	$("div.dataTables_filter").css("width", "250px");
 	
 	$("input[type='checkbox']").change(function(){
+		$("[name='"+$(this).attr("name")+"']").attr("checked", $(this).attr("checked"));
 		oTable.fnDraw();
 	});
 	

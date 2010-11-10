@@ -1,4 +1,12 @@
+var first = 1;
+
 $(document).ready(function() {
+
+	var id = "0";
+	if (location.href.indexOf("id=") >= 0){
+		id = location.href.match(/id=\d+/g).toString().substring(3);
+	}
+
 	oTable = $('#status').dataTable({
 		"bProcessing": true,
 		"bServerSide": true,
@@ -21,7 +29,7 @@ $(document).ready(function() {
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
-			  				return "<a href='problem/viewProblem.action?id=" + oObj.aData[2] + "'>" + oObj.aData[2] + "</a>";
+			  				return "<a href='problem/viewProblem.action?id=" + oObj.aData[2] + "'>" + oObj.aData[11] + " " + oObj.aData[12] + "</a>";
 		  				}
 		  			},
 		  			{
@@ -51,15 +59,22 @@ $(document).ready(function() {
 		  			},
 		  			{},
 		  			{"bVisible": false},
-		  			{"bVisible": false}
+		  			{"bVisible": false},
+		  			{"bVisible": false},
+					{"bVisible": false}
 		  		],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 			var un = $("[name='un']").val();
-			var id = $("[name='id']").val();
+			var OJId = $("[name='OJId']").val();
+			var probNum = $("[name='probNum']").val();
 			var res = $("[name='res']").val();
 		
 			aoData.push( { "name": "un", "value": un } );
-			aoData.push( { "name": "id", "value": id } );
+			if (first){
+				aoData.push( { "name": "id", "value": id } );
+			}
+			aoData.push( { "name": "OJId", "value": OJId } );
+			aoData.push( { "name": "probNum", "value": probNum } );
 			aoData.push( { "name": "res", "value": res } );
 			
 			$.ajax( {
@@ -94,16 +109,24 @@ $(document).ready(function() {
 	});
 	
 	$("#reset").click(function(){
-		$(".errorMessage").remove();
-		$("[name='un']").val("");
-		$("[name='id']").val("");
-		$("[name='res']").val(0);
-		oTable.fnPageChange( 'first' );
+		if (location.href.indexOf("id=") >= 0){
+			location.href = "problem/status.action";
+		} else {
+			$(".errorMessage").remove();
+			$("[name='un']").val("");
+			$("[name='OJId']").val("All");
+			$("[name='probNum']").val("");
+			$("[name='res']").val(0);
+			oTable.fnPageChange( 'first' );
+		}
 	});
 	
 	if (location.href.indexOf("reset") >= 0){
 		oTable.fnPageChange( 'first' );
 	}
+	
+	first = 0;
+	
 });
 
 function getResult(id){

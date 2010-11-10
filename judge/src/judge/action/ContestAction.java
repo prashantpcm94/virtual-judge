@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +53,7 @@ public class ContestAction extends BaseAction {
 	private String source;
 	private String un, num;
 	private Date curDate;
-	private List numList;
+	private Map<String, String> numList;
 	private Map<Object, String> languageList;
 	
 	private boolean s, r, e;	//比赛进行状态
@@ -487,11 +488,11 @@ public class ContestAction extends BaseAction {
 			}
 		}
 		
-		numList = new ArrayList<String>();
-		numList.add("All");
+		numList = new TreeMap();
+		numList.put("-", "All");
 		List<Object[]> tmpList = baseService.query("select cp.num, p.title from Cproblem cp, Problem p where p.id = cp.problemId and cp.contestId = " + cid + " order by cp.num asc");
 		for (Object[] o : tmpList) {
-			numList.add(o[0] + " - " + o[1]);
+			numList.put((String) o[0], o[0] + " - " + o[1]);
 		}
 
 		if (session.containsKey("error")){
@@ -520,8 +521,8 @@ public class ContestAction extends BaseAction {
 			hql.append(" and s.username = '" + un + "' ");
 		}
 		
-		if (!num.equals("All")){
-			hql.append(" and cp.num = '" + num.charAt(0) + "' ");
+		if (!num.equals("-")){
+			hql.append(" and cp.num = '" + num + "' ");
 		}
 		
 		if (res == 1){
@@ -1202,10 +1203,10 @@ public class ContestAction extends BaseAction {
 	public void setDataList(List dataList) {
 		this.dataList = dataList;
 	}
-	public List getNumList() {
+	public Map<String, String> getNumList() {
 		return numList;
 	}
-	public void setNumList(List numList) {
+	public void setNumList(Map<String, String> numList) {
 		this.numList = numList;
 	}
 	
