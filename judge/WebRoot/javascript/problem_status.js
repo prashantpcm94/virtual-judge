@@ -121,7 +121,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	if (location.href.indexOf("reset") >= 0){
+	if (location.href.indexOf("reset") >= 0 || location.href.indexOf("id=") >= 0){
 		oTable.fnPageChange( 'first' );
 	}
 	
