@@ -21,3 +21,12 @@ function comfirmDeleteContest(id){
 		location = 'contest/deleteContest.action?cid=' + id;
 	}
 }
+
+/**
+ * 为字符串增加trim函数
+ */
+if(typeof String.prototype.trim !== 'function') {
+	String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g, '');
+	}
+}

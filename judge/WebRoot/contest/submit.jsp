@@ -33,13 +33,15 @@ String basePath = (String)application.getAttribute("basePath");
 						</td>
 					</tr>
 				</table>
-				<s:textarea name="source" rows="25" cols="90" />
+				<s:textarea name="source" rows="25" cols="100" />
 				<br />
 				<input type="hidden" value="${pid}" name="pid" />
-				<input type="submit" value="Submit" class="btn" />
-				<s:actionerror />
+				<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
+				<input style="float:right" class="bnt1" type="submit" value="Submit" />
+				<div id="errorMsg" style="color:red;font-weight:bold;float:right"><s:actionerror /></div>
 			</form>
 		</div>
+		<div style="clear:both" />
 		<s:include value="/bottom.jsp" />
 	</body>
 </html>

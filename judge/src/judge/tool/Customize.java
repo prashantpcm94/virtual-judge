@@ -21,8 +21,8 @@ public class Customize {
 	static int pto[] = new int[100000];
 	
 	@SuppressWarnings("unchecked")
-	static public void exe(){
-
+	static public void exe2(){
+/*
 		List<Object[]> plist = baseService.query("select p.id, p.originOJ, p.originProb from Problem p order by p.originOJ asc, p.originProb asc");
 		
 		String last = null, now;
@@ -119,7 +119,7 @@ public class Customize {
 			baseService.addOrModify(ld);
 			baseService.addOrModify(lp);
 		}
-		
+*/		
 	}
 
 

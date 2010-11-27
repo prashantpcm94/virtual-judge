@@ -1,25 +1,17 @@
 package judge.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import judge.bean.Description;
 import judge.bean.Problem;
 import judge.bean.Submission;
 import judge.service.imp.BaseService;
 
 @SuppressWarnings("unchecked")
 public class JudgeService extends BaseService {
-	
-	public int toggleAccess(int id){
-		Problem problem = (Problem) this.query(Problem.class, id);
-		System.out.println("title = " + problem.getTitle());
-		problem.setHidden(1 - problem.getHidden());
-		this.modify(problem);
-		return problem.getHidden();
-	}
 	
 	/**
 	 * 根据提交ID查询结果
@@ -43,10 +35,25 @@ public class JudgeService extends BaseService {
 	
 	public Problem findProblem(String OJ, String problemId){
 		Map paraMap = new HashMap<String, String>();
-		paraMap.put("OJ", OJ);
-		paraMap.put("pid", problemId);
+		paraMap.put("OJ", OJ.trim());
+		paraMap.put("pid", problemId.trim());
 		List list = query("select p from Problem p left join fetch p.descriptions where p.originOJ = :OJ and p.originProb = :pid", paraMap);
 		return list.isEmpty() ? null : (Problem)list.get(0);
 	}
+
+	public List findProblemSimple(String OJ, String problemId){
+		Map paraMap = new HashMap<String, String>();
+		paraMap.put("OJ", OJ.trim());
+		paraMap.put("pid", problemId.trim());
+		List list = query("select p from Problem p left join fetch p.descriptions where p.originOJ = :OJ and p.originProb = :pid", paraMap);
+		if (list.isEmpty()){
+			return null;
+		}
+		List res = new ArrayList();
+		res.add(((Problem)list.get(0)).getId());
+		res.add(((Problem)list.get(0)).getTitle());
+		return res;
+	}
+
 
 }

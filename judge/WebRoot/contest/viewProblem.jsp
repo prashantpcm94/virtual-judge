@@ -24,8 +24,8 @@ String basePath = (String)application.getAttribute("basePath");
 		<table width="100%"><tr>
 		<td id="left_view">
 			<div class="ptt">
-				<s:if test="contestOver == 1">
-					<a href="${problem.url}">${cproblem.num} - ${problem.title}</a>
+				<s:if test="contestOver == 1 || #session.visitor.sup == 1">
+					<a href="problem/viewProblem.action?id=${problem.id}">${cproblem.num} - ${problem.title}</a>
 				</s:if>
 				<s:else>
 					${cproblem.num} - ${problem.title}
@@ -93,6 +93,10 @@ String basePath = (String)application.getAttribute("basePath");
 								<span style="float:right" ><a class="vote" id="vote_${id}" href="javascript:void(0)" style="text-decoration:none"><img height="18" src="images/thumb_up.png" border="0"/>${vote}</a></span>
 								<span style="float:right;display:none"><img height="18" src="images/thumb_up.png" border="0"/><span>${vote}</span></span>
 							</s:else>
+							<a style="padding-right:10px;float:right" href="problem/toEditDescription.action?id=${id}"><img height="18" src="images/ico_edit.gif" border="0"/></a>
+							<s:if test="#session.visitor.sup == 1 || #session.visitor.username == author">
+								<a style="padding-right:10px;float:right" id="del_${id}" class="delete_desc" href="javascript:void(0)"><img height="18" src="images/ico_delete.gif" border="0"/></a>
+							</s:if>
 						</span>
 					</div>
 					<div class="hiddable remark">

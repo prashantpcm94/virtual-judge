@@ -1,4 +1,6 @@
 var descList;
+var originWidth = [], originHeight = [];
+var imgCnt;
 
 function show(thisId){
 	$(".hiddable").hide();
@@ -14,6 +16,8 @@ function show(thisId){
 		}
 	}
 	
+	imgCnt = $(".textBG img").length;
+	$(".textBG img").load(resizeImg);
 }
 
 $(document).ready(function() {
@@ -86,6 +90,22 @@ $(document).ready(function() {
 		});
 		show(maxIdx);
 	}
-	
-	
+
 });
+
+$(window).resize(function(){
+	imgCnt = 1;
+	resizeImg();
+});
+
+function resizeImg(){
+	if (--imgCnt)return;
+	$(".textBG img").each(function(){
+		var originWidth = $(this).attr("width");
+		var originHeight = $(this).attr("height");
+		var frameWidth = (document.body.clientWidth - 320) * 0.95;
+		var scale = Math.min(frameWidth / originWidth, 1.0);
+		$(this).attr("width", scale * originWidth);
+		$(this).attr("height", scale * originHeight);
+	});
+}

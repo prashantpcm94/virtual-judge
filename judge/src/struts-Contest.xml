@@ -2,16 +2,7 @@
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
-	<package name="contest" extends="json-default"  namespace="/contest">
-		<global-results>
-	        <result name="error">/errorpages/error.jsp</result>
-	        <result name="sqlError">/errorpages/error.jsp</result>
-	        <result name="input">/errorpages/error.jsp</result>
-	    </global-results>
-	    <global-exception-mappings>
-	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />
-	        <exception-mapping result="error" exception="java.lang.Exception" />
-	    </global-exception-mappings>
+	<package name="contest" extends="default"  namespace="/contest">
 	    
 		<!-- 罗列比赛 -->
 		<action name="toListContest" class="contestAction" method="toListContest">
@@ -35,6 +26,7 @@
 		<!-- 添加比赛 -->
 		<action name="addContest" class="contestAction" method="addContest">
 			<result name="success" type="redirect">toListContest.action</result>		
+			<result name="error" type="redirect">../user/toLogin.action</result>		
 			<result name="input">/contest/addContest.jsp</result>		
 		</action>
 

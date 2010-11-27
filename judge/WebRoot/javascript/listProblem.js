@@ -38,8 +38,8 @@ $(document).ready(function() {
 		  			{"bVisible": false}
               ],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
-			var OJcol = $("#OJcol").val();
-			aoData.push( { "name": "OJId", "value": OJcol } );
+			var OJId = $("#OJId").val();
+			aoData.push( { "name": "OJId", "value": OJId } );
 			$.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
@@ -53,7 +53,10 @@ $(document).ready(function() {
 		"sPaginationType": "full_numbers"
 	});
 	
-	$("#OJcol").change(function(){
+	$("#addBtn").css("visibility", $("#OJId").val() == 'All' ? "hidden" : "visible");
+
+	$("#OJId").change(function(){
+		$("#addBtn").css("visibility", $("#OJId").val() == 'All' ? "hidden" : "visible");
 		oTable.fnDraw();
 	});
 	

@@ -2,16 +2,7 @@
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
-	<package name="problem" extends="json-default" namespace="/problem">
-		<global-results>
-	        <result name="error">/index.jsp</result>
-	        <result name="sqlError">/index.jsp</result>
-	        <result name="input">/errorpages/error.jsp</result>
-	    </global-results>
-	    <global-exception-mappings>
-	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />
-	        <exception-mapping result="error" exception="java.lang.Exception" />
-	    </global-exception-mappings>
+	<package name="problem" extends="default" namespace="/problem">
 	    
 		<!-- 罗列题目 -->
 		<action name="toListProblem" class="problemAction" method="listProblem">
@@ -29,8 +20,16 @@
 	    
 		<!-- 添加题目 -->
 		<action name="addProblem" class="problemAction" method="addProblem">
-			<result name="success" type="redirect">toListProblem.action</result>		
-			<result name="error" type="redirect">toListProblem.action</result>		
+			<result name="success" type="redirectAction">
+				<param name="actionName">toListProblem</param>
+				<param name="namespace">/problem</param>
+				<param name="OJId">${OJId}</param>
+			</result>
+			<result name="error" type="redirectAction">
+				<param name="actionName">toListProblem</param>
+				<param name="namespace">/problem</param>
+				<param name="OJId">${OJId}</param>
+			</result>
 		</action>
 		
 		<!-- 显示题目 -->
@@ -41,18 +40,6 @@
 
 		<!-- 为描述投票 -->
 		<action name="vote4Description" class="problemAction" method="vote4Description">
-		</action>
-
-		<!-- 删除题目 -->
-		<action name="deleteProblem" class="problemAction" method="deleteProblem">
-			<result name="success" type="redirect">toListProblem.action</result>		
-			<result name="error" type="redirect">toListProblem.action</result>		
-		</action>
-
-		<!-- 隐藏/反隐藏题目 -->
-		<action name="toggleAccess" class="problemAction" method="toggleAccess">
-			<result name="success" type="redirect">toListProblem.action</result>		
-			<result name="error" type="redirect">toListProblem.action</result>		
 		</action>
 
 		<!-- 显示提交 -->
@@ -91,15 +78,10 @@
 		
 		<!-- 修改题面 -->
 		<action name="editDescription" class="problemAction" method="editDescription">
-			<result name="success" type="redirectAction">
-				<param name="actionName">viewProblem</param>
-				<param name="namespace">/problem</param>
-				<param name="id">${id}</param>
-				<param name="edit">1</param>
-			</result>
+			<result name="success" type="redirect">${redir}</result>
 		</action>
 		
-		<!-- 修改题面 -->
+		<!-- 删除题面 -->
 		<action name="deleteDescription" class="problemAction" method="deleteDescription">
 		</action>
 		

@@ -39,9 +39,6 @@ String basePath = (String)application.getAttribute("basePath");
 				<a href="http://acm.hdu.edu.cn" target="_blank">HDU</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://61.187.179.132:8080/JudgeOnline/" target="_blank">HYSBZ</a>&nbsp;&nbsp;&nbsp;
 			</p>
-			<p>
-				<b>Note:</b> There are some bugs in IE, Firefox is recommended.
-			</p>
 			<br />
 			<b>Change Log:</b>
 			<ul>

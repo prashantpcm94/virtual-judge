@@ -32,7 +32,7 @@ public class SGUSpider extends Spider {
 			throw new Exception();
         }
         
-		problem.setTitle(regFind(tLine, "\\d{3}\\. ([\\s\\S]*?)</title>"));
+		problem.setTitle(regFind(tLine, "\\d{3}\\. ([\\s\\S]*?)</title>", 1));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
 			throw new Exception();
 		}

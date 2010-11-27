@@ -9,9 +9,9 @@
     <include file="struts-plugin.xml" />
     <include file="struts-Stat.xml" />
 
-	<package name="default" extends="struts-default">
+	<package name="default" extends="json-default">
 		<global-results>
-	        <result name="error">/index.jsp</result>
+	        <result name="error">/errorpages/error.jsp</result>
 	        <result name="sqlError">/errorpages/error.jsp</result>
 	        <result name="input">/errorpages/error.jsp</result>
 	    </global-results>
@@ -20,13 +20,10 @@
 	        <exception-mapping result="error" exception="java.lang.Exception" />
 	    </global-exception-mappings>
 	    
-	    
 	    <!-- 跳转至主页 -->
         <action name="toIndex" class="mainAction" method="toIndex">
 	        <result name="success">/index.jsp</result>
 	    </action>
-	    
-
 
 	</package>
 </struts>

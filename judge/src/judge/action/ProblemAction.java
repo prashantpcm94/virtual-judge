@@ -5,6 +5,7 @@
 package judge.action;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ public class ProblemAction extends BaseAction{
 	private int isOpen;
 	private int res;	//result
 	private String OJId;
-	private String probNum;
+	private String probNum, probNum1, probNum2;
 	private Problem problem;
 	private Description description;
 	private Submission submission;
@@ -78,7 +79,7 @@ public class ProblemAction extends BaseAction{
 			} else if (iSortCol_0 == 2){
 				hql.append(" order by problem.title " + sSortDir_0);
 			} else if (iSortCol_0 == 3){
-				hql.append(" order by problem.triggerTime " + sSortDir_0);
+				hql.append(" order by problem.triggerTime " + sSortDir_0 + " problem.originProb " + sSortDir_0);
 			} else if (iSortCol_0 == 4){
 				hql.append(" order by problem.source " + sSortDir_0);
 			}
@@ -91,64 +92,100 @@ public class ProblemAction extends BaseAction{
 		}
 		dataTablesPage.setAaData(aaData);
 		
-		this.addActionError((String) session.get("error"));
+		if (session.containsKey("error")){
+			this.addActionError((String) session.get("error"));
+		}
 		session.remove("error");
-		OJId = (String) session.get("OJId");
 
 		return SUCCESS;
 	}
 	
 	public String addProblem(){
-		if (!OJList.contains(OJId)){
-			this.addActionError("Please choose a legal OJ!");
-			return ERROR;
-		}
-		if (probNum.isEmpty()){
-			this.addActionError("Please enter the problem number!");
-			return ERROR;
-		}
 		Map session = ActionContext.getContext().getSession();
+		if (!OJList.contains(OJId)){
+			session.put("error", "Please choose a legal OJ!");
+			return ERROR;
+		}
 		User user = (User) session.get("visitor");
 		if (user == null){
-			this.addActionError("Please login first!");
+			session.put("error", "Please login first!");
 			return ERROR;
-		}
-		session.put("OJId", OJId);
-		
-		problem = judgeService.findProblem(OJId.trim(), probNum.trim());
-		if (problem == null){
-			problem = new Problem();
-			problem.setOriginOJ(OJId.trim());
-			problem.setOriginProb(probNum.trim());
-		} else {
-			for (Description desc : problem.getDescriptions()){
-				if ("0".equals(desc.getAuthor())){
-					description = desc;
-					break;
-				}
-			}
-		}
-		if (description == null){
-			description = new Description();
-			description.setUpdateTime(new Date());
-			description.setAuthor("0");
-			description.setRemarks("Initializatioin.");
-			description.setVote(0);
 		}
 
-		problem.setTitle("Crawling……");
-		problem.setTimeLimit(1);
-		problem.setTriggerTime(new Date());
-		baseService.addOrModify(problem);
-		Spider spider = (Spider) spiderMap.get(OJId).clone();
-		spider.setProblem(problem);
-		spider.setDescription(description);
-		try {
-			spider.start();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (probNum1 != null){
+			probNum1 = probNum1.trim();
+			if (probNum1.isEmpty()){
+				probNum1 = null;
+			}
+		}
+		if (probNum2 != null){
+			probNum2 = probNum2.trim();
+			if (probNum2.isEmpty()){
+				probNum2 = null;
+			}
+		}
+		if (probNum1 == null && probNum2 == null){
+			session.put("error", "Please enter at least ONE problem number!");
 			return ERROR;
 		}
+		List<String> probNumList = new ArrayList<String>();
+		if (probNum2 == null){
+			probNumList.add(probNum1);
+		} else if (probNum1 == null){
+			probNumList.add(probNum2);
+		} else if (probNum1.equals(probNum2)){
+			probNumList.add(probNum1);
+		} else if (probNum1.matches("\\d+") && probNum2.matches("\\d+")){
+			int l = Integer.parseInt(probNum1), r = Integer.parseInt(probNum2), tmp;
+			if (l > r){
+				tmp = l;
+				l = r;
+				r = tmp;
+			}
+			if (r - l > 9){
+				session.put("error", "You can add 10 problems at most for each time!");
+				return ERROR;
+			}
+			for (Integer a = l; a <= r; ++a) {
+				probNumList.add(a.toString());
+			}
+		} else {
+			session.put("error", "Invalid problem number ...");
+			return ERROR;
+		}
+		
+		for (String probNum : probNumList) {
+			description = null;
+			problem = judgeService.findProblem(OJId.trim(), probNum);
+			if (problem == null){
+				problem = new Problem();
+				problem.setOriginOJ(OJId.trim());
+				problem.setOriginProb(probNum);
+			} else {
+				for (Description desc : problem.getDescriptions()){
+					if ("0".equals(desc.getAuthor())){
+						description = desc;
+						break;
+					}
+				}
+			}
+			if (description == null){
+				description = new Description();
+				description.setUpdateTime(new Date());
+				description.setAuthor("0");
+				description.setRemarks("Initializatioin.");
+				description.setVote(0);
+			}
+			problem.setTitle("Crawling……");
+			problem.setTimeLimit(1);
+			problem.setTriggerTime(new Date());
+			baseService.addOrModify(problem);
+			Spider spider = (Spider) spiderMap.get(OJId).clone();
+			spider.setProblem(problem);
+			spider.setDescription(description);
+			spider.start();
+		}
+
 		return SUCCESS;
 	}
 	
@@ -210,22 +247,6 @@ public class ProblemAction extends BaseAction{
 			return INPUT;
 		}
 
-		if (problem.getHidden() > 0 && user.getSup() == 0 && problem.getCreatorId() != user.getId()){
-			this.addActionError("This problem is temporarily hidden by the creator!");
-			return INPUT;
-		}
-		
-
-/*		
-		dataList = baseService.query("select contest.beginTime, contest.endTime from Contest contest, Cproblem cproblem where cproblem.contestId = contest.id and cproblem.problemId = " + problem.getId());
-		for (int i = 0; i < dataList.size(); i++){
-			if (((Date)((Object[])dataList.get(i))[0]).compareTo(new Date()) < 0 && ((Date)((Object[])dataList.get(i))[1]).compareTo(new Date()) > 0){
-				this.addActionError("This problem is now in use for contests!");
-				return INPUT;
-			}
-		}
-*/
-		
 		if (!languageList.containsKey(language)){
 			this.addActionError("No such a language!");
 			return INPUT;
@@ -338,41 +359,6 @@ public class ProblemAction extends BaseAction{
 		return SUCCESS;
 	}
 	
-	public String deleteProblem(){
-		Map session = ActionContext.getContext().getSession();
-		problem = (Problem) baseService.query(Problem.class, id);
-		User user = (User) session.get("visitor");
-		if (user == null || user.getSup() == 0 && problem.getCreatorId() != user.getId()){
-			session.put("error", "You don't have access to operation on this problem!");
-			return ERROR;
-		}
-		long c = baseService.count("from Submission submission where submission.problemId = " + id);
-		long d = baseService.count("from Cproblem cproblem where cproblem.problemId = " + id);
-		if (c > 0){
-			session.put("error", "There are already submissions for this problem!");
-			return ERROR;
-		} else if (d > 0){
-			session.put("error", "There are already contests using this problem!");
-			return ERROR;
-		} else {
-			baseService.delete(problem);
-		}
-		return SUCCESS;
-	}
-
-	public String toggleAccess(){
-		Map session = ActionContext.getContext().getSession();
-		problem = (Problem) baseService.query(Problem.class, id);
-		User user = (User) session.get("visitor");
-		if (user == null || user.getSup() == 0 && problem.getCreatorId() != user.getId()){
-			session.put("error", "You don't have access to operation on this problem!");
-			return ERROR;
-		}
-		problem.setHidden(1 - problem.getHidden());
-		baseService.modify(problem);
-		return SUCCESS;
-	}
-	
 	public String toEditDescription(){
 		Map session = ActionContext.getContext().getSession();
 		List list = baseService.query("select d from Description d left join fetch d.problem where d.id = " + id);
@@ -381,6 +367,7 @@ public class ProblemAction extends BaseAction{
 		if (session.get("visitor") == null){
 			return "login";
 		}
+		redir = ServletActionContext.getRequest().getHeader("Referer") + "&edit=1";
 		return SUCCESS;
 	}
 	
@@ -425,10 +412,6 @@ public class ProblemAction extends BaseAction{
 				return ERROR;
 			}
 			problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
-			if (problem.getHidden() == 1){
-				session.put("error", "This source is currently not visible since the problem is hidden!");
-				return ERROR;
-			}
 		}
 		StringBuffer sb = new StringBuffer();
 		String os = submission.getSource();
@@ -622,6 +605,18 @@ public class ProblemAction extends BaseAction{
 	}
 	public void setJudgeService(JudgeService judgeService) {
 		this.judgeService = judgeService;
+	}
+	public String getProbNum1() {
+		return probNum1;
+	}
+	public void setProbNum1(String probNum1) {
+		this.probNum1 = probNum1;
+	}
+	public String getProbNum2() {
+		return probNum2;
+	}
+	public void setProbNum2(String probNum2) {
+		this.probNum2 = probNum2;
 	}
 
 }

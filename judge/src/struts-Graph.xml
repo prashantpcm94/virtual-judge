@@ -3,15 +3,6 @@
 
 <struts>
 	<package name="graph" extends="ofc2-default"  namespace="/graph">
-		<global-results>
-	        <result name="error">/index.jsp</result>
-	        <result name="sqlError">/index.jsp</result>
-	        <result name="input">/index.jsp</result>
-	    </global-results>
-	    <global-exception-mappings>
-	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />
-	        <exception-mapping result="error" exception="java.lang.Exception" />
-	    </global-exception-mappings>
 	    
 	    <!-- 跳转至登陆页面 -->
         <action name="draw" class="graphAction" method="draw">

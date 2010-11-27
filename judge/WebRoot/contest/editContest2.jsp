@@ -43,12 +43,13 @@ String basePath = (String)application.getAttribute("basePath");
 					<td></td>
 					<td>
 						<input type="hidden" name="cid" value="${cid}" />
-						<input class="bnt1" type="submit" value="Submit" />
-						<input class="bnt1" type="button" value="Cancel" onclick="history.go(-1)"/>
+						<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
+						<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Reset" onclick="location.reload();" />
+						<input style="float:right" class="bnt1" type="submit" value="Submit" />
+						<div id="errorMsg" style="color:red;font-weight:bold;float:right"><s:actionerror /></div>
 					</td>
 				</tr>
 			</table>
-			<s:actionerror />
 		</form>
 		<s:include value="/bottom.jsp" />
 	</body>

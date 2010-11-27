@@ -28,6 +28,7 @@ public class HDUSpider extends Spider {
 			throw new Exception();
         }
         
+        tLine = tLine.replaceAll("src=[\\S]*?/images", "src=http://acm.hdu.edu.cn/data/images");
         tLine = tLine.replaceAll("src='[\\S]*?/images", "src='http://acm.hdu.edu.cn/data/images");
         tLine = tLine.replaceAll("src=\"[\\S]*?/images", "src=\"http://acm.hdu.edu.cn/data/images");
 		System.out.println(tLine);

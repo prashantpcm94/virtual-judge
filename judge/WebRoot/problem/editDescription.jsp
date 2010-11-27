@@ -82,6 +82,7 @@ String basePath = (String)application.getAttribute("basePath");
 					</td>
 				</tr>
 			</table>
+			<s:hidden name="redir" />
 			<s:actionerror />
 		</form>
 		<div id="bottomSpace"></div>

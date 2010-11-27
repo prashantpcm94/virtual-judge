@@ -7,6 +7,7 @@
 			<include method="toggleAccess"/>
 			<include method="getResult"/>
 			<include method="fetchDescriptions"/>
+			<include method="findProblemSimple"/>
 		</create>
 		<convert match="judge.bean.Description" converter="bean" >
 			<param name="include" value="description,input,output,sampleInput,sampleOutput,hint"></param>

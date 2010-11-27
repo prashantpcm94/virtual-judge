@@ -10,11 +10,18 @@ String basePath = (String)application.getAttribute("basePath");
     	<base href="<%=basePath%>" />
 	    <title>Virtual Judge -- Contest</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	
+		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" src="javascript/common.js"></script>
+
+	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type='text/javascript' src='dwr/engine.js'></script>
+	    <script type='text/javascript' src='dwr/util.js'></script>
 	</head>
 
 	<body>
 		<s:include value="/top.jsp" />
-		<form action="contest/editContest.action" method="post">
+		<form id="form" action="contest/editContest.action" method="post">
 			<table>
 				<tr>
 					<td class="form_title">Title:</td>
@@ -52,22 +59,43 @@ String basePath = (String)application.getAttribute("basePath");
 				<tr>
 					<td class="form_title">Problems:</td>
 					<td>
-						<font color="green">Please enter the problem IDs you want to add to this contest.<br />Use non-digit separators to separator them.<br /></font>
-						<s:textarea name="problemList" value="%{problemList}" cols="80" rows="10" theme="simple" />
+						<table id="addTable">
+						<s:iterator value="OJs" status="stat">	
+							<tr>
+								<s:hidden name="pids" value="%{pids[#stat.index]}" />
+								<td><a class="deleteRow" href="javascript:void(0)"><img height="18" src="images/ico_delete.gif" border="0"/></a></td>
+								<td><s:select name="OJs" value="%{OJs[#stat.index]}" list="OJList" /></td>
+								<td><s:textfield name="probNums" value="%{probNums[#stat.index]}" /></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</s:iterator>
+						
+							<tr id="addRow" style="display:none">
+								<s:hidden name="pids" />
+								<td><a class="deleteRow" href="javascript:void(0)"><img height="18" src="images/ico_delete.gif" border="0"/></a></td>
+								<td><s:select name="OJs" list="OJList" /></td>
+								<td><s:textfield name="probNums" /></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</table>
+						<input type="button" id="addBtn" value="Add" />
 					</td>
 				</tr>
-				
 				<tr>
 					<td></td>
 					<td>
 						<input type="hidden" name="cid" value="${cid}" />
-						<input class="bnt1" type="submit" value="Submit" />
-						<input class="bnt1" type="button" value="Cancel" onclick="history.go(-1)"/>
+						<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
+						<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Reset" onclick="document.forms[0].reset();location.reload();" />
+						<input style="float:right" class="bnt1" type="submit" value="Submit" />
+						<div id="errorMsg" style="color:red;font-weight:bold;float:right"><s:actionerror /></div>
 					</td>
 				</tr>
 			</table>
-			<s:actionerror />
 		</form>
+		<script type="text/javascript" src="javascript/editContest.js"></script>
 		<s:include value="/bottom.jsp" />
 	</body>
 </html>
