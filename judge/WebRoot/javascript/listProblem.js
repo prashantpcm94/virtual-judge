@@ -1,7 +1,5 @@
-var oTable;
-
 $(document).ready(function() {
-	oTable = $('#listProblem').dataTable({
+	var oTable = $('#listProblem').dataTable({
 		"bProcessing": true,
 		"bServerSide": true,
 		"sAjaxSource": "problem/listProblem.action",
@@ -16,34 +14,47 @@ $(document).ready(function() {
 		"bStateSave": true,
 		"aaSorting": [[ 3, "desc" ]],
 		"aoColumns": [
-			              {"sClass": "center"},
-			              {"sClass": "title"},
-			              {"sClass": "center"},
-			              {"sClass": "time"},
-			              {"sClass": "opr"},
-			              {"sClass": "opr"},
-			              {"sClass": "opr"}
-		              ],
+					{
+		  				"sClass": "center status",
+						"bSortable": false
+					},
+		  			{
+		  				"fnRender": function ( oObj ) {
+			  				return "<a href='" + oObj.aData[6] + "'>" + oObj.aData[1] + "</a>";
+		  				},
+		  				"sClass": "center status"
+		  			},
+		  			{
+		  				"fnRender": function ( oObj ) {
+			  				return "<a href='problem/viewProblem.action?id=" + oObj.aData[5] + "'>" + oObj.aData[2] + "</a>";
+		  				},
+		  				"sClass": "title"
+		  			},
+		  			{
+		  				"sClass": "time"
+		  			},
+		  			{},
+		  			{"bVisible": false},
+		  			{"bVisible": false}
+              ],
+		"fnServerData": function ( sSource, aoData, fnCallback ) {
+			var OJcol = $("#OJcol").val();
+			aoData.push( { "name": "OJId", "value": OJcol } );
+			$.ajax( {
+				"dataType": 'json', 
+				"type": "POST", 
+				"url": sSource, 
+				"data": aoData, 
+				"success": fnCallback
+			} );
+		},
+
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers"
 	});
-} );
-
-var $gLoc;
-
-function toggleAccess(id, $loc){
-	$gLoc = $loc;
-	baseService.toggleAccess(id, callback);
-}
-
-function callback(hidden){
-	var title = $gLoc.parent().prev().prev().prev().prev().prev()[0];
-	var here = $gLoc[0];
-	if (!hidden){
-		title.innerHTML = title.innerHTML.replace(/<font.*?font>/i, '');
-		here.innerHTML = here.innerHTML.replace(/Reveal/, 'Hide');
-	} else {
-		title.innerHTML = title.innerHTML + "<font color=\"red\">(Hidden)<\/font>";
-		here.innerHTML = here.innerHTML.replace(/Hide/, 'Reveal');
-	}
-}
+	
+	$("#OJcol").change(function(){
+		oTable.fnDraw();
+	});
+	
+});

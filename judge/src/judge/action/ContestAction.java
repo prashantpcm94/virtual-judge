@@ -55,7 +55,9 @@ public class ContestAction extends BaseAction {
 	private Date curDate;
 	private Map<String, String> numList;
 	private Map<Object, String> languageList;
-	
+	private String _64Format;
+	private int contestOver;
+
 	private boolean s, r, e;	//比赛进行状态
 	private DataTablesPage dataTablesPage;
 	
@@ -347,7 +349,6 @@ public class ContestAction extends BaseAction {
 		cid = cproblem.getContestId();
 		contest = (Contest) baseService.query(Contest.class, cid);
 		if (session.get("C" + cid) == null){
-			contest = (Contest) baseService.query(Contest.class, cid);
 			if (contest.getPassword() == null || user != null && user.getSup() == 1){
 				session.put("C" + cid, 1);
 			} else {
@@ -358,26 +359,15 @@ public class ContestAction extends BaseAction {
 			return "notbegin";
 		}
 		num = cproblem.getNum();
-		problem = (Problem) baseService.query(Problem.class, cproblem.getProblemId());
-		if (problem.getDescription() != null && problem.getDescription().trim().isEmpty()){
-			problem.setDescription(null);
+
+		List list = baseService.query("select p from Problem p left join fetch p.descriptions where p.id = " + cproblem.getProblemId());
+		problem = (Problem) list.get(0);
+		_64Format = lf.get(problem.getOriginOJ());
+		
+		if (new Date().compareTo(contest.getEndTime()) > 0){
+			contestOver = 1;
 		}
-		if (problem.getInput() != null && problem.getInput().trim().isEmpty()){
-			problem.setInput(null);
-		}
-		if (problem.getOutput() != null && problem.getOutput().trim().isEmpty()){
-			problem.setOutput(null);
-		}
-		if (problem.getSampleInput() != null && problem.getSampleInput().trim().isEmpty()){
-			problem.setSampleInput(null);
-		}
-		if (problem.getSampleOutput() != null && problem.getSampleOutput().trim().isEmpty()){
-			problem.setSampleOutput(null);
-		}
-		if (problem.getHint() != null && problem.getHint().trim().isEmpty()){
-			problem.setHint(null);
-		}
-		problem.setOriginOJ(ProblemAction.lf.get(problem.getOriginOJ()));
+
 		return SUCCESS;
 	}
 
@@ -423,11 +413,6 @@ public class ContestAction extends BaseAction {
 			}
 		}
 
-/*		if (contest.getEndTime().compareTo(new Date()) < 0){
-			this.addActionError("Contest has finished!");
-			return INPUT;
-		}
-*/
 		if (contest.getBeginTime().compareTo(new Date()) > 0){
 			this.addActionError("Contest has not began!");
 			return INPUT;
@@ -1208,6 +1193,18 @@ public class ContestAction extends BaseAction {
 	}
 	public void setNumList(Map<String, String> numList) {
 		this.numList = numList;
+	}
+	public String get_64Format() {
+		return _64Format;
+	}
+	public void set_64Format(String _64Format) {
+		this._64Format = _64Format;
+	}
+	public int getContestOver() {
+		return contestOver;
+	}
+	public void setContestOver(int contestOver) {
+		this.contestOver = contestOver;
 	}
 	
 }

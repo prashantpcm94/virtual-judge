@@ -29,10 +29,12 @@
 				<prop key="hibernate.dialect">
 					org.hibernate.dialect.MySQLDialect 
 				</prop>
+
+<!--
 				<prop key="hibernate.query.factory_class">
 					org.hibernate.hql.classic.ClassicQueryTranslatorFactory
 				</prop>
-<!--
+
                 <prop key="hibernate.show_sql">true</prop>  
 				<prop key="hibernate.format_sql">true</prop>
 -->
@@ -46,6 +48,7 @@
 				<value>judge/bean/Submission.hbm.xml</value>
 				<value>judge/bean/User.hbm.xml</value>
 				<value>judge/bean/Vlog.hbm.xml</value>
+				<value>judge/bean/Description.hbm.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -71,6 +74,10 @@
 	    <property name="baseDao" ref="baseDao" />
 	</bean>
 
+	<bean id="judgeService" class="judge.service.JudgeService">
+	    <property name="baseDao" ref="baseDao" />
+	</bean>
+
 
 	<!-- 配置Action部分 -->
 	<!-- 主配置文件struts.xml -->
@@ -81,6 +88,7 @@
 	
 	<bean id="problemAction" class="judge.action.ProblemAction" scope="prototype">
 		<property name="baseService" ref="baseService" />
+		<property name="judgeService" ref="judgeService" />
 	</bean>
 
 	<bean id="contestAction" class="judge.action.ContestAction" scope="prototype">
@@ -95,7 +103,7 @@
 	</bean>
 
 	<!-- 配置Spider部分 -->
-	<bean id="spider" class="judge.spider.Spider">
+	<bean id="spider" class="judge.spider.HDUSpider">
 		<property name="baseService" ref="baseService" />
 	</bean>
 	

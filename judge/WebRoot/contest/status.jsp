@@ -16,7 +16,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<script type="text/javascript" language="javascript" src="javascript/jquery.js"></script>
 		<script type="text/javascript" language="javascript" src="javascript/jquery.dataTables.js"></script>
 
-	    <script type="text/javascript" src="dwr/interface/baseService.js"></script>
+	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='dwr/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
 	</head>

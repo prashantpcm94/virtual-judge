@@ -21,16 +21,3 @@ function comfirmDeleteContest(id){
 		location = 'contest/deleteContest.action?cid=' + id;
 	}
 }
-
-//==============================================================
-//方法名: toggleOpen
-//方法描述: 本方法实现切换源代码公开性
-//返回值：
-//==============================================================
-function toggleOpen(id, flag){
-	if (!flag){
-		location = 'problem/toggleOpen.action?id=' + id;
-	} else {
-		location = 'contest/toggleOpen.action?id=' + id;
-	}
-}

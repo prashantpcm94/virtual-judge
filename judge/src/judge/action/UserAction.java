@@ -167,8 +167,8 @@ public class UserAction extends ActionSupport {
 		if (!username.matches("[0-9a-zA-Z_]+")){
 			this.addActionError("Username should only contain digits, letters, or '_'s !");
 		}
-		if (username.length() < 1 || username.length() > 16){
-			this.addActionError("Username should have at least 1 character and at most 16 characters!");
+		if (username.length() < 2 || username.length() > 16){
+			this.addActionError("Username should have at least 2 characters and at most 16 characters!");
 		}
 		if (password.length() < 4 || password.length() > 30){
 			this.addActionError("Password should have at least 4 characters and at most 30 characters!");

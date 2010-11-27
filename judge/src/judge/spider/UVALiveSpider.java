@@ -6,7 +6,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 public class UVALiveSpider extends Spider {
 
-	public void run() {
+	public void crawl() throws Exception{
 
 		String tLine = "";
 		HttpClient httpClient = new HttpClient();
@@ -21,14 +21,12 @@ public class UVALiveSpider extends Spider {
 			tLine = new String(responseBody, "UTF-8");
 		} catch (Exception e) {
 			getMethod.releaseConnection();
-			e.printStackTrace();
-			baseService.delete(problem);
-			return;
+			throw new Exception();
+
 		}
 
 		if (tLine.contains("<title>Problem not found</title>")) {
-			baseService.delete(problem);
-			return;
+			throw new Exception();
 		}
 
 		tLine = tLine.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://acmicpc-live-archive.uva.es/nuevoportal/data/");
@@ -36,14 +34,12 @@ public class UVALiveSpider extends Spider {
 
 		problem.setTitle(regFind(tLine,	"<title>\\d{3,} - ([\\s\\S]*?)</title>"));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
-			baseService.delete(problem);
-			return;
+			throw new Exception();
 		}
 		problem.setTimeLimit(0);
 		problem.setMemoryLimit(0);
-		problem.setDescription(regFind(tLine, "<b>Ranking</b></a></td></tr></table>([\\s\\S]*?)<hr><ADDRESS>"));
+		description.setDescription(regFind(tLine, "<b>Ranking</b></a></td></tr></table>([\\s\\S]*?)<hr><ADDRESS>"));
 		problem.setSource(regFind(tLine, "<hr><ADDRESS>([\\s\\S]*?)</ADDRESS>"));
 		problem.setUrl("http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p="	+ problem.getOriginProb());
-		baseService.modify(problem);
 	}
 }

@@ -5,40 +5,25 @@
 package judge.action;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import org.apache.struts2.ServletActionContext;
 
 import judge.bean.DataTablesPage;
+import judge.bean.Description;
 import judge.bean.Problem;
 import judge.bean.Submission;
 import judge.bean.User;
 import judge.service.IBaseService;
-import judge.spider.HDUSpider;
-import judge.spider.HUSTSpider;
-import judge.spider.HYSBZSpider;
-import judge.spider.POJSpider;
-import judge.spider.SGUSpider;
-import judge.spider.SPOJSpider;
+import judge.service.JudgeService;
 import judge.spider.Spider;
-import judge.spider.URALSpider;
-import judge.spider.UVALiveSpider;
-import judge.spider.ZOJSpider;
-import judge.submitter.HDUSubmitter;
-import judge.submitter.HUSTSubmitter;
-import judge.submitter.HYSBZSubmitter;
-import judge.submitter.POJSubmitter;
-import judge.submitter.SGUSubmitter;
-import judge.submitter.SPOJSubmitter;
 import judge.submitter.Submitter;
-import judge.submitter.URALSubmitter;
-import judge.submitter.UVALiveSubmitter;
-import judge.submitter.ZOJSubmitter;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -46,6 +31,7 @@ import com.opensymphony.xwork2.ActionContext;
 public class ProblemAction extends BaseAction{
 	
 	private IBaseService baseService;
+	private JudgeService judgeService;
 	
 	private int id;	//problemId
 	private int uid;
@@ -54,135 +40,56 @@ public class ProblemAction extends BaseAction{
 	private String OJId;
 	private String probNum;
 	private Problem problem;
+	private Description description;
 	private Submission submission;
 	private List dataList;
 	private String language;
 	private String source;
 	private String redir;
 	private String un;
+	private String _64Format;
 	private DataTablesPage dataTablesPage;
 	private Map<Object, String> languageList;
 	
-	static private List<String> OJList = new ArrayList<String>();
-	static {
-		OJList.add("POJ");
-		OJList.add("ZOJ");
-		OJList.add("UVALive");
-		OJList.add("SGU");
-		OJList.add("URAL");
-		OJList.add("HUST");
-		OJList.add("SPOJ");
-		OJList.add("HDU");
-		OJList.add("HYSBZ");
-	}
-	
-	static public Map<String, Spider> spiderMap = new HashMap<String, Spider>();
-	static {
-		spiderMap.put("POJ", new POJSpider());
-		spiderMap.put("ZOJ", new ZOJSpider());
-		spiderMap.put("UVALive", new UVALiveSpider());
-		spiderMap.put("SGU", new SGUSpider());
-		spiderMap.put("URAL", new URALSpider());
-		spiderMap.put("HUST", new HUSTSpider());
-		spiderMap.put("SPOJ", new SPOJSpider());
-		spiderMap.put("HDU", new HDUSpider());
-		spiderMap.put("HYSBZ", new HYSBZSpider());
-	}
-	
-	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
-	static {
-		submitterMap.put("POJ", new POJSubmitter());
-		submitterMap.put("ZOJ", new ZOJSubmitter());
-		submitterMap.put("UVALive", new UVALiveSubmitter());
-		submitterMap.put("SGU", new SGUSubmitter());
-		submitterMap.put("URAL", new URALSubmitter());
-		submitterMap.put("HUST", new HUSTSubmitter());
-		submitterMap.put("SPOJ", new SPOJSubmitter());
-		submitterMap.put("HDU", new HDUSubmitter());
-		submitterMap.put("HYSBZ", new HYSBZSubmitter());
-	}
-	
-	static public Map<String, String> lf = new HashMap<String, String>();
-	static {
-		lf.put("POJ", "%I64d & %I64u");
-		lf.put("ZOJ", "%lld & %llu");
-		lf.put("UVALive", "%lld & %llu");
-		lf.put("SGU", "%I64d & %I64u");
-		lf.put("URAL", "%I64d & %I64u");
-		lf.put("HUST", "%lld & %llu");
-		lf.put("SPOJ", "%lld & %llu");
-		lf.put("HDU", "%I64d & %I64u");
-		lf.put("HYSBZ", "%I64d & %I64u");
-	}
-	
-	static private List<String> OJList4Status = new ArrayList<String>();
-	static {
-		OJList4Status.add("All");
-		OJList4Status.addAll(OJList);
-	}
-
 	public String toListProblem() {
 		return SUCCESS;
 	}
 	
 	public String listProblem() {
 		Map session = ActionContext.getContext().getSession();
-		User user = (User) session.get("visitor");
-		StringBuffer hql = new StringBuffer("select problem.id, problem.title, problem.addTime, problem.hidden, problem.creatorId, problem.originOJ, problem.originProb, problem.url from Problem problem where");
-		if (user == null){
-			hql.append(" problem.hidden = 0");
-		} else if (user.getSup() == 0){
-			hql.append(" (problem.hidden = 0 or problem.creatorId = " + user.getId() + " ) ");
-		} else {
-			hql.append(" problem.id > 0");
-		}
+		StringBuffer hql = new StringBuffer("select problem.originOJ, problem.originProb, problem.title, problem.triggerTime, problem.source, problem.id, problem.url from Problem problem where 1=1 ");
 		long cnt = baseService.count(hql.toString());
 		dataTablesPage = new DataTablesPage();
-		dataTablesPage.setITotalDisplayRecords(cnt);
 		dataTablesPage.setITotalRecords(cnt);
+		if (OJList.contains(OJId)){
+			hql.append(" and problem.originOJ = '" + OJId + "' ");
+		}
 		Map paraMap = new HashMap();
 		if (sSearch != null && !sSearch.trim().isEmpty()){
 			sSearch = sSearch.toLowerCase().trim();
 			paraMap.put("keyword", "%" + sSearch + "%");
-			hql.append(" and (problem.title like :keyword or problem.originOJ like :keyword or problem.originProb like :keyword " + (sSearch.matches("\\d+") ? " or problem.id = " + sSearch : "") + ") ");
-			dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString(), paraMap));
+			hql.append(" and (problem.title like :keyword or problem.originProb like :keyword or problem.source like :keyword) ");
 		}
+		dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString(), paraMap));
 //		System.out.println("iSortCol_0 = " + iSortCol_0);
 		if (iSortCol_0 != null){
-			if (iSortCol_0 == 0){
-				hql.append(" order by problem.id " + sSortDir_0);
-			} else if (iSortCol_0 == 1){
-				hql.append(" order by problem.title " + sSortDir_0);
+			if (iSortCol_0 == 1){
+				hql.append(" order by problem.originProb " + sSortDir_0);
 			} else if (iSortCol_0 == 2){
-				hql.append(" order by problem.originOJ " + sSortDir_0 + ", problem.originProb " + sSortDir_0);
+				hql.append(" order by problem.title " + sSortDir_0);
 			} else if (iSortCol_0 == 3){
-				hql.append(" order by problem.addTime " + sSortDir_0);
+				hql.append(" order by problem.triggerTime " + sSortDir_0);
+			} else if (iSortCol_0 == 4){
+				hql.append(" order by problem.source " + sSortDir_0);
 			}
 		}
 
-		List<Object[]> tmp = baseService.list(hql.toString(), paraMap, iDisplayStart, iDisplayLength);
-		List aaData =  new ArrayList();
+		List<Object[]> aaData = baseService.list(hql.toString(), paraMap, iDisplayStart, iDisplayLength);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		for (Object[] o : tmp) {
-			boolean userHasAccess = user != null && (user.getSup() != 0 || user.getId() == (Integer)o[4]);
-			Object[] res = {
-					o[0],
-					"<a href='problem/viewProblem.action?id=" + o[0] + "'>" + o[1] + "</a>" + ((Integer)o[3] != 0 ? "<font color='red'>(Hidden)</font>" : ""),
-					"<a href='" + o[7] + "'>" + o[5] + " " + o[6] + "</a>",
-					sdf.format((Date)o[2]),
-					userHasAccess ? "<a href='problem/toEditProblem.action?id=" + o[0] + "'>Edit</a>" : "",
-					userHasAccess ? "<a href='javascript:void(0)' onclick='comfirmDeleteProblem(" + o[0] + ")'>Delete</a>" : "",
-					userHasAccess ? "<a href='javascript:void(0)' onclick='toggleAccess(" + o[0] + ", $(this))'>" + ((Integer)o[3] != 0 ? "Reveal" : "Hide") + "</a>" : "",
-			};
-			aaData.add(res);
+		for (Object[] o : aaData) {
+			o[3] = sdf.format((Date)o[3]);
 		}
 		dataTablesPage.setAaData(aaData);
-//		dataTablesPage.setSColumns("id,title,addTime,hidden,creatorId,originOJ,originProb,url");
-		
-//		System.out.println(iDisplayStart + " - " + iDisplayLength);
-//		System.out.println("sSearch : " + sSearch);
-
-//		System.out.println(dataTablesPage.getITotalDisplayRecords() + " ----- " + dataTablesPage.getITotalRecords() + " -- " + dataTablesPage.getAaData().size());
 		
 		this.addActionError((String) session.get("error"));
 		session.remove("error");
@@ -207,56 +114,64 @@ public class ProblemAction extends BaseAction{
 			return ERROR;
 		}
 		session.put("OJId", OJId);
-		Spider spider = (Spider) spiderMap.get(OJId).clone();
-		problem = new Problem();
-		problem.setCreatorId(user.getId());
-		problem.setAddTime(new Date());
-		problem.setOriginOJ(OJId.trim());
-		problem.setOriginProb(probNum.replaceAll("\\s+", ""));
+		
+		problem = judgeService.findProblem(OJId.trim(), probNum.trim());
+		if (problem == null){
+			problem = new Problem();
+			problem.setOriginOJ(OJId.trim());
+			problem.setOriginProb(probNum.trim());
+		} else {
+			for (Description desc : problem.getDescriptions()){
+				if ("0".equals(desc.getAuthor())){
+					description = desc;
+					break;
+				}
+			}
+		}
+		if (description == null){
+			description = new Description();
+			description.setUpdateTime(new Date());
+			description.setAuthor("0");
+			description.setRemarks("Initializatioin.");
+			description.setVote(0);
+		}
+
 		problem.setTitle("Crawling……");
-		problem.setHidden(1);
 		problem.setTimeLimit(1);
-		baseService.add(problem);
+		problem.setTriggerTime(new Date());
+		baseService.addOrModify(problem);
+		Spider spider = (Spider) spiderMap.get(OJId).clone();
 		spider.setProblem(problem);
+		spider.setDescription(description);
 		try {
 			spider.start();
 		} catch (Exception e) {
 			e.printStackTrace();
-			baseService.delete(problem);
 			return ERROR;
 		}
 		return SUCCESS;
 	}
 	
 	public String viewProblem(){
-		problem = (Problem) baseService.query(Problem.class, id);
-		if (problem.getDescription() != null && problem.getDescription().trim().isEmpty()){
-			problem.setDescription(null);
-		}
-		if (problem.getInput() != null && problem.getInput().trim().isEmpty()){
-			problem.setInput(null);
-		}
-		if (problem.getOutput() != null && problem.getOutput().trim().isEmpty()){
-			problem.setOutput(null);
-		}
-		if (problem.getSampleInput() != null && problem.getSampleInput().trim().isEmpty()){
-			problem.setSampleInput(null);
-		}
-		if (problem.getSampleOutput() != null && problem.getSampleOutput().trim().isEmpty()){
-			problem.setSampleOutput(null);
-		}
-		if (problem.getHint() != null && problem.getHint().trim().isEmpty()){
-			problem.setHint(null);
-		}
+		List list = baseService.query("select p from Problem p left join fetch p.descriptions where p.id = " + id);
+		problem = (Problem) list.get(0);
+		_64Format = lf.get(problem.getOriginOJ());
 		Map session = ActionContext.getContext().getSession();
-		User user = (User) session.get("visitor");
-		if (problem.getHidden() > 0 && (user == null || user.getSup() == 0 && problem.getCreatorId() != user.getId())){
-			session.put("error", "You don't have access to viewing this problem!");
-			return ERROR;
-		}
-		session.put("oj", problem.getOriginOJ());
-		problem.setOriginOJ(lf.get(problem.getOriginOJ()));
 		session.put("problem", problem);
+		return SUCCESS;
+	}
+	
+	public String vote4Description(){
+		Map session = ActionContext.getContext().getSession();
+		Set votePids = (Set) session.get("votePids");
+		if (votePids == null){
+			votePids = new HashSet<Integer>();
+			session.put("votePids", votePids);
+		}
+		Description desc = (Description) baseService.query(Description.class, id);
+		desc.setVote(desc.getVote() + 1);
+		baseService.modify(desc);
+		votePids.add(desc.getProblem().getId());
 		return SUCCESS;
 	}
 	
@@ -269,8 +184,6 @@ public class ProblemAction extends BaseAction{
 		}
 		ServletContext sc = ServletActionContext.getServletContext();
 		problem = (Problem) session.get("problem");
-		problem.setOriginOJ((String) session.get("oj"));
-		session.put("problem", problem);
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
 		language = (String) session.get("L" + problem.getOriginOJ());
 		isOpen = user.getShare();
@@ -460,32 +373,45 @@ public class ProblemAction extends BaseAction{
 		return SUCCESS;
 	}
 	
-	public String toEditProblem(){
+	public String toEditDescription(){
 		Map session = ActionContext.getContext().getSession();
-		problem = (Problem) baseService.query(Problem.class, id);
-		User user = (User) session.get("visitor");
-		if (user == null || user.getSup() == 0 && problem.getCreatorId() != user.getId()){
-			return ERROR;
+		List list = baseService.query("select d from Description d left join fetch d.problem where d.id = " + id);
+		description = (Description) list.get(0);
+		problem = description.getProblem();
+		if (session.get("visitor") == null){
+			return "login";
 		}
 		return SUCCESS;
 	}
 	
-	public String editProblem(){
+	public String editDescription(){
 		Map session = ActionContext.getContext().getSession();
-		Problem curProblem = (Problem) baseService.query(Problem.class, id);
 		User user = (User) session.get("visitor");
-		if (user == null || user.getSup() == 0 && curProblem.getCreatorId() != user.getId()){
-			session.put("error", "You don't have access to operation on this problem!");
+		if (user == null){
+			session.put("error", "Please login first!");
 			return ERROR;
 		}
-		curProblem.setTitle(problem.getTitle());
-		curProblem.setDescription(problem.getDescription());
-		curProblem.setInput(problem.getInput());
-		curProblem.setOutput(problem.getOutput());
-		curProblem.setSampleInput(problem.getSampleInput());
-		curProblem.setSampleOutput(problem.getSampleOutput());
-		curProblem.setHint(problem.getHint());
-		baseService.modify(curProblem);
+		if (id == 0){
+			return ERROR;
+		}
+		description.setUpdateTime(new Date());
+		description.setAuthor(user.getUsername());
+		description.setVote(0);
+		description.setProblem(new Problem(id));
+		baseService.execute("delete from Description d where d.author = '" + user.getUsername() + "' and d.problem.id = " + id);
+		baseService.add(description);
+		return SUCCESS;
+	}
+	
+	public String deleteDescription(){
+		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
+		if (user != null){
+			description = (Description) baseService.query(Description.class, id);
+			if (!description.getAuthor().equals("0") && (user.getSup() == 1 || user.getUsername().equals(description.getAuthor()))){
+				baseService.delete(description);
+			}
+		}
 		return SUCCESS;
 	}
 	
@@ -607,9 +533,6 @@ public class ProblemAction extends BaseAction{
 	public void setDataList(List dataList) {
 		this.dataList = dataList;
 	}
-	public List<String> getOJList() {
-		return OJList;
-	}
 	public Map<Object, String> getLanguageList() {
 		return languageList;
 	}
@@ -682,7 +605,23 @@ public class ProblemAction extends BaseAction{
 	public void setUn(String un) {
 		this.un = un;
 	}
-	public List<String> getOJList4Status() {
-		return OJList4Status;
+	public Description getDescription() {
+		return description;
 	}
+	public void setDescription(Description description) {
+		this.description = description;
+	}
+	public String get_64Format() {
+		return _64Format;
+	}
+	public void set_64Format(String _64Format) {
+		this._64Format = _64Format;
+	}
+	public JudgeService getJudgeService() {
+		return judgeService;
+	}
+	public void setJudgeService(JudgeService judgeService) {
+		this.judgeService = judgeService;
+	}
+
 }

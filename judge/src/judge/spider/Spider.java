@@ -3,23 +3,14 @@ package judge.spider;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import judge.bean.Description;
 import judge.bean.Problem;
 import judge.service.IBaseService;
 
-public class Spider extends Thread implements Cloneable {
+public abstract class Spider extends Thread implements Cloneable {
 	public Problem problem;
+	public Description description;
 	static public IBaseService baseService;
-
-	public void setBaseService(IBaseService baseService) {
-		System.out.println("spider baseservice init...");
-		Spider.baseService = baseService;
-	}
-	public Problem getProblem() {
-		return problem;
-	}
-	public void setProblem(Problem problem) {
-		this.problem = problem;
-	}
 	
 	public String regFind(String text, String reg){
 		Pattern p = Pattern.compile(reg);
@@ -53,4 +44,49 @@ public class Spider extends Thread implements Cloneable {
 		}
 		return o;
 	}
+	
+	/**
+	 * 抓取题目,对problem和description进行赋值
+	 * @throws Exception
+	 */
+	public abstract void crawl() throws Exception;
+	
+	
+	public void run() {
+		try {
+			crawl();
+			description.setProblem(problem);
+			baseService.addOrModify(problem);
+			baseService.addOrModify(description);
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (problem.getUrl() == null){
+				//本次是第一次抓取，且失败，认为输入OJ题号错误，删除
+				baseService.delete(problem);
+			} else {
+				//本次虽失败，但因为题目本来是好的，估计是网络问题，故不删
+				problem.setTitle("[Crawlong failed]");
+				baseService.addOrModify(problem);
+			}
+		}
+	}
+	
+	public void setBaseService(IBaseService baseService) {
+		System.out.println("spider baseservice init...");
+		Spider.baseService = baseService;
+	}
+	public Problem getProblem() {
+		return problem;
+	}
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
+	public Description getDescription() {
+		return description;
+	}
+	public void setDescription(Description description) {
+		this.description = description;
+	}
+
+	
 }

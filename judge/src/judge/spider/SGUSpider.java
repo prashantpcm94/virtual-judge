@@ -9,7 +9,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 public class SGUSpider extends Spider {
 	
 
-	public void run() {
+	public void crawl() throws Exception{
 		
 		String tLine = "";
         HttpClient httpClient = new HttpClient();
@@ -25,20 +25,16 @@ public class SGUSpider extends Spider {
         }
         catch(Exception e) {
 			getMethod.releaseConnection();
-			e.printStackTrace();
-			baseService.delete(problem);
-			return;
+			throw new Exception();
         }
 
         if (tLine.contains("<h4>no such problem</h4>")){
-        	baseService.delete(problem);
-        	return;
+			throw new Exception();
         }
         
 		problem.setTitle(regFind(tLine, "\\d{3}\\. ([\\s\\S]*?)</title>"));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
-			baseService.delete(problem);
-			return;
+			throw new Exception();
 		}
 		
 		String tl = regFind(tLine, "ime limit per test: ([\\d\\.]*)");
@@ -57,17 +53,16 @@ public class SGUSpider extends Spider {
 		}
 		
 		if (Integer.parseInt(problem.getOriginProb()) >= 277){
-			problem.setDescription(regFind(tLine, "output: standard</div><br/>([\\s\\S]*?)<b>Input</b>") + "</div>");
-			problem.setInput(regFind(tLine, "<b>Input</b></div>([\\s\\S]*?)<b>Output</b>") + "</div>");
-			problem.setOutput(regFind(tLine, "<b>Output</b></div>([\\s\\S]*?)<b>Example") + "</div>");
-			problem.setSampleInput(regFind(tLine, "<b>Example\\(s\\)</b></div>([\\s\\S]*?)(<b>Note|<hr>)") + "</div>");
-			problem.setHint(regFind(tLine, "<b>Note</b></div>([\\s\\S]*?)<hr>") + "</div>");
+			description.setDescription(regFind(tLine, "output: standard</div><br/>([\\s\\S]*?)<b>Input</b>") + "</div>");
+			description.setInput(regFind(tLine, "<b>Input</b></div>([\\s\\S]*?)<b>Output</b>") + "</div>");
+			description.setOutput(regFind(tLine, "<b>Output</b></div>([\\s\\S]*?)<b>Example") + "</div>");
+			description.setSampleInput(regFind(tLine, "<b>Example\\(s\\)</b></div>([\\s\\S]*?)(<b>Note|<hr>)") + "</div>");
+			description.setHint(regFind(tLine, "<b>Note</b></div>([\\s\\S]*?)<hr>") + "</div>");
 		} else {
-			problem.setDescription(regFind(tLine, "(<BODY[\\s\\S]*?</BODY>)", 1));
+			description.setDescription(regFind(tLine, "(<BODY[\\s\\S]*?</BODY>)", 1));
 			problem.setSource(regFind(tLine, "Resource:</td><td>([\\s\\S]*?)\n</td>"));
 		}
 		problem.setUrl("http://acm.sgu.ru/problem.php?contest=0&problem=" + problem.getOriginProb());
-		baseService.modify(problem);
 	}
 
 }

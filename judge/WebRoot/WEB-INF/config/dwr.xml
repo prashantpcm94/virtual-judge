@@ -2,10 +2,14 @@
 <!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr/dwr20.dtd">
 <dwr>
 	<allow>
-		<create javascript="baseService" creator="spring">
-			<param name="beanName" value="baseService" />
+		<create javascript="judgeService" creator="spring">
+			<param name="beanName" value="judgeService" />
 			<include method="toggleAccess"/>
 			<include method="getResult"/>
+			<include method="fetchDescriptions"/>
 		</create>
+		<convert match="judge.bean.Description" converter="bean" >
+			<param name="include" value="description,input,output,sampleInput,sampleOutput,hint"></param>
+		</convert>
 	</allow>
 </dwr>

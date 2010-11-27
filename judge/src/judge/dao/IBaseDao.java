@@ -19,5 +19,7 @@ public interface IBaseDao {
 	public void addOrModify(Collection entity);
 	public List query(String hql, Map parMap);
 	public List query(String hql, Map parMap, int FirstResult, int MaxResult);
+	public void execute(String statement);
+	public void execute(String statement, Map parMap);
 
 }

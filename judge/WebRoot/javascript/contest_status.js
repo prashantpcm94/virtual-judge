@@ -112,7 +112,7 @@ $(document).ready(function() {
 });
 
 function getResult(id){
-	baseService.getResult(id, cb);
+	judgeService.getResult(id, cb);
 }
 
 function cb(back){

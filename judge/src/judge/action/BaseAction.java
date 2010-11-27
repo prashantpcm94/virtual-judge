@@ -1,5 +1,33 @@
 package judge.action;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import judge.spider.HDUSpider;
+import judge.spider.HUSTSpider;
+import judge.spider.HYSBZSpider;
+import judge.spider.POJSpider;
+import judge.spider.SGUSpider;
+import judge.spider.SPOJSpider;
+import judge.spider.Spider;
+import judge.spider.URALSpider;
+import judge.spider.UVALiveSpider;
+import judge.spider.ZOJSpider;
+import judge.submitter.HDUSubmitter;
+import judge.submitter.HUSTSubmitter;
+import judge.submitter.HYSBZSubmitter;
+import judge.submitter.POJSubmitter;
+import judge.submitter.SGUSubmitter;
+import judge.submitter.SPOJSubmitter;
+import judge.submitter.Submitter;
+import judge.submitter.URALSubmitter;
+import judge.submitter.UVALiveSubmitter;
+import judge.submitter.ZOJSubmitter;
+
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -7,6 +35,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Isun
  *
  */
+@SuppressWarnings("unchecked")
 public class BaseAction extends ActionSupport{
 
 	private static final long serialVersionUID = 1L;
@@ -20,7 +49,66 @@ public class BaseAction extends ActionSupport{
 	protected Integer iSortCol_0;
 	protected String sSortDir_0;
 	protected String sEcho;
+
+	static public List<String> OJList = new ArrayList<String>();
+	static {
+		OJList.add("POJ");
+		OJList.add("ZOJ");
+		OJList.add("UVALive");
+		OJList.add("SGU");
+		OJList.add("URAL");
+		OJList.add("HUST");
+		OJList.add("SPOJ");
+		OJList.add("HDU");
+		OJList.add("HYSBZ");
+	}
 	
+	static private List<String> OJListAll = new ArrayList<String>();
+	static {
+		OJListAll.add("All");
+		OJListAll.addAll(OJList);
+	}
+	
+	static public Map<String, Spider> spiderMap = new HashMap<String, Spider>();
+	static {
+		spiderMap.put("POJ", new POJSpider());
+		spiderMap.put("ZOJ", new ZOJSpider());
+		spiderMap.put("UVALive", new UVALiveSpider());
+		spiderMap.put("SGU", new SGUSpider());
+		spiderMap.put("URAL", new URALSpider());
+		spiderMap.put("HUST", new HUSTSpider());
+		spiderMap.put("SPOJ", new SPOJSpider());
+		spiderMap.put("HDU", new HDUSpider());
+		spiderMap.put("HYSBZ", new HYSBZSpider());
+	}
+	
+	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
+	static {
+		submitterMap.put("POJ", new POJSubmitter());
+		submitterMap.put("ZOJ", new ZOJSubmitter());
+		submitterMap.put("UVALive", new UVALiveSubmitter());
+		submitterMap.put("SGU", new SGUSubmitter());
+		submitterMap.put("URAL", new URALSubmitter());
+		submitterMap.put("HUST", new HUSTSubmitter());
+		submitterMap.put("SPOJ", new SPOJSubmitter());
+		submitterMap.put("HDU", new HDUSubmitter());
+		submitterMap.put("HYSBZ", new HYSBZSubmitter());
+	}
+	
+	static public Map<String, String> lf = new HashMap<String, String>();
+	static {
+		lf.put("POJ", "%I64d & %I64u");
+		lf.put("ZOJ", "%lld & %llu");
+		lf.put("UVALive", "%lld & %llu");
+		lf.put("SGU", "%I64d & %I64u");
+		lf.put("URAL", "%I64d & %I64u");
+		lf.put("HUST", "%lld & %llu");
+		lf.put("SPOJ", "%lld & %llu");
+		lf.put("HDU", "%I64d & %I64u");
+		lf.put("HYSBZ", "%I64d & %I64u");
+	}
+	
+
 	public Integer getIDisplayStart() {
 		return iDisplayStart;
 	}
@@ -75,6 +163,11 @@ public class BaseAction extends ActionSupport{
 	public void setSSortDir_0(String sortDir_0) {
 		sSortDir_0 = sortDir_0;
 	}
-
+	public List getOJList() {
+		return OJList;
+	}
+	public List getOJListAll() {
+		return OJListAll;
+	}
 	
 }

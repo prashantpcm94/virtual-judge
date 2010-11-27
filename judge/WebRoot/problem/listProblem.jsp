@@ -25,10 +25,9 @@ String basePath = (String)application.getAttribute("basePath");
 
 		<script type="text/javascript" src="javascript/jquery.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
-		<script type="text/javascript" src="javascript/listProblem.js"></script>
 		<script type="text/javascript" src="javascript/common.js"></script>
 
-	    <script type="text/javascript" src="dwr/interface/baseService.js"></script>
+	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='dwr/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
 	</head>
@@ -43,7 +42,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<div class="plm">
 			<s:if test="#session.visitor != null">
 				<form id="addProblem" action="problem/addProblem.action" method="post">
-					Add a problem:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJList" theme="simple" cssClass="select" />
+					Add a problem:<s:select id="OJId" name="OJId" list="OJList" theme="simple" cssClass="select" />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Problem number:<s:textfield id="ProbNum" name="ProbNum" theme="simple" />
 					<input type="submit" value="Add"/>
 				</form>
@@ -56,11 +55,11 @@ String basePath = (String)application.getAttribute("basePath");
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="listProblem">
 			<thead>
 				<tr>
-					<th >ID</th>
+					<th ><s:select id="OJcol" name="OJcol" list="OJListAll" /></th>
+					<th>ProbID</th>
 					<th>Title</th>
+					<th>Trigger Time</th>
 					<th>Source</th>
-					<th>Add Time</th>
-					<th></th>
 					<th></th>
 					<th></th>
 				</tr>
@@ -71,6 +70,8 @@ String basePath = (String)application.getAttribute("basePath");
 				</tr>
 			</tbody>
 		</table>
+		
+		<script type="text/javascript" src="javascript/listProblem.js"></script>
 		<s:include value="/bottom.jsp" />
 	</body>
 

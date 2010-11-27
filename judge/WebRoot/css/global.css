@@ -34,6 +34,7 @@ p.pst {
 	font-size: 18pt;
 	font-weight: bold;
 	color: blue;
+	margin-bottom: 0px;
 }
 
 pre.sio {
@@ -202,4 +203,39 @@ a.shared {
 .result {
 	font-family: Arial,Helvetica,sans-serif;
 	font-weight: bold;
+}
+
+/********************ViewProblem*********************/
+.desc_info {
+	background-color:#EAEBFF;
+	margin: 3px;
+	padding: 5px;
+}
+
+.selected {
+	background-color:#DDFFDD;
+}
+
+#left_view {
+}
+
+#right_view {
+	vertical-align: top;
+	width: 320px;
+}
+
+.remark {
+	font-family:Courier;
+	font-size:17px;
+}
+
+.over {
+	background-color:#EEEEEE;
+}
+
+p.pst span {
+	color: black;
+	font-family: Courier;
+	font-size: 17px;
+	float: right;
 }

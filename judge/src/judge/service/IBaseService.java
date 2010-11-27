@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import judge.bean.Problem;
+
 @SuppressWarnings("unchecked")
 public interface IBaseService {
 	/**
@@ -45,30 +47,14 @@ public interface IBaseService {
 	 */
 	public void addOrModify(Collection entity);
 
-	
 	public Object query(Class entityClass, Serializable id);
-	
-
 	public List query(String queryString);
-	
-
 	public long count(String hql);
-	
-
 	public List list(String queryString, int FirstResult, int MaxResult);
-	
-	public int toggleAccess(int id);
-	
-	/**
-	 * 根据提交ID查询结果
-	 * @param id
-	 * @return 0:ID 1:结果 2:内存 3:时间
-	 */
-	public Object[] getResult(int id);
-
 	public List query(String queryString, Map parMap) ;
-
 	public List list(String hql, Map parMap, int FirstResult, int MaxResult);
-
 	public long count(String hql, Map parMap);
+	public void execute(String hql);
+	public void execute(String hql, Map parMap);
+
 }

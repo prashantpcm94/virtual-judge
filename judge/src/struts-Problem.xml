@@ -6,7 +6,7 @@
 		<global-results>
 	        <result name="error">/index.jsp</result>
 	        <result name="sqlError">/index.jsp</result>
-	        <result name="input">/error.jsp</result>
+	        <result name="input">/errorpages/error.jsp</result>
 	    </global-results>
 	    <global-exception-mappings>
 	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />
@@ -37,6 +37,10 @@
 		<action name="viewProblem" class="problemAction" method="viewProblem">
 			<result name="success">/problem/viewProblem.jsp</result>
 			<result name="error" type="redirect">toListProblem.action</result>		
+		</action>
+
+		<!-- 为描述投票 -->
+		<action name="vote4Description" class="problemAction" method="vote4Description">
 		</action>
 
 		<!-- 删除题目 -->
@@ -79,18 +83,24 @@
 			<result name="input">/problem/submit.jsp</result>
 		</action>
 		
-		<!-- 进入修改题目页面 -->
-		<action name="toEditProblem" class="problemAction" method="toEditProblem">
-			<result name="success">/problem/editProblem.jsp</result>
+		<!-- 进入修改题面页面 -->
+		<action name="toEditDescription" class="problemAction" method="toEditDescription">
+			<result name="success">/problem/editDescription.jsp</result>
+			<result name="login" type="redirect">../user/toLogin.action</result>	
 		</action>
 		
-		<!-- 修改题目 -->
-		<action name="editProblem" class="problemAction" method="editProblem">
+		<!-- 修改题面 -->
+		<action name="editDescription" class="problemAction" method="editDescription">
 			<result name="success" type="redirectAction">
 				<param name="actionName">viewProblem</param>
 				<param name="namespace">/problem</param>
 				<param name="id">${id}</param>
+				<param name="edit">1</param>
 			</result>
+		</action>
+		
+		<!-- 修改题面 -->
+		<action name="deleteDescription" class="problemAction" method="deleteDescription">
 		</action>
 		
 		<!-- 查看代码 -->

@@ -15,7 +15,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<script type="text/javascript" src="javascript/jquery.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
-	    <script type="text/javascript" src="dwr/interface/baseService.js"></script>
+	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='dwr/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
 	</head>
@@ -26,7 +26,7 @@ String basePath = (String)application.getAttribute("basePath");
 		
 		<form id="form_status">
 			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
-			OJ:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJList4Status" />&nbsp;&nbsp;
+			OJ:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJListAll" />&nbsp;&nbsp;
 			Problem ID:<s:textfield name="probNum" />&nbsp;&nbsp;
 			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Judge Error'}" />&nbsp;&nbsp;
 			<input type="submit" value="Filter"/>&nbsp;&nbsp;

@@ -55,6 +55,10 @@
 			<param-name>config</param-name>
 			<param-value>/WEB-INF/config/dwr.xml</param-value>
 		</init-param>
+		<init-param>
+			<param-name>allowScriptTagRemoting</param-name>
+			<param-value>true</param-value>
+		</init-param>
 	</servlet>
 	
 	<servlet-mapping>

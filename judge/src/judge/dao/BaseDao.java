@@ -138,4 +138,50 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		super.releaseSession(session); 
 		return list;
 	}
+	
+	public void execute(String statement, Map parMap) {
+		Session session = super.getSession();
+		Transaction tx = session.beginTransaction();
+		tx.begin();
+		try {
+			Query query = session.createQuery(statement);
+			if (parMap != null) {
+				for (Iterator i = parMap.entrySet().iterator(); i.hasNext();) {
+					Map.Entry entry = (Map.Entry) i.next();
+					try {
+						if (entry.getValue() instanceof List) {
+							query.setParameterList((String) entry.getKey(), (List) entry.getValue());
+						} else if (entry.getValue() instanceof String[]) {
+							query.setParameterList((String) entry.getKey(), (String[]) entry.getValue());
+						} else {
+							query.setParameter((String) entry.getKey(), entry.getValue());
+						}
+					} catch (HibernateException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			query.executeUpdate();
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		}
+		super.releaseSession(session); 
+	}
+
+	public void execute(String statement) {
+//		Session session = this.getHibernateTemplate().getSessionFactory().openSession();
+		Session session = super.getSession();
+		Transaction tx = session.beginTransaction();
+		tx.begin();
+		try {
+			session.createQuery(statement).executeUpdate();
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		}
+		super.releaseSession(session); 
+	}
 }

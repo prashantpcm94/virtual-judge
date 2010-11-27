@@ -6,8 +6,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 public class HDUSpider extends Spider {
 	
-	public void run() {
-		
+	public void crawl() throws Exception{
 		String tLine = "";
         HttpClient httpClient = new HttpClient();
         GetMethod getMethod = new GetMethod("http://acm.hdu.edu.cn/showproblem.php?pid=" + problem.getOriginProb());
@@ -22,14 +21,11 @@ public class HDUSpider extends Spider {
         }
         catch(Exception e) {
 			getMethod.releaseConnection();
-			e.printStackTrace();
-			baseService.delete(problem);
-			return;
+			throw new Exception();
         }
 
         if (tLine.contains("<DIV>No such problem")){
-        	baseService.delete(problem);
-        	return;
+			throw new Exception();
         }
         
         tLine = tLine.replaceAll("src='[\\S]*?/images", "src='http://acm.hdu.edu.cn/data/images");
@@ -38,24 +34,28 @@ public class HDUSpider extends Spider {
 		
 		problem.setTitle(regFind(tLine, "color:#1A5CC8'>([\\s\\S]*?)</h1>"));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
-			baseService.delete(problem);
-			return;
+			throw new Exception();
 		}
 		
 		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "(\\d*) MS")));
 		problem.setMemoryLimit(Integer.parseInt(regFind(tLine, "/(\\d*) K")));
-		problem.setDescription(regFind(tLine, "Problem Description</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		problem.setInput(regFind(tLine, "Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		problem.setOutput(regFind(tLine, "Output</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		problem.setSampleInput(regFind(tLine, "Sample Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		problem.setSampleOutput(regFind(tLine, "Sample Output</div>([\\s\\S]*?)(<br><[^<>]*?panel_title[^<>]*?>|<[^<>]*?><[^<>]*?><i>Hint)") + "</div></div>");
-		problem.setHint(regFind(tLine, "<i>Hint</i></div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setDescription(regFind(tLine, "Problem Description</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setInput(regFind(tLine, "Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setOutput(regFind(tLine, "Output</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setSampleInput(regFind(tLine, "Sample Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setSampleOutput(regFind(tLine, "Sample Output</div>([\\s\\S]*?)(<br><[^<>]*?panel_title[^<>]*?>|<[^<>]*?><[^<>]*?><i>Hint)") + "</div></div>");
+		description.setHint(regFind(tLine, "<i>Hint</i></div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		if (description.getHint() != null){
+			description.setHint("<pre>" + description.getHint() + "</pre>");
+		}
+		
 		problem.setSource(regFind(tLine, "Source</div> <div class=panel_content>([\\s\\S]*?)<[^<>]*?panel_[^<>]*?>"));
 		if (problem.getSource() != null){
 			problem.setSource(problem.getSource().replaceAll("<[\\s\\S]*?>", ""));
 		}
 		problem.setUrl("http://acm.hdu.edu.cn/showproblem.php?pid=" + problem.getOriginProb());
-		baseService.modify(problem);
 	}
+	
+	
 
 }

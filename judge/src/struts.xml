@@ -12,8 +12,8 @@
 	<package name="default" extends="struts-default">
 		<global-results>
 	        <result name="error">/index.jsp</result>
-	        <result name="sqlError">/error.jsp</result>
-	        <result name="input">/error.jsp</result>
+	        <result name="sqlError">/errorpages/error.jsp</result>
+	        <result name="input">/errorpages/error.jsp</result>
 	    </global-results>
 	    <global-exception-mappings>
 	        <exception-mapping result="sqlError" exception="java.sql.SQLException" />

@@ -1,6 +1,7 @@
 package judge.bean;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 题目
@@ -10,22 +11,31 @@ import java.util.Date;
 public class Problem {
 	private int id;			//Hibernate统编ID
 	private String title;		//标题
-	private String description;	//题面描述
-	private String input;		//输入介绍
-	private String output;		//输出介绍
-	private String sampleInput;	//样例输入
-	private String sampleOutput;//样例输出
-	private String hint;		//提示
+	private String description;	//题面描述	Del
+	private String input;		//输入介绍	Del
+	private String output;		//输出介绍	Del
+	private String sampleInput;	//样例输入	Del
+	private String sampleOutput;//样例输出	Del
+	private String hint;		//提示		Del
 	private String source;		//出处
 	private String url;			//题面原始url
 	private String originOJ;	//原始OJ
 	private String originProb;	//原始OJ题号
-	private Date addTime;		//加入时间
-	private int hidden;			//被隐藏
+	private Date addTime;		//加入时间	Del
+	private int hidden;			//被隐藏		Del
 	private int memoryLimit;	//内存限制(KB)
 	private int timeLimit;		//时间限制(ms)
-	private int creatorId;		//创建人ID
+	private int creatorId;		//创建人ID		Del
 	
+	private Date triggerTime;	//上次激活(有新版本)时间	Add
+	
+	private Set<Description> descriptions;
+	
+	public Problem(int id){
+		this.id = id;
+	}
+	
+	public Problem(){}
 
 	public int getHidden() {
 		return hidden;
@@ -91,6 +101,12 @@ public class Problem {
 		return source;
 	}
 	public void setSource(String source) {
+		if (source != null){
+			source = source.trim();
+			if (source.matches("(<[^<>]*>\\s*)*")){
+				source = null;
+			}
+		}
 		this.source = source;
 	}
 	public String getUrl() {
@@ -128,6 +144,18 @@ public class Problem {
 	}
 	public void setTimeLimit(int timeLimit) {
 		this.timeLimit = timeLimit;
+	}
+	public Date getTriggerTime() {
+		return triggerTime;
+	}
+	public void setTriggerTime(Date triggerTime) {
+		this.triggerTime = triggerTime;
+	}
+	public Set<Description> getDescriptions() {
+		return descriptions;
+	}
+	public void setDescriptions(Set<Description> descriptions) {
+		this.descriptions = descriptions;
 	}
 	
 }
