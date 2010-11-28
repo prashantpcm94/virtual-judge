@@ -16,11 +16,11 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `T_CONTEST`
+-- Table structure for table `t_contest`
 --
 
-DROP TABLE IF EXISTS `T_CONTEST`;
-CREATE TABLE `T_CONTEST` (
+DROP TABLE IF EXISTS `t_contest`;
+CREATE TABLE `t_contest` (
   `C_ID` int(10) NOT NULL auto_increment,
   `C_TITLE` varchar(100) collate utf8_unicode_ci default NULL,
   `C_DESCRIPTION` text collate utf8_unicode_ci,
@@ -30,15 +30,15 @@ CREATE TABLE `T_CONTEST` (
   `C_MANAGERID` int(10) default NULL,
   PRIMARY KEY  (`C_ID`),
   KEY `C_MANAGERID` (`C_MANAGERID`),
-  CONSTRAINT `C_MANAGERID` FOREIGN KEY (`C_MANAGERID`) REFERENCES `T_USER` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `C_MANAGERID` FOREIGN KEY (`C_MANAGERID`) REFERENCES `t_user` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Table structure for table `T_CPROBLEM`
+-- Table structure for table `t_cproblem`
 --
 
-DROP TABLE IF EXISTS `T_CPROBLEM`;
-CREATE TABLE `T_CPROBLEM` (
+DROP TABLE IF EXISTS `t_cproblem`;
+CREATE TABLE `t_cproblem` (
   `C_ID` int(10) NOT NULL auto_increment,
   `C_PROBLEMID` int(10) default NULL,
   `C_CONTESTID` int(10) default NULL,
@@ -46,42 +46,57 @@ CREATE TABLE `T_CPROBLEM` (
   PRIMARY KEY  (`C_ID`),
   KEY `C_PROBLEMID` (`C_PROBLEMID`),
   KEY `C_CONTESTID` (`C_CONTESTID`),
-  CONSTRAINT `C_CONTESTID` FOREIGN KEY (`C_CONTESTID`) REFERENCES `T_CONTEST` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `C_PROBLEMID` FOREIGN KEY (`C_PROBLEMID`) REFERENCES `T_PROBLEM` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `C_CONTESTID` FOREIGN KEY (`C_CONTESTID`) REFERENCES `t_contest` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `C_PROBLEMID` FOREIGN KEY (`C_PROBLEMID`) REFERENCES `t_problem` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Table structure for table `T_PROBLEM`
+-- Table structure for table `t_description`
 --
 
-DROP TABLE IF EXISTS `T_PROBLEM`;
-CREATE TABLE `T_PROBLEM` (
+DROP TABLE IF EXISTS `t_description`;
+CREATE TABLE `t_description` (
+  `C_ID` int(11) NOT NULL auto_increment,
+  `C_DESCRIPTION` text character set utf8 collate utf8_unicode_ci,
+  `C_INPUT` text character set utf8 collate utf8_unicode_ci,
+  `C_OUTPUT` text character set utf8 collate utf8_unicode_ci,
+  `C_SAMPLEINPUT` text character set utf8 collate utf8_unicode_ci,
+  `C_SAMPLEOUTPUT` text character set utf8 collate utf8_unicode_ci,
+  `C_HINT` text character set utf8 collate utf8_unicode_ci,
+  `C_PROBLEM_ID` int(11) NOT NULL default '0',
+  `C_UPDATE_TIME` datetime default NULL,
+  `C_AUTHOR` varchar(100) default NULL,
+  `C_REMARKS` varchar(500) character set utf8 collate utf8_unicode_ci default NULL,
+  `C_VOTE` int(10) unsigned default NULL,
+  PRIMARY KEY  (`C_ID`),
+  KEY `FK_t_description_1` (`C_PROBLEM_ID`),
+  CONSTRAINT `FK_t_description_1` FOREIGN KEY (`C_PROBLEM_ID`) REFERENCES `t_problem` (`C_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `t_problem`
+--
+
+DROP TABLE IF EXISTS `t_problem`;
+CREATE TABLE `t_problem` (
   `C_ID` int(10) NOT NULL auto_increment,
   `C_TITLE` varchar(100) collate utf8_unicode_ci default NULL,
-  `C_DESCRIPTION` text collate utf8_unicode_ci,
-  `C_INPUT` text collate utf8_unicode_ci,
-  `C_OUTPUT` text collate utf8_unicode_ci,
-  `C_SAMPLEINPUT` text collate utf8_unicode_ci,
-  `C_SAMPLEOUTPUT` text collate utf8_unicode_ci,
-  `C_HINT` text collate utf8_unicode_ci,
   `C_SOURCE` varchar(500) collate utf8_unicode_ci default NULL,
   `C_URL` varchar(500) collate utf8_unicode_ci default NULL,
   `C_originOJ` varchar(40) collate utf8_unicode_ci default NULL,
   `C_originProb` varchar(40) collate utf8_unicode_ci default NULL,
-  `C_addTime` datetime default NULL,
   `C_MEMORYLIMIT` int(10) default NULL,
   `C_TIMELIMIT` int(10) unsigned default NULL,
-  `C_CREATORID` int(10) unsigned default NULL,
-  `C_HIDDEN` int(10) unsigned default NULL,
+  `C_TRIGGER_TIME` datetime default NULL,
   PRIMARY KEY  (`C_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Table structure for table `T_SUBMISSION`
+-- Table structure for table `t_submission`
 --
 
-DROP TABLE IF EXISTS `T_SUBMISSION`;
-CREATE TABLE `T_SUBMISSION` (
+DROP TABLE IF EXISTS `t_submission`;
+CREATE TABLE `t_submission` (
   `C_ID` int(10) NOT NULL auto_increment,
   `C_STATUS` varchar(40) collate utf8_unicode_ci default NULL,
   `C_TIME` int(10) unsigned default NULL,
@@ -99,16 +114,16 @@ CREATE TABLE `T_SUBMISSION` (
   KEY `C_PROBLEMID2` (`C_PROBLEMID`),
   KEY `C_USERID` (`C_USERID`),
   KEY `C_CPROBLEMID` (`C_CONTESTID`),
-  CONSTRAINT `C_PROBLEMID2` FOREIGN KEY (`C_PROBLEMID`) REFERENCES `T_PROBLEM` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `C_USERID` FOREIGN KEY (`C_USERID`) REFERENCES `T_USER` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `C_PROBLEMID2` FOREIGN KEY (`C_PROBLEMID`) REFERENCES `t_problem` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `C_USERID` FOREIGN KEY (`C_USERID`) REFERENCES `t_user` (`C_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Table structure for table `T_USER`
+-- Table structure for table `t_user`
 --
 
-DROP TABLE IF EXISTS `T_USER`;
-CREATE TABLE `T_USER` (
+DROP TABLE IF EXISTS `t_user`;
+CREATE TABLE `t_user` (
   `C_ID` int(10) NOT NULL auto_increment,
   `C_USERNAME` varchar(40) collate utf8_unicode_ci default NULL,
   `C_NICKNAME` varchar(100) collate utf8_unicode_ci default NULL,
@@ -124,11 +139,11 @@ CREATE TABLE `T_USER` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Table structure for table `T_VLOG`
+-- Table structure for table `t_vlog`
 --
 
-DROP TABLE IF EXISTS `T_VLOG`;
-CREATE TABLE `T_VLOG` (
+DROP TABLE IF EXISTS `t_vlog`;
+CREATE TABLE `t_vlog` (
   `C_ID` int(10) unsigned NOT NULL auto_increment,
   `C_SESSIONID` varchar(40) default NULL,
   `C_IP` varchar(40) default NULL,
@@ -150,4 +165,4 @@ CREATE TABLE `T_VLOG` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-11-15 13:27:43
+-- Dump completed on 2010-11-28  7:31:01
