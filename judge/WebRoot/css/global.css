@@ -148,6 +148,11 @@ div.plm {
 	color: black;
 }
 
+/***************struts2 error ******************/
+.errorMessage {
+	margin: 2px;
+}
+
 /********************listContest*********************/
 tr.Ended.odd {
 	background-color:#DDFFDD;

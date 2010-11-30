@@ -25,7 +25,8 @@ String basePath = (String)application.getAttribute("basePath");
 		<td id="left_view">
 			<div class="ptt">
 				<s:if test="contestOver == 1 || #session.visitor.sup == 1">
-					<a href="problem/viewProblem.action?id=${problem.id}">${cproblem.num} - ${problem.title}</a>
+					<a href="${problem.url}">${cproblem.num} - ${problem.title}</a>
+					<a href="problem/viewProblem.action?id=${problem.id}"><font color="green"><sub>p</sub></font></a>
 				</s:if>
 				<s:else>
 					${cproblem.num} - ${problem.title}

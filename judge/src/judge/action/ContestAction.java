@@ -157,6 +157,12 @@ public class ContestAction extends BaseAction {
 
 	@SuppressWarnings("deprecation")
 	public String toAddContest() {
+		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
+		if (user == null) {
+			return ERROR;
+		}
+		
 		curDate = new Date();
 		year = curDate.getYear() + 1900;
 		month = curDate.getMonth() + 1;

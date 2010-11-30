@@ -1,6 +1,5 @@
 var descList;
-var originWidth = [], originHeight = [];
-var imgCnt;
+var originWidth = {}, originHeight = {};
 
 function show(thisId){
 	$(".hiddable").hide();
@@ -16,8 +15,11 @@ function show(thisId){
 		}
 	}
 	
-	imgCnt = $(".textBG img").length;
-	$(".textBG img").load(resizeImg);
+	$(".textBG img").load(function(){
+		originWidth[$(this).attr("src")] = $(this).attr("width");
+		originHeight[$(this).attr("src")] = $(this).attr("height");
+		$(this).resizeImg();
+	});
 }
 
 $(document).ready(function() {
@@ -94,18 +96,17 @@ $(document).ready(function() {
 });
 
 $(window).resize(function(){
-	imgCnt = 1;
-	resizeImg();
+	$(".textBG img").each(function(){
+		$(this).resizeImg();	
+	});
 });
 
-function resizeImg(){
-	if (--imgCnt)return;
-	$(".textBG img").each(function(){
-		var originWidth = $(this).attr("width");
-		var originHeight = $(this).attr("height");
-		var frameWidth = (document.body.clientWidth - 320) * 0.95;
-		var scale = Math.min(frameWidth / originWidth, 1.0);
-		$(this).attr("width", scale * originWidth);
-		$(this).attr("height", scale * originHeight);
-	});
+jQuery.prototype.resizeImg = function(){
+	var src = $(this).attr("src");
+	if (originWidth[src] != undefined){
+		var frameWidth = (document.body.clientWidth - 320) * 0.99;
+		var scale = Math.min(frameWidth / originWidth[src], 1.0);
+		$(this).attr("width", scale * originWidth[src]);
+		$(this).attr("height", scale * originHeight[src]);
+	}
 }

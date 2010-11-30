@@ -36,9 +36,9 @@ String basePath = (String)application.getAttribute("basePath");
 				<s:textarea name="source" rows="25" cols="100" />
 				<br />
 				<input type="hidden" value="${pid}" name="pid" />
-				<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
-				<input style="float:right" class="bnt1" type="submit" value="Submit" />
-				<div id="errorMsg" style="color:red;font-weight:bold;float:right"><s:actionerror /></div>
+				<input style="float:left" class="bnt1" type="submit" value="Submit" />
+				<input style="margin-left:20px;float:left" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
+				<div id="errorMsg" style="color:red;font-weight:bold;float:left"><s:actionerror /></div>
 			</form>
 		</div>
 		<div style="clear:both" />

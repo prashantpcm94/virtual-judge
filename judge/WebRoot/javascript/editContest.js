@@ -14,14 +14,24 @@ $(document).ready(function(){
 		}
 	});
 	
-	$("[name=OJs]").live("change", function(){
+	$("[name=OJs]").live($.browser.msie ? 'click' : 'change', function(){
+		last = "vj";
 		updateTitle($(this).parent().parent());
 	});
 	
-	$("[name=probNums]").live("change", function(){
+	$("[name=probNums]").live("focus", function(){
+		$row = $(this).parent().parent();
+		last = $("[name=probNums]", $row).val();
+		thread = window.setInterval(function(){
+			updateTitle($row);
+		}, 100 );
+	});
+
+	$("[name=probNums]").live("blur", function(){
+		window.clearInterval(thread);
 		updateTitle($(this).parent().parent());
 	});
-	
+
 	$("#form").submit(function(){
 		$("#errorMsg").html("");
 		if ($("#addTable tr:visible").length < 1){
@@ -50,6 +60,7 @@ $(document).ready(function(){
 			return false;
 		}
 		if (err == 1){
+			$("#errorMsg").html("There are invalid problems!");
 			return false;
 		}
 		$("tr:not(:visible)").remove();
@@ -68,8 +79,10 @@ function callBack(_problemInfo){
 	problemInfo = _problemInfo;
 }
 
+var last;
 function updateTitle($row){
-	$row.children().eq(-1).html("<img height='18' src='images/loader.gif' /><font color='green'>Loding...</font>");
+	if ($("[name=probNums]", $row).val() == last)return;
+	last = $("[name=probNums]", $row).val();
 	judgeService.findProblemSimple($("[name=OJs]", $row).val(), $("[name=probNums]", $row).val(), callBack);
 	if (problemInfo == null){
 		$row.children().eq(-1).html("<font color='red'>No such problem!</font>");
@@ -82,10 +95,11 @@ function updateTitle($row){
 
 function updateNum(){
 	$("#addTable tr:visible").each(function(index){
-		if ($(this).children().eq(-1).html()[1] == 'a'){
-			$(this).children().eq(-2).html(String.fromCharCode(65 + index) + " - ");
+		$last = $("td:last-child", $(this)); 
+		if ($last.html()[1] == 'a' || $last.html()[1] == 'A'){
+			$last.prev().html(String.fromCharCode(65 + index) + " - ");
 		} else {
-			$(this).children().eq(-2).html("");
+			$last.prev().html("");
 		}
 	});
 }
