@@ -20,6 +20,9 @@
 		<property name="num" type="java.lang.String">
 		    <column name="C_NUM" />
 		</property>
+		<property name="title" type="java.lang.String">
+		    <column name="C_TITLE" />
+		</property>
 
     </class>
 </hibernate-mapping>

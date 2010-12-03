@@ -9,7 +9,7 @@ $(document).ready(function(){
 	$(".deleteRow").live("click", function(){
 		$(this).parent().parent().remove();
 		updateNum();
-		if ($("#addTable tr:visible").length < 26){
+		if ($("#addTable tr.tr_problem:visible").length < 26){
 			$("#addBtn").show();
 		}
 	});
@@ -34,15 +34,15 @@ $(document).ready(function(){
 
 	$("#form").submit(function(){
 		$("#errorMsg").html("");
-		if ($("#addTable tr:visible").length < 1){
+		if ($("#addTable tr.tr_problem:visible").length < 1){
 			$("#errorMsg").html("Please add one problem at least!");
 			return false;
 		}
-		if ($("#addTable tr:visible").length > 26){
+		if ($("#addTable tr.tr_problem:visible").length > 26){
 			$("#errorMsg").html("At most 26 problems!");
 			return false;
 		}
-		var dup = 0, err = 0, $trs = $("#addTable tr:visible");
+		var dup = 0, err = 0, $trs = $("#addTable tr.tr_problem:visible");
 		for (i = 0; i < $trs.length; i=i+1){
 			for (j = 0; j < i; j=j+1){
 				if ($("[name=OJs]", $trs.eq(i)).val() == $("[name=OJs]", $trs.eq(j)).val() && $("[name=probNums]", $trs.eq(i)).val() == $("[name=probNums]", $trs.eq(j)).val()){
@@ -66,10 +66,10 @@ $(document).ready(function(){
 		$("tr:not(:visible)").remove();
 	});
 
-	if ($("#addTable tr:visible").length < 1){
+	if ($("#addTable tr.tr_problem:visible").length < 1){
 		addRow();
 	}
-	$("#addTable tr:visible").each(function(){
+	$("#addTable tr.tr_problem:visible").each(function(){
 		updateTitle($(this));
 	});
 });
@@ -94,7 +94,7 @@ function updateTitle($row){
 }
 
 function updateNum(){
-	$("#addTable tr:visible").each(function(index){
+	$("#addTable tr.tr_problem:visible").each(function(index){
 		$last = $("td:last-child", $(this)); 
 		if ($last.html()[1] == 'a' || $last.html()[1] == 'A'){
 			$last.prev().html(String.fromCharCode(65 + index) + " - ");
@@ -106,7 +106,7 @@ function updateNum(){
 
 function addRow(){
 	var $originRow;
-	if ($("#addTable tr:visible").length){
+	if ($("#addTable tr.tr_problem:visible").length){
 		$originRow = $("tr#addRow").prev();
 	} else {
 		$originRow = $("tr#addRow");
@@ -126,7 +126,7 @@ function addRow(){
 	$newRow.insertBefore("tr#addRow").show();
 	updateTitle($newRow);
 	
-	if ($("#addTable tr:visible").length >= 26){
+	if ($("#addTable tr.tr_problem:visible").length >= 26){
 		$("#addBtn").hide();
 	}
 }

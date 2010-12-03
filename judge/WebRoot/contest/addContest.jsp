@@ -60,22 +60,32 @@ String basePath = (String)application.getAttribute("basePath");
 					<td class="form_title">Problems:</td>
 					<td>
 						<table id="addTable">
-						<s:iterator value="OJs" status="stat">	
 							<tr>
+								<td></td>
+								<td>OJ</td>
+								<td>ProbNum</td>
+								<td>Alias</td>
+								<td width="24"></td>
+								<td>Title</td>
+							</tr>
+						<s:iterator value="OJs" status="stat">	
+							<tr class="tr_problem">
 								<s:hidden name="pids" value="%{pids[#stat.index]}" />
 								<td><a class="deleteRow" href="javascript:void(0)"><img height="18" src="images/ico_delete.gif" border="0"/></a></td>
 								<td><s:select name="OJs" value="%{OJs[#stat.index]}" list="OJList" /></td>
 								<td><s:textfield name="probNums" value="%{probNums[#stat.index]}" /></td>
+								<td><s:textfield name="titles" value="%{titles[#stat.index]}" /></td>
 								<td></td>
 								<td></td>
 							</tr>
 						</s:iterator>
 						
-							<tr id="addRow" style="display:none">
+							<tr id="addRow" class="tr_problem" style="display:none">
 								<s:hidden name="pids" />
 								<td><a class="deleteRow" href="javascript:void(0)"><img height="18" src="images/ico_delete.gif" border="0"/></a></td>
 								<td><s:select name="OJs" list="OJList" /></td>
 								<td><s:textfield name="probNums" /></td>
+								<td><s:textfield name="titles" /></td>
 								<td></td>
 								<td></td>
 							</tr>

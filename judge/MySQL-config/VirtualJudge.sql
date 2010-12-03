@@ -43,6 +43,7 @@ CREATE TABLE `t_cproblem` (
   `C_PROBLEMID` int(10) default NULL,
   `C_CONTESTID` int(10) default NULL,
   `C_NUM` varchar(2) collate utf8_unicode_ci default NULL,
+  `C_TITLE` varchar(100) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`C_ID`),
   KEY `C_PROBLEMID` (`C_PROBLEMID`),
   KEY `C_CONTESTID` (`C_CONTESTID`),

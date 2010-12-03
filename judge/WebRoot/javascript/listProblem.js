@@ -12,7 +12,7 @@ $(document).ready(function() {
 //		"bInfo": false,
 		"bAutoWidth": false,
 		"bStateSave": true,
-		"aaSorting": [[ 3, "desc" ]],
+		"aaSorting": [[ 1, "asc" ]],
 		"aoColumns": [
 					{
 		  				"sClass": "center status",
@@ -31,8 +31,9 @@ $(document).ready(function() {
 		  				"sClass": "title"
 		  			},
 		  			{
-		  				"sClass": "time"
-		  			},
+		  				"sClass": "time",
+						"bSortable": false
+					},
 		  			{},
 		  			{"bVisible": false},
 		  			{"bVisible": false}

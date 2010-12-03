@@ -12,6 +12,7 @@ public class Cproblem {
 	private int problemId;
 	private int contestId;
 	private String num;
+	private String title;
 	
 	
 	public String getNum() {
@@ -37,6 +38,12 @@ public class Cproblem {
 	}
 	public void setContestId(int contestId) {
 		this.contestId = contestId;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	

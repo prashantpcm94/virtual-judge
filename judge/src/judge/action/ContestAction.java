@@ -58,6 +58,7 @@ public class ContestAction extends BaseAction {
 	private List pids;
 	private List OJs;
 	private List probNums;
+	private List<String> titles;
 
 	private boolean s, r, e;	//比赛进行状态
 	private DataTablesPage dataTablesPage;
@@ -269,6 +270,12 @@ public class ContestAction extends BaseAction {
 			cproblem = new Cproblem();
 			cproblem.setContestId(contestId);
 			cproblem.setProblemId(Integer.parseInt((String) pids.get(i)));
+			if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
+				problem = (Problem) baseService.query(Problem.class, cproblem.getProblemId());
+				cproblem.setTitle(problem.getTitle());
+			} else {
+				cproblem.setTitle((String) titles.get(i));
+			}
 			cproblem.setNum((char)('A' + i) + "");
 			baseService.add(cproblem);
 
@@ -293,8 +300,7 @@ public class ContestAction extends BaseAction {
 			return INPUT;
 		}
 		if (user != null && (user.getSup() == 1 || user.getId() == contest.getManagerId()) || curDate.compareTo(contest.getBeginTime()) >= 0){
-			dataList = baseService.list("select problem.id, cproblem.num, problem.title, problem.id, cproblem.id from Cproblem cproblem, Problem problem " +
-					"where cproblem.contestId = '" + cid + "' and problem.id = cproblem.problemId order by cproblem.id asc", 0, 100);
+			dataList = baseService.list("select cproblem.problemId, cproblem.num, cproblem.title, cproblem.problemId, cproblem.id from Cproblem cproblem where cproblem.contestId = '" + cid + "' order by cproblem.id asc", 0, 100);
 			for (int i = 0; i < dataList.size(); i++){
 				int pid = (Integer)((Object[])dataList.get(i))[0];
 				if (uid < 0){
@@ -464,7 +470,7 @@ public class ContestAction extends BaseAction {
 		
 		numList = new TreeMap();
 		numList.put("-", "All");
-		List<Object[]> tmpList = baseService.query("select cp.num, p.title from Cproblem cp, Problem p where p.id = cp.problemId and cp.contestId = " + cid + " order by cp.num asc");
+		List<Object[]> tmpList = baseService.query("select cp.num, cp.title from Cproblem cp where cp.contestId = " + cid + " order by cp.num asc");
 		for (Object[] o : tmpList) {
 			numList.put((String) o[0], o[0] + " - " + o[1]);
 		}
@@ -576,10 +582,11 @@ public class ContestAction extends BaseAction {
 			}
 			int index = pMap.get(submission.getProblemId());
 			if (ci.ACtime[index] < 0){
-				if (submission.getStatus().equals("Accepted")){
+				String status = submission.getStatus();
+				if (status.equals("Accepted")){
 					ci.ACtime[index] = submission.getSubTime().getTime() - beginTime;
 					ci.solCnt++;
-				} else {
+				} else if (!status.equals("Judging Error")){
 					ci.attempts[index]++;
 				}
 			}
@@ -662,7 +669,7 @@ public class ContestAction extends BaseAction {
 		d_day = (int) (dur / 86400000);
 		d_hour = (int) (dur % 86400000 / 3600000);
 		d_minute = (int) (dur % 3600000 / 60000);
-		dataList = baseService.query("select cproblem.id, p.originOJ, p.originProb from Cproblem cproblem, Problem p where cproblem.problemId = p.id and cproblem.contestId = " + cid + " order by cproblem.num asc");
+		dataList = baseService.query("select cproblem.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problemId = p.id and cproblem.contestId = " + cid + " order by cproblem.num asc");
 		
 		if (contest.getBeginTime().compareTo(curDate) < 0){
 			return "running";
@@ -670,10 +677,12 @@ public class ContestAction extends BaseAction {
 		pids = new ArrayList();
 		OJs = new ArrayList();
 		probNums = new ArrayList();
+		titles = new ArrayList();
 		for (int i = 0; i < dataList.size(); i++){
 			pids.add(((Object [])dataList.get(i))[0]);
 			OJs.add(((Object [])dataList.get(i))[1]);
 			probNums.add(((Object [])dataList.get(i))[2]);
+			titles.add((String) ((Object [])dataList.get(i))[3]);
 		}
 		return "scheduled";
 	}
@@ -764,7 +773,7 @@ public class ContestAction extends BaseAction {
 				contest.setPassword(MD5.getMD5(contest.getPassword()));
 			}
 			contest.setBeginTime(new Date(year - 1900, month - 1, date, hour, minute));
-			contest.setEndTime(new Date(contest.getBeginTime().getTime() + d_day * 86400000 + d_hour * 3600000 + d_minute * 60000));
+			contest.setEndTime(new Date(contest.getBeginTime().getTime() + d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L));
 			long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
 			long start = contest.getBeginTime().getTime() - new Date().getTime();
 			
@@ -805,6 +814,12 @@ public class ContestAction extends BaseAction {
 				cproblem = new Cproblem();
 				cproblem.setContestId(cid);
 				cproblem.setProblemId(Integer.parseInt((String) pids.get(i)));
+				if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
+					problem = (Problem) baseService.query(Problem.class, cproblem.getProblemId());
+					cproblem.setTitle(problem.getTitle());
+				} else {
+					cproblem.setTitle((String) titles.get(i));
+				}
 				cproblem.setNum((char)('A' + i) + "");
 				baseService.add(cproblem);
 			}
@@ -1183,6 +1198,12 @@ public class ContestAction extends BaseAction {
 	}
 	public void setProbNums(List probNums) {
 		this.probNums = probNums;
+	}
+	public List getTitles() {
+		return titles;
+	}
+	public void setTitles(List titles) {
+		this.titles = titles;
 	}
 	
 }
