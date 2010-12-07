@@ -50,7 +50,8 @@ $(document).ready(function(){
 					break;
 				}
 			}
-			if ($trs.eq(i).children().eq(-1).html()[1] != 'a'){
+			tmp = $trs.eq(i).children().eq(-1).html().charAt(1);
+			if (tmp != 'a' && tmp != 'A'){
 				err = 1;
 				break;
 			}
@@ -96,7 +97,7 @@ function updateTitle($row){
 function updateNum(){
 	$("#addTable tr.tr_problem:visible").each(function(index){
 		$last = $("td:last-child", $(this)); 
-		if ($last.html()[1] == 'a' || $last.html()[1] == 'A'){
+		if ($last.html().charAt(1) == 'a' || $last.html().charAt(1) == 'A'){
 			$last.prev().html(String.fromCharCode(65 + index) + " - ");
 		} else {
 			$last.prev().html("");
