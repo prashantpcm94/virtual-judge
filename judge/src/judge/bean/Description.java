@@ -18,8 +18,22 @@ public class Description {
 	private int vote;			//like票数
 	
 	private Problem problem;
-
 	
+	
+	/**
+	 * 去除空标签
+	 * @param string
+	 * @return
+	 */
+	private String trans(String string){
+		if (string != null){
+			string = string.trim();
+			if (!string.contains("img") && !string.contains("IMG") && string.matches("(<[^<>]*>\\s*)*")){
+				string = null;
+			}
+		}
+		return string;
+	}
 	public Problem getProblem() {
 		return problem;
 	}
@@ -36,73 +50,37 @@ public class Description {
 		return description;
 	}
 	public void setDescription(String description) {
-		if (description != null){
-			description = description.trim();
-			if (description.matches("(<[^<>]*>\\s*)*")){
-				description = null;
-			}
-		}
-		this.description = description;
+		this.description = trans(description);
 	}
 	public String getInput() {
 		return input;
 	}
 	public void setInput(String input) {
-		if (input != null){
-			input = input.trim();
-			if (input.matches("(<[^<>]*>\\s*)*")){
-				input = null;
-			}
-		}
-		this.input = input;
+		this.input = trans(input);
 	}
 	public String getOutput() {
 		return output;
 	}
 	public void setOutput(String output) {
-		if (output != null){
-			output = output.trim();
-			if (output.matches("(<[^<>]*>\\s*)*")){
-				output = null;
-			}
-		}
-		this.output = output;
+		this.output = trans(output);
 	}
 	public String getSampleInput() {
 		return sampleInput;
 	}
 	public void setSampleInput(String sampleInput) {
-		if (sampleInput != null){
-			sampleInput = sampleInput.trim();
-			if (sampleInput.matches("(<[^<>]*>\\s*)*")){
-				sampleInput = null;
-			}
-		}
-		this.sampleInput = sampleInput;
+		this.sampleInput = trans(sampleInput);
 	}
 	public String getSampleOutput() {
 		return sampleOutput;
 	}
 	public void setSampleOutput(String sampleOutput) {
-		if (sampleOutput != null){
-			sampleOutput = sampleOutput.trim();
-			if (sampleOutput.matches("(<[^<>]*>\\s*)*")){
-				sampleOutput = null;
-			}
-		}
-		this.sampleOutput = sampleOutput;
+		this.sampleOutput = trans(sampleOutput);
 	}
 	public String getHint() {
 		return hint;
 	}
 	public void setHint(String hint) {
-		if (hint != null){
-			hint = hint.trim();
-			if (hint.matches("(<[^<>]*>\\s*)*")){
-				hint = null;
-			}
-		}
-		this.hint = hint;
+		this.hint = trans(hint);
 	}
 	public Date getUpdateTime() {
 		return updateTime;

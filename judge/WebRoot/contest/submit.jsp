@@ -20,7 +20,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<table>
 					<tr>
 						<td>Problem:</td>
-						<td><s:property value="%{cproblem.num}"/></td>
+						<td><b>${cproblem.num}</b> - <a href="contest/viewProblem.action?pid=${cproblem.id}">${cproblem.title}</a></td>
 					</tr>
 					<tr>
 						<td>Language:</td>
