@@ -48,6 +48,7 @@ public class ProblemAction extends BaseAction{
 	private String source;
 	private String redir;
 	private String un;
+	private boolean inContest;
 	private String _64Format;
 	private DataTablesPage dataTablesPage;
 	private Map<Object, String> languageList;
@@ -305,11 +306,15 @@ public class ProblemAction extends BaseAction{
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 		
-		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen, p.originOJ, p.originProb from Submission s, Problem p where s.problemId = p.id and s.contestId = 0 ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen, p.originOJ, p.originProb, s.contestId from Submission s, Problem p where s.problemId = p.id ");
 
 		dataTablesPage = new DataTablesPage();
 
 		dataTablesPage.setITotalRecords(9999999L);
+		
+		if (!inContest || sup == 0){
+			hql.append(" and s.contestId = 0 ");
+		}
 
 		if (un != null && !un.trim().isEmpty()){
 			un = un.toLowerCase().trim();
@@ -617,6 +622,12 @@ public class ProblemAction extends BaseAction{
 	}
 	public void setProbNum2(String probNum2) {
 		this.probNum2 = probNum2;
+	}
+	public boolean isInContest() {
+		return inContest;
+	}
+	public void setInContest(boolean inContest) {
+		this.inContest = inContest;
 	}
 
 }

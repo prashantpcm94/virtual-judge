@@ -58,17 +58,24 @@ $(document).ready(function() {
 		  				}
 		  			},
 		  			{},
+		  			{
+		  				"fnRender": function ( oObj ) {
+	  						return oObj.aData[13] > 0 ? "<a href='contest/viewContest.action?cid=" + oObj.aData[13] + "'>*</a>" : "";
+		  				}
+		  			},
 		  			{"bVisible": false},
 		  			{"bVisible": false},
 		  			{"bVisible": false},
 					{"bVisible": false}
 		  		],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
+			var inContest = $("[name='inContest']:checked").length > 0;
 			var un = $("[name='un']").val();
 			var OJId = $("[name='OJId']").val();
 			var probNum = $("[name='probNum']").val();
 			var res = $("[name='res']").val();
 		
+			aoData.push( { "name": "inContest", "value": inContest } );
 			aoData.push( { "name": "un", "value": un } );
 			if (first){
 				aoData.push( { "name": "id", "value": id } );
@@ -119,6 +126,10 @@ $(document).ready(function() {
 			$("[name='res']").val(0);
 			oTable.fnPageChange( 'first' );
 		}
+	});
+
+	$("[name='inContest']").click(function(){
+		oTable.fnPageChange( 'first' );
 	});
 	
 	if (location.href.indexOf("reset") >= 0 || location.href.indexOf("id=") >= 0){
