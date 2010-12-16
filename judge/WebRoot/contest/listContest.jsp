@@ -24,6 +24,9 @@
 		</style>
 		<script type="text/javascript" src="javascript/jquery.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
+
+		<script type="text/javascript" src="javascript/common.js"></script>
+		<script type="text/javascript" src="javascript/listContest.js"></script>
 	</head>
 
 	<body>
@@ -71,7 +74,5 @@
 		</table>
 
 		<s:include value="/bottom.jsp" />
-		<script type="text/javascript" src="javascript/listContest.js"></script>
-		<script type="text/javascript" src="javascript/common.js"></script>
 	</body>
 </html>

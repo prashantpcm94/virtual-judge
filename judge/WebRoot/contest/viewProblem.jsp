@@ -11,11 +11,12 @@ String basePath = (String)application.getAttribute("basePath");
 	    <title>Virtual Judge -- Contest</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-		<script type="text/javascript" src="javascript/jquery.js"></script>
-
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='dwr/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
+
+		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" src="javascript/viewProblem.js"></script>
 	</head>
 
 	<body>
@@ -110,10 +111,8 @@ String basePath = (String)application.getAttribute("basePath");
 		</tr></table>
 
 		<s:hidden name="pid" value="%{problem.id}" />
-		<div style="clear:both" />
 		<s:include value="/bottom.jsp" />
 
-		<script type="text/javascript" src="javascript/viewProblem.js"></script>
 	</body>
 	
 </html>

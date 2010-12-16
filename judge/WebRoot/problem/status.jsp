@@ -18,6 +18,8 @@ String basePath = (String)application.getAttribute("basePath");
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='dwr/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
+
+		<script type="text/javascript" src="javascript/problem_status.js"></script>
 	</head>
 
 	<body>
@@ -59,7 +61,6 @@ String basePath = (String)application.getAttribute("basePath");
 		</table>
 
 		<s:include value="/bottom.jsp" />
-		<script type="text/javascript" src="javascript/problem_status.js"></script>
 	</body>
 
 </html>

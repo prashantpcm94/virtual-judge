@@ -75,6 +75,6 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 			</s:else>
 		</p>
 		<pre class="${language}" style="font-family:Courier New,Courier,monospace">${submission.source}</pre>
+		<s:include value="/bottom.jsp" />
 	</body>
-	<s:include value="/bottom.jsp" />
 </html>

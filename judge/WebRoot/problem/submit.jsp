@@ -40,7 +40,6 @@ String basePath = (String)application.getAttribute("basePath");
 				<input type="hidden" value="${problem.id}" name="problem.id" />
 			</form>
 		</div>
-		<div style="clear:both" />
 		<s:include value="/bottom.jsp" />
 	</body>
 </html>

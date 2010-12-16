@@ -41,7 +41,6 @@ String basePath = (String)application.getAttribute("basePath");
 				<div id="errorMsg" style="color:red;font-weight:bold;float:left"><s:actionerror /></div>
 			</form>
 		</div>
-		<div style="clear:both" />
 		<s:include value="/bottom.jsp" />
 	</body>
 </html>

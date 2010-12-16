@@ -21,6 +21,7 @@ String basePath = (String)application.getAttribute("basePath");
 			}
 		</style>
 		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" src="javascript/editDescription.js"></script>
 	</head>
 
 	<body>
@@ -148,7 +149,6 @@ String basePath = (String)application.getAttribute("basePath");
 					} );
 		//]]>
 		</script>
-		<script type="text/javascript" src="javascript/editDescription.js"></script>
 		<s:include value="/bottom.jsp" />
 	</body>
 
