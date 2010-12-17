@@ -21,6 +21,7 @@ public class StartUpListener implements ServletContextListener {
 		
 		ServletContext sc = event.getServletContext();
 		Customize.sc = sc;
+		ApplicationContainer.sc = sc;
 		
 		Map<String, String> languageList;
 		

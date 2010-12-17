@@ -107,16 +107,12 @@ public class BaseService implements IBaseService {
 	}
 	
 	public void execute(String hql) {
-		this.baseDao.execute(hql);
+		BaseService.baseDao.execute(hql);
 	}
 
 	public void execute(String hql, Map parMap) {
-		this.baseDao.execute(hql, parMap);
+		BaseService.baseDao.execute(hql, parMap);
 	}
-
-
-	
-
 
 
 }

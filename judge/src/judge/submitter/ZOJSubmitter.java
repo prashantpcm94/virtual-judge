@@ -1,10 +1,17 @@
 package judge.submitter;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import judge.bean.Problem;
+import judge.tool.ApplicationContainer;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
@@ -15,31 +22,38 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 public class ZOJSubmitter extends Submitter {
 
-	static private HttpClient clientList[] = new HttpClient[5];
+	static final String OJ_NAME = "ZOJ";
+	static private HttpClient clientList[];
+	static private boolean using[];
+	static private String[] usernameList;
+	static private String[] passwordList;
+
 	static {
+		List<String> uList = new ArrayList<String>(), pList = new ArrayList<String>();
+		try {
+			FileReader fr = new FileReader(ApplicationContainer.sc.getRealPath("WEB-INF" + File.separator + "accounts.conf"));
+			BufferedReader br = new BufferedReader(fr);
+			while (br.ready()) {
+				String info[] = br.readLine().split("\\s+");
+				if (info.length >= 3 && info[0].equalsIgnoreCase(OJ_NAME)){
+					uList.add(info[1]);
+					pList.add(info[2]);
+				}
+			}
+			br.close();
+			fr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		usernameList = uList.toArray(new String[0]);
+		passwordList = pList.toArray(new String[0]);
+		using = new boolean[usernameList.length];
+		clientList = new HttpClient[usernameList.length];
 		for (int i = 0; i < clientList.length; i++){
 			clientList[i] = new HttpClient();
 			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
 		}
 	}
-	
-	static private boolean using[] = new boolean[5];
-	
-	final static private String usernameList[] = {
-		"vjudge1",
-		"vjudge2",
-		"vjudge33",
-		"vjudge4",
-		"vjudge5"
-	};
-
-	final static private String passwordList[] = {
-		"xiaotuliangliang",
-		"xiaotuliangliang",
-		"xiaotuliangliang",
-		"xiaotuliangliang",
-		"xiaotuliangliang"
-	};
 	
 	private void getMaxRunId() throws Exception {
 		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showRuns.do?contestId=1");
