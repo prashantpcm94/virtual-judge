@@ -174,7 +174,7 @@ public class ProblemAction extends BaseAction{
 				description = new Description();
 				description.setUpdateTime(new Date());
 				description.setAuthor("0");
-				description.setRemarks("Initializatioin.");
+				description.setRemarks("Initialization.");
 				description.setVote(0);
 			}
 			problem.setTitle("Crawling……");
