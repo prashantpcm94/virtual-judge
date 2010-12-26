@@ -26,13 +26,14 @@ String basePath = (String)application.getAttribute("basePath");
 		<table cellpadding="0" cellspacing="1" border="0" class="display" id="standing">
 			<thead>
 				<tr>
-					<th>Rank</th>
-					<th>ID</th>
-					<th>Solve</th>
-					<th>Penalty</th>
+					<th class="rank">Rank</th>
+					<th class="id">ID</th>
+					<th class="solve">Solve</th>
+					<th class="standing_time">Penalty</th>
 					<s:iterator value="tList" status="stat">
 						<th class="standing_time"><a href="contest/viewProblem.action?pid=${id}"><s:property value="num" /></a></th>
 					</s:iterator>
+					<th />
 				</tr>
 			</thead>
 
@@ -53,6 +54,7 @@ String basePath = (String)application.getAttribute("basePath");
 							<td class="red">-<s:property value="attempts[#stat1.index]" /></td>
 						</s:else>
 					</s:iterator>
+					<td class="white" />
 				</tr>
 			</s:iterator>			
 		</table>
