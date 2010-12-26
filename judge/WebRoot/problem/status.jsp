@@ -39,14 +39,14 @@ String basePath = (String)application.getAttribute("basePath");
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="status" style="text-align:center">
 			<thead>
 				<tr>
-					<th>Run ID</th>
+					<th>RunID</th>
 					<th>User</th>
 					<th>Problem</th>
 					<th>Result</th>
 					<th>Memory</th>
 					<th>Time</th>
 					<th>Language</th>
-					<th>Code Length</th>
+					<th>Length</th>
 					<th>Submit Time</th>
 					<th></th>
 					<th></th>

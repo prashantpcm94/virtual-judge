@@ -59,7 +59,7 @@ String basePath = (String)application.getAttribute("basePath");
 			<thead>
 				<tr>
 					<th>OJ</th>
-					<th>ProbID</th>
+					<th style="width:80px;">ProbID</th>
 					<th>Title</th>
 					<th>Trigger Time</th>
 					<th>Source</th>

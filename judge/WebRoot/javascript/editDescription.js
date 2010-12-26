@@ -3,12 +3,6 @@ $(document).ready(function() {
 	$("#remarks").focus();
 
 	$("#editorsForm").submit(function(){
-		if ($("[name=description.remarks]").val().match(/^\s*$/)){
-			form.scrollTop = 0;
-			$("#remarks").focus();
-			alert("Fill some remarks, please ~~");
-			return false;
-		}
 		if ($("[name=description.remarks]").val().length > 450){
 			form.scrollTop = 0;
 			$("#remarks").focus();

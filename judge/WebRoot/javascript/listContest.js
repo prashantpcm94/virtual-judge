@@ -19,7 +19,7 @@ $(document).ready(function() {
 		  				"sClass": "title"
 		  			},
 		  			{ 
-		  				"sClass": "time"
+		  				"sClass": "date"
 		  			},
 		  			{ 
 		  				"bSortable": false,

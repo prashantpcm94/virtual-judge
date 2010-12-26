@@ -30,7 +30,8 @@ $(document).ready(function() {
 		  			{
 		  				"fnRender": function ( oObj ) {
 			  				return "<a href='problem/viewProblem.action?id=" + oObj.aData[2] + "'>" + oObj.aData[11] + " " + oObj.aData[12] + "</a>";
-		  				}
+		  				},
+		  				"sClass": "prob_num"
 		  			},
 		  			{
 		  				"sClass": "result"
@@ -50,14 +51,18 @@ $(document).ready(function() {
 		  			{ 
 		  				"fnRender": function ( oObj ) {
 	  						return oObj.aData[10] ? "<a " + (oObj.aData[10] == 2 ? "class='shared'" : "") + " href='problem/viewSource.action?id=" + oObj.aData[0] + "'>" + oObj.aData[6] + "</a>" : oObj.aData[6];
-		  				}
-		  			},
+		  				},
+		  				"sClass": "language"
+					},
 		  			{
 		  				"fnRender": function ( oObj ) {
 		  					return oObj.aData[7] + " B";
-		  				}
+		  				},
+		  				"sClass": "length"
 		  			},
-		  			{},
+		  			{
+		  				"sClass": "date"
+		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
 	  						return oObj.aData[13] > 0 ? "<a href='contest/viewContest.action?cid=" + oObj.aData[13] + "'>*</a>" : "";

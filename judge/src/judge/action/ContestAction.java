@@ -140,7 +140,7 @@ public class ContestAction extends BaseAction {
 					contest.getId(),
 					contest.getTitle(),
 					sdf.format(contest.getBeginTime()),
-					trans(contest.getEndTime().getTime() - contest.getBeginTime().getTime()),
+					trans(contest.getEndTime().getTime() - contest.getBeginTime().getTime(), true),
 					curDate.compareTo(contest.getBeginTime()) < 0 ? "Scheduled" : curDate.compareTo(contest.getEndTime()) < 0 ? "Running" : "Ended",
 					contest.getPassword() == null ? "Public" : "Private",
 					user.getUsername(),
@@ -613,21 +613,21 @@ public class ContestAction extends BaseAction {
 		});
 		for (int i = 0; i < dataList.size(); i++){
 			ci = (ContestInfo)dataList.get(i);
-			ci.sPenalty = trans(ci.penalty);
+			ci.sPenalty = trans(ci.penalty, false);
 			for (int j = 0; j < problemNum; j++){
-				ci.sACtime[j] = trans(ci.ACtime[j]);
+				ci.sACtime[j] = trans(ci.ACtime[j], false);
 			}
 		}
 		return SUCCESS;
 	}
 	
-	public String trans(Object object){
+	public String trans(Object object, boolean hasDay){
 		long time = (Long)object;
 		long d = time / 86400000;
-		long h = time % 86400000 / 3600000;
+		long h = (hasDay ? time % 86400000 : time) / 3600000;
 		long m = time % 3600000 / 60000;
 		long s = time % 60000 / 1000;
-		return (d > 0 ? (d + "天") : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;    
+		return (hasDay && d > 0 ? (d + "天") : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;    
 	}
 	
 	public String deleteContest(){

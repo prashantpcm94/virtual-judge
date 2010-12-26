@@ -15,23 +15,23 @@ $(document).ready(function() {
 		"aaSorting": [[ 1, "asc" ]],
 		"aoColumns": [
 					{
-		  				"sClass": "center status",
+		  				"sClass": "center",
 						"bSortable": false
 					},
 		  			{
 		  				"fnRender": function ( oObj ) {
 			  				return "<a href='" + oObj.aData[6] + "'>" + oObj.aData[1] + "</a>";
 		  				},
-		  				"sClass": "center status"
+		  				"sClass": "center"
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
 			  				return "<a href='problem/viewProblem.action?id=" + oObj.aData[5] + "'>" + oObj.aData[2] + "</a>";
 		  				},
-		  				"sClass": "title"
+		  				"sClass": ""
 		  			},
 		  			{
-		  				"sClass": "time",
+		  				"sClass": "date",
 						"bSortable": false
 					},
 		  			{},

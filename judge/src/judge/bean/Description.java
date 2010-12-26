@@ -27,8 +27,8 @@ public class Description {
 	 */
 	private String trans(String string){
 		if (string != null){
-			string = string.trim();
-			if (!string.contains("img") && !string.contains("IMG") && string.matches("(<[^<>]*>\\s*)*")){
+			string = string.replaceAll("null", "").trim();
+			if (!string.contains("img") && !string.contains("IMG") && !string.contains("iframe") && string.matches("(<[^<>]*>\\s*)*")){
 				string = null;
 			}
 		}
