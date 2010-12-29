@@ -30,10 +30,10 @@ import com.opensymphony.xwork2.ActionContext;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class ProblemAction extends BaseAction{
-	
+
 	private IBaseService baseService;
 	private JudgeService judgeService;
-	
+
 	private int id;	//problemId
 	private int uid;
 	private int isOpen;
@@ -52,11 +52,11 @@ public class ProblemAction extends BaseAction{
 	private String _64Format;
 	private DataTablesPage dataTablesPage;
 	private Map<Object, String> languageList;
-	
+
 	public String toListProblem() {
 		return SUCCESS;
 	}
-	
+
 	public String listProblem() {
 		Map session = ActionContext.getContext().getSession();
 		StringBuffer hql = new StringBuffer("select problem.originOJ, problem.originProb, problem.title, problem.triggerTime, problem.source, problem.id, problem.url from Problem problem where 1=1 ");
@@ -92,7 +92,7 @@ public class ProblemAction extends BaseAction{
 			o[3] = sdf.format((Date)o[3]);
 		}
 		dataTablesPage.setAaData(aaData);
-		
+
 		if (session.containsKey("error")){
 			this.addActionError((String) session.get("error"));
 		}
@@ -100,7 +100,7 @@ public class ProblemAction extends BaseAction{
 
 		return SUCCESS;
 	}
-	
+
 	public String addProblem(){
 		Map session = ActionContext.getContext().getSession();
 		if (!OJList.contains(OJId)){
@@ -154,7 +154,7 @@ public class ProblemAction extends BaseAction{
 			session.put("error", "Invalid problem number ...");
 			return ERROR;
 		}
-		
+
 		for (String probNum : probNumList) {
 			description = null;
 			problem = judgeService.findProblem(OJId.trim(), probNum);
@@ -189,7 +189,7 @@ public class ProblemAction extends BaseAction{
 
 		return SUCCESS;
 	}
-	
+
 	public String viewProblem(){
 		List list = baseService.query("select p from Problem p left join fetch p.descriptions where p.id = " + id);
 		problem = (Problem) list.get(0);
@@ -198,7 +198,7 @@ public class ProblemAction extends BaseAction{
 		session.put("problem", problem);
 		return SUCCESS;
 	}
-	
+
 	public String vote4Description(){
 		Map session = ActionContext.getContext().getSession();
 		Set votePids = (Set) session.get("votePids");
@@ -212,7 +212,7 @@ public class ProblemAction extends BaseAction{
 		votePids.add(desc.getProblem().getId());
 		return SUCCESS;
 	}
-	
+
 	public String toSubmit(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -227,8 +227,8 @@ public class ProblemAction extends BaseAction{
 		isOpen = user.getShare();
 		return SUCCESS;
 	}
-	
-	
+
+
 	public String submit(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -282,14 +282,14 @@ public class ProblemAction extends BaseAction{
 		}
 		return SUCCESS;
 	}
-	
+
 	public String status() {
 		if (id != 0){
 			problem = (Problem) baseService.query(Problem.class, id);
 			OJId = problem.getOriginOJ();
 			probNum = problem.getOriginProb();
 		}
-		
+
 		Map session = ActionContext.getContext().getSession();
 		if (session.containsKey("error")){
 			this.addActionError((String) session.get("error"));
@@ -305,13 +305,13 @@ public class ProblemAction extends BaseAction{
 		User user = (User) session.get("visitor");
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
-		
+
 		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen, p.originOJ, p.originProb, s.contestId from Submission s, Problem p where s.problemId = p.id ");
 
 		dataTablesPage = new DataTablesPage();
 
 		dataTablesPage.setITotalRecords(9999999L);
-		
+
 		if (!inContest || sup == 0){
 			hql.append(" and s.contestId = 0 ");
 		}
@@ -320,7 +320,7 @@ public class ProblemAction extends BaseAction{
 			un = un.toLowerCase().trim();
 			hql.append(" and s.username = '" + un + "' ");
 		}
-		
+
 		if (id != 0){
 			hql.append(" and p.id = " + id);
 		} else {
@@ -331,7 +331,7 @@ public class ProblemAction extends BaseAction{
 				hql.append(" and p.originProb = '" + probNum + "' ");
 			}
 		}
-		
+
 		if (res == 1){
 			hql.append(" and s.status = 'Accepted' ");
 		} else if (res == 2) {
@@ -347,23 +347,23 @@ public class ProblemAction extends BaseAction{
 		} else if (res == 7) {
 			hql.append(" and s.status = 'Judging Error' ");
 		}
-		
+
 		hql.append(" order by s.id desc ");
-		
+
 		dataTablesPage.setITotalDisplayRecords(9999999L);
-		
+
 		List<Object[]> aaData = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
-		
+
 		for (Object[] o : aaData) {
 			o[8] = sdf.format((Date)o[8]);
-			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0; 
+			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0;
 		}
 
 		dataTablesPage.setAaData(aaData);
 
 		return SUCCESS;
 	}
-	
+
 	public String toEditDescription(){
 		Map session = ActionContext.getContext().getSession();
 		List list = baseService.query("select d from Description d left join fetch d.problem where d.id = " + id);
@@ -375,7 +375,7 @@ public class ProblemAction extends BaseAction{
 		redir = ServletActionContext.getRequest().getHeader("Referer") + "&edit=1";
 		return SUCCESS;
 	}
-	
+
 	public String editDescription(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -394,7 +394,7 @@ public class ProblemAction extends BaseAction{
 		baseService.add(description);
 		return SUCCESS;
 	}
-	
+
 	public String deleteDescription(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
@@ -406,11 +406,15 @@ public class ProblemAction extends BaseAction{
 		}
 		return SUCCESS;
 	}
-	
+
 	public String viewSource(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		submission = (Submission) baseService.query(Submission.class, id);
+		if (submission.getContestId() != 0){
+			session.put("error", "No access to codes in contests!");
+			return ERROR;
+		}
 		if (user == null || user.getSup() == 0 && user.getId() != submission.getUserId()){
 			if (submission.getIsOpen() == 0){
 				session.put("error", "No access to this code!");
@@ -461,7 +465,7 @@ public class ProblemAction extends BaseAction{
 		baseService.modify(submission);
 		return SUCCESS;
 	}
-	
+
 	private String findClass4SHJS(String srcLang) {
 		srcLang = " " + srcLang.toLowerCase() + " ";
 		if (srcLang.contains("c++") || srcLang.contains("cpp") || srcLang.contains("g++")){
@@ -494,8 +498,8 @@ public class ProblemAction extends BaseAction{
 			return "sh_c";
 		}
 	}
-	
-	
+
+
 	public int getUid() {
 		return uid;
 	}
