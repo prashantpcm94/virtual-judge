@@ -74,7 +74,7 @@ public class SPOJSubmitter extends Submitter {
 
 	
 	private void submit(String username, String password) throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		PostMethod postMethod = new PostMethod("http://www.spoj.pl/submit/complete/");
 
 		postMethod.addParameter("lang", submission.getLanguage());
@@ -93,7 +93,7 @@ public class SPOJSubmitter extends Submitter {
 		String tLine = new String(responseBody, "UTF-8");
 		if (tLine.contains("submit in this language for this problem")){
 			submission.setStatus("Language Error");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			throw new Exception();
 		}
 		//注意:此处判断登陆成功条件并不充分,相当于默认成功
@@ -115,17 +115,17 @@ public class SPOJSubmitter extends Submitter {
 				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
 				if (!result.contains("ing")){
-					if (result.equals("accepted")){
+					if (result.contains("accepted")){
 						submission.setStatus("Accepted");
 						result = m.group(4).trim();
 						int mul = result.contains("M") ? 1024 : 1;
 						submission.setMemory((int)(0.5 + mul * Double.parseDouble(result.replaceAll("[Mk]", ""))));
 						submission.setTime((int)(0.5 + 1000 * Double.parseDouble(m.group(3).replaceAll("<[\\s\\S]*?>", "").trim())));
 					}
-					baseService.modify(submission);
+					baseService.addOrModify(submission);
 					return;
 				}
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
 			interval += 500;
@@ -164,14 +164,14 @@ public class SPOJSubmitter extends Submitter {
 				
 			submit(usernameList[idx], passwordList[idx]);	//非登陆式,只需交一次
 			submission.setStatus("Running & Judging");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (!"Language Error".equals(submission.getStatus())){
 				submission.setStatus("Judging Error");
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
 			}
 		}
 		
