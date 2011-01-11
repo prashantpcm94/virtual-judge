@@ -9,11 +9,11 @@ package judge.bean;
 public class Cproblem {
 	private int id;
 	
-	private int problemId;
-	private int contestId;
 	private String num;
 	private String title;
 	
+	private Problem problem;
+	private Contest contest;
 	
 	public String getNum() {
 		return num;
@@ -27,23 +27,23 @@ public class Cproblem {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getProblemId() {
-		return problemId;
-	}
-	public void setProblemId(int problemId) {
-		this.problemId = problemId;
-	}
-	public int getContestId() {
-		return contestId;
-	}
-	public void setContestId(int contestId) {
-		this.contestId = contestId;
-	}
 	public String getTitle() {
 		return title;
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public Problem getProblem() {
+		return problem;
+	}
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
+	public Contest getContest() {
+		return contest;
+	}
+	public void setContest(Contest contest) {
+		this.contest = contest;
 	}
 	
 	

@@ -25,10 +25,25 @@
 		<property name="endTime" type="java.sql.Timestamp">
 		    <column name="C_ENDTIME" length="7" />
 		</property>
-		
-		<property name="managerId" type="java.lang.Integer">
-		    <column name="C_MANAGERID" />
+		<property name="hashCode" type="java.lang.String">
+		    <column name="C_HASH_CODE" />
 		</property>
+		
+		<many-to-one name="manager" class="judge.bean.User" fetch="select">
+			<column name="C_MANAGER_ID" />
+		</many-to-one>
+		<set name="cproblems" lazy="true" inverse="true">
+			<key>
+				<column name="C_CONTEST_ID" />
+			</key>
+			<one-to-many class="judge.bean.Cproblem" />
+		</set>
+		<set name="submissions" lazy="true" inverse="true">
+			<key>
+				<column name="C_CONTEST_ID" />
+			</key>
+			<one-to-many class="judge.bean.Submission" />
+		</set>
 
     </class>
 </hibernate-mapping>

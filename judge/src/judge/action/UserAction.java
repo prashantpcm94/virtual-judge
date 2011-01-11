@@ -201,7 +201,7 @@ public class UserAction extends ActionSupport {
 		user.setEmail(email);
 		user.setBlog(blog);
 		user.setShare(share);
-		userService.add(user);
+		userService.addOrModify(user);
 		Map session = ActionContext.getContext().getSession();
 		session.put("visitor", user);
 		return SUCCESS;
@@ -262,7 +262,7 @@ public class UserAction extends ActionSupport {
 		user.setEmail(email);
 		user.setBlog(blog);
 		user.setShare(share);
-		userService.modify(user);
+		userService.addOrModify(user);
 		session.put("visitor", user);
 		return SUCCESS;
 	}

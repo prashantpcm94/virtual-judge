@@ -24,17 +24,17 @@ public class Submission {
 	private int memory;			//运行内存(未AC提交为空	单位:KB)
 	private Date subTime;		//提交时间
 	
-	private int problemId;		//外键	题目
-	private int userId;			//外键	提交人
-	private int contestId;		//外键	比赛
-	
 	private String language;	//语言
 	private String source;		//源代码
 	private int isOpen;			//代码是否公开
 	
 	private String dispLanguage;//用于显示的语言
 	private String username;	//提交者用户名
-	
+
+	private Problem problem;	//外键	题目
+	private User user;			//外键	提交人
+	private Contest contest;	//外键	比赛
+
 
 	public int getIsOpen() {
 		return isOpen;
@@ -84,24 +84,6 @@ public class Submission {
 	public void setSubTime(Date subTime) {
 		this.subTime = subTime;
 	}
-	public int getProblemId() {
-		return problemId;
-	}
-	public void setProblemId(int problemId) {
-		this.problemId = problemId;
-	}
-	public int getUserId() {
-		return userId;
-	}
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
-	public int getContestId() {
-		return contestId;
-	}
-	public void setContestId(int contestId) {
-		this.contestId = contestId;
-	}
 	public String getDispLanguage() {
 		return dispLanguage;
 	}
@@ -114,8 +96,23 @@ public class Submission {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
-
-	
+	public Problem getProblem() {
+		return problem;
+	}
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	public Contest getContest() {
+		return contest;
+	}
+	public void setContest(Contest contest) {
+		this.contest = contest;
+	}
 
 }

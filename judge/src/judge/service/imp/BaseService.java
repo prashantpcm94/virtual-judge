@@ -8,29 +8,19 @@
 package judge.service.imp;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import judge.dao.IBaseDao;
 import judge.service.IBaseService;
 
-
 @SuppressWarnings("unchecked")
 public class BaseService implements IBaseService {
 
 	static private IBaseDao baseDao;
 
-	public IBaseDao getBaseDao() {
-		return baseDao;
-	}
-
-	public void setBaseDao(IBaseDao baseDao) {
-		BaseService.baseDao = baseDao;
-	}
-
-	public Serializable add(Object entity) {
-		return BaseService.baseDao.add(entity);
+	public void addOrModify(Object entity) {
+		BaseService.baseDao.addOrModify(entity);
 	}
 
 	public void delete(Object entity) {
@@ -39,18 +29,6 @@ public class BaseService implements IBaseService {
 
 	public void delete(Class entityClass, Serializable id) {
 		BaseService.baseDao.delete(entityClass, id);
-	}
-
-	public void modify(Object entity) {
-		BaseService.baseDao.modify(entity);
-	}
-
-	public void addOrModify(Object entity) {
-		BaseService.baseDao.addOrModify(entity);
-	}
-
-	public void addOrModify(Collection entity) {
-		BaseService.baseDao.addOrModify(entity);
 	}
 
 	public Object query(Class entityClass, Serializable id) {
@@ -112,6 +90,17 @@ public class BaseService implements IBaseService {
 
 	public void execute(String hql, Map parMap) {
 		BaseService.baseDao.execute(hql, parMap);
+	}
+	
+	//////////////////////////////////////////////
+
+	
+	public IBaseDao getBaseDao() {
+		return baseDao;
+	}
+
+	public void setBaseDao(IBaseDao baseDao) {
+		BaseService.baseDao = baseDao;
 	}
 
 

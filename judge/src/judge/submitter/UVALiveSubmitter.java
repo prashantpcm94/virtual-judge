@@ -73,7 +73,7 @@ public class UVALiveSubmitter extends Submitter {
 	}
 
 	private void submit(String password) throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		
         PostMethod postMethod = new PostMethod("http://acmicpc-live-archive.uva.es/nuevoportal/mailer.php");
         postMethod.addParameter("paso", "paso");
@@ -115,7 +115,7 @@ public class UVALiveSubmitter extends Submitter {
     				submission.setTime((int)(1000 * Double.parseDouble(m.group(3))));
 //	   				System.out.println(username + " " + submission.getMemory() + "KB " + submission.getTime() + "ms");
 				}
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
 				return;
 			}
 			Thread.sleep(interval);
@@ -156,13 +156,13 @@ public class UVALiveSubmitter extends Submitter {
 				
 			submit(passwordList[idx]);	//非登陆式,只需交一次
 			submission.setStatus("Running & Judging");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(passwordList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 		}
 		
 		try {

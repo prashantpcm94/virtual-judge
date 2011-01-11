@@ -73,7 +73,7 @@ public class HUSTSubmitter extends Submitter {
 	}
 	
 	private void submit() throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		
         PostMethod postMethod = new PostMethod("http://acm.hust.edu.cn/thx/submit.php");
         postMethod.addParameter("language", submission.getLanguage());
@@ -127,10 +127,10 @@ public class HUSTSubmitter extends Submitter {
 						submission.setMemory(Integer.parseInt(m.group(3).replaceAll(" <font[\\s\\S]*?font>", "")));
 						submission.setTime(Integer.parseInt(m.group(4).replaceAll(" <font[\\s\\S]*?font>", "")));
 					}
-					baseService.modify(submission);
+					baseService.addOrModify(submission);
 					return;
 				}
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
 			interval += 500;
@@ -178,13 +178,13 @@ public class HUSTSubmitter extends Submitter {
 				submit();
 			}
 			submission.setStatus("Running & Judging");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 		}
 		
 		try {

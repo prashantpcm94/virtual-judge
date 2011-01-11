@@ -74,7 +74,7 @@ public class SGUSubmitter extends Submitter {
 	
 	
 	private void submit(String username, String password) throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
         PostMethod postMethod = new PostMethod("http://acm.sgu.ru/sendfile.php?contest=0");
         postMethod.addParameter("elang", submission.getLanguage());
         postMethod.addParameter("id", username);
@@ -115,10 +115,10 @@ public class SGUSubmitter extends Submitter {
 	    				submission.setMemory(Integer.parseInt(m.group(4)));
 	    				submission.setTime(Integer.parseInt(m.group(3)));
     				}
-    				baseService.modify(submission);
+    				baseService.addOrModify(submission);
     				return;
     			}
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
 	    	}
 			Thread.sleep(interval);
 			interval += 500;
@@ -157,13 +157,13 @@ public class SGUSubmitter extends Submitter {
 				
 			submit(usernameList[idx], passwordList[idx]);	//非登陆式,只需交一次
 			submission.setStatus("Running & Judging");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 		}
 		
 		try {

@@ -34,13 +34,25 @@
 		<property name="triggerTime" type="java.sql.Timestamp">
 		    <column name="C_TRIGGER_TIME" length="7" />
 		</property>
-        <set name="descriptions" lazy="true" inverse="true" sort="judge.tool.DescriptionComparator">
-            <key>
-                <column name="C_PROBLEM_ID" />
-            </key>
-            <one-to-many class="judge.bean.Description" />
-        </set>
 		
+		<set name="descriptions" lazy="true" inverse="true" sort="judge.tool.DescriptionComparator">
+			<key>
+				<column name="C_PROBLEM_ID" />
+			</key>
+			<one-to-many class="judge.bean.Description" />
+		</set>
+		<set name="submissions" lazy="true" inverse="true">
+			<key>
+				<column name="C_PROBLEM_ID" />
+			</key>
+			<one-to-many class="judge.bean.Submission" />
+		</set>		
+		<set name="cproblems" lazy="true" inverse="true">
+			<key>
+				<column name="C_PROBLEM_ID" />
+			</key>
+			<one-to-many class="judge.bean.Cproblem" />
+		</set>		
 		
     </class>
 </hibernate-mapping>

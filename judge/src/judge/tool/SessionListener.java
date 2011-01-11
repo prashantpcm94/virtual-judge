@@ -33,7 +33,7 @@ public class SessionListener implements HttpSessionListener {
 		
 		Vlog vlog = statService.getBySessionId(session.getId());
 		vlog.setDuration(new Date().getTime() - session.getCreationTime() - 1800000);
-		statService.modify(vlog);
+		statService.addOrModify(vlog);
 
 		synchronized (StatService.sessions) {
 			StatService.sessions.remove(session);

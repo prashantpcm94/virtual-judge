@@ -42,8 +42,8 @@
 		</property>
 
 
-        <many-to-one name="problem" class="judge.bean.Problem" fetch="select">
-            <column name="C_PROBLEM_ID" />
-        </many-to-one>
+		<many-to-one name="problem" class="judge.bean.Problem" fetch="select">
+			<column name="C_PROBLEM_ID" />
+		</many-to-one>
     </class>
 </hibernate-mapping>

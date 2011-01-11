@@ -1,5 +1,7 @@
 package judge.bean;
 
+import java.util.Set;
+
 
 /**
  * 用户,即OJ账号
@@ -19,23 +21,17 @@ public class User {
 	private int share;
 	private int sup;
 	
+	private Set<Submission> submissions;
+	private Set<Submission> contests;
 
-/*	private Set<Submission> submission;
-	private Set<Submission> contest;
 	
-	public Set<Submission> getSubmission() {
-		return submission;
+	public User(String username, String password){
+		this.username = username;
+		this.password = password;
 	}
-	private void setSubmission(Set<Submission> submission) {
-		this.submission = submission;
-	}
-	public Set<Submission> getContest() {
-		return contest;
-	}
-	private void setContest(Set<Submission> contest) {
-		this.contest = contest;
-	}
-*/
+	
+	public User(){}
+
 	
 	public int getId() {
 		return id;
@@ -97,15 +93,18 @@ public class User {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-	
-	public User(String username, String password){
-		this.username = username;
-		this.password = password;
+	public Set<Submission> getSubmissions() {
+		return submissions;
 	}
-	
-	public User(){}
-	
-	
+	public void setSubmissions(Set<Submission> submissions) {
+		this.submissions = submissions;
+	}
+	public Set<Submission> getContests() {
+		return contests;
+	}
+	public void setContests(Set<Submission> contests) {
+		this.contests = contests;
+	}
 	
 	
 }

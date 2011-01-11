@@ -36,7 +36,7 @@ public class MyFilter implements Filter{
 				vlog.setCreateTime(new Date(httpSession.getCreationTime()));
 				System.out.println("URL: " + request.getRequestURL());
 				System.out.println("sessionId: " + sessionId);
-				statService.add(vlog);
+				statService.addOrModify(vlog);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

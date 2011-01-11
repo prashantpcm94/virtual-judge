@@ -54,6 +54,7 @@ public class ContestAction extends BaseAction {
 	private Map<Object, String> languageList;
 	private String _64Format;
 	private int contestOver;
+	private String sameContests;
 	
 	private List pids;
 	private List OJs;
@@ -62,6 +63,8 @@ public class ContestAction extends BaseAction {
 
 	private boolean s, r, e;	//比赛进行状态
 	private DataTablesPage dataTablesPage;
+	
+//	private List dataList;
 	
 	class ContestInfo{
 		public String handle;
@@ -88,7 +91,7 @@ public class ContestAction extends BaseAction {
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 		
-		StringBuffer hql = new StringBuffer("select contest, user from Contest contest, User user where contest.managerId = user.id ");
+		StringBuffer hql = new StringBuffer("select contest, user from Contest contest, User user where contest.manager.id = user.id ");
 		long cnt = baseService.count(hql.toString());
 		dataTablesPage = new DataTablesPage();
 		dataTablesPage.setITotalRecords(cnt);
@@ -181,11 +184,12 @@ public class ContestAction extends BaseAction {
 		if (user == null) {
 			return ERROR;
 		}
+		List<Problem> pList = new ArrayList<Problem>();
 
 		boolean beiju = false;
 
 		/**
-		 * 标题不能为空
+		 * 标题不能为空，不能超过90字符
 		 */
 		if (contest.getTitle() == null || contest.getTitle().isEmpty()) {
 			this.addActionError("Contest Title shouldn't be empty!");
@@ -194,6 +198,10 @@ public class ContestAction extends BaseAction {
 			this.addActionError("Contest Title should be shorter than 90 characters!");
 			beiju = true;
 		}
+		
+		/**
+		 * 比赛描述不得多于65000字符
+		 */
 		if (contest.getDescription().length() > 65000) {
 			this.addActionError("Contest description should be shorter than 65000 characters!");
 			beiju = true;
@@ -205,40 +213,46 @@ public class ContestAction extends BaseAction {
 		if (pids.isEmpty()) {
 			this.addActionError("Please add one problem at least!");
 			beiju = true;
-		} else {
-			for (int i = 0; i < pids.size(); i++) {
-				problem = (Problem) baseService.query(Problem.class, Integer.parseInt((String) pids.get(i)));
-				if (problem == null || problem.getTimeLimit() == 1) {
-					this.addActionError("Problem " + pids.get(i) + " doesn't exist!");
-					beiju = true;
-				}
-			}
-			for (int i = 0; !beiju && i < pids.size(); i++) {
-				for (int j = i + 1; !beiju && j < pids.size(); j++) {
-					if (pids.get(i).equals(pids.get(j))){
-						this.addActionError("Duplcate problems are not allowed!");
-						beiju = true;
-					}
-				}
-			}
 		}
-		
+
+		/**
+		 * 至多26道题
+		 */
 		if (pids.size() > 26){
 			this.addActionError("At most 26 problems!");
 			beiju = true;
 		}
-
-		contest.setManagerId(user.getId());
-		if (contest.getPassword().isEmpty()) {
-			contest.setPassword(null);
-		} else {
-			contest.setPassword(MD5.getMD5(contest.getPassword()));
+		
+		/**
+		 * 不允许题目重复
+		 */
+		for (int i = 0; !beiju && i < pids.size(); i++) {
+			for (int j = i + 1; !beiju && j < pids.size(); j++) {
+				if (pids.get(i).equals(pids.get(j))){
+					this.addActionError("Duplcate problems are not allowed!");
+					beiju = true;
+				}
+			}
 		}
+
+		/**
+		 * 题目必须存在于题库中
+		 */
+		for (int i = 0; !beiju && i < pids.size(); i++) {
+			problem = (Problem) baseService.query(Problem.class, Integer.parseInt((String) pids.get(i)));
+			pList.add(problem);
+			if (problem == null || problem.getTimeLimit() == 1) {
+				this.addActionError("Problem " + pids.get(i) + " doesn't exist!");
+				beiju = true;
+			}
+		}
+		
 		contest.setBeginTime(new Date(year - 1900, month - 1, date, hour, minute));
 		contest.setEndTime(new Date(contest.getBeginTime().getTime() + d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L));
 		long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
 		long start = contest.getBeginTime().getTime() - new Date().getTime();
-		
+
+
 		/**
 		 * 开始时间不能比当前时间早, 比赛必须在30天内开始
 		 */
@@ -246,7 +260,7 @@ public class ContestAction extends BaseAction {
 			this.addActionError("Begin time should be later than the current time!");
 			beiju = true;
 		} else if (start > 2592000000L) {
-			this.addActionError("The contest should begin in 30 days from now on!");
+			this.addActionError("The contest should begin in 30 days from now!");
 			beiju = true;
 		}
 		
@@ -265,23 +279,35 @@ public class ContestAction extends BaseAction {
 			return INPUT;
 		}
 
-		int contestId = (Integer) baseService.add(contest);
+		contest.setManager(user);
+		if (contest.getPassword().isEmpty()) {
+			contest.setPassword(null);
+		} else {
+			contest.setPassword(MD5.getMD5(contest.getPassword()));
+		}
+
+		dataList = new ArrayList();
+		dataList.add(contest);
+
+		StringBuffer hashCode = new StringBuffer();
 		for (int i = 0; i < pids.size(); i++) {
 			cproblem = new Cproblem();
-			cproblem.setContestId(contestId);
-			cproblem.setProblemId(Integer.parseInt((String) pids.get(i)));
+			cproblem.setContest(contest);
+			problem = pList.get(i);
+			cproblem.setProblem(problem);
 			if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
-				problem = (Problem) baseService.query(Problem.class, cproblem.getProblemId());
 				cproblem.setTitle(problem.getTitle());
 			} else {
-				cproblem.setTitle((String) titles.get(i));
+				cproblem.setTitle(titles.get(i).trim());
 			}
 			cproblem.setNum((char)('A' + i) + "");
-			baseService.add(cproblem);
-
-			problem = (Problem) baseService.query(Problem.class, Integer.parseInt((String) pids.get(i)));
-			baseService.modify(problem);
+			dataList.add(cproblem);
+			hashCode.append(problem.getTitle().toLowerCase().replaceAll("\\W", ""));
 		}
+		hashCode.append(pids.size());
+		contest.setHashCode(MD5.getMD5(hashCode.toString()));
+		baseService.addOrModify(dataList);
+		
 		return SUCCESS;
 	}
 	
@@ -299,21 +325,21 @@ public class ContestAction extends BaseAction {
 		if (session.get("C" + cid) == null){
 			return INPUT;
 		}
-		if (user != null && (user.getSup() == 1 || user.getId() == contest.getManagerId()) || curDate.compareTo(contest.getBeginTime()) >= 0){
-			dataList = baseService.list("select cproblem.problemId, cproblem.num, cproblem.title, cproblem.problemId, cproblem.id from Cproblem cproblem where cproblem.contestId = '" + cid + "' order by cproblem.id asc", 0, 100);
+		if (user != null && (user.getSup() == 1 || user.getId() == contest.getManager().getId()) || curDate.compareTo(contest.getBeginTime()) >= 0){
+			dataList = baseService.list("select cproblem.problem.id, cproblem.num, cproblem.title, cproblem.problem.id, cproblem.id from Cproblem cproblem where cproblem.contest.id = '" + cid + "' order by cproblem.id asc", 0, 100);
 			for (int i = 0; i < dataList.size(); i++){
 				int pid = (Integer)((Object[])dataList.get(i))[0];
 				if (uid < 0){
 					((Object[])dataList.get(i))[0] = null;
 				}
-				long uac = baseService.count("from Submission submission where submission.status = 'Accepted' and submission.userId = '" + uid + "' and " +
-						"submission.contestId = '" + cid + "' and submission.problemId = '" + pid + "'");
+				long uac = baseService.count("from Submission submission where submission.status = 'Accepted' and submission.user.id = '" + uid + "' and " +
+						"submission.contest.id = '" + cid + "' and submission.problem.id = '" + pid + "'");
 				if (uac == 0){
 					((Object[])dataList.get(i))[0] = null;
 				}
 				long ac = baseService.count("from Submission submission where submission.status = 'Accepted' and " +
-						"submission.contestId = '" + cid + "' and submission.problemId = '" + pid + "'");
-				long total = baseService.count("from Submission submission where submission.contestId = '" + cid + "' and submission.problemId = '" + pid + "'");
+						"submission.contest.id = '" + cid + "' and submission.problem.id = '" + pid + "'");
+				long total = baseService.count("from Submission submission where submission.contest.id = '" + cid + "' and submission.problem.id = '" + pid + "'");
 				((Object[])dataList.get(i))[3] = (total == 0 ? 0.0 : ((long)(0.5 + 10000 * ac / total))/100.0) + "%(" + ac + "/" + total + ")";
 			}
 		}
@@ -341,7 +367,7 @@ public class ContestAction extends BaseAction {
 		if (cproblem == null){
 			return ERROR;
 		}
-		cid = cproblem.getContestId();
+		cid = cproblem.getContest().getId();
 		contest = (Contest) baseService.query(Contest.class, cid);
 		if (session.get("C" + cid) == null){
 			if (contest.getPassword() == null || user != null && user.getSup() == 1){
@@ -350,12 +376,12 @@ public class ContestAction extends BaseAction {
 				return INPUT;
 			}
 		}
-		if (contest.getBeginTime().compareTo(new Date()) > 0 && (user == null || user.getSup() == 0 && user.getId() != contest.getManagerId())){
+		if (contest.getBeginTime().compareTo(new Date()) > 0 && (user == null || user.getSup() == 0 && user.getId() != contest.getManager().getId())){
 			return "notbegin";
 		}
 		num = cproblem.getNum();
 
-		List list = baseService.query("select p from Problem p left join fetch p.descriptions where p.id = " + cproblem.getProblemId());
+		List list = baseService.query("select p from Problem p left join fetch p.descriptions where p.id = " + cproblem.getProblem().getId());
 		problem = (Problem) list.get(0);
 		_64Format = lf.get(problem.getOriginOJ());
 		
@@ -375,7 +401,7 @@ public class ContestAction extends BaseAction {
 			return ERROR;
 		}
 		cproblem = (Cproblem) baseService.query(Cproblem.class, pid);
-		cid = cproblem.getContestId();
+		cid = cproblem.getContest().getId();
 		if (session.get("C" + cid) == null){
 			contest = (Contest) baseService.query(Contest.class, cid);
 			if (contest.getPassword() == null || user != null && user.getSup() == 1){
@@ -385,7 +411,7 @@ public class ContestAction extends BaseAction {
 			}
 		}
 		isOpen = user.getShare();
-		problem = (Problem) baseService.query(Problem.class, cproblem.getProblemId());
+		problem = (Problem) baseService.query(Problem.class, cproblem.getProblem().getId());
 		language = (String) session.get("L" + problem.getOriginOJ());
 		ServletContext sc = ServletActionContext.getServletContext();
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
@@ -395,10 +421,10 @@ public class ContestAction extends BaseAction {
 	public String submit(){
 		Map session = ActionContext.getContext().getSession();
 		cproblem = (Cproblem) baseService.query(Cproblem.class, pid);
-		problem = (Problem) baseService.query(Problem.class, cproblem.getProblemId());
+		problem = (Problem) baseService.query(Problem.class, cproblem.getProblem().getId());
 		ServletContext sc = ServletActionContext.getServletContext();
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
-		cid = cproblem.getContestId();
+		cid = cproblem.getContest().getId();
 		contest = (Contest) baseService.query(Contest.class, cid);
 		if (session.get("C" + cid) == null){
 			if (contest.getPassword() == null){
@@ -432,18 +458,18 @@ public class ContestAction extends BaseAction {
 		}
 		Submission submission = new Submission();
 		submission.setSubTime(new Date());
-		submission.setProblemId(problem.getId());
+		submission.setProblem(problem);
 		if (contest.getEndTime().compareTo(new Date()) > 0){
-			submission.setContestId(cid);
+			submission.setContest(contest);
 		}
-		submission.setUserId(user.getId());
+		submission.setUser(user);
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
 		submission.setSource(source);
 		submission.setIsOpen(isOpen);
 		submission.setDispLanguage(((Map<String, String>)sc.getAttribute(problem.getOriginOJ())).get(language));
 		submission.setUsername(user.getUsername());
-		baseService.add(submission);
+		baseService.addOrModify(submission);
 		try {
 			Submitter submitter = (Submitter) ProblemAction.submitterMap.get(problem.getOriginOJ()).clone();
 			submitter.setSubmission(submission);
@@ -470,7 +496,7 @@ public class ContestAction extends BaseAction {
 		
 		numList = new TreeMap();
 		numList.put("-", "All");
-		List<Object[]> tmpList = baseService.query("select cp.num, cp.title from Cproblem cp where cp.contestId = " + cid + " order by cp.num asc");
+		List<Object[]> tmpList = baseService.query("select cp.num, cp.title from Cproblem cp where cp.contest.id = " + cid + " order by cp.num asc");
 		for (Object[] o : tmpList) {
 			numList.put((String) o[0], o[0] + " - " + o[1]);
 		}
@@ -490,7 +516,7 @@ public class ContestAction extends BaseAction {
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 		
-		StringBuffer hql = new StringBuffer("select s.id, s.username, cp.num, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen, cp.id from Submission s, Cproblem cp where s.contestId = " + cid + " and s.problemId = cp.problemId and s.contestId = cp.contestId ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, cp.num, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, cp.id from Submission s, Cproblem cp where s.contest.id = " + cid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id ");
 
 		dataTablesPage = new DataTablesPage();
 
@@ -538,6 +564,29 @@ public class ContestAction extends BaseAction {
 
 		return SUCCESS;
 	}
+
+	public String standing2(){
+		curDate = new Date();
+		Map session = ActionContext.getContext().getSession();
+		contest = (Contest) baseService.query(Contest.class, cid);
+
+		if (session.get("C" + cid) == null){
+			if (contest.getPassword() == null){
+				session.put("C" + cid, 1);
+			} else {
+				return INPUT;
+			}
+		}
+		
+		List<String> cidList = baseService.query("select c.id from Contest c where c.hashCode = '" + contest.getHashCode() + "'");
+		sameContests = "";
+		for (String cid : cidList) {
+			sameContests += cid + " ";
+		}
+		return SUCCESS;
+	}
+	
+	
 	
 	public String standing(){
 		Map session = ActionContext.getContext().getSession();
@@ -553,20 +602,20 @@ public class ContestAction extends BaseAction {
 			}
 		}
 		
-		tList = baseService.query("select cproblem from Cproblem cproblem where cproblem.contestId = " + cid);
+		tList = baseService.query("select cproblem from Cproblem cproblem where cproblem.contest.id = " + cid);
 		long beginTime = ((Contest)baseService.query(Contest.class, cid)).getBeginTime().getTime();
 		int problemNum = tList.size();
 		Map<Integer, Integer> pMap = new HashMap<Integer, Integer>();
 		for (int i = 0; i < problemNum; i++){
-			pMap.put(((Cproblem)tList.get(i)).getProblemId(), i);
+			pMap.put(((Cproblem)tList.get(i)).getProblem().getId(), i);
 		}
-		List sList = baseService.query("select submission from Submission submission where submission.contestId =" + cid);
+		List sList = baseService.query("select submission from Submission submission where submission.contest.id =" + cid);
 		Map<Integer, ContestInfo> rankList = new HashMap<Integer, ContestInfo>();
 		ContestInfo ci;
 		Submission submission;
 		for (int i = 0; i < sList.size(); i++){
 			submission = (Submission)sList.get(i); 
-			int uid = submission.getUserId();
+			int uid = submission.getUser().getId();
 			if (!rankList.containsKey(uid)){
 				ci = new ContestInfo();
 				ci.userId = uid;
@@ -580,7 +629,7 @@ public class ContestAction extends BaseAction {
 			} else {
 				ci = rankList.get(uid);
 			}
-			int index = pMap.get(submission.getProblemId());
+			int index = pMap.get(submission.getProblem().getId());
 			if (ci.ACtime[index] < 0){
 				String status = submission.getStatus();
 				if (status.equals("Accepted")){
@@ -634,7 +683,7 @@ public class ContestAction extends BaseAction {
 		Map session = ActionContext.getContext().getSession();
 		contest = (Contest) baseService.query(Contest.class, cid);
 		User user = (User) session.get("visitor");
-		if (user == null || user.getSup() == 0 && user.getId() != contest.getManagerId()){
+		if (user == null || user.getSup() == 0 && user.getId() != contest.getManager().getId()){
 			session.put("error", "You don't have access to operation on this contest!");
 			return ERROR;
 		}
@@ -642,7 +691,7 @@ public class ContestAction extends BaseAction {
 			session.put("error", "You can only delete a contest before it starts!");
 			return ERROR;
 		}
-		dataList = baseService.query("select cproblem from Cproblem cproblem where cproblem.contestId = " + cid);
+		dataList = baseService.query("select cproblem from Cproblem cproblem where cproblem.contest.id = " + cid);
 		for (int i = 0; i < dataList.size(); i++){
 			baseService.delete(dataList.get(i));
 		}
@@ -655,7 +704,7 @@ public class ContestAction extends BaseAction {
 		Map session = ActionContext.getContext().getSession();
 		contest = (Contest) baseService.query(Contest.class, cid);
 		User user = (User) session.get("visitor");
-		if (user == null || user.getSup() == 0 && user.getId() != contest.getManagerId()){
+		if (user == null || user.getSup() == 0 && user.getId() != contest.getManager().getId()){
 			session.put("error", "You don't have access to operation on this contest!");
 			return ERROR;
 		}
@@ -669,7 +718,7 @@ public class ContestAction extends BaseAction {
 		d_day = (int) (dur / 86400000);
 		d_hour = (int) (dur % 86400000 / 3600000);
 		d_minute = (int) (dur % 3600000 / 60000);
-		dataList = baseService.query("select cproblem.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problemId = p.id and cproblem.contestId = " + cid + " order by cproblem.num asc");
+		dataList = baseService.query("select cproblem.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problem.id = p.id and cproblem.contest.id = " + cid + " order by cproblem.num asc");
 		
 		if (contest.getBeginTime().compareTo(curDate) < 0){
 			return "running";
@@ -689,146 +738,140 @@ public class ContestAction extends BaseAction {
 	
 	@SuppressWarnings("deprecation")
 	public String editContest(){
-		try {
-			boolean beiju = false;
-			Map session = ActionContext.getContext().getSession();
-			Contest mContest = (Contest) baseService.query(Contest.class, cid);
-			User user = (User) session.get("visitor");
-			if (user == null || user.getSup() == 0 && user.getId() != mContest.getManagerId()){
-				session.put("error", "You don't have access to operation on this contest!");
-				return SUCCESS;
-			}
-			curDate = new Date();
-			Date originBegin = mContest.getBeginTime();
-//		Date originEnd = mContest.getEndTime();
+		boolean beiju = false;
+		Map session = ActionContext.getContext().getSession();
+		Contest mContest = (Contest) baseService.query(Contest.class, cid);
+		User user = (User) session.get("visitor");
+		if (user == null || user.getSup() == 0 && user.getId() != mContest.getManager().getId()){
+			session.put("error", "You don't have access to operation on this contest!");
+			return SUCCESS;
+		}
+		curDate = new Date();
+		Date originBegin = mContest.getBeginTime();
 
-			if (curDate.compareTo(originBegin) > 0){
-				long dur = d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L;
-				mContest.setEndTime(new Date(mContest.getBeginTime().getTime() + dur));
-				if (dur > 2592000000L){
-					this.addActionError("Contest duration should be shorter than 30 days!");
-					beiju = true;
-				}
-				if (contest.getDescription().length() > 65000) {
-					this.addActionError("Contest description should be shorter than 65000 characters!");
-					beiju = true;
-				}
-				mContest.setDescription(contest.getDescription());
-				if (beiju){
-					contest = (Contest) baseService.query(Contest.class, cid);
-					return "running";
-				}
-				baseService.modify(mContest);
-				return SUCCESS;
-			}
-			
-			
-			/**
-			 * 标题不能为空
-			 */
-			if (contest.getTitle() == null || contest.getTitle().isEmpty()) {
-				this.addActionError("Contest Title shouldn't be empty!");
-				beiju = true;
-			} else if (contest.getTitle().length() > 90) {
-				this.addActionError("Contest Title should be shorter than 90 characters!");
+		if (curDate.compareTo(originBegin) > 0){
+			long dur = d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L;
+			mContest.setEndTime(new Date(mContest.getBeginTime().getTime() + dur));
+			if (dur > 2592000000L){
+				this.addActionError("Contest duration should be shorter than 30 days!");
 				beiju = true;
 			}
 			if (contest.getDescription().length() > 65000) {
 				this.addActionError("Contest description should be shorter than 65000 characters!");
 				beiju = true;
 			}
-			
-			/**
-			 * 至少要加一道题
-			 */
-			if (pids.isEmpty()) {
-				this.addActionError("Please add one problem at least!");
-				beiju = true;
-			} else {
-				for (int i = 0; i < pids.size(); i++) {
-					problem = (Problem) baseService.query(Problem.class, Integer.parseInt((String) pids.get(i)));
-					if (problem == null) {
-						this.addActionError("Problem " + pids.get(i) + " doesn't exist!");
+			mContest.setDescription(contest.getDescription());
+			if (beiju){
+				contest = (Contest) baseService.query(Contest.class, cid);
+				return "running";
+			}
+			baseService.addOrModify(mContest);
+			return SUCCESS;
+		}
+		
+		
+		/**
+		 * 标题不能为空
+		 */
+		if (contest.getTitle() == null || contest.getTitle().isEmpty()) {
+			this.addActionError("Contest Title shouldn't be empty!");
+			beiju = true;
+		} else if (contest.getTitle().length() > 90) {
+			this.addActionError("Contest Title should be shorter than 90 characters!");
+			beiju = true;
+		}
+		if (contest.getDescription().length() > 65000) {
+			this.addActionError("Contest description should be shorter than 65000 characters!");
+			beiju = true;
+		}
+		
+		/**
+		 * 至少要加一道题
+		 */
+		if (pids.isEmpty()) {
+			this.addActionError("Please add one problem at least!");
+			beiju = true;
+		} else {
+			for (int i = 0; i < pids.size(); i++) {
+				problem = (Problem) baseService.query(Problem.class, Integer.parseInt((String) pids.get(i)));
+				if (problem == null) {
+					this.addActionError("Problem " + pids.get(i) + " doesn't exist!");
+					beiju = true;
+				}
+			}
+			for (int i = 0; !beiju && i < pids.size(); i++) {
+				for (int j = i + 1; !beiju && j < pids.size(); j++) {
+					if (pids.get(i).equals(pids.get(j))){
+						this.addActionError("Duplcate problems are not allowed!");
 						beiju = true;
 					}
 				}
-				for (int i = 0; !beiju && i < pids.size(); i++) {
-					for (int j = i + 1; !beiju && j < pids.size(); j++) {
-						if (pids.get(i).equals(pids.get(j))){
-							this.addActionError("Duplcate problems are not allowed!");
-							beiju = true;
-						}
-					}
-				}
 			}
-			
-			if (pids.size() > 26){
-				this.addActionError("At most 26 problems!");
-				beiju = true;
-			}
-
-			if (contest.getPassword().isEmpty()) {
-				contest.setPassword(null);
-			} else {
-				contest.setPassword(MD5.getMD5(contest.getPassword()));
-			}
-			contest.setBeginTime(new Date(year - 1900, month - 1, date, hour, minute));
-			contest.setEndTime(new Date(contest.getBeginTime().getTime() + d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L));
-			long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
-			long start = contest.getBeginTime().getTime() - new Date().getTime();
-			
-			/**
-			 * 开始时间不能比当前时间早, 比赛必须在30天内开始
-			 */
-			if (start < 1) {
-				this.addActionError("Begin time should be later than the current time!");
-				beiju = true;
-			} else if (start > 2592000000L) {
-				this.addActionError("The contest should begin in 30 days from now on!");
-				beiju = true;
-			}
-			
-			/**
-			 * 结束时间必须比开始时间晚,持续时间必须短于30天
-			 */
-			if (dur < 1) {
-				this.addActionError("End time should be later than begin time!");
-				beiju = true;
-			} else if (dur > 2592000000L) {
-				this.addActionError("Contest duration should be shorter than 30 days!");
-				beiju = true;
-			}
-
-			if (beiju) {
-				contest = (Contest) baseService.query(Contest.class, cid);
-				return "scheduled";
-			}
-			
-			mContest.setTitle(contest.getTitle());
-			mContest.setDescription(contest.getDescription());
-			mContest.setBeginTime(contest.getBeginTime());
-			mContest.setEndTime(contest.getEndTime());
-			mContest.setPassword(contest.getPassword());
-			baseService.execute("delete from Cproblem cproblem where cproblem.contestId = " + cid);
-			for (int i = 0; i < pids.size(); i++) {
-				cproblem = new Cproblem();
-				cproblem.setContestId(cid);
-				cproblem.setProblemId(Integer.parseInt((String) pids.get(i)));
-				if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
-					problem = (Problem) baseService.query(Problem.class, cproblem.getProblemId());
-					cproblem.setTitle(problem.getTitle());
-				} else {
-					cproblem.setTitle((String) titles.get(i));
-				}
-				cproblem.setNum((char)('A' + i) + "");
-				baseService.add(cproblem);
-			}
-			System.out.println("mContest = " + mContest);
-			baseService.modify(mContest);
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		
+		if (pids.size() > 26){
+			this.addActionError("At most 26 problems!");
+			beiju = true;
+		}
+
+		if (contest.getPassword().isEmpty()) {
+			contest.setPassword(null);
+		} else {
+			contest.setPassword(MD5.getMD5(contest.getPassword()));
+		}
+		contest.setBeginTime(new Date(year - 1900, month - 1, date, hour, minute));
+		contest.setEndTime(new Date(contest.getBeginTime().getTime() + d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L));
+		long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
+		long start = contest.getBeginTime().getTime() - new Date().getTime();
+		
+		/**
+		 * 开始时间不能比当前时间早, 比赛必须在30天内开始
+		 */
+		if (start < 1) {
+			this.addActionError("Begin time should be later than the current time!");
+			beiju = true;
+		} else if (start > 2592000000L) {
+			this.addActionError("The contest should begin in 30 days from now on!");
+			beiju = true;
+		}
+		
+		/**
+		 * 结束时间必须比开始时间晚,持续时间必须短于30天
+		 */
+		if (dur < 1) {
+			this.addActionError("End time should be later than begin time!");
+			beiju = true;
+		} else if (dur > 2592000000L) {
+			this.addActionError("Contest duration should be shorter than 30 days!");
+			beiju = true;
+		}
+
+		if (beiju) {
+			contest = (Contest) baseService.query(Contest.class, cid);
+			return "scheduled";
+		}
+		
+		mContest.setTitle(contest.getTitle());
+		mContest.setDescription(contest.getDescription());
+		mContest.setBeginTime(contest.getBeginTime());
+		mContest.setEndTime(contest.getEndTime());
+		mContest.setPassword(contest.getPassword());
+		baseService.execute("delete from Cproblem cproblem where cproblem.contest.id = " + cid);
+		for (int i = 0; i < pids.size(); i++) {
+			cproblem = new Cproblem();
+			cproblem.setContestId(cid);
+			cproblem.setProblemId(Integer.parseInt((String) pids.get(i)));
+			if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
+				problem = (Problem) baseService.query(Problem.class, cproblem.getProblem().getId());
+				cproblem.setTitle(problem.getTitle());
+			} else {
+				cproblem.setTitle((String) titles.get(i));
+			}
+			cproblem.setNum((char)('A' + i) + "");
+			baseService.addOrModify(cproblem);
+		}
+		System.out.println("mContest = " + mContest);
+		baseService.addOrModify(mContest);
 		return SUCCESS;
 	}
 
@@ -837,8 +880,8 @@ public class ContestAction extends BaseAction {
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		submission = (Submission) baseService.query(Submission.class, id);
-		problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
-		dataList = baseService.query("select cproblem from Cproblem cproblem where cproblem.problemId = " + submission.getProblemId() + " and cproblem.contestId = " + submission.getContestId());
+		problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
+		dataList = baseService.query("select cproblem from Cproblem cproblem where cproblem.problem.id = " + submission.getProblem().getId() + " and cproblem.contest.id = " + submission.getContest().getId());
 		cproblem = (Cproblem) dataList.get(0);
 		contest = (Contest) baseService.query(Contest.class, submission.getContestId());
 		cid = cproblem.getContestId();
@@ -886,12 +929,12 @@ public class ContestAction extends BaseAction {
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		submission = (Submission) baseService.query(Submission.class, id);
-		if (user == null || user.getSup() == 0 && user.getId() != submission.getUserId()){
+		if (user == null || user.getSup() == 0 && user.getId() != submission.getUser().getId()){
 			session.put("error", "No access to this code!");
 			return ERROR;
 		}
 		submission.setIsOpen(1 - submission.getIsOpen());
-		baseService.modify(submission);
+		baseService.addOrModify(submission);
 		return SUCCESS;
 	}
 	
@@ -905,8 +948,8 @@ public class ContestAction extends BaseAction {
 			submission = (Submission) baseService.query(Submission.class, id);
 			System.out.println(submission);
 			submission.setStatus("Pending Rejudge");
-			baseService.modify(submission);
-			problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+			baseService.addOrModify(submission);
+			problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 			try {
 				Submitter submitter = (Submitter) ProblemAction.submitterMap.get(problem.getOriginOJ()).clone();
 				submitter.setSubmission(submission);
@@ -917,14 +960,14 @@ public class ContestAction extends BaseAction {
 			}
 		} else if (pid > 0){
 			cproblem = (Cproblem) baseService.query(Cproblem.class, pid);
-			dataList = baseService.query("select s from Submission s where s.problemId = " + cproblem.getProblemId()  + " and s.contestId = " + cproblem.getContestId());
+			dataList = baseService.query("select s from Submission s where s.problem.id = " + cproblem.getProblem().getId()  + " and s.contest.id = " + cproblem.getContest().getId());
 			for (int i = 0; i < dataList.size(); i++){
 				submission = new Submission();
 				submission = (Submission) dataList.get(i);
 				System.out.println(submission);
 				submission.setStatus("Pending Rejudge");
-				baseService.modify(submission);
-				problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+				baseService.addOrModify(submission);
+				problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 				try {
 					Submitter submitter = (Submitter) ProblemAction.submitterMap.get(problem.getOriginOJ()).clone();
 					submitter.setSubmission(submission);
@@ -1204,6 +1247,12 @@ public class ContestAction extends BaseAction {
 	}
 	public void setTitles(List titles) {
 		this.titles = titles;
+	}
+	public String getSameContests() {
+		return sameContests;
+	}
+	public void setSameContests(String sameContests) {
+		this.sameContests = sameContests;
 	}
 	
 }

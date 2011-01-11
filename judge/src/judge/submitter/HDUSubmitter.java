@@ -74,7 +74,7 @@ public class HDUSubmitter extends Submitter {
 	}
 	
 	private void submit() throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		
         PostMethod postMethod = new PostMethod("http://acm.hdu.edu.cn/submit.php?action=submit");
         postMethod.addParameter("check", "0");
@@ -130,10 +130,10 @@ public class HDUSubmitter extends Submitter {
 	    				submission.setTime(Integer.parseInt(m.group(3)));
 	    				submission.setMemory(Integer.parseInt(m.group(4)));
     				}
-    				baseService.modify(submission);
+    				baseService.addOrModify(submission);
     				return;
     			}
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
 			interval += 500;
@@ -181,13 +181,13 @@ public class HDUSubmitter extends Submitter {
 				submit();
 			}
 			submission.setStatus("Running & Judging");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 		}
 		
 		try {

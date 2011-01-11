@@ -208,7 +208,7 @@ public class ProblemAction extends BaseAction{
 		}
 		Description desc = (Description) baseService.query(Description.class, id);
 		desc.setVote(desc.getVote() + 1);
-		baseService.modify(desc);
+		baseService.addOrModify(desc);
 		votePids.add(desc.getProblem().getId());
 		return SUCCESS;
 	}
@@ -263,15 +263,15 @@ public class ProblemAction extends BaseAction{
 		}
 		submission = new Submission();
 		submission.setSubTime(new Date());
-		submission.setProblemId(problem.getId());
-		submission.setUserId(user.getId());
+		submission.setProblem(problem);
+		submission.setUser(user);
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
 		submission.setSource(source);
 		submission.setIsOpen(isOpen);
 		submission.setDispLanguage(((Map<String, String>)sc.getAttribute(problem.getOriginOJ())).get(language));
 		submission.setUsername(user.getUsername());
-		baseService.add(submission);
+		baseService.addOrModify(submission);
 		try {
 			Submitter submitter = (Submitter) submitterMap.get(problem.getOriginOJ()).clone();
 			submitter.setSubmission(submission);
@@ -306,14 +306,14 @@ public class ProblemAction extends BaseAction{
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 
-		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problemId, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.userId, s.isOpen, p.originOJ, p.originProb, s.contestId from Submission s, Problem p where s.problemId = p.id ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problem.id, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, p.originOJ, p.originProb, s.contest.id from Submission s, Problem p where s.problem.id = p.id ");
 
 		dataTablesPage = new DataTablesPage();
 
 		dataTablesPage.setITotalRecords(9999999L);
 
 		if (!inContest || sup == 0){
-			hql.append(" and s.contestId = 0 ");
+			hql.append(" and s.contest is null ");
 		}
 
 		if (un != null && !un.trim().isEmpty()){
@@ -391,7 +391,7 @@ public class ProblemAction extends BaseAction{
 		description.setVote(0);
 		description.setProblem(new Problem(id));
 		baseService.execute("delete from Description d where d.author = '" + user.getUsername() + "' and d.problem.id = " + id);
-		baseService.add(description);
+		baseService.addOrModify(description);
 		return SUCCESS;
 	}
 
@@ -411,16 +411,16 @@ public class ProblemAction extends BaseAction{
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		submission = (Submission) baseService.query(Submission.class, id);
-		if (submission.getContestId() != 0){
+		if (submission.getContest() != null){
 			session.put("error", "No access to codes in contests!");
 			return ERROR;
 		}
-		if (user == null || user.getSup() == 0 && user.getId() != submission.getUserId()){
+		if (user == null || user.getSup() == 0 && user.getId() != submission.getUser().getId()){
 			if (submission.getIsOpen() == 0){
 				session.put("error", "No access to this code!");
 				return ERROR;
 			}
-			problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+			problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		}
 		StringBuffer sb = new StringBuffer();
 		String os = submission.getSource();
@@ -439,11 +439,11 @@ public class ProblemAction extends BaseAction{
 			}
 		}
 		submission.setSource(sb.toString());
-		problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		ServletContext sc = ServletActionContext.getServletContext();
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
 		submission.setLanguage(languageList.get(submission.getLanguage()));
-		user = (User) baseService.query(User.class, submission.getUserId());
+		user = (User) baseService.query(User.class, submission.getUser().getId());
 		uid = user.getId();
 		un = user.getUsername();
 
@@ -457,12 +457,12 @@ public class ProblemAction extends BaseAction{
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		submission = (Submission) baseService.query(Submission.class, id);
-		if (user == null || user.getSup() == 0 && user.getId() != submission.getUserId()){
+		if (user == null || user.getSup() == 0 && user.getId() != submission.getUser().getId()){
 			session.put("error", "No access to this code!");
 			return ERROR;
 		}
 		submission.setIsOpen(1 - submission.getIsOpen());
-		baseService.modify(submission);
+		baseService.addOrModify(submission);
 		return SUCCESS;
 	}
 

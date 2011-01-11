@@ -28,27 +28,25 @@
 		<property name="subTime" type="java.sql.Timestamp">
 		    <column name="C_SUBTIME" length="7" />
 		</property>
-		
-		<property name="problemId" type="java.lang.Integer">
-		    <column name="C_PROBLEMID" />
-		</property>
-		<property name="userId" type="java.lang.Integer">
-		    <column name="C_USERID" />
-		</property>
-		<property name="contestId" type="java.lang.Integer">
-		    <column name="C_CONTESTID" not-null="false"/>
-		</property>
-		
 		<property name="isOpen" type="java.lang.Integer">
 		    <column name="C_ISOPEN" precision="10" scale="0"/>
 		</property>
-
 		<property name="dispLanguage" type="java.lang.String">
 		    <column name="C_DISP_LANGUAGE" length="100"/>
 		</property>
 		<property name="username" type="java.lang.String">
 		    <column name="C_USERNAME" length="40"/>
 		</property>
+		
+		<many-to-one name="user" class="judge.bean.User" fetch="select">
+			<column name="C_USER_ID" />
+		</many-to-one>
+		<many-to-one name="problem" class="judge.bean.Problem" fetch="select">
+			<column name="C_PROBLEM_ID" />
+		</many-to-one>
+		<many-to-one name="contest" class="judge.bean.Contest" fetch="select">
+			<column name="C_CONTEST_ID" />
+		</many-to-one>
 
     </class>
 </hibernate-mapping>

@@ -135,6 +135,12 @@
 			<result name="success">/contest/standing.jsp</result>
 			<result name="input">/contest/loginContest.jsp</result>		
 		</action>
+
+		<!-- 排名页面2 -->
+		<action name="standing2" class="contestAction" method="standing2">
+			<result name="success">/contest/standing2.jsp</result>
+			<result name="input">/contest/loginContest.jsp</result>		
+		</action>
 		
 		<!-- 查看代码 -->
 		<action name="viewSource" class="contestAction" method="viewSource">

@@ -18,9 +18,12 @@ public class Problem {
 	private int memoryLimit;	//内存限制(KB)
 	private int timeLimit;		//时间限制(ms)
 	
-	private Date triggerTime;	//上次激活(有新版本)时间	Add
+	private Date triggerTime;	//上次激活(有新版本)时间
 	
 	private Set<Description> descriptions;
+	private Set<Cproblem> cproblems;
+	private Set<Submission> submissions;
+	
 	
 	public Problem(int id){
 		this.id = id;
@@ -95,6 +98,18 @@ public class Problem {
 	}
 	public void setDescriptions(Set<Description> descriptions) {
 		this.descriptions = descriptions;
+	}
+	public Set<Cproblem> getCproblems() {
+		return cproblems;
+	}
+	public void setCproblems(Set<Cproblem> cproblems) {
+		this.cproblems = cproblems;
+	}
+	public Set<Submission> getSubmissions() {
+		return submissions;
+	}
+	public void setSubmissions(Set<Submission> submissions) {
+		this.submissions = submissions;
 	}
 	
 }

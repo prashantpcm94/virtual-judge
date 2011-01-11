@@ -73,7 +73,7 @@ public class ZOJSubmitter extends Submitter {
 	}
 
 	private void submit() throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 
 		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
@@ -143,10 +143,10 @@ public class ZOJSubmitter extends Submitter {
 						submission.setMemory(Integer.parseInt(m.group(4)));
 						submission.setTime(Integer.parseInt(m.group(3)));
 					}
-					baseService.modify(submission);
+					baseService.addOrModify(submission);
 					return;
 				}
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
 			interval += 500;
@@ -196,13 +196,13 @@ public class ZOJSubmitter extends Submitter {
 				submit();
 			}
 			submission.setStatus("Running & Judging");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 		}
 		
 		try {

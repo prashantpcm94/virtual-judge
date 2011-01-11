@@ -1,6 +1,7 @@
 package judge.bean;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 比赛信息
@@ -14,8 +15,13 @@ public class Contest {
 	private String password;
 	private Date beginTime;
 	private Date endTime;
+	private String hashCode;	//按原题title
 	
-	private int managerId;
+	private User manager;		//管理员
+	
+	private Set<Submission> submissions;
+	private Set<Cproblem> cproblems;
+
 
 	public int getId() {
 		return id;
@@ -53,11 +59,30 @@ public class Contest {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
-	public int getManagerId() {
-		return managerId;
+	public String getHashCode() {
+		return hashCode;
 	}
-	public void setManagerId(int managerId) {
-		this.managerId = managerId;
+	public void setHashCode(String hashCode) {
+		this.hashCode = hashCode;
 	}
+	public User getManager() {
+		return manager;
+	}
+	public void setManager(User manager) {
+		this.manager = manager;
+	}
+	public Set<Submission> getSubmissions() {
+		return submissions;
+	}
+	public void setSubmissions(Set<Submission> submissions) {
+		this.submissions = submissions;
+	}
+	public Set<Cproblem> getCproblems() {
+		return cproblems;
+	}
+	public void setCproblems(Set<Cproblem> cproblems) {
+		this.cproblems = cproblems;
+	}
+
 	
 }

@@ -73,7 +73,7 @@ public class POJSubmitter extends Submitter {
 	}
 	
 	private void submit() throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 
 		PostMethod postMethod = new PostMethod("http://poj.org/submit");
 		postMethod.addParameter("language", submission.getLanguage());
@@ -132,10 +132,10 @@ public class POJSubmitter extends Submitter {
 	    				submission.setMemory(Integer.parseInt(m.group(3).replaceAll("K", "")));
 	    				submission.setTime(Integer.parseInt(m.group(4).replaceAll("MS", "")));
     				}
-    				baseService.modify(submission);
+    				baseService.addOrModify(submission);
     				return;
     			}
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
 			interval += 500;
@@ -183,13 +183,13 @@ public class POJSubmitter extends Submitter {
 				submit();
 			}
 			submission.setStatus("Running & Judging");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 		}
 		
 		try {

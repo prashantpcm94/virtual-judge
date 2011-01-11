@@ -75,7 +75,7 @@ public class URALSubmitter extends Submitter {
 	
 	
 	private void submit(String password) throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblemId());
+		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		
         PostMethod postMethod = new PostMethod("http://acm.timus.ru/submit.aspx");
 		postMethod.addParameter("Action", "submit");
@@ -116,10 +116,10 @@ public class URALSubmitter extends Submitter {
 	    				submission.setMemory(Integer.parseInt(m.group(4).replaceAll(" ", "")));
 	    				submission.setTime((int)(0.5 + 1000 * Double.parseDouble(m.group(3))));
     				}
-    				baseService.modify(submission);
+    				baseService.addOrModify(submission);
     				return;
     			}
-				baseService.modify(submission);
+				baseService.addOrModify(submission);
     		}
 			Thread.sleep(interval);
 			interval += 500;
@@ -159,13 +159,13 @@ public class URALSubmitter extends Submitter {
 				
 			submit(passwordList[idx]);	//非登陆式,只需交一次
 			submission.setStatus("Running & Judging");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(passwordList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error");
-			baseService.modify(submission);
+			baseService.addOrModify(submission);
 		}
 		
 		try {

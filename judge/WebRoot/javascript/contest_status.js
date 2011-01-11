@@ -101,7 +101,7 @@ $(document).ready(function() {
 	$("#reset").click(function(){
 		$(".errorMessage").remove();
 		$("[name='un']").val("");
-		$("[name='num']").val("All");
+		$("[name='num']").val("-");
 		$("[name='res']").val(0);
 		oTable.fnPageChange( 'first' );
 	});
