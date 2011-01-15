@@ -15,7 +15,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
-		<script type="text/javascript" language="javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" language="javascript" src="javascript/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" language="javascript" src="javascript/jquery.dataTables.js"></script>
 		<script type="text/javascript" src="javascript/viewContest.js"></script>
 	</head>
@@ -28,11 +28,9 @@ String basePath = (String)application.getAttribute("basePath");
 		</div>
 		
 		<div class="plm">
-			<b>Start Time:</b> <s:date name="contest.beginTime" format="yyyy-MM-dd HH:mm:ss" />
-			&nbsp;&nbsp;&nbsp;&nbsp;
+			<b>Start Time:</b> <s:date name="contest.beginTime" format="yyyy-MM-dd HH:mm:ss" />&nbsp;&nbsp;&nbsp;&nbsp;
 			<b>End Time:</b> <s:date name="contest.endTime" format="yyyy-MM-dd HH:mm:ss" /><br>
-			<b>Contest Type</b>:<s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Priavte</font></s:else>
-			&nbsp;&nbsp;&nbsp;
+			<b>Contest Type</b>:<s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Priavte</font></s:else>&nbsp;&nbsp;&nbsp;
 			<b>Contest Status:</b> 
 				<%
 					Date date = new Date();
@@ -46,19 +44,11 @@ String basePath = (String)application.getAttribute("basePath");
 					} else {
 						out.println("<font color=\"green\">Ended</font>");
 					}
-				%>
+				%>&nbsp;&nbsp;&nbsp;
+			<b>Manager:</b> <a href="user/profile.action?uid=<s:property value='contest.manager.id' />" ><s:property value="contest.manager.username" /></a>
 			<br />
 			<font color="orange">Current Server Time : <s:date name="curDate" format="yyyy-MM-dd HH:mm:ss" /></font>
-			<s:if test="#session.visitor.sup == 1">
-				<br />
-				<td width="10px"></td>
-				<td>
-					<b>Manager:</b>
-					<a href="user/profile.action?uid=<s:property value='contest.managerId' />" >
-						<s:property value='contest.managerId' />
-					</a>
-				</td>
-			</s:if>
+			<br />
 		</div>
 
 		<s:if test="dataList != null">
@@ -89,7 +79,7 @@ String basePath = (String)application.getAttribute("basePath");
 								<s:param name="pid" value="dataList[#stat.index][4]" />
 							</s:url>
 							<a href="${viewProblem}">
-								<s:property value="dataList[#stat.index][2]" />
+								<s:property value="dataList[#stat.index][2]" escape="false" />
 							</a>
 						</td>
 						<td class="center">

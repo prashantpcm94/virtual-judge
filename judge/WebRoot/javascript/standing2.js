@@ -15,8 +15,6 @@ $(document).ready(function() {
 	});
 });
 
-
-
 function fill_table(){
 	
 	var sameContests = $("[name=sameContests]").val();

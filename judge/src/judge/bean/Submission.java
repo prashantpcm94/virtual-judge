@@ -30,6 +30,11 @@ public class Submission {
 	
 	private String dispLanguage;//用于显示的语言
 	private String username;	//提交者用户名
+	
+	private String originOJ;	//原始OJ
+	private String originProb;	//原始OJ题号
+	private int isPrivate;		//是否不公开
+	
 
 	private Problem problem;	//外键	题目
 	private User user;			//外键	提交人
@@ -113,6 +118,24 @@ public class Submission {
 	}
 	public void setContest(Contest contest) {
 		this.contest = contest;
+	}
+	public String getOriginOJ() {
+		return originOJ;
+	}
+	public void setOriginOJ(String originOJ) {
+		this.originOJ = originOJ;
+	}
+	public String getOriginProb() {
+		return originProb;
+	}
+	public void setOriginProb(String originProb) {
+		this.originProb = originProb;
+	}
+	public int getIsPrivate() {
+		return isPrivate;
+	}
+	public void setIsPrivate(int isPrivate) {
+		this.isPrivate = isPrivate;
 	}
 
 }

@@ -27,7 +27,7 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 				<tr>
 					<td>
 						<b>Problem: </b>
-						<a href="problem/viewProblem.action?id=${submission.problem.id}">${submission.problem.id}</a>
+						<a href="problem/viewProblem.action?id=${submission.problem.id}">${problem.originOJ} ${problem.originProb}</a>
 					</td>
 					<td width=10px></td>
 					<td>

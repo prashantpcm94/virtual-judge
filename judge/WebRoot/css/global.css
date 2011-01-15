@@ -65,7 +65,11 @@ pre.sio {
 
 .textBG {
 	background-color: #EAEBFF;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 	padding: 10px;
+	border-style: dotted;
+	border-width: 2px;
 }
 
 .sioBG {
@@ -133,12 +137,12 @@ div.plm {
 }
 
 .white {
-	background-color: #FFFFFF;
+	background-color: #ebfff4;
 	color: black;
 }
 
 .green {
-	background-color: #DDFFDD;
+	background-color: #a9f5af;
 	color: black;
 }
 
@@ -273,12 +277,14 @@ a.shared {
 	background-color:#EAEBFF;
 	margin: 3px;
 	padding: 5px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
 }
 
 .selected {
 	background-color:#DDFFDD;
 }
-
+ 
 #left_view {
 }
 
@@ -294,6 +300,8 @@ a.shared {
 
 .over {
 	background-color:#EEEEEE;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 }
 
 p.pst span {
@@ -301,4 +309,21 @@ p.pst span {
 	font-family: Courier;
 	font-size: 17px;
 	float: right;
+}
+
+
+body {
+	background-image: -webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0.1, rgb(203,250,225)),
+	    color-stop(0.95, rgb(255,255,255))
+	);
+	background-image: -moz-linear-gradient(
+	    center bottom,
+	    rgb(203,250,225) 10%,
+	    rgb(255,255,255) 95%
+	);
+	background-attachment: fixed;
 }

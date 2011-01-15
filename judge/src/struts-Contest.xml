@@ -48,7 +48,7 @@
 		<!-- 删除比赛 -->
 		<action name="deleteContest" class="contestAction" method="deleteContest">
 			<result name="success" type="redirect">toListContest.action</result>		
-			<result name="error" type="redirect">toListContest.action</result>		
+			<result name="error" type="redirect">toListContest.action</result>
 		</action>
 
 		<!-- 进入比赛 -->

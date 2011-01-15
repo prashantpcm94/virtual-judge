@@ -22,7 +22,7 @@
 			#example_wrapper .fg-toolbar { font-size: 0.8em }
 			#theme_links span { float: left; padding: 2px 10px; }
 		</style>
-		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
 		<script type="text/javascript" src="javascript/common.js"></script>

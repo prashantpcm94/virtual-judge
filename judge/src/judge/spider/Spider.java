@@ -65,7 +65,7 @@ public abstract class Spider extends Thread implements Cloneable {
 				baseService.delete(problem);
 			} else {
 				//本次虽失败，但因为题目本来是好的，估计是网络问题，故不删
-				problem.setTitle("[Crawlong failed]");
+				problem.setTitle("[Crawling failed]");
 				baseService.addOrModify(problem);
 			}
 		}

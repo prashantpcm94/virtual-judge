@@ -54,6 +54,11 @@ public class ProblemAction extends BaseAction{
 	private Map<Object, String> languageList;
 
 	public String toListProblem() {
+		Map session = ActionContext.getContext().getSession();
+		if (session.containsKey("error")){
+			this.addActionError((String) session.get("error"));
+		}
+		session.remove("error");
 		return SUCCESS;
 	}
 
@@ -271,6 +276,8 @@ public class ProblemAction extends BaseAction{
 		submission.setIsOpen(isOpen);
 		submission.setDispLanguage(((Map<String, String>)sc.getAttribute(problem.getOriginOJ())).get(language));
 		submission.setUsername(user.getUsername());
+		submission.setOriginOJ(problem.getOriginOJ());
+		submission.setOriginProb(problem.getOriginProb());
 		baseService.addOrModify(submission);
 		try {
 			Submitter submitter = (Submitter) submitterMap.get(problem.getOriginOJ()).clone();
@@ -306,14 +313,16 @@ public class ProblemAction extends BaseAction{
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 
-		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problem.id, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, p.originOJ, p.originProb, s.contest.id from Submission s, Problem p where s.problem.id = p.id ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problem.id, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, s.originOJ, s.originProb, s.contest.id from Submission s where 1=1 ");
 
 		dataTablesPage = new DataTablesPage();
 
 		dataTablesPage.setITotalRecords(9999999L);
 
-		if (!inContest || sup == 0){
+		if (!inContest){
 			hql.append(" and s.contest is null ");
+		} else if (sup == 0){
+			hql.append(" and s.isPrivate = 0 ");
 		}
 
 		if (un != null && !un.trim().isEmpty()){
@@ -322,13 +331,13 @@ public class ProblemAction extends BaseAction{
 		}
 
 		if (id != 0){
-			hql.append(" and p.id = " + id);
+			hql.append(" and s.problem.id = " + id);
 		} else {
-			if (OJList.contains(OJId)){
-				hql.append(" and p.originOJ = '" + OJId + "' ");
-			}
 			if (!probNum.isEmpty()){
-				hql.append(" and p.originProb = '" + probNum + "' ");
+				hql.append(" and s.originProb = '" + probNum + "' ");
+			}
+			if (OJList.contains(OJId)){
+				hql.append(" and s.originOJ = '" + OJId + "' ");
 			}
 		}
 
@@ -410,18 +419,17 @@ public class ProblemAction extends BaseAction{
 	public String viewSource(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
-		submission = (Submission) baseService.query(Submission.class, id);
-		if (submission.getContest() != null){
-			session.put("error", "No access to codes in contests!");
+		List list = baseService.query("select s from Submission s left join fetch s.contest left join fetch s.problem left join fetch s.user where s.id = " + id);
+		if (list.isEmpty()){
+			session.put("error", "No such submission!");
 			return ERROR;
 		}
-		if (user == null || user.getSup() == 0 && user.getId() != submission.getUser().getId()){
-			if (submission.getIsOpen() == 0){
-				session.put("error", "No access to this code!");
-				return ERROR;
-			}
-			problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
+		submission = (Submission) list.get(0);
+		if (!(user != null && (user.getSup() != 0 || user.getId() == submission.getUser().getId()) || submission.getIsOpen() == 1 && (submission.getContest() == null || new Date().compareTo(submission.getContest().getEndTime()) > 0))){
+			session.put("error", "No access to this code!");
+			return ERROR;
 		}
+		problem = submission.getProblem();
 		StringBuffer sb = new StringBuffer();
 		String os = submission.getSource();
 		for (int i = 0; i < os.length(); i++){
@@ -439,13 +447,12 @@ public class ProblemAction extends BaseAction{
 			}
 		}
 		submission.setSource(sb.toString());
-		problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
+
 		ServletContext sc = ServletActionContext.getServletContext();
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
 		submission.setLanguage(languageList.get(submission.getLanguage()));
-		user = (User) baseService.query(User.class, submission.getUser().getId());
-		uid = user.getId();
-		un = user.getUsername();
+		uid = submission.getUser().getId();
+		un = submission.getUser().getUsername();
 
 		//这里language用作为shjs提供语言识别所需要的class名
 		language = findClass4SHJS(submission.getLanguage());

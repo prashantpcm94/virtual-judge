@@ -46,7 +46,7 @@ $(document).ready(function() {
 		  				"fnRender": function ( oObj ) {
 
 		  					if (oObj.aData[8] == 1) {
-		  						return "<a href='contest/toEditContest.action?cid=" + oObj.aData[0] + "'><img height='15px' border='0' src='images/wrench.gif' /></a>" + (oObj.aData[4] == 'Scheduled' ? "&nbsp;<a href='javascript:void(0)' onclick='comfirmDeleteContest(\"" + oObj.aData[0] + "\")'><img height='15px' border='0' src='images/recycle.gif' /></a>" : "&nbsp;&nbsp;&nbsp;");
+		  						return "<a href='contest/toEditContest.action?cid=" + oObj.aData[0] + "'><img height='15px' border='0' src='images/wrench.gif' /></a>&nbsp;<a href='javascript:void(0)' onclick='comfirmDeleteContest(\"" + oObj.aData[0] + "\")'><img height='15px' border='0' src='images/recycle.gif' /></a>";
 		  					} else return "";
 		  				},
 		  				"bUseRendered": false, 
@@ -88,5 +88,10 @@ $(document).ready(function() {
 		$("[name='"+$(this).attr("name")+"']").attr("checked", $(this).attr("checked"));
 		oTable.fnDraw();
 	});
-	
-} );
+});
+
+function comfirmDeleteContest(id){
+	if (confirm("Sure to delete this contest?")){
+		location = 'contest/deleteContest.action?cid=' + id;
+	}
+}

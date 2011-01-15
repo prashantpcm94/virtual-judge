@@ -28,6 +28,9 @@ public class UVALiveSpider extends Spider {
 		if (tLine.contains("<title>Problem not found</title>")) {
 			throw new Exception();
 		}
+		if (!tLine.contains("<b>Submit</b>")) {
+			throw new Exception();
+		}
 
 		tLine = tLine.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://acmicpc-live-archive.uva.es/nuevoportal/data/");
 		tLine = tLine.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://acmicpc-live-archive.uva.es/nuevoportal/data/");

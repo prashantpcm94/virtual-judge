@@ -12,7 +12,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
-		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
@@ -27,7 +27,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<s:actionerror/>
 		
 		<form id="form_status">
-			<s:if test="#session.visitor.sup == 1">Contest:<input type="checkbox" name="inContest" /></s:if>
+			Contest:<input type="checkbox" name="inContest" />
 			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
 			OJ:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJListAll" />&nbsp;&nbsp;
 			Problem ID:<s:textfield name="probNum" />&nbsp;&nbsp;

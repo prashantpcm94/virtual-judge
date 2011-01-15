@@ -10,12 +10,14 @@ String basePath = (String)application.getAttribute("basePath");
     	<base href="<%=basePath%>" />
 	    <title>Virtual Judge -- Problem</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="javascript/submit.js"></script>
 	</head>
 
 	<body>
 		<s:include value="/top.jsp" />
 		<div style="width:800px;MARGIN-RIGHT:auto;MARGIN-LEFT:auto;">
-			<form action="problem/submit.action" method="post">
+			<form id="form" action="problem/submit.action" method="post">
 				<table>
 					<tr>
 						<td>Problem:</td>
@@ -34,7 +36,7 @@ String basePath = (String)application.getAttribute("basePath");
 				</table>
 				<s:textarea name="source" rows="25" cols="100" />
 				<br />
-				<input style="float:left" class="bnt1" type="submit" value="Submit" />
+				<input style="float:left" class="bnt1" type="submit" id="submit" value="Submit" />
 				<input style="margin-left:20px;float:left" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
 				<div id="errorMsg" style="color:red;font-weight:bold;float:left"><s:actionerror /></div>
 				<input type="hidden" value="${problem.id}" name="problem.id" />

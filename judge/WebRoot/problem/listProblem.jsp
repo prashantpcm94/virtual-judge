@@ -3,7 +3,6 @@
 <%
 String basePath = (String)application.getAttribute("basePath");
 %>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -23,7 +22,7 @@ String basePath = (String)application.getAttribute("basePath");
 			#theme_links span { float: left; padding: 2px 10px; }
 		</style>
 
-		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 		<script type="text/javascript" src="javascript/common.js"></script>
 

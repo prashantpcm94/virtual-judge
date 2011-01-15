@@ -33,10 +33,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<tr>
 					<td>Duration:</td>
 					<td>
-						Day :<s:textfield value="%{d_day}" name="d_day" size="7" theme="simple" />
-						Hour :<s:textfield value="%{d_hour}" name="d_hour" size="7" theme="simple" />
-						minute:<s:textfield value="%{d_minute}" name="d_minute" size="7" theme="simple" />
-						(Attention: you can only delay or keep the end time.)
+						Day:<s:textfield name="d_day" size="5" cssClass="clk_select" /> <s:textfield name="d_hour" size="2" maxlength="2" cssClass="clk_select" />:<s:textfield name="d_minute" size="2" maxlength="2" cssClass="clk_select" />:00
 					</td>
 				</tr>
 				<tr>

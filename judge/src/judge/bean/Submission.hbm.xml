@@ -37,6 +37,15 @@
 		<property name="username" type="java.lang.String">
 		    <column name="C_USERNAME" length="40"/>
 		</property>
+		<property name="originOJ" type="java.lang.String">
+		    <column name="C_ORIGIN_OJ" />
+		</property>
+		<property name="originProb" type="java.lang.String">
+		    <column name="C_ORIGIN_PROB" />
+		</property>
+		<property name="isPrivate" type="java.lang.Integer">
+		    <column name="C_IS_PRIVATE" />
+		</property>
 		
 		<many-to-one name="user" class="judge.bean.User" fetch="select">
 			<column name="C_USER_ID" />

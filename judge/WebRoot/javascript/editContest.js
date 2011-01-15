@@ -64,6 +64,18 @@ $(document).ready(function(){
 			$("#errorMsg").html("There are invalid problems!");
 			return false;
 		}
+		
+		var hour = parseInt($("#hour").val());
+		var minute = parseInt($("#minute").val());
+		var d_day = parseInt($("#d_day").val());
+		var d_hour = parseInt($("#d_hour").val());
+		var d_minute = parseInt($("#d_minute").val());
+		if (isNaN(hour) || hour < 0 || hour > 23 || isNaN(minute) || minute < 0 || minute > 59 || isNaN(d_day) || d_day < 0 || isNaN(d_hour) || d_hour < 0 || d_hour > 23 || isNaN(d_minute) || d_minute < 0 || d_minute > 59){
+			$("#errorMsg").html("Date format error!");
+			return false;
+		}
+		$("[name=contest.beginTime]").val($("[name=contest.beginTime]").val() + " " + hour + ":" + minute + ":00");
+	
 		$("tr:not(:visible)").remove();
 	});
 
@@ -73,6 +85,25 @@ $(document).ready(function(){
 	$("#addTable tr.tr_problem:visible").each(function(){
 		updateTitle($(this));
 	});
+	
+	
+	
+	$("[name=contest.beginTime]").datepicker({
+		dateFormat: 'yy-mm-dd',
+		minDate: -0,
+		maxDate: +30,
+		showAnim: 'blind'
+	});
+	
+	$(".clk_select").click(function(){
+		this.select();
+	});
+	$(".clk_select").blur(function(){
+		if (!this.value || this.value.match(/^\s+$/)){
+			this.value = 0;
+		}
+	});
+
 });
 
 var problemInfo;
@@ -114,7 +145,8 @@ function addRow(){
 	}
 	$newRow = $originRow.clone();
 	$("[name=OJs]", $newRow).val($("[name=OJs]", $originRow).val());
-	
+	$("[name=titles]", $newRow).val("");
+
 	$newRow.removeAttr("id");
 	$(":input", $newRow).removeAttr("id");
 	

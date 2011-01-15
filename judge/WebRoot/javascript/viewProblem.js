@@ -51,31 +51,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("p.pst").click(function(){
-		var $content = $(this).next();
-		if ($content.css('display') == 'none'){
-			$content.animate({height:'show',opacity:'show'}, 'fast');
-			$("span:eq(1)", $(this)).show();
-			$("span:eq(0)", $(this)).hide();
-		} else {
-			$content.animate({height:'hide',opacity:'hide'}, 'fast');
-			$("span:eq(0)", $(this)).show();
-			$("span:eq(1)", $(this)).hide();
-		}
-	}).mouseover(function(){
-		$(this).addClass("over");
-		if ($(this).next().css('display') == 'none'){
-			$("span:eq(0)", $(this)).show();
-		} else {
-			$("span:eq(1)", $(this)).show();
-		}
-	}).mouseout(function(){
-		$(this).removeClass("over");
-		$(this).children().hide();
-	});
-
-	$("p.pst span").hide();
-
 	if (location.href.indexOf("edit=") >= 0){
 		show($("input[name=vote]").length - 1);
 	} else {

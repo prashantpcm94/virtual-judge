@@ -11,7 +11,9 @@ String basePath = (String)application.getAttribute("basePath");
 	    <title>Virtual Judge -- Contest</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	
-		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/redmond/jquery-ui-1.8.7.custom.css" />
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery-ui-1.8.7.custom.min.js"></script>
 		<script type="text/javascript" src="javascript/common.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
@@ -36,19 +38,18 @@ String basePath = (String)application.getAttribute("basePath");
 				<tr>
 					<td class="form_title">Begin Time:</td>
 					<td>
-						Year:<s:textfield value="%{year}" name="year" size="7" theme="simple" />
-						Month:<s:textfield value="%{month}" name="month" size="7" theme="simple" />
-						&nbsp;&nbsp;&nbsp;Day:<s:textfield value="%{date}" name="date" size="7" theme="simple" />
-						Hour:<s:textfield value="%{hour}" name="hour" size="7" theme="simple" />
-						Minute:<s:textfield value="%{minute}" name="minute" size="7" theme="simple" />
+						<s:textfield name="contest.beginTime" size="10" readonly="true" >
+							<s:param name="value">
+								<s:date name="%{contest.beginTime}" format="yyyy-MM-dd" />
+							</s:param>
+						</s:textfield>
+						<s:textfield name="hour" size="2" maxlength="2" cssClass="clk_select" />:<s:textfield name="minute" size="2" maxlength="2" cssClass="clk_select" />:00
 					</td>
 				</tr>
 				<tr>
 					<td class="form_title">Duration:</td>
 					<td>
-						Day :<s:textfield value="%{d_day}" name="d_day" size="7" theme="simple" />
-						Hour :<s:textfield value="%{d_hour}" name="d_hour" size="7" theme="simple" />
-						minute:<s:textfield value="%{d_minute}" name="d_minute" size="7" theme="simple" />
+						Day:<s:textfield name="d_day" size="5" cssClass="clk_select" /> <s:textfield name="d_hour" size="2" maxlength="2" cssClass="clk_select" />:<s:textfield name="d_minute" size="2" maxlength="2" cssClass="clk_select" />:00
 					</td>
 				</tr>
 				<tr>

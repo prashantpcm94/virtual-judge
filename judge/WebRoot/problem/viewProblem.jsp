@@ -11,7 +11,7 @@ String basePath = (String)application.getAttribute("basePath");
 	    <title>Virtual Judge -- Problem</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-		<script type="text/javascript" src="javascript/jquery.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='dwr/engine.js'></script>
@@ -59,13 +59,13 @@ String basePath = (String)application.getAttribute("basePath");
 				</font>
 			</p>
 			
-			<div class="hiddable" id="vj_description"><p class="pst"><span>expand</span><span>collapse</span>Description</p><div class="textBG"></div></div>
-			<div class="hiddable" id="vj_input"><p class="pst"><span>expand</span><span>collapse</span>Input</p><div class="textBG"></div></div>
-			<div class="hiddable" id="vj_output"><p class="pst"><span>expand</span><span>collapse</span>Output</p><div class="textBG"></div></div>
-			<div class="hiddable" id="vj_sampleInput"><p class="pst"><span>expand</span><span>collapse</span>Sample Input</p><div class="textBG"></div></div>
-			<div class="hiddable" id="vj_sampleOutput"><p class="pst"><span>expand</span><span>collapse</span>Sample Output</p><div class="textBG"></div></div>
-			<div class="hiddable" id="vj_hint"><p class="pst"><span>expand</span><span>collapse</span>Hint</p><div class="textBG"></div></div>
-			<s:if test="problem.source != null"><p class="pst"><span>expand</span><span>collapse</span>Source</p><div class="textBG">${problem.source}</div></s:if>
+			<div class="hiddable" id="vj_description"><p class="pst">Description</p><div class="textBG"></div></div>
+			<div class="hiddable" id="vj_input"><p class="pst">Input</p><div class="textBG"></div></div>
+			<div class="hiddable" id="vj_output"><p class="pst">Output</p><div class="textBG"></div></div>
+			<div class="hiddable" id="vj_sampleInput"><p class="pst">Sample Input</p><div class="textBG"></div></div>
+			<div class="hiddable" id="vj_sampleOutput"><p class="pst">Sample Output</p><div class="textBG"></div></div>
+			<div class="hiddable" id="vj_hint"><p class="pst">Hint</p><div class="textBG"></div></div>
+			<s:if test="problem.source != null"><p class="pst">Source</p><div class="textBG">${problem.source}</div></s:if>
 
 			<p align="center">
 				<font size="3" color="#333399">
