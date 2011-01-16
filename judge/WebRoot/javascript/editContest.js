@@ -83,7 +83,7 @@ $(document).ready(function(){
 		addRow();
 	}
 	$("#addTable tr.tr_problem:visible").each(function(){
-		updateTitle($(this));
+		updateTitle($(this), true);
 	});
 	
 	
@@ -112,8 +112,8 @@ function callBack(_problemInfo){
 }
 
 var last;
-function updateTitle($row){
-	if ($("[name=probNums]", $row).val() == last)return;
+function updateTitle($row, init){
+	if (!init && $("[name=probNums]", $row).val() == last)return;
 	last = $("[name=probNums]", $row).val();
 	judgeService.findProblemSimple($("[name=OJs]", $row).val(), $("[name=probNums]", $row).val(), callBack);
 	if (problemInfo == null){
