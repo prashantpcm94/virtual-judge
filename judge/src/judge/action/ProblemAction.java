@@ -309,20 +309,24 @@ public class ProblemAction extends BaseAction{
 	public String fetchStatus() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Map session = ActionContext.getContext().getSession();
+		Map paraMap = new HashMap();
 		User user = (User) session.get("visitor");
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 
-		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problem.id, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, s.originOJ, s.originProb, s.contest.id from Submission s where 1=1 ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problem.id, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, s.originOJ, s.originProb, s.contest.id from Submission s ");
 
 		dataTablesPage = new DataTablesPage();
 
 		dataTablesPage.setITotalRecords(9999999L);
 
 		if (!inContest){
-			hql.append(" and s.contest is null ");
+			hql.append(" where s.contest is null ");
 		} else if (sup == 0){
-			hql.append(" and s.isPrivate = 0 ");
+			hql.append(" left join s.contest c where s.isPrivate = 0 and (c is null or c.endTime < :currentTime) ");
+			paraMap.put("currentTime", new Date());
+		} else {
+			hql.append(" where 1 = 1 ");
 		}
 
 		if (un != null && !un.trim().isEmpty()){
@@ -361,7 +365,7 @@ public class ProblemAction extends BaseAction{
 
 		dataTablesPage.setITotalDisplayRecords(9999999L);
 
-		List<Object[]> aaData = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
+		List<Object[]> aaData = baseService.list(hql.toString(), paraMap, iDisplayStart, iDisplayLength);
 
 		for (Object[] o : aaData) {
 			o[8] = sdf.format((Date)o[8]);

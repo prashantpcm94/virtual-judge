@@ -442,6 +442,7 @@ public class ContestAction extends BaseAction {
 		submission.setProblem(problem);
 		if (contest.getEndTime().compareTo(new Date()) > 0){
 			submission.setContest(contest);
+			submission.setIsPrivate(contest.getPassword() == null ? 0 : 1);
 		}
 		submission.setUser(user);
 		submission.setStatus("Pending……");
@@ -452,7 +453,6 @@ public class ContestAction extends BaseAction {
 		submission.setUsername(user.getUsername());
 		submission.setOriginOJ(problem.getOriginOJ());
 		submission.setOriginProb(problem.getOriginProb());
-		submission.setIsPrivate(contest.getPassword() == null ? 0 : 1);
 		baseService.addOrModify(submission);
 		try {
 			Submitter submitter = (Submitter) ProblemAction.submitterMap.get(problem.getOriginOJ()).clone();

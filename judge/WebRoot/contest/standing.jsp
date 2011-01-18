@@ -13,8 +13,8 @@ String basePath = (String)application.getAttribute("basePath");
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
-		<script type="text/javascript" language="javascript" src="javascript/jquery-1.4.4.min.js"></script>
-		<script type="text/javascript" language="javascript" src="javascript/jquery.dataTables.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 		<script type="text/javascript" src="javascript/standing.js"></script>
 	</head>
 
@@ -31,7 +31,7 @@ String basePath = (String)application.getAttribute("basePath");
 					<th class="solve">Solve</th>
 					<th class="standing_time">Penalty</th>
 					<s:iterator value="tList" status="stat">
-						<th class="standing_time"><a href="contest/viewProblem.action?pid=${id}"><s:property value="num" /></a></th>
+						<th><a href="contest/viewProblem.action?pid=${id}"><s:property value="num" /></a></th>
 					</s:iterator>
 					<th />
 				</tr>
@@ -45,13 +45,13 @@ String basePath = (String)application.getAttribute("basePath");
 					<td><s:property value="sPenalty" /></td>
 					<s:iterator value="sACtime" status="stat1">
 						<s:if test="ACtime[#stat1.index] gt 0">
-							<td class="green"><s:property value="sACtime[#stat1.index]" /><s:if test="attempts[#stat1.index] gt 0">(-<s:property value="attempts[#stat1.index]" />)</s:if></td>
+							<td class="green standing_time"><s:property value="sACtime[#stat1.index]" /><s:if test="attempts[#stat1.index] gt 0">(-<s:property value="attempts[#stat1.index]" />)</s:if></td>
 						</s:if>
 						<s:elseif test="attempts[#stat1.index] == 0">
-							<td class="white" />
+							<td class="white standing_time" />
 						</s:elseif>
 						<s:else>
-							<td class="red">-<s:property value="attempts[#stat1.index]" /></td>
+							<td class="red standing_time">-<s:property value="attempts[#stat1.index]" /></td>
 						</s:else>
 					</s:iterator>
 					<td class="white" />

@@ -16,6 +16,26 @@ public class Customize {
 	static private IBaseService baseService;
 	static public ServletContext sc;
 	
+	static public void fixSubmissionPrivacy() throws Exception{
+		int interval = 3000;
+		List<Object[]> list;
+		List dataList;
+		
+		for (int i = 9500; i < 100000; i += interval){
+			System.out.println(i);
+			dataList = new ArrayList();
+			list = baseService.query("select s, c from Submission s left join s.contest c where s.id between " + i + " and " + (i + interval - 1));
+			for (Object[] o : list) {
+				Submission s = (Submission) o[0];
+				if (o[1] == null && s.getIsPrivate() != 0){
+					s.setIsPrivate(0);
+					dataList.add(s);
+				}
+			}
+			baseService.addOrModify(dataList);
+		}
+	}
+	
 	static public void fixDescRemark() throws Exception{
 		List<Description> list = baseService.query("select d from Description d");
 		for (Description description : list) {

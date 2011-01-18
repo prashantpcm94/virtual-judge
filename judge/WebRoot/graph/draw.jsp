@@ -11,10 +11,10 @@ String basePath = (String)application.getAttribute("basePath");
     
     <title>My JSP 'draw.jsp' starting page</title>
     
-	<script type="text/javascript" language="javascript" src="javascript/jquery-1.4.4.min.js"></script>
-	<script type="text/javascript" language="javascript" src="javascript/swfobject.js"></script>
+	<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="javascript/swfobject.js"></script>
 	
-	<script type="text/javascript" language="javascript">
+	<script type="text/javascript">
 		$(document).ready(function(){
 			var url = 'graph/draw.action';
 			swfobject.embedSWF("open-flash-chart.swf", "chart", "400", "400", "9.0.0", "expressInstall.swf", {"data-file":url});
