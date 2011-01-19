@@ -112,7 +112,7 @@ public class SPOJSubmitter extends Submitter {
 			String tLine = new String(responseBody, "UTF-8");
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
-				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").replaceAll("edit", "").trim();
+				result = m.group(2).replaceAll("edit", "").replaceAll(">run<", "><").replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
 				if (!result.contains("ing")){
 					if (result.contains("accepted")){
