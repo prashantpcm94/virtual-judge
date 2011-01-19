@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import judge.service.IBaseService;
+import judge.service.JudgeService;
 import judge.spider.HDUSpider;
 import judge.spider.HUSTSpider;
 import judge.spider.HYSBZSpider;
@@ -47,6 +49,9 @@ public class BaseAction extends ActionSupport{
 	protected Integer iSortCol_0;
 	protected String sSortDir_0;
 	protected String sEcho;
+
+	protected IBaseService baseService;
+	protected JudgeService judgeService;
 
 	static public List<String> OJList = new ArrayList<String>();
 	static {
@@ -166,6 +171,18 @@ public class BaseAction extends ActionSupport{
 	}
 	public List getOJListAll() {
 		return OJListAll;
+	}
+	public IBaseService getBaseService() {
+		return baseService;
+	}
+	public void setBaseService(IBaseService baseService) {
+		this.baseService = baseService;
+	}
+	public JudgeService getJudgeService() {
+		return judgeService;
+	}
+	public void setJudgeService(JudgeService judgeService) {
+		this.judgeService = judgeService;
 	}
 	
 }

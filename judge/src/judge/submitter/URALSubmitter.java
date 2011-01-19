@@ -58,7 +58,7 @@ public class URALSubmitter extends Submitter {
 	
 	private void getMaxRunId() throws Exception {
 		GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("<TD class=\"id\">(\\d+)");
 
 		httpClient.executeMethod(getMethod);
@@ -99,7 +99,7 @@ public class URALSubmitter extends Submitter {
 		String reg = "aspx/(\\d+)\\.txt[\\s\\S]*?class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
         Pattern p = Pattern.compile(reg);
         GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx?author=" + username.substring(0, 5));
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			System.out.println("getResult...");
@@ -153,18 +153,20 @@ public class URALSubmitter extends Submitter {
 	
 	public void run() {
 		int idx = getIdleClient();
+		int errorCode = 1;
 
 		try {
 			getMaxRunId();
 				
 			submit(passwordList[idx]);	//非登陆式,只需交一次
+			errorCode = 2;
 			submission.setStatus("Running & Judging");
 			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(passwordList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			submission.setStatus("Judging Error");
+			submission.setStatus("Judging Error " + errorCode);
 			baseService.addOrModify(submission);
 		}
 		

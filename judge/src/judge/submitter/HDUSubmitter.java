@@ -58,7 +58,7 @@ public class HDUSubmitter extends Submitter {
 	
 	private void getMaxRunId() throws Exception {
 		GetMethod getMethod = new GetMethod("http://acm.hdu.edu.cn/status.php");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("<td height=22px>(\\d+)");
 
 		httpClient.executeMethod(getMethod);
@@ -113,7 +113,7 @@ public class HDUSubmitter extends Submitter {
 		String reg = ">(\\d{7,})</td><td>[\\s\\S]*?</td><td>([\\s\\S]*?)</td><td>[\\s\\S]*?</td><td>(\\d*?)MS</td><td>(\\d*?)K</td>", result;
 		Pattern p = Pattern.compile(reg);
 		GetMethod getMethod = new GetMethod("http://acm.hdu.edu.cn/status.php?user=" + username);
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			System.out.println("getResult...");
@@ -166,6 +166,7 @@ public class HDUSubmitter extends Submitter {
 	
 	public void run() {
 		int idx = getIdleClient();
+		int errorCode = 1;
 
 		try {
 			getMaxRunId();
@@ -180,13 +181,14 @@ public class HDUSubmitter extends Submitter {
 				Thread.sleep(2000);
 				submit();
 			}
+			errorCode = 2;
 			submission.setStatus("Running & Judging");
 			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			submission.setStatus("Judging Error");
+			submission.setStatus("Judging Error " + errorCode);
 			baseService.addOrModify(submission);
 		}
 		

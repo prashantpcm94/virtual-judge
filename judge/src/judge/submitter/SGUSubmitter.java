@@ -57,7 +57,7 @@ public class SGUSubmitter extends Submitter {
 	private void getMaxRunId() throws Exception {
 		// 获取当前最大RunID
 		GetMethod getMethod = new GetMethod("http://acm.sgu.ru/status.php");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("<TD>(\\d{7,})</TD>");
 
 		httpClient.executeMethod(getMethod);
@@ -98,7 +98,7 @@ public class SGUSubmitter extends Submitter {
 		Pattern p = Pattern.compile(reg);
 
 		GetMethod getMethod = new GetMethod("http://acm.sgu.ru/status.php?idmode=1&id=" + username);
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			System.out.println("getResult...");
@@ -151,18 +151,20 @@ public class SGUSubmitter extends Submitter {
 	
 	public void run() {
 		int idx = getIdleClient();
+		int errorCode = 1;
 
 		try {
 			getMaxRunId();
 				
 			submit(usernameList[idx], passwordList[idx]);	//非登陆式,只需交一次
+			errorCode = 2;
 			submission.setStatus("Running & Judging");
 			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			submission.setStatus("Judging Error");
+			submission.setStatus("Judging Error " + errorCode);
 			baseService.addOrModify(submission);
 		}
 		

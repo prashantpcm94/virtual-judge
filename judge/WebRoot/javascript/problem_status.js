@@ -34,7 +34,10 @@ $(document).ready(function() {
 		  				"sClass": "prob_num"
 		  			},
 		  			{
-		  				"sClass": "result"
+		  				"fnRender": function ( oObj ) {
+		  					return oObj.aData[3] == 'Judging Error 1' ? oObj.aData[3] + " <a href='#' class='rejudge' ><img border=0 height='15' src='images/refresh.png'/></a>" : oObj.aData[3];
+		  				},
+						"sClass": "result"
 					},
 		  			{
 		  				"fnRender": function ( oObj ) {
@@ -131,6 +134,18 @@ $(document).ready(function() {
 			$("[name='res']").val(0);
 			oTable.fnPageChange( 'first' );
 		}
+	});
+	
+	$(".rejudge").live("click", function(){
+		var $row = $(this).parent().parent();
+		var id = $row.attr("id");
+		$row.removeClass("no");
+		$row.removeClass("yes");
+		$row.addClass("pending");
+		$.get("problem/rejudge.action", {id: id}, function() {
+			getResult(id);
+		});
+		return false;
 	});
 
 	$("[name='inContest']").click(function(){

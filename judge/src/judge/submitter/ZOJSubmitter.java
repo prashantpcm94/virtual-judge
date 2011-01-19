@@ -57,7 +57,7 @@ public class ZOJSubmitter extends Submitter {
 	
 	private void getMaxRunId() throws Exception {
 		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showRuns.do?contestId=1");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("<td class=\"runId\">(\\d+)</td>");
 
 		httpClient.executeMethod(getMethod);
@@ -76,7 +76,7 @@ public class ZOJSubmitter extends Submitter {
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 
 		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		int statusCode = httpClient.executeMethod(getMethod);
 		byte[] responseBody = getMethod.getResponseBody();
 		String tLine = new String(responseBody, "UTF-8");
@@ -125,7 +125,7 @@ public class ZOJSubmitter extends Submitter {
 		Pattern p = Pattern.compile(reg);
 
 		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showRuns.do?contestId=1&handle=" + username);
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(10, true));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			System.out.println("getResult...");
@@ -180,6 +180,7 @@ public class ZOJSubmitter extends Submitter {
 
 	public void run() {
 		int idx = getIdleClient();
+		int errorCode = 1;
 		httpClient = clientList[idx];
 
 		try {
@@ -195,13 +196,14 @@ public class ZOJSubmitter extends Submitter {
 				Thread.sleep(2000);
 				submit();
 			}
+			errorCode = 2;
 			submission.setStatus("Running & Judging");
 			baseService.addOrModify(submission);
 			Thread.sleep(2000);
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			submission.setStatus("Judging Error");
+			submission.setStatus("Judging Error " + errorCode);
 			baseService.addOrModify(submission);
 		}
 		

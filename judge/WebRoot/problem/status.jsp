@@ -31,7 +31,7 @@ String basePath = (String)application.getAttribute("basePath");
 			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
 			OJ:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJListAll" />&nbsp;&nbsp;
 			Problem ID:<s:textfield name="probNum" />&nbsp;&nbsp;
-			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Judge Error'}" />&nbsp;&nbsp;
+			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Judging Error'}" />&nbsp;&nbsp;
 			<input type="submit" value="Filter"/>&nbsp;&nbsp;
 			<input type="button" value="Reset" id="reset" />
 		</form>
@@ -43,10 +43,10 @@ String basePath = (String)application.getAttribute("basePath");
 					<th>User</th>
 					<th>Problem</th>
 					<th>Result</th>
-					<th>Memory</th>
-					<th>Time</th>
+					<th style="text-align:right;padding:3px">Memory</th>
+					<th style="text-align:right;padding:3px">Time</th>
 					<th>Language</th>
-					<th>Length</th>
+					<th style="text-align:right;padding:3px">Length</th>
 					<th>Submit Time</th>
 					<th></th>
 					<th></th>

@@ -21,8 +21,6 @@ import judge.bean.Description;
 import judge.bean.Problem;
 import judge.bean.Submission;
 import judge.bean.User;
-import judge.service.IBaseService;
-import judge.service.JudgeService;
 import judge.spider.Spider;
 import judge.submitter.Submitter;
 
@@ -30,9 +28,6 @@ import com.opensymphony.xwork2.ActionContext;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class ProblemAction extends BaseAction{
-
-	private IBaseService baseService;
-	private JudgeService judgeService;
 
 	private int id;	//problemId
 	private int uid;
@@ -358,7 +353,7 @@ public class ProblemAction extends BaseAction{
 		} else if (res == 6) {
 			hql.append(" and s.status like 'compil%' ");
 		} else if (res == 7) {
-			hql.append(" and s.status = 'Judging Error' ");
+			hql.append(" and s.status like 'Judging Error%' ");
 		}
 
 		hql.append(" order by s.id desc ");
@@ -509,7 +504,17 @@ public class ProblemAction extends BaseAction{
 			return "sh_c";
 		}
 	}
-
+	
+	public String rejudge(){
+		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
+		submission = (Submission) baseService.query(Submission.class, id);
+		if (submission == null || !submission.getStatus().equals("Judging Error 1") && (user == null || user.getSup() == 0)){
+			return ERROR;
+		}
+		judgeService.rejudge(submission);
+		return SUCCESS;
+	}
 
 	public int getUid() {
 		return uid;
@@ -584,12 +589,6 @@ public class ProblemAction extends BaseAction{
 	public void setProbNum(String probNum) {
 		this.probNum = probNum;
 	}
-	public IBaseService getBaseService() {
-		return baseService;
-	}
-	public void setBaseService(IBaseService baseService) {
-		this.baseService = baseService;
-	}
 	public DataTablesPage getDataTablesPage() {
 		return dataTablesPage;
 	}
@@ -619,12 +618,6 @@ public class ProblemAction extends BaseAction{
 	}
 	public void set_64Format(String _64Format) {
 		this._64Format = _64Format;
-	}
-	public JudgeService getJudgeService() {
-		return judgeService;
-	}
-	public void setJudgeService(JudgeService judgeService) {
-		this.judgeService = judgeService;
 	}
 	public String getProbNum1() {
 		return probNum1;

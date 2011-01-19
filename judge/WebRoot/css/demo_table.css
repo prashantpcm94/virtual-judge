@@ -190,7 +190,7 @@ table.display tr.even.pending {
 tr.pending td.time {
 	padding-left: auto;
 	padding-right: auto;
-	background: url("../images/loader.gif") no-repeat 50% 50%;
+	background: url("../images/loader.gif") no-repeat 90% 50%;
 }
 
 table.display tr.odd.no {

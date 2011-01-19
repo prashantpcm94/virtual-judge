@@ -93,6 +93,7 @@
 
 	<bean id="contestAction" class="judge.action.ContestAction" scope="prototype">
 		<property name="baseService" ref="baseService" />
+		<property name="judgeService" ref="judgeService" />
 	</bean>
 
 	<bean id="mainAction" class="judge.action.MainAction" scope="prototype">

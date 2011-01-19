@@ -39,7 +39,6 @@ public class ContestAction extends BaseAction {
 	private Problem problem;
 	private Submission submission;
 	private Cproblem cproblem;
-	private IBaseService baseService;
 
 	private int hour, minute, d_day, d_hour, d_minute;
 	private int id, pid, cid, uid;
@@ -528,7 +527,7 @@ public class ContestAction extends BaseAction {
 		} else if (res == 6) {
 			hql.append(" and s.status like 'compil%' ");
 		} else if (res == 7) {
-			hql.append(" and s.status = 'Judging Error' ");
+			hql.append(" and s.status like 'Judging Error%' ");
 		}
 		
 		hql.append(" order by s.id desc ");
@@ -619,7 +618,7 @@ public class ContestAction extends BaseAction {
 				if (status.equals("Accepted")){
 					ci.ACtime[index] = submission.getSubTime().getTime() - beginTime;
 					ci.solCnt++;
-				} else if (!status.equals("Judging Error")){
+				} else if (!status.startsWith("Judging Error")){
 					ci.attempts[index]++;
 				}
 			}
@@ -859,35 +858,11 @@ public class ContestAction extends BaseAction {
 		}
 		if (id > 0){
 			submission = (Submission) baseService.query(Submission.class, id);
-			System.out.println(submission);
-			submission.setStatus("Pending Rejudge");
-			baseService.addOrModify(submission);
-			problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
-			try {
-				Submitter submitter = (Submitter) ProblemAction.submitterMap.get(problem.getOriginOJ()).clone();
-				submitter.setSubmission(submission);
-				submitter.start();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return ERROR;
-			}
+			judgeService.rejudge(submission);
 		} else if (pid > 0){
-			cproblem = (Cproblem) baseService.query(Cproblem.class, pid);
-			dataList = baseService.query("select s from Submission s where s.problem.id = " + cproblem.getProblem().getId()  + " and s.contest.id = " + cproblem.getContest().getId());
-			for (int i = 0; i < dataList.size(); i++){
-				submission = new Submission();
-				submission = (Submission) dataList.get(i);
-				System.out.println(submission);
-				submission.setStatus("Pending Rejudge");
-				baseService.addOrModify(submission);
-				problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
-				try {
-					Submitter submitter = (Submitter) ProblemAction.submitterMap.get(problem.getOriginOJ()).clone();
-					submitter.setSubmission(submission);
-					submitter.start();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			List<Submission> submissionList = baseService.query("select s from Submission s, Cproblem cp where cp.id = " + pid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id");
+			for (Submission submission : submissionList) {
+				judgeService.rejudge(submission);
 			}
 		}
 		return SUCCESS;

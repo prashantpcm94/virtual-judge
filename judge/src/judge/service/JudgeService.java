@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import judge.action.BaseAction;
 import judge.bean.Problem;
 import judge.bean.Submission;
 import judge.service.imp.BaseService;
+import judge.submitter.Submitter;
 
 @SuppressWarnings("unchecked")
 public class JudgeService extends BaseService {
@@ -54,6 +56,22 @@ public class JudgeService extends BaseService {
 		res.add(((Problem)list.get(0)).getTitle());
 		return res;
 	}
+	
+	public void rejudge(Submission submission){
+		if (submission.getId() == 0){
+			return;
+		}
+		submission.setStatus("Pending Rejudge");
+		this.addOrModify(submission);
+		try {
+			Submitter submitter = (Submitter) BaseAction.submitterMap.get(submission.getOriginOJ()).clone();
+			submitter.setSubmission(submission);
+			submitter.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 
 }

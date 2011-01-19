@@ -29,7 +29,10 @@ $(document).ready(function() {
 		  				}
 		  			},
 		  			{
-		  				"sClass": "result"
+		  				"fnRender": function ( oObj ) {
+		  					return oObj.aData[3] == 'Judging Error 1' ? oObj.aData[3] + " <a href='#' class='rejudge' ><img border=0 height='15' src='images/refresh.png'/></a>" : oObj.aData[3];
+		  				},
+						"sClass": "result"
 					},
 		  			{
 		  				"fnRender": function ( oObj ) {
@@ -46,12 +49,14 @@ $(document).ready(function() {
 		  			{ 
 		  				"fnRender": function ( oObj ) {
 	  						return oObj.aData[10] ? "<a " + (oObj.aData[10] == 2 ? "class='shared'" : "") + " href='contest/viewSource.action?id=" + oObj.aData[0] + "'>" + oObj.aData[6] + "</a>" : oObj.aData[6];
-		  				}
+		  				},
+		  				"sClass": "language"
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
 		  					return oObj.aData[7] + " B";
-		  				}
+		  				},
+		  				"sClass": "length"
 		  			},
 		  			{},
 		  			{"bVisible": false},
@@ -105,6 +110,19 @@ $(document).ready(function() {
 		$("[name='res']").val(0);
 		oTable.fnPageChange( 'first' );
 	});
+	
+	$(".rejudge").live("click", function(){
+		var $row = $(this).parent().parent();
+		var id = $row.attr("id");
+		$row.removeClass("no");
+		$row.removeClass("yes");
+		$row.addClass("pending");
+		$.get("problem/rejudge.action", {id: id}, function() {
+			getResult(id);
+		});
+		return false;
+	});
+
 	
 	if (location.href.indexOf("reset") >= 0){
 		oTable.fnPageChange( 'first' );

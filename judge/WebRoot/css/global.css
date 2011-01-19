@@ -233,7 +233,7 @@ table#standing .standing_time {
 /********************Status*********************/
 a.shared {
 	font-family: Arial, Helvetica, sans-serif;
-	color: green;
+	color: #00AA00;
 	font-weight: bold;
 }
 
