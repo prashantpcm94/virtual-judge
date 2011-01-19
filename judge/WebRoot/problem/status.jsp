@@ -27,7 +27,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<s:actionerror/>
 		
 		<form id="form_status">
-			Contest:<input type="checkbox" name="inContest" />
+			Contest:<input type="checkbox" name="inContest" checked="true" />
 			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
 			OJ:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJListAll" />&nbsp;&nbsp;
 			Problem ID:<s:textfield name="probNum" />&nbsp;&nbsp;
