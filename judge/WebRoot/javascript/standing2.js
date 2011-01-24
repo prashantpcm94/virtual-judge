@@ -101,6 +101,7 @@ function getRemoteData(){
 	var ids = $.cookie("contest_" + cid);
 	if (!ids){
 		$("tr.disp").remove();
+		$("#status_processing").hide();
 		return;
 	}
 
