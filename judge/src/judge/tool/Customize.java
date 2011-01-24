@@ -13,8 +13,8 @@ import judge.service.IBaseService;
 @SuppressWarnings("unchecked")
 public class Customize {
 	
-	static private IBaseService baseService;
-	static public ServletContext sc;
+	static public ServletContext sc = ApplicationContainer.sc;
+	static public IBaseService baseService = (IBaseService) SpringBean.getBean("baseService", sc);
 	
 	static public void fixSubmissionPrivacy() throws Exception{
 		int interval = 3000;

@@ -353,7 +353,7 @@ public class ProblemAction extends BaseAction{
 		} else if (res == 6) {
 			hql.append(" and s.status like 'compil%' ");
 		} else if (res == 7) {
-			hql.append(" and s.status like 'Judging Error%' ");
+			hql.append(" and s.status like '%ing%' and s.status not like '%ting%' ");
 		}
 
 		hql.append(" order by s.id desc ");

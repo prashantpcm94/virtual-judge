@@ -3,7 +3,7 @@
 <link rel="shortcut icon" href="images/logo.ico" />
 <div style="text-align:center;margin-top:30px;clear:both">
 	<hr />All Copyright Reserved ©2010 <a href="http://acm.hust.edu.cn">HUST ACM/ICPC</a> TEAM
-	<s:if test="#session.visitor.sup == 1"><a href="stat/listOL.action"><img style="text-decoration: none;" height="15px" src="images/statistics.gif" /></a></s:if>
+	<s:if test="#session.visitor.sup == 1"><a href="stat/listOL.action"><img style="text-decoration: none;" height="15px" border="0" src="images/statistics.gif" /></a></s:if>
 	<br>Anything about the OJ, Please Contact Author:<a href="http://hi.baidu.com/xh176233756">I</a><a href="mailto:is.un@qq.com">sun</a><br>
 </div>
 <script type="text/javascript">

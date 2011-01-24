@@ -11,7 +11,7 @@
             <generator class="native" />
         </id>
 		<property name="status" type="java.lang.String">
-		    <column name="C_STATUS" length="40"/>
+		    <column name="C_STATUS" length="100"/>
 		</property>
 		<property name="time" type="java.lang.Integer">
 		    <column name="C_TIME" precision="10" scale="0"/>

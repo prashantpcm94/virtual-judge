@@ -6,12 +6,15 @@ import java.util.regex.Pattern;
 import judge.bean.Description;
 import judge.bean.Problem;
 import judge.service.IBaseService;
+import judge.tool.ApplicationContainer;
+import judge.tool.SpringBean;
 
 public abstract class Spider extends Thread implements Cloneable {
+	static public IBaseService baseService = (IBaseService) SpringBean.getBean("baseService", ApplicationContainer.sc);
+
 	public Problem problem;
 	public Description description;
-	static public IBaseService baseService;
-	
+
 	public String regFind(String text, String reg){
 		Pattern p = Pattern.compile(reg);
 		Matcher m = p.matcher(text);
@@ -71,10 +74,6 @@ public abstract class Spider extends Thread implements Cloneable {
 		}
 	}
 	
-	public void setBaseService(IBaseService baseService) {
-		System.out.println("spider baseservice init...");
-		Spider.baseService = baseService;
-	}
 	public Problem getProblem() {
 		return problem;
 	}

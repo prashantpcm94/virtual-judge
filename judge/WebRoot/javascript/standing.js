@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$('#standing').dataTable({
+	$('#standing1').dataTable({
 		"bPaginate": false,
 		"bLengthChange": false,
 		"bFilter": true,
@@ -13,4 +13,4 @@ $(document).ready(function() {
 		              ]
 		
 	});
-} );
+});

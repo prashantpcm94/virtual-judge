@@ -9,9 +9,7 @@ public class SpringBean {
 	
 	/* 获取spring中bean的实例 */
 	public static Object getBean (String beanName, ServletContext sc) {
-		Object bean;
 		WebApplicationContext wc = WebApplicationContextUtils.getWebApplicationContext(sc);
-		bean = wc.getBean(beanName);
-		return bean;
+		return wc.getBean(beanName);
 	}
 }

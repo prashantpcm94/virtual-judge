@@ -11,9 +11,9 @@ String basePath = (String)application.getAttribute("basePath");
 	    <title>Virtual Judge -- Contest</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-		<link rel="stylesheet" type="text/css" href="css/redmond/jquery-ui-1.8.7.custom.css" />
+		<link rel="stylesheet" type="text/css" href="css/redmond/jquery-ui-1.8.9.custom.css" />
 		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
-		<script type="text/javascript" src="javascript/jquery-ui-1.8.7.custom.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery-ui-1.8.9.custom.min.js"></script>
 		
 		<script type="text/javascript" src="javascript/common.js"></script>
 

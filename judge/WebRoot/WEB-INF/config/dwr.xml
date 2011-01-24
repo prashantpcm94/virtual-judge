@@ -8,6 +8,8 @@
 			<include method="getResult"/>
 			<include method="fetchDescriptions"/>
 			<include method="findProblemSimple"/>
+			<include method="getStandingData"/>
+			<include method="getContestTimeInfo"/>
 		</create>
 		<convert match="judge.bean.Description" converter="bean" >
 			<param name="include" value="description,input,output,sampleInput,sampleOutput,hint"></param>

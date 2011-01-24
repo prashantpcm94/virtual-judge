@@ -42,11 +42,11 @@ pre.sio {
 	font-size: 12pt;
 }
 
-#standing th {
+.standing th {
 	text-align: center;
 }
 
-#standing td {
+.standing td {
 	text-align: center;
 }
 
@@ -211,24 +211,52 @@ td.Scheduled, span.Scheduled {
 }
 
 /********************standing*********************/
-table#standing .rank {
+
+table.standing .rank {
 	width: 40px;
 }
 
-table#standing .id {
+table.standing .id {
 	width: 120px;
 }
 
-table#standing .solve {
+table.standing .solve {
 	width: 40px;
 }
 
-table#standing .standing_time {
+table.standing .standing_time {
 	width: 100px;
 	font-size: 12px;
 }
 
+table.standing td span {
+	color: gray;
+}
 
+table.standing td.curTd {
+	background-color: #CCDDFF;
+}
+
+table.standing td.sameTd {
+	background-color: #FFFFBB;
+}
+
+div.processing {
+    background-color: white;
+    border: 1px solid #DDDDDD;
+    color: #999999;
+    font-size: 14px;
+    height: 30px;
+    left: 50%;
+    margin-left: -125px;
+    margin-top: -15px;
+    padding: 14px 0 2px;
+    position: absolute;
+    text-align: center;
+    top: 300px;
+    width: 250px;
+    z-index: 1000;
+}
 
 /********************Status*********************/
 a.shared {

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +55,17 @@ public class ZOJSubmitter extends Submitter {
 			clientList[i] = new HttpClient();
 			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
 		}
+
+		Map<String, String> languageList = new TreeMap<String, String>();
+		languageList.put("1", "C (gcc 4.4.5)");
+		languageList.put("2", "C++ (g++ 4.4.5)");
+		languageList.put("3", "FPC (fpc 2.4.0)");
+		languageList.put("4", "Java (java 1.6.0)");
+		languageList.put("5", "Python (Python 2.6.6)");
+		languageList.put("6", "Perl (Perl 5.10.1)");
+		languageList.put("7", "Scheme (Guile 1.8.7)");
+		languageList.put("8", "PHP (PHP 5.3.2)");
+		sc.setAttribute("ZOJ", languageList);
 	}
 	
 	private void getMaxRunId() throws Exception {
@@ -178,8 +191,8 @@ public class ZOJSubmitter extends Submitter {
 	}
 
 
-	public void run() {
-		int idx = getIdleClient();
+	public void work() {
+		idx = getIdleClient();
 		int errorCode = 1;
 		httpClient = clientList[idx];
 
@@ -207,6 +220,10 @@ public class ZOJSubmitter extends Submitter {
 			baseService.addOrModify(submission);
 		}
 		
+	}
+
+	@Override
+	public void waitForUnfreeze() {
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -216,5 +233,6 @@ public class ZOJSubmitter extends Submitter {
 			using[idx] = false;
 		}
 	}
+
 
 }

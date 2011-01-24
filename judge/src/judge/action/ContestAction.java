@@ -26,6 +26,7 @@ import judge.bean.Submission;
 import judge.bean.User;
 import judge.service.IBaseService;
 import judge.submitter.Submitter;
+import judge.tool.ApplicationContainer;
 import judge.tool.MD5;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -53,7 +54,7 @@ public class ContestAction extends BaseAction {
 	private Map<Object, String> languageList;
 	private String _64Format;
 	private int contestOver;
-	private String sameContests;
+	private List<Object[]> sameContests;
 	
 	private List pids;
 	private List OJs;
@@ -400,12 +401,14 @@ public class ContestAction extends BaseAction {
 	
 	public String submit(){
 		Map session = ActionContext.getContext().getSession();
-		cproblem = (Cproblem) baseService.query(Cproblem.class, pid);
-		problem = (Problem) baseService.query(Problem.class, cproblem.getProblem().getId());
-		ServletContext sc = ServletActionContext.getServletContext();
+		List<Object[]> list = baseService.query("select cp, p, c from Cproblem cp left join cp.problem p left join cp.contest c where cp.id = " + pid);
+		cproblem = (Cproblem) list.get(0)[0];
+		problem = (Problem) list.get(0)[1];
+		contest = (Contest) list.get(0)[2];
+		cid = contest.getId();
+
+		ServletContext sc = ApplicationContainer.sc;
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
-		cid = cproblem.getContest().getId();
-		contest = (Contest) baseService.query(Contest.class, cid);
 		if (session.get("C" + cid) == null){
 			if (contest.getPassword() == null){
 				session.put("C" + cid, 1);
@@ -424,7 +427,7 @@ public class ContestAction extends BaseAction {
 			return ERROR;
 		}
 		if (!languageList.containsKey(language)){
-			this.addActionError("No such a language!");
+			this.addActionError("No such language!");
 			return INPUT;
 		}
 		session.put("L" + problem.getOriginOJ(), language);
@@ -527,7 +530,7 @@ public class ContestAction extends BaseAction {
 		} else if (res == 6) {
 			hql.append(" and s.status like 'compil%' ");
 		} else if (res == 7) {
-			hql.append(" and s.status like 'Judging Error%' ");
+			hql.append(" and s.status like '%ing%' and s.status not like '%ting%' ");
 		}
 		
 		hql.append(" order by s.id desc ");
@@ -560,11 +563,16 @@ public class ContestAction extends BaseAction {
 				return INPUT;
 			}
 		}
+		tList = baseService.query("select cproblem from Cproblem cproblem where cproblem.contest.id = " + cid);
 		
-		List<String> cidList = baseService.query("select c.id from Contest c where c.hashCode = '" + contest.getHashCode() + "'");
-		sameContests = "";
-		for (String cid : cidList) {
-			sameContests += cid + " ";
+		Map paraMap = new HashMap();
+		paraMap.put("hashCode", contest.getHashCode());
+		paraMap.put("beginTime", contest.getBeginTime());
+		paraMap.put("curTime", new Date());
+		sameContests = baseService.query("select c.id, c.title, c.beginTime, c.endTime, c.manager.username, c.manager.id, c.id from Contest c where c.hashCode = :hashCode and (c.beginTime <= :beginTime or c.endTime <= :curTime) order by c.id desc ", paraMap);
+		for (int i = 0; i < sameContests.size(); i++){
+			sameContests.get(i)[6] = sameContests.get(i)[0].equals(cid) ? "Scheduled" : curDate.compareTo((Date) sameContests.get(i)[3]) > 0 ? "Ended" : "Runing";
+			sameContests.get(i)[3] = trans(((Date)sameContests.get(i)[3]).getTime() - ((Date)sameContests.get(i)[2]).getTime(), true);
 		}
 		return SUCCESS;
 	}
@@ -618,7 +626,7 @@ public class ContestAction extends BaseAction {
 				if (status.equals("Accepted")){
 					ci.ACtime[index] = submission.getSubTime().getTime() - beginTime;
 					ci.solCnt++;
-				} else if (!status.startsWith("Judging Error")){
+				} else {
 					ci.attempts[index]++;
 				}
 			}
@@ -807,6 +815,7 @@ public class ContestAction extends BaseAction {
 				return ERROR;
 			}
 		}
+		
 		StringBuffer sb = new StringBuffer();
 		String os = submission.getSource();
 		for (int i = 0; i < os.length(); i++){
@@ -900,7 +909,6 @@ public class ContestAction extends BaseAction {
 			return "sh_c";
 		}
 	}
-	
 	
 	public int getRes() {
 		return res;
@@ -1118,12 +1126,13 @@ public class ContestAction extends BaseAction {
 	public void setTitles(List titles) {
 		this.titles = titles;
 	}
-	public String getSameContests() {
+	public List getSameContests() {
 		return sameContests;
 	}
-	public void setSameContests(String sameContests) {
+	public void setSameContests(List sameContests) {
 		this.sameContests = sameContests;
 	}
+
 	
 }
 

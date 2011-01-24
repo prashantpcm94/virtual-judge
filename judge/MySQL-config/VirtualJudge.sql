@@ -34,7 +34,7 @@ CREATE TABLE `t_contest` (
   PRIMARY KEY (`C_ID`),
   KEY `Index_manager_id` (`C_MANAGER_ID`),
   KEY `Index_hash_code` (`C_HASH_CODE`)
-) ENGINE=InnoDB AUTO_INCREMENT=919 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -53,7 +53,7 @@ CREATE TABLE `t_cproblem` (
   PRIMARY KEY (`C_ID`),
   KEY `Index_problem_id` (`C_PROBLEM_ID`),
   KEY `Index_contest_id` (`C_CONTEST_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=21811 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +78,7 @@ CREATE TABLE `t_description` (
   `C_VOTE` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`C_ID`),
   KEY `Index_problem_id` (`C_PROBLEM_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9184 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +99,7 @@ CREATE TABLE `t_problem` (
   `C_TIMELIMIT` int(10) unsigned DEFAULT NULL,
   `C_TRIGGER_TIME` datetime DEFAULT NULL,
   PRIMARY KEY (`C_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=16939 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,7 +111,7 @@ DROP TABLE IF EXISTS `t_submission`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_submission` (
   `C_ID` int(10) NOT NULL AUTO_INCREMENT,
-  `C_STATUS` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `C_STATUS` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `C_TIME` int(10) unsigned DEFAULT NULL,
   `C_MEMORY` int(10) unsigned DEFAULT NULL,
   `C_SUBTIME` datetime DEFAULT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE `t_submission` (
   KEY `Index_username` (`C_USERNAME`),
   KEY `Index_origin_OJ` (`C_ORIGIN_OJ`),
   KEY `Index_origin_prob` (`C_ORIGIN_PROB`)
-) ENGINE=InnoDB AUTO_INCREMENT=58850 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -156,7 +156,7 @@ CREATE TABLE `t_user` (
   `C_SHARE` int(10) unsigned NOT NULL DEFAULT '1',
   `C_SUP` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`C_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2207 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -177,7 +177,7 @@ CREATE TABLE `t_vlog` (
   `C_LOGINER` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`C_ID`),
   KEY `Index_2` (`C_SESSIONID`)
-) ENGINE=InnoDB AUTO_INCREMENT=44746 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

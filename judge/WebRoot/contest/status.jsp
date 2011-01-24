@@ -29,7 +29,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<form id="form_status">
 			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
 			Problem:<s:select name="num" list="%{numList}" cssStyle="width:90px" />&nbsp;&nbsp;
-			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Judging Error'}" />&nbsp;&nbsp;
+			Result:<s:select name="res" list="#{'0':'All','1':'Accepted','2':'Wrong Answer','3':'Time Limit Exceed','4':'Runtime Error','5':'Presentation Error','6':'Compile Error','7':'Processing'}" />&nbsp;&nbsp;
 			<input type="submit" value="Filter"/>&nbsp;&nbsp;
 			<input type="button" value="Reset" id="reset" />
 		</form>

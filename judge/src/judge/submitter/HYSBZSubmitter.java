@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +55,12 @@ public class HYSBZSubmitter extends Submitter {
 			clientList[i] = new HttpClient();
 			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
 		}
+
+		Map<String, String> languageList = new TreeMap<String, String>();
+		languageList.put("0", "G++");
+		languageList.put("1", "GCC");
+		languageList.put("2", "Pascal");
+		sc.setAttribute("HYSBZ", languageList);
 	}
 	
 	private void getMaxRunId() throws Exception {
@@ -166,8 +174,8 @@ public class HYSBZSubmitter extends Submitter {
 		}
 	}
 	
-	public void run() {
-		int idx = getIdleClient();
+	public void work() {
+		idx = getIdleClient();
 		int errorCode = 1;
 
 		try {
@@ -193,7 +201,11 @@ public class HYSBZSubmitter extends Submitter {
 			submission.setStatus("Judging Error " + errorCode);
 			baseService.addOrModify(submission);
 		}
-		
+
+	}
+
+	@Override
+	public void waitForUnfreeze() {
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
