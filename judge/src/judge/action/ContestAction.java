@@ -565,14 +565,18 @@ public class ContestAction extends BaseAction {
 		}
 		tList = baseService.query("select cproblem from Cproblem cproblem where cproblem.contest.id = " + cid);
 		
-		Map paraMap = new HashMap();
-		paraMap.put("hashCode", contest.getHashCode());
-		paraMap.put("beginTime", contest.getBeginTime());
-		paraMap.put("curTime", new Date());
-		sameContests = baseService.query("select c.id, c.title, c.beginTime, c.endTime, c.manager.username, c.manager.id, c.id from Contest c where c.hashCode = :hashCode and (c.beginTime <= :beginTime or c.endTime <= :curTime) order by c.id desc ", paraMap);
-		for (int i = 0; i < sameContests.size(); i++){
-			sameContests.get(i)[6] = sameContests.get(i)[0].equals(cid) ? "Scheduled" : curDate.compareTo((Date) sameContests.get(i)[3]) > 0 ? "Ended" : "Runing";
-			sameContests.get(i)[3] = trans(((Date)sameContests.get(i)[3]).getTime() - ((Date)sameContests.get(i)[2]).getTime(), true);
+		if (curDate.compareTo(contest.getBeginTime()) < 0){
+			sameContests = new ArrayList<Object[]>();
+		} else {
+			Map paraMap = new HashMap();
+			paraMap.put("hashCode", contest.getHashCode());
+			paraMap.put("beginTime", contest.getBeginTime());
+			paraMap.put("curTime", new Date());
+			sameContests = baseService.query("select c.id, c.title, c.beginTime, c.endTime, c.manager.username, c.manager.id, c.id from Contest c where c.hashCode = :hashCode and (c.beginTime <= :beginTime or c.endTime <= :curTime) order by c.id desc ", paraMap);
+			for (int i = 0; i < sameContests.size(); i++){
+				sameContests.get(i)[6] = sameContests.get(i)[0].equals(cid) ? "Scheduled" : curDate.compareTo((Date) sameContests.get(i)[3]) > 0 ? "Ended" : "Runing";
+				sameContests.get(i)[3] = trans(((Date)sameContests.get(i)[3]).getTime() - ((Date)sameContests.get(i)[2]).getTime(), true);
+			}
 		}
 		return SUCCESS;
 	}
