@@ -10,10 +10,10 @@ var standingTableSetting = {
 };
 
 $(document).ready(function() {
-	
+
 	cid = $("[name=cid]").val();
 	pnum = $("tr#template td").length - 5;
-	
+
 	if ($.cookie("contest_" + cid) == undefined){
 		$.cookie("contest_" + cid, cid);
 	}
@@ -29,12 +29,12 @@ $(document).ready(function() {
 		},
 		cookie: {}
 	});
-	
+
 	$( "#tabs" ).removeClass("ui-widget-content");
 	$( "#tabs" ).addClass("ui-widget-content-custom");
 
 	standingTable = $('#standing').dataTable(standingTableSetting);
-	
+
 	$('#setting table').dataTable({
 		"bPaginate": false,
 		"bLengthChange": false,
@@ -43,7 +43,7 @@ $(document).ready(function() {
 		"bInfo": false,
 		"bAutoWidth": false
 	});
-	
+
 	$("[name=ids]").click(function(){
 		var ids = "";
 		$("[name=ids]:checked").each(function(){
@@ -51,11 +51,11 @@ $(document).ready(function() {
 		});
 		$.cookie("contest_" + cid, ids.substr(1));
 	});
-	
+
 	$("[name=penaltyFormat]").change(function(){
 		$.cookie("penalty_format", $(this).val());
 	});
-	
+
 	$("td.meta_td").live("mouseover", function(){
 		var curCid = $(this).parent().attr("cid");
 		$("tr[cid=" + curCid + "] td.meta_td").addClass("sameTd")
@@ -79,12 +79,12 @@ $(document).ready(function() {
 			$("div#contestTitle").html($("input[type=checkbox][value=" + curCid + "]").parent().next().html());
 		}
 	});
-	
+
 	$("#refresh").click(function(){
 		getRemoteData();
 		return false;
 	});
-	
+
 	var ids = $.cookie("contest_" + cid);
 	if (!!ids) {
 		ids = ids.split("/");
@@ -108,7 +108,7 @@ function getRemoteData(){
 	DWREngine.setAsync(false);
 	judgeService.getContestTimeInfo(cid, function(res){ti = res;});
 	DWREngine.setAsync(true);
-	
+
 	ids = ids.split("/");
 	var cnum = ids.length, ccnt = 0;
 	data = {};
@@ -142,13 +142,13 @@ function init() {
 			changed = true;
 		}
 	});
-	
+
 	$("#status_processing").hide();
 }
 
 function calcScoreBoard(){
 	$("#status_processing").show();
-	
+
 	var sb = {};
 	$.each(onlyCid ? {onlyCid: data[onlyCid]} : data, function(curCid, sInfo){
 		$.each(sInfo, function(key, s){
@@ -160,10 +160,12 @@ function calcScoreBoard(){
 			if (sb[name][s[1]] == undefined){
 				sb[name][s[1]] = [0, 0];
 			}
-			if (s[2]) {
-				sb[name][s[1]][0] = s[3];
-			} else {
-				sb[name][s[1]][1]++;
+			if (!sb[name][s[1]][0]){
+				if (s[2]) {
+					sb[name][s[1]][0] = s[3];
+				} else {
+					sb[name][s[1]][1]++;
+				}
 			}
 		});
 	});
@@ -179,14 +181,14 @@ function calcScoreBoard(){
 		}
 		result.push([name, solve, penalty]);
 	}
-	
+
 	result.sort(function(a, b){
-		return b[1] - a[1] || a[2] - b[2];		
+		return b[1] - a[1] || a[2] - b[2];
 	});
 
 	standingTable.fnDestroy();
 	$("tr.disp").remove();
-	
+
 	var $originRow = $("tr#template");
 	$.each(result, function(i, v1){
 		var $newRow = $originRow.clone().removeAttr("id").attr("class", "disp");
@@ -215,7 +217,7 @@ function calcScoreBoard(){
 		$newRow.insertBefore("tr#template").show();
 	});
 	standingTable.dataTable(standingTableSetting);
-	
+
 	var formatIdx = $.cookie("penalty_format");
 	$("#time_index").css("width", (2 - formatIdx + 100 * maxTime / ti[0]) + "%");
 	$("#time_index span").text(dateFormat(maxTime));
