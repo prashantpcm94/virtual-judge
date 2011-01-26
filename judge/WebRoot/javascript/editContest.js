@@ -33,13 +33,16 @@ $(document).ready(function(){
 	});
 
 	$("#form").submit(function(){
+		$("#submit").attr("disabled", true);
 		$("#errorMsg").html("");
 		if ($("#addTable tr.tr_problem:visible").length < 1){
 			$("#errorMsg").html("Please add one problem at least!");
+			$("#submit").attr("disabled", false);
 			return false;
 		}
 		if ($("#addTable tr.tr_problem:visible").length > 26){
 			$("#errorMsg").html("At most 26 problems!");
+			$("#submit").attr("disabled", false);
 			return false;
 		}
 		var dup = 0, err = 0, $trs = $("#addTable tr.tr_problem:visible");
@@ -58,10 +61,12 @@ $(document).ready(function(){
 		}
 		if (dup == 1){
 			$("#errorMsg").html("Duplcate problems are not allowed!");
+			$("#submit").attr("disabled", false);
 			return false;
 		}
 		if (err == 1){
 			$("#errorMsg").html("There are invalid problems!");
+			$("#submit").attr("disabled", false);
 			return false;
 		}
 		
@@ -72,6 +77,7 @@ $(document).ready(function(){
 		var d_minute = parseInt($("#d_minute").val());
 		if (isNaN(hour) || hour < 0 || hour > 23 || isNaN(minute) || minute < 0 || minute > 59 || isNaN(d_day) || d_day < 0 || isNaN(d_hour) || d_hour < 0 || d_hour > 23 || isNaN(d_minute) || d_minute < 0 || d_minute > 59){
 			$("#errorMsg").html("Date format error!");
+			$("#submit").attr("disabled", false);
 			return false;
 		}
 		$("[name=contest.beginTime]").val($("[name=contest.beginTime]").val() + " " + hour + ":" + minute + ":00");
@@ -85,7 +91,6 @@ $(document).ready(function(){
 	$("#addTable tr.tr_problem:visible").each(function(){
 		updateTitle($(this), true);
 	});
-	
 	
 	
 	$("[name=contest.beginTime]").datepicker({

@@ -24,6 +24,8 @@ $(document).ready(function() {
 	$( "#tabs" ).tabs({
 		show: function(event, ui) {
 			if (ui.index == 0){
+				onlyCid = 0;
+				$("div#contestTitle").text("　");
 				getRemoteData();
 			}
 		},
@@ -71,7 +73,7 @@ $(document).ready(function() {
 			} else {
 				$("tr.disp").show();
 			}
-			$("div#contestTitle").text("");
+			$("div#contestTitle").text("　");
 		} else {
 			onlyCid = curCid;
 			changed = false;
@@ -136,7 +138,7 @@ function init() {
 		slide: function( event, ui ) {
 			if (ui.value > ti[1])return false;
 		},
-		change: function( event, ui ) {
+		stop: function( event, ui ) {
 			maxTime = ui.value;
 			calcScoreBoard();
 			changed = true;
@@ -200,20 +202,22 @@ function calcScoreBoard(){
 		v1[0] = v1[0].substr(0, splitIdx);
 		v1[2] = dateFormat(v1[2]);
 		$newRow.attr("cid", curCid);
-		$.each(v1, function(k, v3){
-			var $curTd = $("td:eq(" + (k+1) + ")", $newRow);
-			$curTd.html(v3);
+
+		var $curTd = $("td:eq(0)", $newRow);
+		$curTd.html(i + 1);
+		$curTd = $curTd.next();
+		for (k in v1){
+			$curTd.html(v1[k]);
 			if (k <= 2){
 				$curTd.addClass("meta_td");
 				if (cid == curCid){
 					$curTd.addClass("curTd");
 				}
+			} else if (v1[k].length){
+				$curTd.addClass(v1[k].charAt(0) == ' ' ? "red" : "green");
 			}
-			if (k > 2 && v3.length){
-				$curTd.addClass(v3.charAt(0) == ' ' ? "red" : "green");
-			}
-		});
-		$("td:eq(0)", $newRow).html(i + 1);
+			$curTd = $curTd.next();
+		}
 		$newRow.insertBefore("tr#template").show();
 	});
 	standingTable.dataTable(standingTableSetting);

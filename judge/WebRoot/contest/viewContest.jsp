@@ -32,19 +32,16 @@ String basePath = (String)application.getAttribute("basePath");
 			<b>End Time:</b> <s:date name="contest.endTime" format="yyyy-MM-dd HH:mm:ss" /><br>
 			<b>Contest Type</b>:<s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Priavte</font></s:else>&nbsp;&nbsp;&nbsp;
 			<b>Contest Status:</b> 
-				<%
-					Date date = new Date();
-					long now = date.getTime();
-					long begin = ((Date)(request.getAttribute("contest.beginTime"))).getTime();
-					long end = ((Date)(request.getAttribute("contest.endTime"))).getTime();
-					if (now < begin){
-						out.println("<font color=\"blue\">Scheduled</font>");
-					} else if (now < end) {
-						out.println("<font color=\"red\">Running</font>");
-					} else {
-						out.println("<font color=\"green\">Ended</font>");
-					}
-				%>&nbsp;&nbsp;&nbsp;
+			<s:if test="curDate.compareTo(contest.beginTime) < 0">
+				<font color="blue">Scheduled</font>
+			</s:if>
+			<s:elseif test="curDate.compareTo(contest.endTime) < 0">
+				<font color="red">Running</font>
+			</s:elseif>
+			<s:else>
+				<font color="green">Ended</font>
+			</s:else>
+			&nbsp;&nbsp;&nbsp;
 			<b>Manager:</b> <a href="user/profile.action?uid=<s:property value='contest.manager.id' />" ><s:property value="contest.manager.username" /></a>
 			<br />
 			<font color="orange">Current Server Time : <s:date name="curDate" format="yyyy-MM-dd HH:mm:ss" /></font>
@@ -53,6 +50,11 @@ String basePath = (String)application.getAttribute("basePath");
 
 		<s:if test="dataList != null">
 			<br />
+			<s:if test="curDate.compareTo(contest.beginTime) > 0">
+				<div style="text-align:center;padding:10px">
+					[<a href="contest/toAddContest.action?cid=${cid}" title="Create a contest using the same problems, in which you can see the original score board.">Clone this contest</a>]
+				</div>
+			</s:if>
 			<table style="width:960px" cellpadding="0" cellspacing="0" border="0" class="display" id="viewContest">
 				<thead>
 					<tr>

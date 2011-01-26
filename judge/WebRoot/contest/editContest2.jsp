@@ -42,7 +42,7 @@ String basePath = (String)application.getAttribute("basePath");
 						<input type="hidden" name="cid" value="${cid}" />
 						<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
 						<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Reset" onclick="location.reload();" />
-						<input style="float:right" class="bnt1" type="submit" value="Submit" />
+						<input style="float:right" id="submit" class="bnt1" type="submit" value="Submit" />
 						<div id="errorMsg" style="color:red;font-weight:bold;float:right"><s:actionerror /></div>
 					</td>
 				</tr>

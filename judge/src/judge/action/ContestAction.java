@@ -169,7 +169,26 @@ public class ContestAction extends BaseAction {
 		if (user == null) {
 			return ERROR;
 		}
-		contest = new Contest();
+		if (cid > 0){
+			contest = (Contest) baseService.query(Contest.class, cid);
+			contest.setTitle(null);
+			contest.setDescription(null);
+			contest.setPassword(null);
+			
+			List<Object []> cproblemList = baseService.query("select cproblem.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problem.id = p.id and cproblem.contest.id = " + cid + " order by cproblem.num asc");
+			pids = new ArrayList();
+			OJs = new ArrayList();
+			probNums = new ArrayList();
+			titles = new ArrayList();
+			for (Object[] o : cproblemList) {
+				pids.add(o[0]);
+				OJs.add(o[1]);
+				probNums.add(o[2]);
+				titles.add((String) o[3]);
+			}
+		} else {
+			contest = new Contest();
+		}
 		contest.setBeginTime(new Date());
 		d_hour = 5;
 		return SUCCESS;
@@ -554,6 +573,7 @@ public class ContestAction extends BaseAction {
 	public String standing2(){
 		curDate = new Date();
 		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
 		contest = (Contest) baseService.query(Contest.class, cid);
 
 		if (session.get("C" + cid) == null){
@@ -565,9 +585,7 @@ public class ContestAction extends BaseAction {
 		}
 		tList = baseService.query("select cproblem from Cproblem cproblem where cproblem.contest.id = " + cid);
 		
-		if (curDate.compareTo(contest.getBeginTime()) < 0){
-			sameContests = new ArrayList<Object[]>();
-		} else {
+		if (curDate.compareTo(contest.getBeginTime()) >= 0 || user != null && (user.getSup() != 0 || user.getId() == contest.getManager().getId())){
 			Map paraMap = new HashMap();
 			paraMap.put("hashCode", contest.getHashCode());
 			paraMap.put("beginTime", contest.getBeginTime());
@@ -577,6 +595,8 @@ public class ContestAction extends BaseAction {
 				sameContests.get(i)[6] = sameContests.get(i)[0].equals(cid) ? "Scheduled" : curDate.compareTo((Date) sameContests.get(i)[3]) > 0 ? "Ended" : "Runing";
 				sameContests.get(i)[3] = trans(((Date)sameContests.get(i)[3]).getTime() - ((Date)sameContests.get(i)[2]).getTime(), true);
 			}
+		} else {
+			sameContests = new ArrayList<Object[]>();
 		}
 		return SUCCESS;
 	}

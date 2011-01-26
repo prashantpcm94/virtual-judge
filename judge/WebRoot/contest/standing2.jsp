@@ -13,6 +13,9 @@ String basePath = (String)application.getAttribute("basePath");
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
 		<link rel="stylesheet" type="text/css" href="css/redmond/jquery-ui-1.8.9.custom.css" />
+		<style type="text/css">
+			.ui-tabs .ui-tabs-panel {padding:15px 0px}
+		</style>
 		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="javascript/jquery-ui-1.8.9.custom.min.js"></script>
@@ -56,7 +59,7 @@ String basePath = (String)application.getAttribute("basePath");
 					</tr>
 				</table>
 
-				<div id="contestTitle" style="width:960px;font-size:14px;padding-top:15px;margin-left:auto;margin-right:auto;text-align:center;font: 20px 'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;" ></div>
+				<div id="contestTitle" style="width:960px;font-size:14px;padding-top:15px;margin-left:auto;margin-right:auto;text-align:center;font: 20px 'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;" >　</div>
 				<div id="status_processing" class="processing" style="display:none">Processing...</div>
 				<table cellpadding="0" cellspacing="1" class="display standing" id="standing">
 					<thead>
@@ -102,7 +105,14 @@ String basePath = (String)application.getAttribute("basePath");
 							<s:iterator value="sameContests" status="stat">
 							<tr class="<s:property value='sameContests[#stat.index][6]' />">
 								<td><s:checkbox fieldValue="%{sameContests[#stat.index][0]}" name="ids" /></td>
-								<td><a href="contest/viewContest.action?cid=<s:property value='sameContests[#stat.index][0]' />" target="_blank"><s:property value="sameContests[#stat.index][1]" /></a></td>
+								<td>
+									<s:if test="sameContests[#stat.index][0] == cid">
+										<s:property value="sameContests[#stat.index][1]" />
+									</s:if>
+									<s:else>
+										<a href="contest/viewContest.action?cid=<s:property value='sameContests[#stat.index][0]' />" target="_blank"><s:property value="sameContests[#stat.index][1]" /></a>
+									</s:else>
+								</td>
 								<td class="date"><s:date name="sameContests[#stat.index][2]" format="yyyy-MM-dd HH:mm:ss" /></td>
 								<td class="date"><s:property value='sameContests[#stat.index][3]' /></td>
 								<td class="center"><a href="user/profile.action?uid=<s:property value='sameContests[#stat.index][5]' />"><s:property value="sameContests[#stat.index][4]" /></a></td>
