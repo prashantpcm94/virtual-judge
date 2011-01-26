@@ -138,7 +138,7 @@ public class JudgeService extends BaseService {
 		Long beginTime = ((Date) list.get(0)[0]).getTime();
 		Long endTime = ((Date) list.get(0)[1]).getTime();
 		Long totalTime = endTime - beginTime;
-		Long elapsedTime = new Date().getTime() - beginTime;
+		Long elapsedTime = Math.max(new Date().getTime() - beginTime, 0L);
 		return new Long[]{totalTime / 1000L, Math.min(totalTime, elapsedTime) / 1000L};
 	}
 

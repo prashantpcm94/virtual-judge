@@ -12,7 +12,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
-
+		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='dwr/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
@@ -74,6 +74,10 @@ String basePath = (String)application.getAttribute("basePath");
 					[<a href="problem/status.action?id=${problem.id}">Status</a>]&nbsp;&nbsp; 
 				</font>
 			</p>
+		</td>
+		
+		<td id=mid_view>
+			<img id="bt" style="position:fixed" src="images/to_right.png" />
 		</td>
 		
 		<td id="right_view">

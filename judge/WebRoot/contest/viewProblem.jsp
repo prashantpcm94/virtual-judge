@@ -16,6 +16,7 @@ String basePath = (String)application.getAttribute("basePath");
 	    <script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="javascript/viewProblem.js"></script>
 	</head>
 
@@ -80,6 +81,10 @@ String basePath = (String)application.getAttribute("basePath");
 			</p>
 		</td>
 		
+		<td id=mid_view>
+			<img id="bt" style="position:fixed" src="images/to_right.png" />
+		</td>
+
 		<td id="right_view">
 			<s:iterator value="problem.descriptions" status="stat">
 				<div class="desc_info">

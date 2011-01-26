@@ -317,6 +317,15 @@ a.shared {
 #left_view {
 }
 
+td#mid_view {
+	vertical-align: top;
+	width: 15px;
+}
+
+.mid_hover{
+	background-color:#CCDDFF;
+}
+
 #right_view {
 	vertical-align: top;
 	width: 320px;
