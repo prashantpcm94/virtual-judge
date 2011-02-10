@@ -14,7 +14,7 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 		<script type="text/javascript" src="shjs/sh_main.min.js" ></script>
 		<script type="text/javascript" src="<%=langFile%>" ></script>
 		<link type="text/css" rel="stylesheet" href="shjs/css/sh_style.min.css" />
-		<script type="text/javascript" src="javascript/common.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 	</head>
 
 	<body onload="sh_highlightDocument();">

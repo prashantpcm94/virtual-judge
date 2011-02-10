@@ -171,6 +171,12 @@ public class ContestAction extends BaseAction {
 		}
 		if (cid > 0){
 			contest = (Contest) baseService.query(Contest.class, cid);
+			
+			//比赛结束后才能clone
+			if (new Date().compareTo(contest.getEndTime()) < 0){
+				return ERROR;
+			}
+
 			contest.setTitle(null);
 			contest.setDescription(null);
 			contest.setPassword(null);
@@ -347,7 +353,7 @@ public class ContestAction extends BaseAction {
 	}
 	
 	public String loginContest(){
-		contest = (Contest) baseService.query(Contest.class, cid);
+		contest = (Contest) baseService.query("select c from Contest c left join fetch c.manager where c.id = " + cid).get(0);
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		if ((user != null && user.getSup() != 0) || MD5.getMD5(password).equals(contest.getPassword())){
@@ -358,7 +364,6 @@ public class ContestAction extends BaseAction {
 		curDate = new Date();
 		return INPUT;
 	}
-	
 	
 	public String viewProblem(){
 		Map session = ActionContext.getContext().getSession();

@@ -77,11 +77,22 @@ pre.sio {
 	padding-left: 10px;
 }
 
-div.plm {
+.plm {
 	text-align: center;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12pt;
 }
+
+.alignLeft {
+	text-align: left;
+}
+
+.alignRight {
+	text-align: right;
+	padding-left: 20px;
+}
+
+
 
 .blue {
 	color: blue;

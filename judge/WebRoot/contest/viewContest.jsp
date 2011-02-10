@@ -27,30 +27,34 @@ String basePath = (String)application.getAttribute("basePath");
 			<s:property value="contest.title" />
 		</div>
 		
-		<div class="plm">
-			<b>Start Time:</b> <s:date name="contest.beginTime" format="yyyy-MM-dd HH:mm:ss" />&nbsp;&nbsp;&nbsp;&nbsp;
-			<b>End Time:</b> <s:date name="contest.endTime" format="yyyy-MM-dd HH:mm:ss" /><br>
-			<b>Contest Type</b>:<s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Priavte</font></s:else>&nbsp;&nbsp;&nbsp;
-			<b>Contest Status:</b> 
-			<s:if test="curDate.compareTo(contest.beginTime) < 0">
-				<font color="blue">Scheduled</font>
-			</s:if>
-			<s:elseif test="curDate.compareTo(contest.endTime) < 0">
-				<font color="red">Running</font>
-			</s:elseif>
-			<s:else>
-				<font color="green">Ended</font>
-			</s:else>
-			&nbsp;&nbsp;&nbsp;
-			<b>Manager:</b> <a href="user/profile.action?uid=<s:property value='contest.manager.id' />" ><s:property value="contest.manager.username" /></a>
-			<br />
-			<font color="orange">Current Server Time : <s:date name="curDate" format="yyyy-MM-dd HH:mm:ss" /></font>
-			<br />
-		</div>
+		<table style="margin:auto" class="plm">
+			<tr>
+				<td class="alignRight"><b>Current Time: </b></td>
+				<td class="alignLeft"><span class="currentTime" /></td>
+				<td class="alignRight"><b>Contest Type: </b></td>
+				<td class="alignLeft"><s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Priavte</font></s:else></td>
+			</tr>
+			<tr>
+				<td class="alignRight"><b>Start Time: </b></td>
+				<td class="alignLeft"><s:date name="contest.beginTime" format="yyyy-MM-dd HH:mm:ss" /></td>
+				<td class="alignRight"><b>Contest Status: </b></td>
+				<td class="alignLeft">
+					<s:if test="curDate.compareTo(contest.beginTime) < 0"><font color="blue">Scheduled</font></s:if>
+					<s:elseif test="curDate.compareTo(contest.endTime) < 0"><font color="red">Running</font></s:elseif>
+					<s:else><font color="green">Ended</font></s:else>
+				</td>
+			</tr>
+			<tr>
+				<td class="alignRight"><b>End Time: </b></td>
+				<td class="alignLeft"><s:date name="contest.endTime" format="yyyy-MM-dd HH:mm:ss" /></td>
+				<td class="alignRight"><b>Manager: </b></td>
+				<td class="alignLeft"><a href="user/profile.action?uid=<s:property value='contest.manager.id' />" ><s:property value="contest.manager.username" /></a></td>
+			</tr>
+		</table>
 
 		<s:if test="dataList != null">
 			<br />
-			<s:if test="curDate.compareTo(contest.beginTime) > 0">
+			<s:if test="curDate.compareTo(contest.endTime) > 0">
 				<div style="text-align:center;padding:10px">
 					[<a href="contest/toAddContest.action?cid=${cid}" title="Create a contest using the same problems, in which you can see the original score board.">Clone this contest</a>]
 				</div>

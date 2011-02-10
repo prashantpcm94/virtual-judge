@@ -17,7 +17,6 @@ String basePath = (String)application.getAttribute("basePath");
 		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 		<script type="text/javascript" src="javascript/listHU.js"></script>
-		<script type="text/javascript" src="javascript/common.js"></script>
 	</head>
 
 	<body>

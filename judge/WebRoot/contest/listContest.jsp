@@ -25,7 +25,6 @@
 		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
-		<script type="text/javascript" src="javascript/common.js"></script>
 		<script type="text/javascript" src="javascript/listContest.js"></script>
 	</head>
 
@@ -41,8 +40,7 @@
 		
 		<div class="ptt">Contest List</div>
 		<div class="plm">
-			<font color="orange">Current Server Time : <s:date name="curDate" format="yyyy-MM-dd HH:mm:ss" /></font>
-			<br /><br />
+			<br />
 			<s:if test="#session.visitor != null">
 				<a href="contest/toAddContest.action">Add a contest</a>
 			</s:if>

@@ -11,6 +11,7 @@ String basePath = (String)application.getAttribute("basePath");
     	<base href="<%=basePath%>" />
 	    <title>Virtual Judge -- Contest</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
 	</head>
 
 	<body>
@@ -20,37 +21,39 @@ String basePath = (String)application.getAttribute("basePath");
 			<s:property value="contest.title" />
 		</div>
 		
+		<table style="margin:auto" class="plm">
+			<tr>
+				<td class="alignRight"><b>Current Time: </b></td>
+				<td class="alignLeft"><span class="currentTime" /></td>
+				<td class="alignRight"><b>Contest Type: </b></td>
+				<td class="alignLeft"><s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Priavte</font></s:else></td>
+			</tr>
+			<tr>
+				<td class="alignRight"><b>Start Time: </b></td>
+				<td class="alignLeft"><s:date name="contest.beginTime" format="yyyy-MM-dd HH:mm:ss" /></td>
+				<td class="alignRight"><b>Contest Status: </b></td>
+				<td class="alignLeft">
+					<s:if test="curDate.compareTo(contest.beginTime) < 0"><font color="blue">Scheduled</font></s:if>
+					<s:elseif test="curDate.compareTo(contest.endTime) < 0"><font color="red">Running</font></s:elseif>
+					<s:else><font color="green">Ended</font></s:else>
+				</td>
+			</tr>
+			<tr>
+				<td class="alignRight"><b>End Time: </b></td>
+				<td class="alignLeft"><s:date name="contest.endTime" format="yyyy-MM-dd HH:mm:ss" /></td>
+				<td class="alignRight"><b>Manager: </b></td>
+				<td class="alignLeft"><a href="user/profile.action?uid=<s:property value='contest.manager.id' />" ><s:property value="contest.manager.username" /></a></td>
+			</tr>
+		</table>
+		
 		<div class="plm">
-			<b>Start Time:</b> <s:date name="contest.beginTime" format="yyyy-MM-dd HH:mm:ss" />
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			<b>End Time:</b> <s:date name="contest.endTime" format="yyyy-MM-dd HH:mm:ss" /><br>
-			<b>Contest Type</b>:<s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Priavte</font></s:else>
-			&nbsp;&nbsp;&nbsp;
-			<b>Contest Status:</b> 
-				<%
-					Date date = new Date();
-					long now = date.getTime();
-					long begin = ((Date)(request.getAttribute("contest.beginTime"))).getTime();
-					long end = ((Date)(request.getAttribute("contest.endTime"))).getTime();
-					if (now < begin){
-						out.println("<font color=\"blue\">Scheduled</font>");
-					} else if (now < end) {
-						out.println("<font color=\"red\">Running</font>");
-					} else {
-						out.println("<font color=\"green\">Ended</font>");
-					}
-				%>
 			<br />
-			<font color="orange">Current Server Time : <s:date name="curDate" format="yyyy-MM-dd HH:mm:ss" /></font>
-			<br /><br /><br />
-
 			<form action="contest/loginContest.action" method="get">
 				Password:<s:password name="password" cssClass="input_login" />
 				<input type="hidden" name="cid" value="${cid}" />
 				<input class="bnt1" type="submit" value="Login" />
 			</form>
 			<s:actionerror />
-
 		</div>
 
 		<s:include value="/bottom.jsp" />

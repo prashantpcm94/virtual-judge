@@ -80,7 +80,10 @@ public class Customize {
 		}
 		baseService.addOrModify(cList);
 	}
-
+	
+	static public void xx(){
+		//Do nothing
+	}
 	
 
 	public void setBaseService(IBaseService baseService) {
