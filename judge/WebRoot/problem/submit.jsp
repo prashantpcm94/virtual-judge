@@ -10,7 +10,7 @@ String basePath = (String)application.getAttribute("basePath");
     	<base href="<%=basePath%>" />
 	    <title>Virtual Judge -- Problem</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/submit.js"></script>
 	</head>
 

@@ -11,7 +11,7 @@ String basePath = (String)application.getAttribute("basePath");
     
     <title>My JSP 'draw.jsp' starting page</title>
     
-	<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 	<script type="text/javascript" src="javascript/swfobject.js"></script>
 	
 	<script type="text/javascript">

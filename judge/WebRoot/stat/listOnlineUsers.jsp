@@ -12,7 +12,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
-		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 		<script type="text/javascript" src="javascript/listOL.js"></script>
 	</head>
@@ -31,6 +31,7 @@ String basePath = (String)application.getAttribute("basePath");
 					<th>Username</th>
 					<th>IP</th>
 					<th>Arrive Time</th>
+					<th>Active Length</th>
 					<th>Freeze Length</th>
 					<th>Browser</th>
 					<th>OS</th>
@@ -58,6 +59,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<td><s:property value="dataList[#stat.index][5]" /></td>
 				<td><s:property value="dataList[#stat.index][6]" /></td>
 				<td><s:property value="dataList[#stat.index][7]" /></td>
+				<td><s:property value="dataList[#stat.index][8]" /></td>
 			</tr>
 		</s:iterator>
 		</table>

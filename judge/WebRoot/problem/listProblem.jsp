@@ -22,7 +22,7 @@ String basePath = (String)application.getAttribute("basePath");
 			#theme_links span { float: left; padding: 2px 10px; }
 		</style>
 
-		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>

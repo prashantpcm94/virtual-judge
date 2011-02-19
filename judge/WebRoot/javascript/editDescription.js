@@ -3,7 +3,7 @@ $(document).ready(function() {
 	$("#remarks").focus();
 
 	$("#editorsForm").submit(function(){
-		if ($("[name=description.remarks]").val().length > 450){
+		if ($("[name='description.remarks']").val().length > 450){
 			$( "#tabs" ).tabs("select", 0);
 			$("#remarks").focus();
 			alert("Remarks should be shorter than 450 characters !");

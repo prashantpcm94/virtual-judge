@@ -57,6 +57,9 @@ public class StatAction extends ActionSupport {
 			row.add(ip);
 			row.add(new Date(session.getCreationTime()));
 			
+			long al = (session.getLastAccessedTime() - session.getCreationTime()) / 1000;
+			row.add((al / 60 > 0 ? al / 60 + "分" : "") + (al % 60 + "秒"));
+
 			long fl = (new Date().getTime() - session.getLastAccessedTime()) / 1000;
 			row.add((fl / 60 > 0 ? fl / 60 + "分" : "") + (fl % 60 + "秒"));
 

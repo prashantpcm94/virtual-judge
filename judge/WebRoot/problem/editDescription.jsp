@@ -23,7 +23,7 @@ String basePath = (String)application.getAttribute("basePath");
 				padding: 0;
 			}
 		</style>
-		<script type="text/javascript" src="javascript/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="javascript/jquery-ui-1.8.9.custom.min.js"></script>
 
