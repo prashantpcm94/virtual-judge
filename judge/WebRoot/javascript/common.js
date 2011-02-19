@@ -1,11 +1,3 @@
-function toggleOpen(id, flag){
-	if (!flag){
-		location = 'problem/toggleOpen.action?id=' + id;
-	} else {
-		location = 'contest/toggleOpen.action?id=' + id;
-	}
-}
-
 if(typeof String.prototype.trim !== 'function') {
 	String.prototype.trim = function() {
 		return this.replace(/^\s+|\s+$/g, '');

@@ -16,6 +16,11 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 		<script type="text/javascript" src="<%=langFile%>" ></script>
 		<link type="text/css" rel="stylesheet" href="shjs/css/sh_style.min.css" />
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
+	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type='text/javascript' src='javascript/engine.js'></script>
+	    <script type='text/javascript' src='dwr/util.js'></script>
+
+		<script type="text/javascript" src="javascript/viewSource.js"></script>
 	</head>
 
 	<body onload="sh_highlightDocument();">
@@ -60,20 +65,14 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 							<b>Public: </b>
 						</td>
 						<td colspan="2">
-							<s:radio name="open" list="#{'0':'No', '1':'Yes'}" value="%{submission.isOpen}" theme="simple" onclick="this.blur()" onchange="toggleOpen('%{submission.id}', 0);"></s:radio>
+							<s:radio name="open" list="#{'0':'No', '1':'Yes'}" value="%{submission.isOpen}" onclick="this.blur()" ></s:radio>
 						</td>
 					</tr>
 				</s:if>
 			</table>
+			<s:hidden name="sid" value="%{submission.id}" />
 		</div>	
-		<p style="text-align:center;font-size:15pt;color:green;">
-			<s:if test="submission.isOpen == 1">
-				This source is shared by <b>${un}</b>
-			</s:if>
-			<s:else>
-				&nbsp;
-			</s:else>
-		</p>
+		<p id="info" style="text-align:center;font-size:15pt;color:green;visibility:hidden">This source is shared by <b>${un}</b></p>
 		<pre class="${language}" style="font-family:Courier New,Courier,monospace">${submission.source}</pre>
 		<s:include value="/bottom.jsp" />
 	</body>

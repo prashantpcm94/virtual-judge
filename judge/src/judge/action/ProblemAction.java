@@ -194,8 +194,6 @@ public class ProblemAction extends BaseAction{
 		List list = baseService.query("select p from Problem p left join fetch p.descriptions where p.id = " + id);
 		problem = (Problem) list.get(0);
 		_64Format = lf.get(problem.getOriginOJ());
-		Map session = ActionContext.getContext().getSession();
-		session.put("problem", problem);
 		return SUCCESS;
 	}
 
@@ -221,9 +219,11 @@ public class ProblemAction extends BaseAction{
 			return ERROR;
 		}
 		ServletContext sc = ServletActionContext.getServletContext();
-		problem = (Problem) session.get("problem");
+		problem = (Problem) baseService.query(Problem.class, id);
+		if (problem == null) {
+			return ERROR;
+		}
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
-		language = (String) session.get("L" + problem.getOriginOJ());
 		isOpen = user.getShare();
 		return SUCCESS;
 	}
@@ -235,12 +235,12 @@ public class ProblemAction extends BaseAction{
 		if (user == null){
 			return ERROR;
 		}
-		problem = (Problem) session.get("problem");
+		problem = (Problem) baseService.query(Problem.class, id);
 		ServletContext sc = ServletActionContext.getServletContext();
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
 
 		if (problem == null){
-			this.addActionError("Please submit via usual approach!");
+			this.addActionError("Please submit via normal approach!");
 			return INPUT;
 		}
 		if (problem.getTimeLimit() == 1){
@@ -252,7 +252,6 @@ public class ProblemAction extends BaseAction{
 			this.addActionError("No such a language!");
 			return INPUT;
 		}
-		session.put("L" + problem.getOriginOJ(), language);
 		if (source.length() < 50){
 			this.addActionError("Source code should be longer than 50 characters!");
 			return INPUT;

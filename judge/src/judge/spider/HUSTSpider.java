@@ -30,7 +30,9 @@ public class HUSTSpider extends Spider {
 			throw new Exception();
         }
 
-		tLine = tLine.replaceAll("src='\\.", "src='http://acm.hust.edu.cn/thx");
+		tLine = tLine.replaceAll("src=/thx", "src=http://acm.hust.edu.cn/thx");
+		tLine = tLine.replaceAll("src='/thx", "src='http://acm.hust.edu.cn/thx");
+		tLine = tLine.replaceAll("src=\"/thx", "src=\"http://acm.hust.edu.cn/thx");
 		
 		problem.setTitle(regFind(tLine, "<title>[\\s\\S]*?-- ([\\s\\S]*?)</title>"));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){

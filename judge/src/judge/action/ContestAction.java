@@ -417,7 +417,6 @@ public class ContestAction extends BaseAction {
 		}
 		isOpen = user.getShare();
 		problem = (Problem) baseService.query(Problem.class, cproblem.getProblem().getId());
-		language = (String) session.get("L" + problem.getOriginOJ());
 		ServletContext sc = ServletActionContext.getServletContext();
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
 		return SUCCESS;
@@ -454,7 +453,6 @@ public class ContestAction extends BaseAction {
 			this.addActionError("No such language!");
 			return INPUT;
 		}
-		session.put("L" + problem.getOriginOJ(), language);
 		if (source.length() < 50){
 			this.addActionError("Source code should be longer than 50 characters!");
 			return INPUT;

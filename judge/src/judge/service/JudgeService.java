@@ -141,5 +141,15 @@ public class JudgeService extends BaseService {
 		Long elapsedTime = Math.max(new Date().getTime() - beginTime, 0L);
 		return new Long[]{totalTime / 1000L, Math.min(totalTime, elapsedTime) / 1000L};
 	}
+	
+	/**
+	 * 切换源码公开属性
+	 * @param sid source ID
+	 */
+	public void toggleOpen(Integer sid) {
+		Submission submission = (Submission) this.query(Submission.class, sid);
+		submission.setIsOpen(1 - submission.getIsOpen());
+		this.addOrModify(submission);
+	}
 
 }

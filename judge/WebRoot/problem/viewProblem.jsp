@@ -53,7 +53,7 @@ String basePath = (String)application.getAttribute("basePath");
 	
 			<p align="center">
 				<font size="3" color="#333399">
-					[<a href="problem/toSubmit.action">Submit</a>]&nbsp;&nbsp;
+					[<a href="problem/toSubmit.action?id=${problem.id}">Submit</a>]&nbsp;&nbsp;
 					[<a href="javascript:history.go(-1)">Go Back</a>]&nbsp;&nbsp;
 					[<a href="problem/status.action?id=${problem.id}">Status</a>]&nbsp;&nbsp; 
 				</font>
@@ -69,7 +69,7 @@ String basePath = (String)application.getAttribute("basePath");
 
 			<p align="center">
 				<font size="3" color="#333399">
-					[<a href="problem/toSubmit.action">Submit</a>]&nbsp;&nbsp;
+					[<a href="problem/toSubmit.action?id=${problem.id}">Submit</a>]&nbsp;&nbsp;
 					[<a href="javascript:history.go(-1)">Go Back</a>]&nbsp;&nbsp;
 					[<a href="problem/status.action?id=${problem.id}">Status</a>]&nbsp;&nbsp; 
 				</font>
