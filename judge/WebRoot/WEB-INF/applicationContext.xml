@@ -70,10 +70,6 @@
 	    <property name="baseDao" ref="baseDao" />
 	</bean>
 
-	<bean id="statService" class="judge.service.StatService">
-	    <property name="baseDao" ref="baseDao" />
-	</bean>
-
 	<bean id="judgeService" class="judge.service.JudgeService">
 	    <property name="baseDao" ref="baseDao" />
 	</bean>
@@ -83,7 +79,6 @@
 	<!-- 主配置文件struts.xml -->
 	<bean id="userAction" class="judge.action.UserAction" scope="prototype">
 		<property name="userService" ref="userService" />
-		<property name="statService" ref="statService" />
 	</bean>
 	
 	<bean id="problemAction" class="judge.action.ProblemAction" scope="prototype">
@@ -100,7 +95,6 @@
 	</bean>
 	
 	<bean id="statAction" class="judge.action.StatAction" scope="prototype">
-		<property name="statService" ref="statService" />
 	</bean>
 
 </beans>

@@ -1,6 +1,4 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ page import="org.apache.struts2.ServletActionContext" %>
-<%@ page import="java.util.Date" %>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
 String basePath = (String)application.getAttribute("basePath");

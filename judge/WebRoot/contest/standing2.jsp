@@ -22,7 +22,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
-		<script type='text/javascript' src='dwr/engine.js'></script>
+		<script type='text/javascript' src='javascript/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/standing2.js"></script>
@@ -94,7 +94,7 @@ String basePath = (String)application.getAttribute("basePath");
 					<table class="display" cellpadding="0" cellspacing="0" border="0">
 						<thead>
 							<tr>
-								<th></th>
+								<th style="text-align:left;padding-left:3px"><s:checkbox id="checkAll" name="checkAll" /></th>
 								<th>Title</th>
 								<th>Begin Time</th>
 								<th>Length</th>
@@ -106,7 +106,7 @@ String basePath = (String)application.getAttribute("basePath");
 							<tr class="<s:property value='sameContests[#stat.index][6]' />">
 								<td><s:checkbox fieldValue="%{sameContests[#stat.index][0]}" name="ids" /></td>
 								<td>
-									<s:if test="sameContests[#stat.index][0] == cid">
+									<s:if test="sameContests[#stat.index][0] == cid || contest.endTime.compareTo(curDate) > 0">
 										<s:property value="sameContests[#stat.index][1]" />
 									</s:if>
 									<s:else>

@@ -12,7 +12,7 @@ $(document).ready(function() {
 	});
 	
 	$( "#tabs" ).tabs({
-		cookie: {}
+		cookie: { expires: 30 }
 	});
 	$( "#tabs" ).removeClass("ui-widget-content");
 	$( "#tabs" ).addClass("ui-widget-content-custom");

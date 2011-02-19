@@ -9,69 +9,10 @@
 	        <result name="success">/stat/listOnlineUsers.jsp</result>
 	    </action>		
 
-	    <!-- 查看历史用户 -->
-        <action name="viewHU" class="statAction" method="viewHU">
-	        <result name="success">/stat/viewHU.jsp</result>
+	    <!-- 查看session详情 -->
+        <action name="viewOL" class="statAction" method="viewOL">
+	        <result name="success">/stat/viewOL.jsp</result>
 	    </action>	
-
-	    <!-- 列出历史用户 -->
-        <action name="listHU" class="statAction" method="listHistoryUsers">
-	        <result name="success">/stat/listHistoryUsers.jsp</result>
-	    </action>	
-
-	    <!-- 查看历史用户上一页 -->
-        <action name="prevHU" class="statAction" method="prevHistoryUsers">
-	        <result name="success">/stat/listHistoryUsers.jsp</result>
-	    </action>		
-
-	    <!-- 查看历史用户下一页 -->
-        <action name="nextHU" class="statAction" method="nextHistoryUsers">
-	        <result name="success">/stat/listHistoryUsers.jsp</result>
-	    </action>		
-
-	    <!-- 去查看浏览器分布 -->
-        <action name="toListBrowser" class="statAction" method="toListBrowser">
-	        <result name="success">/stat/listBrowser.jsp</result>
-	    </action>
-
-	    <!-- 查看浏览器分布 -->
-        <action name="listBrowser" class="statAction" method="listBrowser">
-			<result type="ofc2"></result>
-	    </action>
-
-	    <!-- 去查看操作系统分布 -->
-        <action name="toListOS" class="statAction" method="toListOS">
-	        <result name="success">/stat/listOS.jsp</result>
-	    </action>
-
-	    <!-- 查看操作系统分布 -->
-        <action name="listOS" class="statAction" method="listOS">
-			<result type="ofc2"></result>
-	    </action>
-	    
-	    <!-- 去查看停留时间分布 -->
-        <action name="toShowStayTime" class="statAction" method="toShowStayTime">
-	        <result name="success">/stat/showStayTime.jsp</result>
-	    </action>
-
-	    <!-- 查看停留时间分布 -->
-        <action name="showStayTime" class="statAction" method="showStayTime">
-			<result type="ofc2"></result>
-	    </action>
-	    
-	    <!-- 去查看日访问量 -->
-        <action name="toShowDayVisits" class="statAction" method="toShowDayVisits">
-	        <result name="success">/stat/showDayVisits.jsp</result>
-	    </action>
-
-	    <!-- 查看停留时间分布 -->
-        <action name="showDayVisits" class="statAction" method="showDayVisits">
-			<result type="ofc2"></result>
-	    </action>
-	    
-	    
-	    
-
 
 	</package>
 </struts>

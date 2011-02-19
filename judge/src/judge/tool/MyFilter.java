@@ -1,7 +1,6 @@
 package judge.tool;
 
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,53 +11,64 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import judge.bean.Vlog;
-import judge.service.StatService;
-
-
 public class MyFilter implements Filter{
 	
-	static private StatService statService;
+	private SessionContext myc;
 	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
 		try {
-			HttpServletRequest request = (HttpServletRequest) req;
-			HttpSession httpSession = request.getSession();
 
-			String sessionId = httpSession.getId();
-			if (!statService.checkSessionId(sessionId)){
-				Vlog vlog = new Vlog();
-				vlog.setSessionId(sessionId);
-				vlog.setIp(request.getRemoteAddr());
-				vlog.setReferer((String) request.getHeader("referer"));
-				vlog.setUserAgent((String) request.getHeader("user-agent"));
-				vlog.setCreateTime(new Date(httpSession.getCreationTime()));
-				System.out.println("URL: " + request.getRequestURL());
-				System.out.println("sessionId: " + sessionId);
-				statService.addOrModify(vlog);
+			HttpServletRequest request = (HttpServletRequest) req;
+			HttpSession session = request.getSession();
+			
+			String ua = request.getHeader("user-agent");
+			if (!legalUA(ua)) {
+				myc = SessionContext.getInstance();
+				session.invalidate();
+				myc.DelSession(session);
+			} else if (session.getAttribute("remoteAddr") == null) {
+				session.setAttribute("remoteAddr", request.getRemoteAddr());
+				session.setAttribute("user-agent", request.getHeader("user-agent"));
+				session.setAttribute("referer", request.getHeader("referer"));
 			}
+			
+			
+//			Enumeration paramNames = request.getParameterNames();
+//			while (paramNames.hasMoreElements()) {
+//				String paramName = (String) paramNames.nextElement();
+//				System.out.print(paramName + "=");
+//				String[] paramValues = request.getParameterValues(paramName);
+//				for (String value : paramValues) {
+//					System.out.print(value + " ");
+//				}
+//				System.out.println();
+//			}
+//			System.out.println("");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		chain.doFilter(req, res);
     }
+	
+	private boolean legalUA(String ua) {
+		if (ua == null){
+			return false;
+		}
+		ua = ua.toLowerCase();
+		if (ua.isEmpty() || ua.contains("bot") || ua.contains("spider")){
+			return false;
+		}
+		return true;
+	}
 
 	public void destroy() {
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {
 	}
-
-	public static StatService getStatService() {
-		return statService;
-	}
-
-	public static void setStatService(StatService statService) {
-		MyFilter.statService = statService;
-	}
-
 
 	
 

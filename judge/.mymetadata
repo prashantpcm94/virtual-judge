@@ -3,7 +3,7 @@
   type="WEB"
   name="judge"
   id="myeclipse.1270017465021"
-  context-root="/vjudge"
+  context-root="/judge"
   j2ee-spec="5.0"
   archive="judge.war">
   <attributes>

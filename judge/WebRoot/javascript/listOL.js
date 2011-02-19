@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$('#listOL').dataTable({
-		"aaSorting": [[ 5, "asc" ]],
+		"aaSorting": [[ 2, "asc" ]],
 		"bPaginate": false,
 		"bLengthChange": false,
 //		"bFilter": false,
@@ -10,9 +10,10 @@ $(document).ready(function() {
 		"aoColumns": [{"sType": "html"},
 		              {"sType": "html"},
 		              {"sType": "html"},
-		              {"sType": "html"},
-		              {"sType": "html"},
-		              {"sType": "date"}
-		              ]
+		              {"sType": "date"},
+		              {"sType": "number"},
+		              {"sType": "text"},
+		              {"sType": "text"}
+					]
 	});
-} );
+});

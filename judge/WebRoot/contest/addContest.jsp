@@ -18,7 +18,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<script type="text/javascript" src="javascript/common.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
-		<script type='text/javascript' src='dwr/engine.js'></script>
+		<script type='text/javascript' src='javascript/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/editContest.js"></script>
@@ -86,7 +86,7 @@ String basePath = (String)application.getAttribute("basePath");
 						</s:iterator>
 						</s:if>
 							<tr id="addRow" class="tr_problem" style="display:none">
-								<s:hidden name="pids" />
+								<s:hidden name="pids" value="" />
 								<td><a class="deleteRow" href="javascript:void(0)"><img height="18" src="images/ico_delete.gif" border="0"/></a></td>
 								<td><s:select name="OJs" list="OJList" /></td>
 								<td><s:textfield name="probNums" /></td>
@@ -103,7 +103,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<tr>
 					<td></td>
 					<td>
-						<input style="margin-left:20px;float:right" id="submit" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
+						<input style="margin-left:20px;float:right" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />
 						<input style="float:right" id="submit" class="bnt1" type="submit" value="Submit" />
 						<div id="errorMsg" style="color:red;font-weight:bold;float:right"><s:actionerror /></div>
 					</td>

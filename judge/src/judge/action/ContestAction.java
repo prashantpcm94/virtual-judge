@@ -181,7 +181,7 @@ public class ContestAction extends BaseAction {
 			contest.setDescription(null);
 			contest.setPassword(null);
 			
-			List<Object []> cproblemList = baseService.query("select cproblem.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problem.id = p.id and cproblem.contest.id = " + cid + " order by cproblem.num asc");
+			List<Object []> cproblemList = baseService.query("select p.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problem.id = p.id and cproblem.contest.id = " + cid + " order by cproblem.num asc");
 			pids = new ArrayList();
 			OJs = new ArrayList();
 			probNums = new ArrayList();

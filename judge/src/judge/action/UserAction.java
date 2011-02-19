@@ -11,7 +11,6 @@ import org.apache.struts2.ServletActionContext;
 
 import judge.bean.User;
 import judge.service.IUserService;
-import judge.service.StatService;
 import judge.tool.MD5;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -37,15 +36,8 @@ public class UserAction extends ActionSupport {
 	private String newpassword;
 	private String redir;
 	private IUserService userService;
-	private StatService statService;
 	
 	
-	public StatService getStatService() {
-		return statService;
-	}
-	public void setStatService(StatService statService) {
-		this.statService = statService;
-	}
 	public String getNewpassword() {
 		return newpassword;
 	}
@@ -145,9 +137,6 @@ public class UserAction extends ActionSupport {
 			return INPUT;
 		}
 		session.put("visitor", user);
-//		Vlog vlog = statService.getBySessionId(ServletActionContext.getRequest().getSession().getId());
-//		vlog.setLoginer(user.getId());
-//		statService.modify(vlog);
 		return SUCCESS;
 	}
 	

@@ -38,7 +38,7 @@ $(document).ready(function() {
 		$(this).removeClass("mid_hover");
 	}).click(function(){
 		var menuHide = $.cookie("menuHide") || 0;
-		$.cookie("menuHide", 1 - menuHide, {path: '/'});
+		$.cookie("menuHide", 1 - menuHide, {path: '/', expires: 30});
 		dealWithMenu();
 	});
 

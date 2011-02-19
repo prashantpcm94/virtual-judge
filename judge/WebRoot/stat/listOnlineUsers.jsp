@@ -1,6 +1,4 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ page import="org.apache.struts2.ServletActionContext" %>
-<%@ page import="java.util.Date" %>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
 String basePath = (String)application.getAttribute("basePath");
@@ -10,7 +8,7 @@ String basePath = (String)application.getAttribute("basePath");
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
     	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- Statistics</title>
+	    <title>Virtual Judge -- Contest</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
@@ -21,45 +19,48 @@ String basePath = (String)application.getAttribute("basePath");
 
 	<body>
 		<s:include value="/top.jsp" />
-		<s:actionerror />
-
-		<div class="ptt">OnLine Users</div>
-		<br />
 		
-		<table cellpadding="0" cellspacing="0" border="0" class="display" id="listOL">
+		<div class="ptt">
+			Online Users
+		</div>
+		
+		<table id="listOL" cellpadding="0" cellspacing="0" border="0" class="display" style="text-align:center" >
 			<thead>
 				<tr>
+					<th>Session ID</th>
+					<th>Username</th>
 					<th>IP</th>
-					<th>Location</th>
+					<th>Arrive Time</th>
+					<th>Freeze Length</th>
 					<th>Browser</th>
 					<th>OS</th>
-					<th>Username</th>
-					<th>ArriveTime</th>
 				</tr>
 			</thead>
 
 			<s:iterator value="dataList" status="stat">
-				<tr>
-					<td class="id"><s:property value="dataList[#stat.index][0]" /></td>
-					<td class="title" style="text-align:center;"><s:property value="dataList[#stat.index][1]" /></td>
-					<td class="time"><s:property value="dataList[#stat.index][2]" /></td>
-					<td class="time"><s:property value="dataList[#stat.index][3]" /></td>
-					<td class="time">
-						<a href="user/profile.action?uid=<s:property value='dataList[#stat.index][5]' />">
-							<s:property value='dataList[#stat.index][4]' />
-						</a>
-					</td>
-					<td class="time"><s:date name="dataList[#stat.index][6]" format="yyyy-MM-dd HH:mm:ss" /></td>
-				</tr>
-			</s:iterator>
+			<tr>
+				<td>
+					<a href="stat/viewOL.action?id=<s:property value='dataList[#stat.index][0]' />">
+						<s:property value="dataList[#stat.index][0]" />
+					</a>
+				</td>
+				<td>
+					<a href="user/profile.action?uid=<s:property value='dataList[#stat.index][2]' />">
+						<s:property value='dataList[#stat.index][1]' />
+					</a>
+				</td>
+				<td>
+					<a href="http://www.ip138.com/ips.asp?ip=<s:property value="dataList[#stat.index][3]" /> ">
+						<s:property value="dataList[#stat.index][3]" />
+					</a>
+				</td>
+				<td><s:date name="dataList[#stat.index][4]" format="yyyy-MM-dd HH:mm:ss" /></td>
+				<td><s:property value="dataList[#stat.index][5]" /></td>
+				<td><s:property value="dataList[#stat.index][6]" /></td>
+				<td><s:property value="dataList[#stat.index][7]" /></td>
+			</tr>
+		</s:iterator>
 		</table>
-
-		<br /><a href="stat/listOL.action">OnlineUsers</a>
-		<br /><a href="stat/listHU.action">HistoryUsers</a>
-		<br /><a href="stat/toListBrowser.action">Browser</a>
-		<br /><a href="stat/toListOS.action">OS</a>
-		<br /><a href="stat/toShowStayTime.action">Stay Time</a>
-		<br /><a href="stat/toShowDayVisits.action">30Days visits</a>
 
 		<s:include value="/bottom.jsp" />
 	</body>

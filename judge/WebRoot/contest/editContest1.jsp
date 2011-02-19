@@ -16,7 +16,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<script type="text/javascript" src="javascript/jquery-ui-1.8.9.custom.min.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
-		<script type='text/javascript' src='dwr/engine.js'></script>
+		<script type='text/javascript' src='javascript/engine.js'></script>
 	    <script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/editContest.js"></script>

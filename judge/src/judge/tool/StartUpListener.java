@@ -9,7 +9,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import judge.service.JudgeService;
-import judge.service.StatService;
 
 
 public class StartUpListener implements ServletContextListener {
@@ -20,9 +19,6 @@ public class StartUpListener implements ServletContextListener {
 		
 		ServletContext sc = event.getServletContext();
 		ApplicationContainer.sc = sc;
-		
-		MyFilter.setStatService((StatService) SpringBean.getBean("statService", sc));
-		SessionListener.setStatService((StatService) SpringBean.getBean("statService", sc));
 		
         Properties prop = new Properties();
         FileInputStream in;
