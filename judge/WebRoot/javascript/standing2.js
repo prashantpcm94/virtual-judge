@@ -231,7 +231,7 @@ function calcScoreBoard(){
 			}
 			$curTd = $curTd.next();
 		}
-		$newRow.insertBefore("tr#template").show();
+		$newRow.insertBefore($originRow).show();
 	});
 	standingTable.dataTable(standingTableSetting);
 

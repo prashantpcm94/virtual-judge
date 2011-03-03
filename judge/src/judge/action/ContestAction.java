@@ -41,7 +41,7 @@ public class ContestAction extends BaseAction {
 	private Submission submission;
 	private Cproblem cproblem;
 
-	private int hour, minute, d_day, d_hour, d_minute;
+	private int year, month, day, hour, minute, d_day, d_hour, d_minute;
 	private int id, pid, cid, uid;
 	private int res;	//result
 	private int isOpen;
@@ -200,6 +200,7 @@ public class ContestAction extends BaseAction {
 		return SUCCESS;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void validateAddContest(){
 		/**
 		 * 标题不能为空，不能超过90字符
@@ -213,14 +214,14 @@ public class ContestAction extends BaseAction {
 		/**
 		 * 比赛描述不得多于65000字符
 		 */
-		if (contest.getDescription().length() > 65000) {
+		if (contest.getDescription() != null && contest.getDescription().length() > 65000) {
 			this.addActionError("Contest description should be shorter than 65000 characters!");
 		}
 
 		/**
 		 * 至少要加一道题
 		 */
-		if (pids.isEmpty()) {
+		if (pids == null || pids.isEmpty()) {
 			this.addActionError("Please add one problem at least!");
 		}
 
@@ -254,6 +255,7 @@ public class ContestAction extends BaseAction {
 			}
 		}
 		
+		contest.setBeginTime(new Date(year - 1900, month - 1, day, hour, minute, 0));
 		contest.setEndTime(new Date(contest.getBeginTime().getTime() + d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L));
 		long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
 		long start = contest.getBeginTime().getTime() - new Date().getTime();
@@ -282,11 +284,12 @@ public class ContestAction extends BaseAction {
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		if (user == null) {
-			return ERROR;
+			this.addActionError("Please login first!");
+			return INPUT;
 		}
 
 		contest.setManager(user);
-		if (contest.getPassword().isEmpty()) {
+		if (contest.getPassword() == null || contest.getPassword().isEmpty()) {
 			contest.setPassword(null);
 		} else {
 			contest.setPassword(MD5.getMD5(contest.getPassword()));
@@ -1159,8 +1162,24 @@ public class ContestAction extends BaseAction {
 	public void setSameContests(List sameContests) {
 		this.sameContests = sameContests;
 	}
-
-	
+	public int getYear() {
+		return year;
+	}
+	public void setYear(int year) {
+		this.year = year;
+	}
+	public int getMonth() {
+		return month;
+	}
+	public void setMonth(int month) {
+		this.month = month;
+	}
+	public int getDay() {
+		return day;
+	}
+	public void setDay(int day) {
+		this.day = day;
+	}
 }
 
 

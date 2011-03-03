@@ -80,8 +80,12 @@ $(document).ready(function(){
 			$("#submit").attr("disabled", false);
 			return false;
 		}
-		$("[name='contest.beginTime']").val($("[name='contest.beginTime']").val() + " " + hour + ":" + minute + ":00");
-	
+
+		var date = $("[name='beginTime']").val().split("-");
+		$("[name='year']").val(date[0]);
+		$("[name='month']").val(date[1]);
+		$("[name='day']").val(date[2]);
+
 		$("tr:not(:visible)").remove();
 	});
 
@@ -93,7 +97,7 @@ $(document).ready(function(){
 	});
 	
 	
-	$("[name='contest.beginTime']").datepicker({
+	$("[name='beginTime']").datepicker({
 		dateFormat: 'yy-mm-dd',
 		minDate: -0,
 		maxDate: +30,

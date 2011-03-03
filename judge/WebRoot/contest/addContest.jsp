@@ -39,7 +39,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<tr>
 					<td class="form_title">Begin Time:</td>
 					<td>
-						<s:textfield name="contest.beginTime" size="10" readonly="true" >
+						<s:textfield name="beginTime" size="10" readonly="true" >
 							<s:param name="value">
 								<s:date name="%{contest.beginTime}" format="yyyy-MM-dd" />
 							</s:param>
@@ -109,6 +109,9 @@ String basePath = (String)application.getAttribute("basePath");
 					</td>
 				</tr>
 			</table>
+			<s:hidden name="year" />
+			<s:hidden name="month" />
+			<s:hidden name="day" />
 		</form>
 		<s:include value="/bottom.jsp" />
 	</body>

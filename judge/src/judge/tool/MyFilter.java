@@ -23,7 +23,9 @@ public class MyFilter implements Filter{
 			HttpSession session = request.getSession();
 			
 			String ua = request.getHeader("user-agent");
-			if (!legalUA(ua)) {
+			String ip = request.getRemoteAddr();
+
+			if (!legalUA(ua) || !legalIP(ip)) {
 				myc = SessionContext.getInstance();
 				session.invalidate();
 				myc.DelSession(session);
@@ -63,6 +65,15 @@ public class MyFilter implements Filter{
 		}
 		return true;
 	}
+	
+	private boolean legalIP(String ip) {
+		if (ip == null || ip.isEmpty() || ip.equals("220.181.94.224")){
+			return false;
+		}
+		return true;
+	}
+	
+
 
 	public void destroy() {
 	}

@@ -27,7 +27,7 @@
 		<!-- 添加比赛 -->
 		<action name="addContest" class="contestAction" method="addContest">
 			<result name="success" type="redirect">toListContest.action</result>		
-			<result name="error" type="redirect">../user/toLogin.action</result>		
+			<result name="error">/contest/addContest.jsp</result>		
 			<result name="input">/contest/addContest.jsp</result>		
 		</action>
 
