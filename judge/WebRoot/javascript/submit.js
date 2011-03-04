@@ -8,7 +8,7 @@ $(document).ready(function() {
 
 	
 	$("select#language").change(function(){
-		$.cookie("lang_" + oj, $(this).val(), {expire:30, path:'/'});
+		$.cookie("lang_" + oj, $(this).val(), {expires:30, path:'/'});
 	});
 	
 	$("#form").submit(function(){
