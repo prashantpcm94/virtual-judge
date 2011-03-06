@@ -75,9 +75,8 @@ String basePath = (String)application.getAttribute("basePath");
 						<s:if test="pids != null">
 						<s:iterator value="OJs" status="stat">	
 							<tr class="tr_problem">
-								<s:hidden name="pids" value="%{pids[#stat.index]}" />
 								<td></td>
-								<td><s:textfield name="OJs" value="%{OJs[#stat.index]}" readonly="true" /></td>
+								<td><s:textfield name="OJs" value="%{OJs[#stat.index]}" readonly="true" /><s:hidden name="pids" value="%{pids[#stat.index]}" /></td>
 								<td><s:textfield name="probNums" value="%{probNums[#stat.index]}" readonly="true" /></td>
 								<td><s:textfield name="titles" value="%{titles[#stat.index]}" /></td>
 								<td></td>
@@ -86,9 +85,8 @@ String basePath = (String)application.getAttribute("basePath");
 						</s:iterator>
 						</s:if>
 							<tr id="addRow" class="tr_problem" style="display:none">
-								<s:hidden name="pids" value="" />
 								<td><a class="deleteRow" href="javascript:void(0)"><img height="18" src="images/ico_delete.gif" border="0"/></a></td>
-								<td><s:select name="OJs" list="OJList" /></td>
+								<td><s:select name="OJs" list="OJList" /><s:hidden name="pids" value="" /></td>
 								<td><s:textfield name="probNums" /></td>
 								<td><s:textfield name="titles" /></td>
 								<td></td>
