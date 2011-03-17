@@ -64,6 +64,9 @@ $(document).ready(function() {
 		  				"sClass": "length"
 		  			},
 		  			{
+		  				"fnRender": function ( oObj ) {
+		  					return new Date(parseInt(oObj.aData[8])).format("yyyy-MM-dd hh:mm:ss");
+		  				},
 		  				"sClass": "date"
 		  			},
 		  			{

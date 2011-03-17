@@ -34,7 +34,7 @@ String basePath = (String)application.getAttribute("basePath");
 			</tr>
 			<tr>
 				<td class="alignRight"><b>Start Time: </b></td>
-				<td class="alignLeft"><s:date name="contest.beginTime" format="yyyy-MM-dd HH:mm:ss" /></td>
+				<td class="alignLeft"><span class="plainDate">${beginTime}</span></td>
 				<td class="alignRight"><b>Contest Status: </b></td>
 				<td class="alignLeft">
 					<s:if test="curDate.compareTo(contest.beginTime) < 0"><font color="blue">Scheduled</font></s:if>
@@ -44,7 +44,7 @@ String basePath = (String)application.getAttribute("basePath");
 			</tr>
 			<tr>
 				<td class="alignRight"><b>End Time: </b></td>
-				<td class="alignLeft"><s:date name="contest.endTime" format="yyyy-MM-dd HH:mm:ss" /></td>
+				<td class="alignLeft"><span class="plainDate">${endTime}</span></td>
 				<td class="alignRight"><b>Manager: </b></td>
 				<td class="alignLeft"><a href="user/profile.action?uid=<s:property value='contest.manager.id' />" ><s:property value="contest.manager.username" /></a></td>
 			</tr>

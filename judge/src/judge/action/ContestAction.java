@@ -41,7 +41,7 @@ public class ContestAction extends BaseAction {
 	private Submission submission;
 	private Cproblem cproblem;
 
-	private int year, month, day, hour, minute, d_day, d_hour, d_minute;
+	private int d_day, d_hour, d_minute;
 	private int id, pid, cid, uid;
 	private int res;	//result
 	private int isOpen;
@@ -55,6 +55,9 @@ public class ContestAction extends BaseAction {
 	private String _64Format;
 	private int contestOver;
 	private List<Object[]> sameContests;
+	private long beginTime;
+	private long endTime;
+	
 	
 	private List pids;
 	private List OJs;
@@ -146,7 +149,7 @@ public class ContestAction extends BaseAction {
 			Object[] res = {
 					contest.getId(),
 					contest.getTitle(),
-					sdf.format(contest.getBeginTime()),
+					contest.getBeginTime().getTime(),
 					trans(contest.getEndTime().getTime() - contest.getBeginTime().getTime(), true),
 					curDate.compareTo(contest.getBeginTime()) < 0 ? "Scheduled" : curDate.compareTo(contest.getEndTime()) < 0 ? "Running" : "Ended",
 					contest.getPassword() == null ? "Public" : "Private",
@@ -192,6 +195,10 @@ public class ContestAction extends BaseAction {
 				probNums.add(o[2]);
 				titles.add((String) o[3]);
 			}
+			long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
+			d_day = (int) (dur / 86400000);
+			d_hour = (int) (dur % 86400000 / 3600000);
+			d_minute = (int) (dur % 3600000 / 60000);
 		} else {
 			contest = new Contest();
 		}
@@ -200,7 +207,6 @@ public class ContestAction extends BaseAction {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void validateAddContest(){
 		/**
 		 * 标题不能为空，不能超过90字符
@@ -255,7 +261,8 @@ public class ContestAction extends BaseAction {
 			}
 		}
 		
-		contest.setBeginTime(new Date(year - 1900, month - 1, day, hour, minute, 0));
+//		contest.setBeginTime(new Date(year - 1900, month - 1, day, hour, minute, 0));
+		contest.setBeginTime(new Date(beginTime));
 		contest.setEndTime(new Date(contest.getBeginTime().getTime() + d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L));
 		long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
 		long start = contest.getBeginTime().getTime() - new Date().getTime();
@@ -352,6 +359,8 @@ public class ContestAction extends BaseAction {
 				((Object[])dataList.get(i))[3] = (total == 0 ? 0.0 : ((long)(0.5 + 10000 * ac / total))/100.0) + "%(" + ac + "/" + total + ")";
 			}
 		}
+		beginTime = contest.getBeginTime().getTime();
+		endTime = contest.getEndTime().getTime();
 		return SUCCESS;
 	}
 	
@@ -481,6 +490,10 @@ public class ContestAction extends BaseAction {
 		submission.setOriginOJ(problem.getOriginOJ());
 		submission.setOriginProb(problem.getOriginProb());
 		baseService.addOrModify(submission);
+		if (user.getShare() != submission.getIsOpen()) {
+			user.setShare(submission.getIsOpen());
+			baseService.addOrModify(user);
+		}
 		try {
 			Submitter submitter = (Submitter) ProblemAction.submitterMap.get(problem.getOriginOJ()).clone();
 			submitter.setSubmission(submission);
@@ -521,7 +534,6 @@ public class ContestAction extends BaseAction {
 	}
 	
 	public String fetchStatus() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		int userId = user != null ? user.getId() : -1;
@@ -565,7 +577,7 @@ public class ContestAction extends BaseAction {
 		List<Object[]> aaData = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
 
 		for (Object[] o : aaData) {
-			o[8] = sdf.format((Date)o[8]);
+			o[8] = ((Date)o[8]).getTime();
 			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0;
 		}
 
@@ -718,7 +730,6 @@ public class ContestAction extends BaseAction {
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public String toEditContest(){
 		Map session = ActionContext.getContext().getSession();
 		contest = (Contest) baseService.query(Contest.class, cid);
@@ -728,8 +739,9 @@ public class ContestAction extends BaseAction {
 			return ERROR;
 		}
 		curDate = new Date();
-		hour = contest.getBeginTime().getHours();
-		minute = contest.getBeginTime().getMinutes();
+		beginTime = contest.getBeginTime().getTime();
+//		hour = contest.getBeginTime().getHours();
+//		minute = contest.getBeginTime().getMinutes();
 		long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
 		d_day = (int) (dur / 86400000);
 		d_hour = (int) (dur % 86400000 / 3600000);
@@ -1066,18 +1078,6 @@ public class ContestAction extends BaseAction {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public int getHour() {
-		return hour;
-	}
-	public void setHour(int hour) {
-		this.hour = hour;
-	}
-	public int getMinute() {
-		return minute;
-	}
-	public void setMinute(int minute) {
-		this.minute = minute;
-	}
 	public int getD_day() {
 		return d_day;
 	}
@@ -1162,23 +1162,17 @@ public class ContestAction extends BaseAction {
 	public void setSameContests(List sameContests) {
 		this.sameContests = sameContests;
 	}
-	public int getYear() {
-		return year;
+	public long getBeginTime() {
+		return beginTime;
 	}
-	public void setYear(int year) {
-		this.year = year;
+	public void setBeginTime(long beginTime) {
+		this.beginTime = beginTime;
 	}
-	public int getMonth() {
-		return month;
+	public long getEndTime() {
+		return endTime;
 	}
-	public void setMonth(int month) {
-		this.month = month;
-	}
-	public int getDay() {
-		return day;
-	}
-	public void setDay(int day) {
-		this.day = day;
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
 	}
 }
 

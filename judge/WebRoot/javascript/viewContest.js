@@ -7,4 +7,8 @@ $(document).ready(function() {
 		"bInfo": false,
 		"bAutoWidth": false
 	});
-} );
+	
+	$("span.plainDate").each(function(){
+		$(this).html(new Date(parseInt($(this).html())).format("yyyy-MM-dd hh:mm:ss"));
+	});
+});

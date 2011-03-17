@@ -28,7 +28,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<tr>
 					<td>Begin Time:</td>
 					<td>
-						<s:date name="%{contest.beginTime}" format="yyyy-MM-dd HH:mm:ss" />
+						<span class="plainDate">${beginTime}</span>
 					</td>
 				</tr>
 				<tr>
@@ -50,5 +50,12 @@ String basePath = (String)application.getAttribute("basePath");
 			</table>
 		</form>
 		<s:include value="/bottom.jsp" />
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$("span.plainDate").each(function(){
+					$(this).html(new Date(parseInt($(this).html())).format("yyyy-MM-dd hh:mm:ss"));
+				});
+			});
+		</script>
 	</body>
 </html>

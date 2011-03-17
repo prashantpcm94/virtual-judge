@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
 	var oTable = $('#listProblem').dataTable({
 		"bProcessing": true,
@@ -31,6 +32,9 @@ $(document).ready(function() {
 		  				"sClass": ""
 		  			},
 		  			{
+		  				"fnRender": function ( oObj ) {
+			  				return new Date(parseInt(oObj.aData[3])).format("yyyy-MM-dd hh:mm:ss");
+		  				},
 		  				"sClass": "date",
 						"bSortable": false
 					},

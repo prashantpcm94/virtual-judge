@@ -4,7 +4,6 @@
 
 package judge.action;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -87,9 +86,8 @@ public class ProblemAction extends BaseAction{
 		}
 
 		List<Object[]> aaData = baseService.list(hql.toString(), paraMap, iDisplayStart, iDisplayLength);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		for (Object[] o : aaData) {
-			o[3] = sdf.format((Date)o[3]);
+			o[3] = ((Date)o[3]).getTime();
 		}
 		dataTablesPage.setAaData(aaData);
 
@@ -273,6 +271,10 @@ public class ProblemAction extends BaseAction{
 		submission.setOriginOJ(problem.getOriginOJ());
 		submission.setOriginProb(problem.getOriginProb());
 		baseService.addOrModify(submission);
+		if (user.getShare() != submission.getIsOpen()) {
+			user.setShare(submission.getIsOpen());
+			baseService.addOrModify(user);
+		}
 		try {
 			Submitter submitter = (Submitter) submitterMap.get(problem.getOriginOJ()).clone();
 			submitter.setSubmission(submission);
@@ -301,7 +303,6 @@ public class ProblemAction extends BaseAction{
 	}
 
 	public String fetchStatus() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Map session = ActionContext.getContext().getSession();
 		Map paraMap = new HashMap();
 		User user = (User) session.get("visitor");
@@ -362,7 +363,7 @@ public class ProblemAction extends BaseAction{
 		List<Object[]> aaData = baseService.list(hql.toString(), paraMap, iDisplayStart, iDisplayLength);
 
 		for (Object[] o : aaData) {
-			o[8] = sdf.format((Date)o[8]);
+			o[8] = ((Date)o[8]).getTime();
 			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0;
 		}
 

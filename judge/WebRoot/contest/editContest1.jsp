@@ -37,11 +37,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<tr>
 					<td class="form_title">Begin Time:</td>
 					<td>
-						<s:textfield name="beginTime" size="10" readonly="true" >
-							<s:param name="value">
-								<s:date name="%{contest.beginTime}" format="yyyy-MM-dd" />
-							</s:param>
-						</s:textfield>
+						<s:textfield name="_beginTime" size="10" readonly="true" />
 						<s:textfield name="hour" size="2" maxlength="2" cssClass="clk_select" />:<s:textfield name="minute" size="2" maxlength="2" cssClass="clk_select" />:00
 					</td>
 				</tr>
@@ -62,8 +58,8 @@ String basePath = (String)application.getAttribute("basePath");
 					<td class="form_title">Problems:</td>
 					<td>
 						<table id="addTable">
-							<tr>
-								<td></td>
+							<tr style="height: 40px">
+								<td width="30"><a id="addBtn" href="javascript:void(0)"><img height="18" src="images/ico_add.png" border="0"/></a></td>
 								<td>OJ</td>
 								<td>ProbNum</td>
 								<td>Alias</td>
@@ -89,7 +85,6 @@ String basePath = (String)application.getAttribute("basePath");
 								<td></td>
 							</tr>
 						</table>
-						<input type="button" id="addBtn" value="Add" />
 					</td>
 				</tr>
 				<tr>
@@ -103,9 +98,7 @@ String basePath = (String)application.getAttribute("basePath");
 					</td>
 				</tr>
 			</table>
-			<s:hidden name="year" />
-			<s:hidden name="month" />
-			<s:hidden name="day" />
+			<s:hidden name="beginTime" />
 		</form>
 		<s:include value="/bottom.jsp" />
 	</body>

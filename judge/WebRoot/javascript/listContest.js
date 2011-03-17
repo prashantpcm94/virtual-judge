@@ -18,7 +18,10 @@ $(document).ready(function() {
 		  				},
 		  				"sClass": "title"
 		  			},
-		  			{ 
+		  			{
+		  				"fnRender": function ( oObj ) {
+			  				return new Date(parseInt(oObj.aData[2])).format("yyyy-MM-dd hh:mm:ss");
+		  				},
 		  				"sClass": "date"
 		  			},
 		  			{ 

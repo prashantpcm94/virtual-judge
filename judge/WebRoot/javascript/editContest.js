@@ -2,6 +2,14 @@ $(document).ready(function(){
 
 	DWREngine.setAsync(false);
 
+	var beginTime = parseInt($("[name=beginTime]").val());
+	if (beginTime != NaN && beginTime > 0) {
+		beginTime = new Date(beginTime);
+		$("[name=_beginTime]").val(beginTime.format("yyyy-MM-dd"));
+		$("[name=hour]").val(beginTime.getHours());
+		$("[name=minute]").val(beginTime.getMinutes());
+	}
+
 	$("#addBtn").click(function(){
 		addRow();
 	});
@@ -81,11 +89,9 @@ $(document).ready(function(){
 			return false;
 		}
 
-		var date = $("[name='beginTime']").val().split("-");
-		$("[name='year']").val(date[0]);
-		$("[name='month']").val(date[1]);
-		$("[name='day']").val(date[2]);
-
+		var date = $("[name='_beginTime']").val().split("-");
+		$("[name='beginTime']").val(new Date(date[0], parseInt(date[1]) - 1, date[2], hour, minute, 0).getTime());
+		
 		$("tr:not(:visible)").remove();
 	});
 
@@ -97,7 +103,7 @@ $(document).ready(function(){
 	});
 	
 	
-	$("[name='beginTime']").datepicker({
+	$("[name='_beginTime']").datepicker({
 		dateFormat: 'yy-mm-dd',
 		minDate: -0,
 		maxDate: +30,

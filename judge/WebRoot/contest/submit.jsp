@@ -30,7 +30,7 @@ String basePath = (String)application.getAttribute("basePath");
 					<tr>
 						<td>Public:</td>
 						<td>
-							<s:radio name="isOpen" list="#{'0':'No', '1':'Yes'}" value="%{isOpen}" theme="simple"></s:radio>
+							<s:radio name="isOpen" list="#{'0':'No', '1':'Yes'}" theme="simple"></s:radio>
 						</td>
 					</tr>
 				</table>
