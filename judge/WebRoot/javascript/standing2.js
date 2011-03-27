@@ -1,4 +1,4 @@
-var cid, onlyCid, data, ti, maxTime, changed;
+var cid, onlyCid, data, ti, maxTime, changed, standingTable, oFH;
 
 var standingTableSetting = {
 	"bPaginate": false,
@@ -15,7 +15,7 @@ $(document).ready(function() {
 	pnum = $("tr#template td").length - 5;
 
 	if ($.cookie("contest_" + cid) == undefined){
-		$.cookie("contest_" + cid, cid, { expires: 30 });
+		$.cookie("contest_" + cid, cid, { expires: 3 });
 	}
 	if ($.cookie("penalty_format") == undefined){
 		$.cookie("penalty_format", 0, { expires: 30 });
@@ -29,6 +29,13 @@ $(document).ready(function() {
 				getRemoteData();
 			}
 		},
+		select: function(event, ui) {
+			if (ui.index != 0) {
+				$("div.FixedHeader_Cloned").hide();
+			} else {
+				$("div.FixedHeader_Cloned").show();
+			}
+		},
 		cookie: { expires: 30 }
 	});
 
@@ -36,6 +43,9 @@ $(document).ready(function() {
 	$( "#tabs" ).addClass("ui-widget-content-custom");
 
 	standingTable = $('#standing').dataTable(standingTableSetting);
+	setTimeout(function(){
+		oFH = new FixedHeader( standingTable );
+	}, 1000);
 
 	$('#setting table').dataTable({
 		"bPaginate": false,
@@ -51,7 +61,7 @@ $(document).ready(function() {
 		$("[name=ids]:checked").each(function(){
 			ids += "/" + $(this).val();
 		});
-		$.cookie("contest_" + cid, ids.substr(1), { expires: 30 });
+		$.cookie("contest_" + cid, ids.substr(1), { expires: 3 });
 		updateCheckAll();
 	});
 	
@@ -61,7 +71,7 @@ $(document).ready(function() {
 		$("[name=ids]:checked").each(function(){
 			ids += "/" + $(this).val();
 		});
-		$.cookie("contest_" + cid, ids.substr(1), { expires: 30 });
+		$.cookie("contest_" + cid, ids.substr(1), { expires: 3 });
 	});
 
 	$("[name=penaltyFormat]").change(function(){
@@ -234,7 +244,10 @@ function calcScoreBoard(){
 		$newRow.insertBefore($originRow).show();
 	});
 	standingTable.dataTable(standingTableSetting);
-
+	setTimeout(function(){
+		oFH = new FixedHeader( standingTable );
+	}, 1000);
+	
 	var formatIdx = $.cookie("penalty_format");
 	$("#time_index").css("width", (2 - formatIdx + 100 * maxTime / ti[0]) + "%");
 	$("#time_index span").text(dateFormat(maxTime));

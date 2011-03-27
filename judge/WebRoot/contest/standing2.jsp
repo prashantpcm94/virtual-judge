@@ -15,11 +15,13 @@ String basePath = (String)application.getAttribute("basePath");
 		<link rel="stylesheet" type="text/css" href="css/redmond/jquery-ui-1.8.9.custom.css" />
 		<style type="text/css">
 			.ui-tabs .ui-tabs-panel {padding:15px 0px}
+			table#standing th {background-color: #EDFFED;}
 		</style>
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="javascript/jquery-ui-1.8.9.custom.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
+		<script type="text/javascript" src="javascript/FixedHeader.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
