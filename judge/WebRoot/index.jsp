@@ -36,7 +36,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<a href="http://acm.hust.edu.cn/thx/" target="_blank">HUST</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://www.spoj.pl" target="_blank">SPOJ</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://acm.hdu.edu.cn" target="_blank">HDU</a>&nbsp;&nbsp;&nbsp;
-				<a href="http://61.187.179.132:8080/JudgeOnline/" target="_blank">HYSBZ</a>&nbsp;&nbsp;&nbsp;
+				<a href="http://www.zybbs.org/JudgeOnline/" target="_blank">HYSBZ</a>&nbsp;&nbsp;&nbsp;
 			</p>
 			<br />
 			<b>Change Log:</b>

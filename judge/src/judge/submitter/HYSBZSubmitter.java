@@ -57,16 +57,17 @@ public class HYSBZSubmitter extends Submitter {
 		}
 
 		Map<String, String> languageList = new TreeMap<String, String>();
-		languageList.put("0", "G++");
-		languageList.put("1", "GCC");
+		languageList.put("0", "C");
+		languageList.put("1", "C++");
 		languageList.put("2", "Pascal");
+		languageList.put("3", "Java");
 		sc.setAttribute("HYSBZ", languageList);
 	}
 	
 	private void getMaxRunId() throws Exception {
-		GetMethod getMethod = new GetMethod("http://61.187.179.132:8080/JudgeOnline/status");
+		GetMethod getMethod = new GetMethod("http://www.zybbs.org/JudgeOnline/status.php");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		Pattern p = Pattern.compile("<tr align=center><td>(\\d+)");
+		Pattern p = Pattern.compile("class='evenrow'><td>(\\d+)");
 
 		httpClient.executeMethod(getMethod);
 		byte[] responseBody = getMethod.getResponseBody();
@@ -83,11 +84,10 @@ public class HYSBZSubmitter extends Submitter {
 	private void submit() throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 
-		PostMethod postMethod = new PostMethod("http://61.187.179.132:8080/JudgeOnline/submit");
+		PostMethod postMethod = new PostMethod("http://www.zybbs.org/JudgeOnline/submit.php");
+		postMethod.addParameter("id", problem.getOriginProb());
 		postMethod.addParameter("language", submission.getLanguage());
-		postMethod.addParameter("problem_id", problem.getOriginProb());
 		postMethod.addParameter("source", submission.getSource());
-		postMethod.addParameter("submit", "Submit");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.getParams().setContentCharset("UTF-8"); 
 
@@ -101,28 +101,29 @@ public class HYSBZSubmitter extends Submitter {
 	}
 	
 	private void login(String username, String password) throws Exception{
-        PostMethod postMethod = new PostMethod("http://61.187.179.132:8080/JudgeOnline/login?action=login");
-        postMethod.addParameter("B1", "login");
-        postMethod.addParameter("password1", password);
-        postMethod.addParameter("url", "/");
-        postMethod.addParameter("user_id1", username);
+        PostMethod postMethod = new PostMethod("http://www.zybbs.org/JudgeOnline/login.php");
+        postMethod.addParameter("password", password);
+        postMethod.addParameter("submit", "Submit");
+        postMethod.addParameter("user_id", username);
         postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
         System.out.println("login...");
 		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
 
-		//注意:此处判断登陆成功条件并不充分,相当于默认成功
-		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
+		byte[] responseBody = postMethod.getResponseBody();
+		String tLine = new String(responseBody, "UTF-8");
+		
+		if (!tLine.contains("history.go(-2)")) {
 			throw new Exception();
 		}
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "<td>(\\d{5,})[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font>[\\s\\S]*?<td>([\\s\\S]*?)</td><td>([\\s\\S]*?)</td>", result;
-        Pattern p = Pattern.compile(reg);
+		String reg = "class='evenrow'><td>(\\d+)[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font>[\\s\\S]*?<td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
+		Pattern p = Pattern.compile(reg);
 
-		GetMethod getMethod = new GetMethod("http://61.187.179.132:8080/JudgeOnline/status?user_id=" + username);
+		GetMethod getMethod = new GetMethod("http://www.zybbs.org/JudgeOnline/status.php?user_id=" + username);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
@@ -133,12 +134,12 @@ public class HYSBZSubmitter extends Submitter {
 
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
-				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
+				result = m.group(2).trim();
 				submission.setStatus(result);
     			if (!result.contains("ing")){
     				if (result.equals("Accepted")){
-	    				submission.setMemory(Integer.parseInt(m.group(3).replaceAll("K", "")));
-	    				submission.setTime(Integer.parseInt(m.group(4).replaceAll("MS", "")));
+	    				submission.setMemory(Integer.parseInt(m.group(3).replaceAll("\\D", "")));
+	    				submission.setTime(Integer.parseInt(m.group(4).replaceAll("\\D", "")));
     				}
     				baseService.addOrModify(submission);
     				return;
@@ -207,10 +208,10 @@ public class HYSBZSubmitter extends Submitter {
 	@Override
 	public void waitForUnfreeze() {
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(15000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}	//POJ限制每两次提交之间至少隔3秒
+		}	//BZOJ限制每两次提交之间至少隔10秒
 		synchronized (using) {
 			using[idx] = false;
 		}
