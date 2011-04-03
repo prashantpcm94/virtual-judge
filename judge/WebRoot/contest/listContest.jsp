@@ -23,6 +23,7 @@
 			#theme_links span { float: left; padding: 2px 10px; }
 		</style>
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
 		<script type="text/javascript" src="javascript/listContest.js"></script>
@@ -33,9 +34,9 @@
 		<s:actionerror />
 		
 		<div class="head_status" style="float:right;display:none">
-			<span class="Scheduled">Scheduled:</span><s:checkbox name="scheduled" value="true" fieldValue="1"/>  
-			<span class="Running">&nbsp;&nbsp;Running:</span><s:checkbox name="running" value="true" fieldValue="2"/>  
-			<span class="Ended">&nbsp;&nbsp;Ended:</span><s:checkbox name="ended" value="true" fieldValue="3"/>  
+			<span class="Scheduled">Scheduled:</span><input type="checkbox" name="scheduled" checked="checked" value="1" />  
+			<span class="Running">&nbsp;&nbsp;Running:</span><input type="checkbox" name="running" checked="checked" value="2" />  
+			<span class="Ended">&nbsp;&nbsp;Ended:</span><input type="checkbox" name="ended" checked="checked" value="3" />  
 		</div>
 		
 		<div class="ptt">Contest List</div>

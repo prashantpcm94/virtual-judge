@@ -22,9 +22,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
-public class ZOJSubmitter extends Submitter {
+public class UVASubmitter extends Submitter {
 
-	static final String OJ_NAME = "ZOJ";
+	static final String OJ_NAME = "UVA";
 	static private HttpClient clientList[];
 	static private boolean using[];
 	static private String[] usernameList;
@@ -55,23 +55,19 @@ public class ZOJSubmitter extends Submitter {
 			clientList[i] = new HttpClient();
 			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
 		}
-
+		
 		Map<String, String> languageList = new TreeMap<String, String>();
-		languageList.put("1", "C (gcc 4.4.5)");
-		languageList.put("2", "C++ (g++ 4.4.5)");
-		languageList.put("3", "FPC (fpc 2.4.0)");
-		languageList.put("4", "Java (java 1.6.0)");
-		languageList.put("5", "Python (Python 2.6.6)");
-		languageList.put("6", "Perl (Perl 5.10.1)");
-		languageList.put("7", "Scheme (Guile 1.8.7)");
-		languageList.put("8", "PHP (PHP 5.3.2)");
-		sc.setAttribute("ZOJ", languageList);
+		languageList.put("1", "ANSI C 4.1.2");
+		languageList.put("2", "JAVA 1.6.0");
+		languageList.put("3", "C++ 4.1.2");
+		languageList.put("4", "PASCAL 2.0.4");
+		sc.setAttribute("UVA", languageList);
 	}
 	
 	private void getMaxRunId() throws Exception {
-		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showRuns.do?contestId=1");
+		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=19");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		Pattern p = Pattern.compile("<td class=\"runId\">(\\d+)</td>");
+		Pattern p = Pattern.compile("componentheading[\\s\\S]*?<td>(\\d{7,})");
 
 		httpClient.executeMethod(getMethod);
 		byte[] responseBody = getMethod.getResponseBody();
@@ -84,60 +80,77 @@ public class ZOJSubmitter extends Submitter {
 			throw new Exception();
 		}
 	}
-
+	
 	private void submit() throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 
-		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		int statusCode = httpClient.executeMethod(getMethod);
-		byte[] responseBody = getMethod.getResponseBody();
-		String tLine = new String(responseBody, "UTF-8");
-		String problemId = regFind(tLine, "problemId=([\\s\\S]*?)\"><font");
-
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		PostMethod postMethod = new PostMethod("http://acm.zju.edu.cn/onlinejudge/submit.do");
-		postMethod.addParameter("languageId", submission.getLanguage());
-		postMethod.addParameter("problemId", problemId);
-		postMethod.addParameter("source", submission.getSource());
+		PostMethod postMethod = new PostMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=25&page=save_submission");
+		postMethod.addParameter("problemid", "");
+		postMethod.addParameter("category", "");
+		postMethod.addParameter("localid", problem.getOriginProb());
+		postMethod.addParameter("language", submission.getLanguage());
+		postMethod.addParameter("code", submission.getSource());
+		postMethod.addParameter("codeupl", "");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.getParams().setContentCharset("UTF-8"); 
 
 		System.out.println("submit...");
-		statusCode = httpClient.executeMethod(postMethod);
+		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
-        responseBody = postMethod.getResponseBody();
-        tLine = new String(responseBody, "UTF-8");
-        if (!tLine.contains("Submit Successfully")){
-        	throw new Exception();
-        }
+		
+		if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
+			throw new Exception();
+		}
 	}
 	
 	private void login(String username, String password) throws Exception{
-        PostMethod postMethod = new PostMethod("http://acm.zju.edu.cn/onlinejudge/login.do");
- 
-        postMethod.addParameter("handle", username);
-        postMethod.addParameter("password", password);
-        postMethod.addParameter("rememberMe", "on");
+		PostMethod postMethod = new PostMethod("http://uva.onlinejudge.org/index.php?option=com_comprofiler&task=login");
+		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php");
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		String tLine = "";
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if (statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: " + getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		} catch (Exception e) {
+			getMethod.releaseConnection();
+			throw new Exception();
+		}
+		
+		String reg = "<input type=\"hidden\" name=\"([\\s\\S]*?)\" value=\"([\\s\\S]*?)\" />";
+        Matcher matcher = Pattern.compile(reg).matcher(tLine);
+        int number = 0;
+        while (matcher.find()){
+			String name = matcher.group(1);
+			String value = matcher.group(2);
+			if (number > 0 && number < 9) {
+				postMethod.addParameter(name, value);
+			}
+			++number;
+		}
+		postMethod.addParameter("remember", "yes");
+		postMethod.addParameter("username", username);
+		postMethod.addParameter("passwd", password);
         postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		System.out.println("login...");
+
+        System.out.println("login...");
 		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
-		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
-        	throw new Exception();
-        }
+
+		//注意:此处判断登陆成功条件并不充分,相当于默认成功
+		if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
+			throw new Exception();
+		}
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "<td class=\"runId\">(\\d+)[\\s\\S]*?judgeReply\\w{2,5}\">([\\s\\S]*?)</span>[\\s\\S]*?runTime\">([\\s\\S]*?)</td>[\\s\\S]*?runMemory\">([\\s\\S]*?)</td>", result;
-		Pattern p = Pattern.compile(reg);
+		String reg = "<td>(\\d{7,})</td>[\\s\\S]*?</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>", result;
+        Pattern p = Pattern.compile(reg);
 
-		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showRuns.do?contestId=1&handle=" + username);
+		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
@@ -148,16 +161,18 @@ public class ZOJSubmitter extends Submitter {
 
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
-				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("loating ", "loat-");
-				submission.setStatus(result);
-				if (!result.contains("ing")) {
-					if (result.equals("Accepted")) {
-						submission.setMemory(Integer.parseInt(m.group(4)));
-						submission.setTime(Integer.parseInt(m.group(3)));
-					}
-					baseService.addOrModify(submission);
-					return;
+				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing");
+				if (result.isEmpty()) {
+					result = "processing";
 				}
+				submission.setStatus(result);
+    			if (!result.contains("ing")){
+    				if (result.equals("Accepted")){
+	    				submission.setTime(Integer.parseInt(m.group(3).replaceAll("\\.", "")));
+    				}
+    				baseService.addOrModify(submission);
+    				return;
+    			}
 				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
@@ -188,12 +203,10 @@ public class ZOJSubmitter extends Submitter {
 			}
 		}
 	}
-
-
+	
 	public void work() {
 		idx = getIdleClient();
 		int errorCode = 1;
-		httpClient = clientList[idx];
 
 		try {
 			getMaxRunId();
@@ -227,11 +240,10 @@ public class ZOJSubmitter extends Submitter {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}	//zju oj限制每两次提交之间至少隔5秒
+		}	//POJ限制每两次提交之间至少隔3秒
 		synchronized (using) {
 			using[idx] = false;
 		}
 	}
-
 
 }

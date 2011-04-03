@@ -31,14 +31,10 @@ public class UVASpider extends Spider {
 		tLine = tLine.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://uva.onlinejudge.org/external/" + category + "/");
 		tLine = tLine.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://uva.onlinejudge.org/external/" + category + "/");
 
-		problem.setTitle(regFind(tLine,	"<title>([\\s\\S]*?)</title>", 1));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
-			throw new Exception();
-		}
+		problem.setTitle("UVa P" + problem.getOriginProb());
 		problem.setTimeLimit(0);
 		problem.setMemoryLimit(0);
-		description.setDescription(regFind(tLine, "<b>Ranking</b></a></td></tr></table>([\\s\\S]*?)<hr><ADDRESS>"));
-		problem.setSource(regFind(tLine, "<hr><ADDRESS>([\\s\\S]*?)</ADDRESS>"));
-		problem.setUrl("http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p="	+ problem.getOriginProb());
+		description.setDescription(regFind(tLine, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1));
+		problem.setUrl("http://uva.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".html");
 	}
 }

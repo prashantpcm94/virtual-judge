@@ -1,5 +1,6 @@
-
 $(document).ready(function() {
+	$("#OJId").val($.cookie("OJId") || "All");
+
 	var oTable = $('#listProblem').dataTable({
 		"bProcessing": true,
 		"bServerSide": true,
@@ -59,8 +60,9 @@ $(document).ready(function() {
 	});
 	
 	$("#addBtn").css("visibility", $("#OJId").val() == 'All' ? "hidden" : "visible");
-
+	
 	$("#OJId").change(function(){
+		$.cookie("OJId", $(this).val(), {expires:7});
 		$("#addBtn").css("visibility", $("#OJId").val() == 'All' ? "hidden" : "visible");
 		oTable.fnDraw();
 	});

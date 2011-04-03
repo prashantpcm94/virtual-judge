@@ -16,6 +16,7 @@ import judge.spider.SPOJSpider;
 import judge.spider.Spider;
 import judge.spider.URALSpider;
 import judge.spider.UVALiveSpider;
+import judge.spider.UVASpider;
 import judge.spider.ZOJSpider;
 import judge.submitter.HDUSubmitter;
 import judge.submitter.HUSTSubmitter;
@@ -26,6 +27,7 @@ import judge.submitter.SPOJSubmitter;
 import judge.submitter.Submitter;
 import judge.submitter.URALSubmitter;
 import judge.submitter.UVALiveSubmitter;
+import judge.submitter.UVASubmitter;
 import judge.submitter.ZOJSubmitter;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -64,6 +66,7 @@ public class BaseAction extends ActionSupport{
 		OJList.add("SPOJ");
 		OJList.add("HDU");
 		OJList.add("HYSBZ");
+		OJList.add("UVA");
 	}
 	
 	static private List<String> OJListAll = new ArrayList<String>();
@@ -83,6 +86,7 @@ public class BaseAction extends ActionSupport{
 		spiderMap.put("SPOJ", new SPOJSpider());
 		spiderMap.put("HDU", new HDUSpider());
 		spiderMap.put("HYSBZ", new HYSBZSpider());
+		spiderMap.put("UVA", new UVASpider());
 	}
 	
 	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
@@ -96,6 +100,7 @@ public class BaseAction extends ActionSupport{
 		submitterMap.put("SPOJ", new SPOJSubmitter());
 		submitterMap.put("HDU", new HDUSubmitter());
 		submitterMap.put("HYSBZ", new HYSBZSubmitter());
+		submitterMap.put("UVA", new UVASubmitter());
 	}
 	
 	static public Map<String, String> lf = new HashMap<String, String>();
@@ -109,6 +114,7 @@ public class BaseAction extends ActionSupport{
 		lf.put("SPOJ", "%lld & %llu");
 		lf.put("HDU", "%I64d & %I64u");
 		lf.put("HYSBZ", "%I64d & %I64u");
+		lf.put("UVA", "%lld & %llu");
 	}
 	
 

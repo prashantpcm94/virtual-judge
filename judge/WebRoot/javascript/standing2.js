@@ -45,7 +45,7 @@ $(document).ready(function() {
 	standingTable = $('#standing').dataTable(standingTableSetting);
 	setTimeout(function(){
 		oFH = new FixedHeader( standingTable );
-	}, 1000);
+	}, 100);
 
 	$('#setting table').dataTable({
 		"bPaginate": false,
@@ -246,7 +246,7 @@ function calcScoreBoard(){
 	standingTable.dataTable(standingTableSetting);
 	setTimeout(function(){
 		oFH = new FixedHeader( standingTable );
-	}, 1000);
+	}, 100);
 	
 	var formatIdx = $.cookie("penalty_format");
 	$("#time_index").css("width", (2 - formatIdx + 100 * maxTime / ti[0]) + "%");

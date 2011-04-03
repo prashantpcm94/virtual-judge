@@ -1,5 +1,11 @@
 $(document).ready(function() {
-	oTable = $('#listContest').dataTable({
+	$("input[type='checkbox']").each(function(){
+		if ($.cookie("checked_" + $(this).attr("name")) == 'false') {
+			$(this).removeAttr("checked");
+		}
+	});
+	
+	var oTable = $('#listContest').dataTable({
 		"bProcessing": true,
 		"bServerSide": true,
 		"sAjaxSource": "contest/listContest.action",
@@ -83,11 +89,12 @@ $(document).ready(function() {
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers"
 	});
-	
-	$("div.head_status").clone().insertBefore("div#listContest_processing").show();
+
+	$("div.head_status").insertBefore("div#listContest_processing").show();
 	$("div.dataTables_filter").css("width", "250px");
-	
+
 	$("input[type='checkbox']").change(function(){
+		$.cookie("checked_" + $(this).attr("name"), $(this).attr("checked"), {expires:7});
 		$("[name='"+$(this).attr("name")+"']").attr("checked", $(this).attr("checked"));
 		oTable.fnDraw();
 	});

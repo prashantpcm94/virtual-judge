@@ -23,6 +23,7 @@ String basePath = (String)application.getAttribute("basePath");
 		</style>
 
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
+		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
 	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
