@@ -101,6 +101,9 @@ public class UVASubmitter extends Submitter {
 		if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
 			throw new Exception();
 		}
+		if (postMethod.getResponseHeader("Location").getValue().contains("not+exist")){
+			throw new Exception();
+		}
 	}
 	
 	private void login(String username, String password) throws Exception{

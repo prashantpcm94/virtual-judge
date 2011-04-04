@@ -30,6 +30,7 @@ public class UVASpider extends Spider {
 			int statusCode = httpClient.executeMethod(getMethod);
 			if (statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
+				throw new Exception();
 			}
 			byte[] responseBody = getMethod.getResponseBody();
 			tLine = new String(responseBody, "UTF-8");
