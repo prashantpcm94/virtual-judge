@@ -54,4 +54,8 @@ public class POJSpider extends Spider {
 		problem.setUrl("http://poj.org/problem?id=" + problem.getOriginProb());
 	}
 
+	@Override
+	public void extraOptr() throws Exception {
+	}
+
 }

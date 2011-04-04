@@ -53,4 +53,8 @@ public class ZOJSpider extends Spider {
 		problem.setUrl("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
 	}
 
+	@Override
+	public void extraOptr() throws Exception {
+	}
+
 }

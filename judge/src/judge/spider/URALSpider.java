@@ -49,4 +49,8 @@ public class URALSpider extends Spider {
 		problem.setUrl("http://acm.timus.ru/problem.aspx?space=1&num=" + problem.getOriginProb());
 	}
 
+	@Override
+	public void extraOptr() throws Exception {
+	}
+
 }

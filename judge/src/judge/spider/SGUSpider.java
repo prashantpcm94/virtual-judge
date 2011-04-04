@@ -65,4 +65,8 @@ public class SGUSpider extends Spider {
 		problem.setUrl("http://acm.sgu.ru/problem.php?contest=0&problem=" + problem.getOriginProb());
 	}
 
+	@Override
+	public void extraOptr() throws Exception {
+	}
+
 }

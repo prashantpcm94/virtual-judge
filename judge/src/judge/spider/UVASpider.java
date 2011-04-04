@@ -1,9 +1,19 @@
 package judge.spider;
 
+import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+
+import judge.bean.Submission;
+import judge.bean.User;
+import judge.tool.ApplicationContainer;
+
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
+@SuppressWarnings("unchecked")
 public class UVASpider extends Spider {
 
 	public void crawl() throws Exception{
@@ -32,9 +42,32 @@ public class UVASpider extends Spider {
 		tLine = tLine.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://uva.onlinejudge.org/external/" + category + "/");
 
 		problem.setTitle("UVa P" + problem.getOriginProb());
-		problem.setTimeLimit(0);
+		problem.setTimeLimit(1);
 		problem.setMemoryLimit(0);
 		description.setDescription(regFind(tLine, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1));
 		problem.setUrl("http://uva.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".html");
+	}
+
+	@Override
+	public void extraOptr() throws Exception {
+		ServletContext sc = ApplicationContainer.sc;
+		Map<String, String> langMap = (Map<String, String>)sc.getAttribute(problem.getOriginOJ());
+		String language = langMap.keySet().iterator().next();
+		
+		Submission submission = new Submission();
+		submission.setSubTime(new Date());
+		submission.setProblem(problem);
+		submission.setUser(new User(1006));
+		submission.setStatus("Pending……");
+		submission.setLanguage(language);
+		submission.setSource("test");
+		submission.setIsOpen(0);
+		submission.setDispLanguage(langMap.get(language));
+		submission.setUsername("Isun");
+		submission.setOriginOJ(problem.getOriginOJ());
+		submission.setOriginProb(problem.getOriginProb());
+		baseService.addOrModify(submission);
+		
+		judgeService.rejudge(submission);
 	}
 }

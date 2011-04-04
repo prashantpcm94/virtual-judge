@@ -6,11 +6,13 @@ import java.util.regex.Pattern;
 import judge.bean.Description;
 import judge.bean.Problem;
 import judge.service.IBaseService;
+import judge.service.JudgeService;
 import judge.tool.ApplicationContainer;
 import judge.tool.SpringBean;
 
 public abstract class Spider extends Thread implements Cloneable {
 	static public IBaseService baseService = (IBaseService) SpringBean.getBean("baseService", ApplicationContainer.sc);
+	static public JudgeService judgeService = (JudgeService) SpringBean.getBean("judgeService", ApplicationContainer.sc);
 
 	public Problem problem;
 	public Description description;
@@ -54,6 +56,12 @@ public abstract class Spider extends Thread implements Cloneable {
 	 */
 	public abstract void crawl() throws Exception;
 	
+	/**
+	 * 抓取后续操作
+	 * @throws Exception
+	 */
+	public abstract void extraOptr() throws Exception;
+	
 	
 	public void run() {
 		try {
@@ -61,6 +69,7 @@ public abstract class Spider extends Thread implements Cloneable {
 			description.setProblem(problem);
 			baseService.addOrModify(problem);
 			baseService.addOrModify(description);
+			extraOptr();
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (problem.getUrl() == null){

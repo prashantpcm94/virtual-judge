@@ -56,7 +56,9 @@ public class HDUSpider extends Spider {
 		}
 		problem.setUrl("http://acm.hdu.edu.cn/showproblem.php?pid=" + problem.getOriginProb());
 	}
-	
-	
+
+	@Override
+	public void extraOptr() throws Exception {
+	}
 
 }

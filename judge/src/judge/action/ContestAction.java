@@ -907,14 +907,14 @@ public class ContestAction extends BaseAction {
 		if (user == null || user.getSup() == 0){
 			return ERROR;
 		}
+		List<Submission> submissionList = new ArrayList<Submission>();
 		if (id > 0){
-			submission = (Submission) baseService.query(Submission.class, id);
-			judgeService.rejudge(submission);
+			submissionList = baseService.query("select s from Submission s left join fetch s.problem where s.id = " + id);
 		} else if (pid > 0){
-			List<Submission> submissionList = baseService.query("select s from Submission s, Cproblem cp where cp.id = " + pid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id");
-			for (Submission submission : submissionList) {
-				judgeService.rejudge(submission);
-			}
+			submissionList = baseService.query("select s from Submission s left join fetch s.problem, Cproblem cp where cp.id = " + pid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id");
+		}
+		for (Submission submission : submissionList) {
+			judgeService.rejudge(submission);
 		}
 		return SUCCESS;
 	}

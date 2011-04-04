@@ -51,4 +51,8 @@ public class HYSBZSpider extends Spider {
 		problem.setUrl("http://www.zybbs.org/JudgeOnline/problem.php?id=" + problem.getOriginProb());
 	}
 
+	@Override
+	public void extraOptr() throws Exception {
+	}
+
 }

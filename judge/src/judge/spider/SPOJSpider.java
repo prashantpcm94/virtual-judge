@@ -50,4 +50,8 @@ public class SPOJSpider extends Spider {
 		problem.setUrl("http://www.spoj.pl/problems/" + problem.getOriginProb());
 	}
 
+	@Override
+	public void extraOptr() throws Exception {
+	}
+
 }

@@ -29,7 +29,7 @@ public class UVASubmitter extends Submitter {
 	static private boolean using[];
 	static private String[] usernameList;
 	static private String[] passwordList;
-
+	
 	static {
 		List<String> uList = new ArrayList<String>(), pList = new ArrayList<String>();
 		try {
@@ -147,7 +147,7 @@ public class UVASubmitter extends Submitter {
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "<td>(\\d{7,})</td>[\\s\\S]*?</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>", result;
+		String reg = "<td>(\\d{7,})</td>[\\s\\S]*?show_problem&amp;problem=(\\d+)[\\s\\S]*?</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>", result;
         Pattern p = Pattern.compile(reg);
 
 		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
@@ -161,14 +161,17 @@ public class UVASubmitter extends Submitter {
 
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
-				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing");
+				if (submission.getProblem().getTitle().matches("UVa P\\d+")) {
+					fetchExtraInfo(m.group(2));
+				}
+				result = m.group(3).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing");
 				if (result.isEmpty()) {
 					result = "processing";
 				}
 				submission.setStatus(result);
     			if (!result.contains("ing")){
     				if (result.equals("Accepted")){
-	    				submission.setTime(Integer.parseInt(m.group(3).replaceAll("\\.", "")));
+	    				submission.setTime(Integer.parseInt(m.group(4).replaceAll("\\.", "")));
     				}
     				baseService.addOrModify(submission);
     				return;
@@ -244,6 +247,32 @@ public class UVASubmitter extends Submitter {
 		synchronized (using) {
 			using[idx] = false;
 		}
+	}
+	
+	/**
+	 * 获取题目的标题和时限
+	 * @param pid OJ原始题号
+	 * @throws Exception
+	 */
+	private void fetchExtraInfo(String pid) throws Exception {
+		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + pid);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		String tLine = "";
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if (statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: " + getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		} catch (Exception e) {
+			getMethod.releaseConnection();
+			throw new Exception();
+		}
+		Problem problem = submission.getProblem();
+		problem.setTitle(regFind(tLine, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>"));
+		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
+		baseService.addOrModify(problem);
 	}
 
 }

@@ -24,6 +24,9 @@ public class User {
 	private Set<Submission> submissions;
 	private Set<Submission> contests;
 
+	public User(int id){
+		this.id = id;
+	}
 	
 	public User(String username, String password){
 		this.username = username;

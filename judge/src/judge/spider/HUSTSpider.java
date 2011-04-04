@@ -54,4 +54,8 @@ public class HUSTSpider extends Spider {
 		problem.setUrl("http://acm.hust.edu.cn/thx/problem.php?id=" + problem.getOriginProb());
 	}
 
+	@Override
+	public void extraOptr() throws Exception {
+	}
+
 }

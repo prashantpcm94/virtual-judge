@@ -45,4 +45,8 @@ public class UVALiveSpider extends Spider {
 		problem.setSource(regFind(tLine, "<hr><ADDRESS>([\\s\\S]*?)</ADDRESS>"));
 		problem.setUrl("http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p="	+ problem.getOriginProb());
 	}
+
+	@Override
+	public void extraOptr() throws Exception {
+	}
 }
