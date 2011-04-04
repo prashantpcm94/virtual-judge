@@ -62,6 +62,7 @@ public class UVASpider extends Spider {
 		submission.setLanguage(language);
 		submission.setSource("test");
 		submission.setIsOpen(0);
+		submission.setIsPrivate(1);
 		submission.setDispLanguage(langMap.get(language));
 		submission.setUsername("Isun");
 		submission.setOriginOJ(problem.getOriginOJ());
