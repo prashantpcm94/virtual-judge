@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +73,20 @@ public class POJSubmitter extends Submitter {
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("<tr align=center><td>(\\d+)");
 
-		httpClient.executeMethod(getMethod);
+		int count = 0;
+		while (true) {
+			try {
+				httpClient.executeMethod(getMethod);
+				break;
+			} catch (SocketException e) {
+				if (!e.getMessage().contains("reset") || ++count > 5) {
+					getMethod.releaseConnection();
+					throw e;
+				}
+				Thread.sleep(4000);
+			}
+		}
+		
 		byte[] responseBody = getMethod.getResponseBody();
 		String tLine = new String(responseBody, "UTF-8");
 		Matcher m = p.matcher(tLine);

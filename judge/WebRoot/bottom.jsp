@@ -2,7 +2,7 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <link rel="stylesheet" type="text/css" href="css/global.css" />
 <link rel="shortcut icon" href="images/logo.ico" />
-<div style="text-align:center;margin-top:30px;clear:both">
+<div style="text-align:center;margin-top:30px;clear:both;font-size:80%">
 	<hr />FAQ | About Virtual Judge | <a href="http://acm.hust.edu.cn/forum/forumdisplay.php?fid=10">Forum</a> | <a href="mailto:is.un@qq.com">Contact</a> | <a href="http://code.google.com/p/virtual-judge/">Open Source Project</a><br />
 	All Copyright Reserved ©2010-2011 <a href="http://acm.hust.edu.cn">HUST ACM/ICPC</a> TEAM
 	<s:if test="#session.visitor.sup == 1"><a href="stat/listOL.action"><img style="text-decoration: none;" height="15px" border="0" src="images/statistics.gif" /></a></s:if>
