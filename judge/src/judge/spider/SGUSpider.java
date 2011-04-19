@@ -32,11 +32,6 @@ public class SGUSpider extends Spider {
 			throw new Exception();
         }
         
-		problem.setTitle(regFind(tLine, "\\d{3}\\. ([\\s\\S]*?)</title>", 1));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
-			throw new Exception();
-		}
-		
 		String tl = regFind(tLine, "ime limit per test: ([\\d\\.]*)");
 		if (tl != null){
 			problem.setTimeLimit((int)(1000 * Double.parseDouble(tl)));
@@ -53,12 +48,14 @@ public class SGUSpider extends Spider {
 		}
 		
 		if (Integer.parseInt(problem.getOriginProb()) >= 277){
+			problem.setTitle(regFind(tLine, "\\d{3}\\. ([\\s\\S]*?)</title>", 1));
 			description.setDescription(regFind(tLine, "output: standard</div><br/>([\\s\\S]*?)<b>Input</b>") + "</div>");
 			description.setInput(regFind(tLine, "<b>Input</b></div>([\\s\\S]*?)<b>Output</b>") + "</div>");
 			description.setOutput(regFind(tLine, "<b>Output</b></div>([\\s\\S]*?)<b>Example") + "</div>");
 			description.setSampleInput(regFind(tLine, "<b>Example\\(s\\)</b></div>([\\s\\S]*?)(<b>Note|<hr>)") + "</div>");
 			description.setHint(regFind(tLine, "<b>Note</b></div>([\\s\\S]*?)<hr>") + "</div>");
 		} else {
+			problem.setTitle(regFind(tLine, "<h4>" + problem.getOriginProb() + "\\. ([\\s\\S]*?)</h4>", 1).trim());
 			description.setDescription(regFind(tLine, "(<BODY[\\s\\S]*?</BODY>)", 1));
 			problem.setSource(regFind(tLine, "Resource:</td><td>([\\s\\S]*?)\n</td>"));
 		}
