@@ -39,6 +39,9 @@ public class Contest {
 		return description;
 	}
 	public void setDescription(String description) {
+		if (description != null) {
+			description = description.replaceAll("(?i)script", "scri_pt");
+		}
 		this.description = description;
 	}
 	public String getPassword() {
