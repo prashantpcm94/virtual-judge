@@ -124,9 +124,9 @@ public class UVASubmitter extends Submitter {
 		}
 		
 		String reg = "<input type=\"hidden\" name=\"([\\s\\S]*?)\" value=\"([\\s\\S]*?)\" />";
-        Matcher matcher = Pattern.compile(reg).matcher(tLine);
-        int number = 0;
-        while (matcher.find()){
+		Matcher matcher = Pattern.compile(reg).matcher(tLine);
+		int number = 0;
+		while (matcher.find()){
 			String name = matcher.group(1);
 			String value = matcher.group(2);
 			if (number > 0 && number < 9) {
@@ -137,9 +137,9 @@ public class UVASubmitter extends Submitter {
 		postMethod.addParameter("remember", "yes");
 		postMethod.addParameter("username", username);
 		postMethod.addParameter("passwd", password);
-        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
-        System.out.println("login...");
+		System.out.println("login...");
 		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
 
@@ -151,7 +151,7 @@ public class UVASubmitter extends Submitter {
 	
 	public void getResult(String username) throws Exception{
 		String reg = "<td>(\\d{7,})</td>[\\s\\S]*?show_problem&amp;problem=(\\d+)[\\s\\S]*?</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>", result;
-        Pattern p = Pattern.compile(reg);
+		Pattern p = Pattern.compile(reg);
 
 		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
@@ -167,18 +167,18 @@ public class UVASubmitter extends Submitter {
 				if (submission.getProblem().getTitle().matches("UVa P\\d+")) {
 					fetchExtraInfo(m.group(2));
 				}
-				result = m.group(3).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing");
+				result = m.group(3).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing").replaceAll("Received", "processing");
 				if (result.isEmpty()) {
 					result = "processing";
 				}
 				submission.setStatus(result);
-    			if (!result.contains("ing")){
-    				if (result.equals("Accepted")){
-	    				submission.setTime(Integer.parseInt(m.group(4).replaceAll("\\.", "")));
-    				}
-    				baseService.addOrModify(submission);
-    				return;
-    			}
+				if (!result.contains("ing")){
+					if (result.equals("Accepted")){
+						submission.setTime(Integer.parseInt(m.group(4).replaceAll("\\.", "")));
+					}
+					baseService.addOrModify(submission);
+					return;
+				}
 				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
