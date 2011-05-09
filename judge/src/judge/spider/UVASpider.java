@@ -46,6 +46,9 @@ public class UVASpider extends Spider {
 		problem.setTimeLimit(1);
 		problem.setMemoryLimit(0);
 		description.setDescription(regFind(tLine, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1));
+		if (description.getDescription() == null || description.getDescription().trim().isEmpty()) {
+			description.setDescription(tLine.replaceAll("(?i)</?html>", ""));
+		}
 		problem.setUrl("http://uva.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".html");
 	}
 
