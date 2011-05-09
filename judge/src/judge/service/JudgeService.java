@@ -78,7 +78,7 @@ public class JudgeService extends BaseService {
 	}
 	
 	public void initJudge(){
-		List<Submission> sList = this.query("select s from Submission s where s.status like '%ing%' and s.status not like '%rror%' ");
+		List<Submission> sList = this.query("select s from Submission s left join fetch s.problem where s.status like '%ing%' and s.status not like '%rror%' ");
 		for (Submission submission : sList) {
 			this.rejudge(submission);
 		}
