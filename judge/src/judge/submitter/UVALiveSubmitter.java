@@ -17,6 +17,7 @@ import judge.tool.ApplicationContainer;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -28,7 +29,7 @@ public class UVALiveSubmitter extends Submitter {
 	static private boolean using[];
 	static private String[] usernameList;
 	static private String[] passwordList;
-
+	
 	static {
 		List<String> uList = new ArrayList<String>(), pList = new ArrayList<String>();
 		try {
@@ -54,20 +55,19 @@ public class UVALiveSubmitter extends Submitter {
 			clientList[i] = new HttpClient();
 			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
 		}
-
+		
 		Map<String, String> languageList = new TreeMap<String, String>();
-		languageList.put("C", "C");
-		languageList.put("C++", "C++");
-		languageList.put("Pascal", "Pascal");
-		languageList.put("Java", "Java");
+		languageList.put("1", "ANSI C 4.1.2");
+		languageList.put("2", "JAVA 1.6.0");
+		languageList.put("3", "C++ 4.1.2");
+		languageList.put("4", "PASCAL 2.0.4");
 		sc.setAttribute("UVALive", languageList);
 	}
 	
 	private void getMaxRunId() throws Exception {
-		// 获取当前最大RunID
-		GetMethod getMethod = new GetMethod("http://acmicpc-live-archive.uva.es/nuevoportal/status.php");
+		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=19");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		Pattern p = Pattern.compile("<td>&nbsp;(\\d+)&nbsp;");
+		Pattern p = Pattern.compile("componentheading[\\s\\S]*?<td>(\\d{6,})");
 
 		httpClient.executeMethod(getMethod);
 		byte[] responseBody = getMethod.getResponseBody();
@@ -80,59 +80,110 @@ public class UVALiveSubmitter extends Submitter {
 			throw new Exception();
 		}
 	}
-
-	private void submit(String password) throws Exception{
+	
+	private void submit() throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
-		
-        PostMethod postMethod = new PostMethod("http://acmicpc-live-archive.uva.es/nuevoportal/mailer.php");
-        postMethod.addParameter("paso", "paso");
-        postMethod.addParameter("language", submission.getLanguage());
-        postMethod.addParameter("problem", problem.getOriginProb());
-        postMethod.addParameter("code", submission.getSource());
-        postMethod.addParameter("userid", password);
-        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        httpClient.getParams().setContentCharset("UTF-8"); 
 
-    	System.out.println("submit...");
-		httpClient.executeMethod(postMethod);
-		byte[] responseBody = postMethod.getResponseBody();
-		String tLine = new String(responseBody, "UTF-8");
-		if (!tLine.contains("Problem submitted successfull")){
+		PostMethod postMethod = new PostMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=25&page=save_submission");
+		postMethod.addParameter("problemid", "");
+		postMethod.addParameter("category", "");
+		postMethod.addParameter("localid", problem.getOriginProb());
+		postMethod.addParameter("language", submission.getLanguage());
+		postMethod.addParameter("code", submission.getSource());
+		postMethod.addParameter("codeupl", "");
+		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		httpClient.getParams().setContentCharset("UTF-8"); 
+
+		System.out.println("submit...");
+		int statusCode = httpClient.executeMethod(postMethod);
+		System.out.println("statusCode = " + statusCode);
+		
+		if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
+			throw new Exception();
+		}
+		if (postMethod.getResponseHeader("Location").getValue().contains("not+exist")){
+			throw new Exception();
+		}
+	}
+	
+	private void login(String username, String password) throws Exception{
+		PostMethod postMethod = new PostMethod("http://livearchive.onlinejudge.org/index.php?option=com_comprofiler&task=login");
+		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php");
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		String tLine = "";
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if (statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: " + getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		} catch (Exception e) {
+			getMethod.releaseConnection();
+			throw new Exception();
+		}
+		
+		String reg = "<input type=\"hidden\" name=\"([\\s\\S]*?)\" value=\"([\\s\\S]*?)\" />";
+		Matcher matcher = Pattern.compile(reg).matcher(tLine);
+		int number = 0;
+		while (matcher.find()){
+			String name = matcher.group(1);
+			String value = matcher.group(2);
+			if (number > 0 && number < 9) {
+				postMethod.addParameter(name, value);
+			}
+			++number;
+		}
+		postMethod.addParameter("remember", "yes");
+		postMethod.addParameter("username", username);
+		postMethod.addParameter("passwd", password);
+		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		System.out.println("login...");
+		int statusCode = httpClient.executeMethod(postMethod);
+		System.out.println("statusCode = " + statusCode);
+
+		//注意:此处判断登陆成功条件并不充分,相当于默认成功
+		if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
 			throw new Exception();
 		}
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "<td>&nbsp;(\\d+)&nbsp;[\\s\\S]*?class=\"V_\\w{2,5}\">([\\s\\S]*?)<td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
+		String reg = "<td>(\\d{6,})</td>[\\s\\S]*?</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>", result;
 		Pattern p = Pattern.compile(reg);
-		GetMethod getMethod = new GetMethod("http://acmicpc-live-archive.uva.es/nuevoportal/status.php?u=" + username);
+
+		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
-		while (new Date().getTime() - cur < 600000){
+		while (new Date().getTime() - cur < 1800000){
 			System.out.println("getResult...");
-	        httpClient.executeMethod(getMethod);
-	        byte[] responseBody = getMethod.getResponseBody();
-	        String tLine = new String(responseBody, "UTF-8");
-			Matcher m = p.matcher(tLine);
-			
-			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
-				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
-				submission.setStatus(result);
+			httpClient.executeMethod(getMethod);
+			byte[] responseBody = getMethod.getResponseBody();
+			String tLine = new String(responseBody, "UTF-8");
 
-				if (result.equals("Accepted")){
-    				submission.setMemory(m.group(4).equals("Minimum") ? 0 : Integer.parseInt(m.group(4)));
-    				submission.setTime((int)(1000 * Double.parseDouble(m.group(3))));
-//	   				System.out.println(username + " " + submission.getMemory() + "KB " + submission.getTime() + "ms");
+			Matcher m = p.matcher(tLine);
+			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
+				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing").replaceAll("Received", "processing");
+				if (result.isEmpty()) {
+					result = "processing";
+				}
+				submission.setStatus(result);
+				if (!result.contains("ing")){
+					if (result.equals("Accepted")){
+						submission.setTime(Integer.parseInt(m.group(3).replaceAll("\\.", "")));
+					}
+					baseService.addOrModify(submission);
+					return;
 				}
 				baseService.addOrModify(submission);
-				return;
 			}
 			Thread.sleep(interval);
 			interval += 500;
-        }
+		}
 		throw new Exception();
 	}
-
+	
 	private int getIdleClient() {
 		int length = usernameList.length;
 		int begIdx = (int) (Math.random() * length);
@@ -155,21 +206,29 @@ public class UVALiveSubmitter extends Submitter {
 			}
 		}
 	}
-
-
+	
 	public void work() {
 		idx = getIdleClient();
 		int errorCode = 1;
 
 		try {
 			getMaxRunId();
-				
-			submit(passwordList[idx]);	//非登陆式,只需交一次
+			try {
+				//第一次尝试提交
+				submit();
+			} catch (Exception e1) {
+				//失败,认为是未登录所致
+				e1.printStackTrace();
+				Thread.sleep(2000);
+				login(usernameList[idx], passwordList[idx]);
+				Thread.sleep(2000);
+				submit();
+			}
 			errorCode = 2;
 			submission.setStatus("Running & Judging");
 			baseService.addOrModify(submission);
 			Thread.sleep(2000);
-			getResult(passwordList[idx]);
+			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error " + errorCode);
@@ -184,7 +243,7 @@ public class UVALiveSubmitter extends Submitter {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}	//client冷却时间
+		}	//UVa Live限制每两次提交之间至少隔?秒
 		synchronized (using) {
 			using[idx] = false;
 		}

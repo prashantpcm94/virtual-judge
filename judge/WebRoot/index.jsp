@@ -30,7 +30,7 @@ String basePath = (String)application.getAttribute("basePath");
 				Currently, this system supports the following online judges:<br />
 				<a href="http://acm.pku.edu.cn/JudgeOnline/" target="_blank">POJ</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://acm.zju.edu.cn/onlinejudge/" target="_blank">ZOJ</a>&nbsp;&nbsp;&nbsp;
-				<a href="http://acmicpc-live-archive.uva.es/nuevoportal/" target="_blank">UVALive</a>&nbsp;&nbsp;&nbsp;
+				<a href="http://livearchive.onlinejudge.org/index.php" target="_blank">UVALive</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://acm.sgu.ru/" target="_blank">SGU</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://acm.timus.ru/" target="_blank">URAL</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://acm.hust.edu.cn/thx/" target="_blank">HUST</a>&nbsp;&nbsp;&nbsp;

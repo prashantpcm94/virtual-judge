@@ -10,40 +10,47 @@ public class UVALiveSpider extends Spider {
 
 		String tLine = "";
 		HttpClient httpClient = new HttpClient();
-		GetMethod getMethod = new GetMethod("http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p=" + problem.getOriginProb());
+		if (!problem.getOriginProb().matches("\\d+")) {
+			throw new Exception();
+		}
+		int category = Integer.parseInt(problem.getOriginProb()) / 100;
+		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".html");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
 			int statusCode = httpClient.executeMethod(getMethod);
 			if (statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
+				throw new Exception();
 			}
 			byte[] responseBody = getMethod.getResponseBody();
 			tLine = new String(responseBody, "UTF-8");
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
-
 		}
 
-		if (tLine.contains("<title>Problem not found</title>")) {
+		tLine = tLine.replaceAll("(?i)(src=\"?)(?!\"*http)", "$1http://livearchive.onlinejudge.org/external/" + category + "/");
+		description.setDescription(tLine);
+		
+		getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + (Integer.parseInt(problem.getOriginProb()) - 1999));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if (statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: " + getMethod.getStatusLine());
+				throw new Exception();
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		} catch (Exception e) {
+			getMethod.releaseConnection();
 			throw new Exception();
 		}
-		if (!tLine.contains("<b>Submit</b>")) {
-			throw new Exception();
-		}
 
-		tLine = tLine.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://acmicpc-live-archive.uva.es/nuevoportal/data/");
-		tLine = tLine.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://acmicpc-live-archive.uva.es/nuevoportal/data/");
-
-		problem.setTitle(regFind(tLine,	"<title>\\d{3,} - ([\\s\\S]*?)</title>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
-			throw new Exception();
-		}
-		problem.setTimeLimit(0);
+		problem.setTitle(regFind(tLine, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>"));
+		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
 		problem.setMemoryLimit(0);
-		description.setDescription(regFind(tLine, "<b>Ranking</b></a></td></tr></table>([\\s\\S]*?)<hr><ADDRESS>"));
-		problem.setSource(regFind(tLine, "<hr><ADDRESS>([\\s\\S]*?)</ADDRESS>"));
-		problem.setUrl("http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p="	+ problem.getOriginProb());
+		problem.setUrl("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + (Integer.parseInt(problem.getOriginProb()) - 1999));
 	}
 
 	@Override
