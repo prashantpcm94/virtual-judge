@@ -176,7 +176,9 @@ public class ProblemAction extends BaseAction{
 				description.setRemarks("Initialization.");
 				description.setVote(0);
 			}
-			problem.setTitle("Crawling……");
+			if (problem.getTitle() == null) {
+				problem.setTitle("Crawling……");
+			}
 			problem.setTimeLimit(1);
 			problem.setTriggerTime(new Date());
 			baseService.addOrModify(problem);

@@ -42,8 +42,9 @@ public class UVASpider extends Spider {
 		tLine = tLine.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://uva.onlinejudge.org/external/" + category + "/");
 		tLine = tLine.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://uva.onlinejudge.org/external/" + category + "/");
 
-		problem.setTitle("UVa P" + problem.getOriginProb());
-		problem.setTimeLimit(1);
+		if ("Crawling……".equals(problem.getTitle())) {
+			problem.setTitle("UVa P" + problem.getOriginProb());
+		}
 		problem.setMemoryLimit(0);
 		description.setDescription(regFind(tLine, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1));
 		if (description.getDescription() == null || description.getDescription().trim().isEmpty()) {
@@ -54,6 +55,10 @@ public class UVASpider extends Spider {
 
 	@Override
 	public void extraOptr() throws Exception {
+		if (!problem.getTitle().matches("UVa P\\d+")) {
+			return;
+		}
+		
 		ServletContext sc = ApplicationContainer.sc;
 		Map<String, String> langMap = (Map<String, String>)sc.getAttribute(problem.getOriginOJ());
 		String language = langMap.keySet().iterator().next();
@@ -64,7 +69,7 @@ public class UVASpider extends Spider {
 		submission.setUser(new User(1006));
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
-		submission.setSource("test");
+		submission.setSource("int main(){return 0;}/* http://acm.hust.edu.cn:8080/judge */");
 		submission.setIsOpen(0);
 		submission.setIsPrivate(1);
 		submission.setDispLanguage(langMap.get(language));
