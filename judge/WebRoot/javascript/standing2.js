@@ -27,6 +27,9 @@ $(document).ready(function() {
 				onlyCid = 0;
 				$("div#contestTitle").text("　");
 				getRemoteData();
+				setTimeout(function(){
+					oFH = new FixedHeader( standingTable );
+				}, 100);
 			}
 		},
 		select: function(event, ui) {
@@ -43,9 +46,6 @@ $(document).ready(function() {
 	$( "#tabs" ).addClass("ui-widget-content-custom");
 
 	standingTable = $('#standing').dataTable(standingTableSetting);
-	setTimeout(function(){
-		oFH = new FixedHeader( standingTable );
-	}, 100);
 
 	$('#setting table').dataTable({
 		"bPaginate": false,

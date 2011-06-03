@@ -1,11 +1,7 @@
 $(document).ready(function() {
-	
-	dispInfo();
-
 	$("input[name=open]").change(function(){
 		judgeService.toggleOpen($("[name=sid]").val(), dispInfo);
 	});
-	
 });
 
 function dispInfo(){

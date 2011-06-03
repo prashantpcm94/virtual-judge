@@ -9,16 +9,16 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- Source code</title>
+		<base href="<%=basePath%>" />
+		<title>Virtual Judge -- Source code</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<script type="text/javascript" src="shjs/sh_main.min.js" ></script>
 		<script type="text/javascript" src="<%=langFile%>" ></script>
 		<link type="text/css" rel="stylesheet" href="shjs/css/sh_style.min.css" />
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
-	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
-	    <script type='text/javascript' src='dwr/util.js'></script>
+		<script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/viewSource.js"></script>
 	</head>
@@ -71,8 +71,13 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 				</s:if>
 			</table>
 			<s:hidden name="sid" value="%{submission.id}" />
-		</div>	
-		<p id="info" style="text-align:center;font-size:15pt;color:green;visibility:hidden">This source is shared by <b>${un}</b></p>
+		</div>
+		<s:if test="submission.isOpen == 0">
+			<p id="info" style="text-align:center;font-size:15pt;color:green;visibility:hidden">This source is shared by <b>${un}</b></p>
+		</s:if>
+		<s:else>
+			<p id="info" style="text-align:center;font-size:15pt;color:green;">This source is shared by <b>${un}</b></p>
+		</s:else>	
 		<pre class="${language}" style="font-family:Courier New,Courier,monospace">${submission.source}</pre>
 		<s:include value="/bottom.jsp" />
 	</body>
