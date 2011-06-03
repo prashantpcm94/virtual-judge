@@ -30,7 +30,7 @@ $(document).ready(function() {
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
-		  					return oObj.aData[3] == 'Judging Error 1' ? oObj.aData[3] + " <a href='#' class='rejudge' ><img border=0 height='15' src='images/refresh.png'/></a>" : oObj.aData[3];
+		  					return oObj.aData[3] == 'Judging Error 1' || oObj.aData[3] == 'Judging Error 2' && $("[name='isSup']").val() != 0 ? oObj.aData[3] + " <a href='#' class='rejudge' ><img border=0 height='15' src='images/refresh.png'/></a>" : oObj.aData[3];
 		  				},
 						"sClass": "result"
 					},

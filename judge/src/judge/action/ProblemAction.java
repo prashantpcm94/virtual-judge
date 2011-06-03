@@ -44,6 +44,7 @@ public class ProblemAction extends BaseAction{
 	private String un;
 	private boolean inContest;
 	private String _64Format;
+	private Integer isSup;
 	private DataTablesPage dataTablesPage;
 	private Map<Object, String> languageList;
 
@@ -292,8 +293,10 @@ public class ProblemAction extends BaseAction{
 			OJId = problem.getOriginOJ();
 			probNum = problem.getOriginProb();
 		}
-
 		Map session = ActionContext.getContext().getSession();
+		User user = (User) session.get("visitor");
+		isSup = user == null ? 0 : user.getSup();
+
 		if (session.containsKey("error")){
 			this.addActionError((String) session.get("error"));
 		}
@@ -508,7 +511,10 @@ public class ProblemAction extends BaseAction{
 	public String rejudge(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
-		submission = (Submission) baseService.query(Submission.class, id);
+		List<Submission> submissionList = baseService.query("select s from Submission s left join fetch s.problem where s.id = " + id);
+		if (!submissionList.isEmpty()) {
+			submission = submissionList.get(0);
+		}
 		if (submission == null || !submission.getStatus().equals("Judging Error 1") && (user == null || user.getSup() == 0)){
 			return ERROR;
 		}
@@ -636,6 +642,12 @@ public class ProblemAction extends BaseAction{
 	}
 	public void setInContest(boolean inContest) {
 		this.inContest = inContest;
+	}
+	public Integer getIsSup() {
+		return isSup;
+	}
+	public void setIsSup(Integer isSup) {
+		this.isSup = isSup;
 	}
 
 }

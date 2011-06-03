@@ -61,6 +61,7 @@ String basePath = (String)application.getAttribute("basePath");
 				</tr>
 			</tbody>
 		</table>
+		<s:hidden name="isSup" />
 		<s:include value="/bottom.jsp" />
 	</body>
 

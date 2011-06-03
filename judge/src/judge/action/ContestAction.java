@@ -57,6 +57,7 @@ public class ContestAction extends BaseAction {
 	private List<Object[]> sameContests;
 	private long beginTime;
 	private long endTime;
+	private Integer isSup;
 	
 	
 	private List pids;
@@ -508,6 +509,7 @@ public class ContestAction extends BaseAction {
 	public String status(){
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
+		isSup = user == null ? 0 : user.getSup();
 		
 		if (session.get("C" + cid) == null){
 			contest = (Contest) baseService.query(Contest.class, cid);
@@ -1173,6 +1175,12 @@ public class ContestAction extends BaseAction {
 	}
 	public void setEndTime(long endTime) {
 		this.endTime = endTime;
+	}
+	public Integer getIsSup() {
+		return isSup;
+	}
+	public void setIsSup(Integer isSup) {
+		this.isSup = isSup;
 	}
 }
 
