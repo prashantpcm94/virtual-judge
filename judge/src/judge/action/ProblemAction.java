@@ -160,7 +160,7 @@ public class ProblemAction extends BaseAction{
 			if (problem == null){
 				problem = new Problem();
 				problem.setOriginOJ(OJId.trim());
-				problem.setOriginProb(probNum);
+				problem.setOriginProb(probNum.toUpperCase());
 			} else {
 				for (Description desc : problem.getDescriptions()){
 					if ("0".equals(desc.getAuthor())){

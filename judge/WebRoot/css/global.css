@@ -313,6 +313,11 @@ a.shared {
 
 
 /********************ViewProblem*********************/
+
+.hiddable {
+	font-family: times new roman;
+}
+
 .desc_info {
 	background-color:#EAEBFF;
 	margin: 3px;
@@ -366,6 +371,10 @@ pre {
 	white-space: -pre-wrap;      /* Opera 4-6 */
 	white-space: -o-pre-wrap;    /* Opera 7 */
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.tex-span {
+    font-size: 125%;
 }
 
 body {
