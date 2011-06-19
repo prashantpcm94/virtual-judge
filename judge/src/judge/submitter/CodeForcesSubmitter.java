@@ -130,7 +130,7 @@ public class CodeForcesSubmitter extends Submitter {
 		postMethod.addParameter("action", "submitSolutionFormSubmitted");
 		postMethod.addParameter("submittedProblemCode", problem.getOriginProb());
 		postMethod.addParameter("language", submission.getLanguage());
-		postMethod.addParameter("source", submission.getSource());
+		postMethod.addParameter("source", source);
 		postMethod.addParameter("sourceFile", "");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.getParams().setContentCharset("UTF-8"); 
