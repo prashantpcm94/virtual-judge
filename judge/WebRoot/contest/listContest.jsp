@@ -53,21 +53,11 @@
 		
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="listContest">
 			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Title</th>
-					<th>Begin Time</th>
-					<th>Length</th>
-					<th>Status</th>
-					<th>Type</th>
-					<th>Manager</th>
-					<th></th>
-					<th></th>
-				</tr>
+				<tr><th>ID</th><th></th><th>Title</th><th>Begin Time</th><th>Length</th><th>Status</th><th>Type</th><th>Manager</th><th></th><th></th></tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td colspan="9">Loading data from server</td>
+					<td colspan="10">Loading data from server</td>
 				</tr>
 			</tbody>
 		</table>

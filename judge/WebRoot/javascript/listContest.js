@@ -12,7 +12,7 @@ $(document).ready(function() {
 		"iDisplayLength": 25,
 		"bAutoWidth": false,
 		"bStateSave": true,
-		"aaSorting": [[ 2, "desc" ]],
+		"aaSorting": [[ 3, "desc" ]],
 
 		"aoColumns": [
 		  			{ 
@@ -20,13 +20,19 @@ $(document).ready(function() {
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
-			  				return "<a href='contest/viewContest.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[1] + "</a>";
+			  				return oObj.aData[1] == 1 ? "<img height='15px' border='0' src='images/replay.png' />" : "";
 		  				},
-		  				"sClass": "title"
+		  				"bSortable": false
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
-			  				return new Date(parseInt(oObj.aData[2])).format("yyyy-MM-dd hh:mm:ss");
+			  				return "<a href='contest/viewContest.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[2] + "</a>";
+		  				},
+		  				"sClass": "title"
+		  			},
+{
+		  				"fnRender": function ( oObj ) {
+			  				return new Date(parseInt(oObj.aData[3])).format("yyyy-MM-dd hh:mm:ss");
 		  				},
 		  				"sClass": "date"
 		  			},
@@ -44,7 +50,7 @@ $(document).ready(function() {
 		  			},
 		  			{ 
 		  				"fnRender": function ( oObj ) {
-		  					return "<a href='user/profile.action?uid=" + oObj.aData[7] + "'>" + oObj.aData[6] + "</a>";
+		  					return "<a href='user/profile.action?uid=" + oObj.aData[8] + "'>" + oObj.aData[7] + "</a>";
 		  				},
 		  				"sClass": "center"
 		  			},
@@ -53,15 +59,14 @@ $(document).ready(function() {
 		  			},
 		  			{ 
 		  				"fnRender": function ( oObj ) {
-
-		  					if (oObj.aData[8] == 1) {
+		  					if (oObj.aData[9] == 1) {
 		  						return "<a href='contest/toEditContest.action?cid=" + oObj.aData[0] + "'><img height='15px' border='0' src='images/wrench.gif' /></a>&nbsp;<a href='javascript:void(0)' onclick='comfirmDeleteContest(\"" + oObj.aData[0] + "\")'><img height='15px' border='0' src='images/recycle.gif' /></a>";
 		  					} else return "";
 		  				},
 		  				"bUseRendered": false, 
 		  				"bSearchable": false,
 		  				"bSortable": false,
-		  				"sClass": "id"
+		  				"sClass": "id icon"
 		  			}
 		  		],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
@@ -81,9 +86,9 @@ $(document).ready(function() {
 			} );
 		},
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-		    $('td:eq(4)', nRow).addClass(aData[4]);
 		    $('td:eq(5)', nRow).addClass(aData[5]);
-		    nRow.className += " " + aData[4];
+		    $('td:eq(6)', nRow).addClass(aData[6]);
+		    nRow.className += " " + aData[5];
 			return nRow;
 		},
 		"bJQueryUI": true,

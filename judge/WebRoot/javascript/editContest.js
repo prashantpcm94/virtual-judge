@@ -105,7 +105,6 @@ $(document).ready(function(){
 	
 	$("[name='_beginTime']").datepicker({
 		dateFormat: 'yy-mm-dd',
-		minDate: -0,
 		maxDate: +30,
 		showAnim: 'blind'
 	});
@@ -116,6 +115,20 @@ $(document).ready(function(){
 	$(".clk_select").blur(function(){
 		if (!this.value || this.value.match(/^\s+$/)){
 			this.value = 0;
+		}
+	});
+	
+
+	if ($("input[name='contestType']:checked").val() == 0) {
+		$("#ranklistData").hide();
+	} else {
+		$("#ranklistData").show();
+	}
+	$("input[name='contestType']").change(function(){
+		if ($(this).val() == 0) {
+			$("#ranklistData").hide();
+		} else {
+			$("#ranklistData").show();
 		}
 	});
 

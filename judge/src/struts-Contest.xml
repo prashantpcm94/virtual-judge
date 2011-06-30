@@ -27,22 +27,31 @@
 		<!-- 添加比赛 -->
 		<action name="addContest" class="contestAction" method="addContest">
 			<result name="success" type="redirect">toListContest.action</result>		
-			<result name="error">/contest/addContest.jsp</result>		
-			<result name="input">/contest/addContest.jsp</result>		
+			<result name="choose_meaning">/contest/chooseMeaning.jsp</result>		
+			<result name="input">/contest/addContest.jsp</result>
+			<result name="error">/contest/addContest.jsp</result>
+		</action>
+
+		<!-- 添加比赛回放 -->
+		<action name="addReplay" class="contestAction" method="addReplay">
+			<result name="success" type="redirect">toListContest.action</result>		
+			<result name="input">/contest/chooseMeaning.jsp</result>
+			<result name="error">/contest/chooseMeaning.jsp</result>
 		</action>
 
 		<!-- 进入修改比赛 -->
 		<action name="toEditContest" class="contestAction" method="toEditContest">
-			<result name="scheduled">/contest/editContest1.jsp</result>
-			<result name="running">/contest/editContest2.jsp</result>
+			<result name="detail_edit">/contest/editContest1.jsp</result>
+			<result name="brief_edit">/contest/editContest2.jsp</result>
 			<result name="error" type="redirect">toListContest.action</result>		
 		</action>
 
 		<!-- 修改比赛 -->
 		<action name="editContest" class="contestAction" method="editContest">
 			<result name="success" type="redirect">toListContest.action</result>		
-			<result name="scheduled">/contest/editContest1.jsp</result>
-			<result name="running">/contest/editContest2.jsp</result>
+			<result name="choose_meaning">/contest/chooseMeaning.jsp</result>		
+			<result name="detail_edit">/contest/editContest1.jsp</result>
+			<result name="brief_edit">/contest/editContest2.jsp</result>
 		</action>
 
 		<!-- 删除比赛 -->

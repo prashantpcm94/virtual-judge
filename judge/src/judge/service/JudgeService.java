@@ -1,17 +1,32 @@
 package judge.service;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.Ostermiller.util.CSVParser;
 
 import judge.action.BaseAction;
 import judge.bean.Contest;
 import judge.bean.Problem;
+import judge.bean.ReplayStatus;
 import judge.bean.Submission;
 import judge.service.imp.BaseService;
 import judge.submitter.Submitter;
@@ -19,6 +34,34 @@ import judge.tool.ApplicationContainer;
 
 @SuppressWarnings("unchecked")
 public class JudgeService extends BaseService {
+
+	private static final String cellOptions []= {
+		"No submisson",																//0		0
+		"1 wrong submission and did not solve",										//0		1
+
+		"Solved at [0] minute with no wrong submisson",								//1		2
+		"Solved at [0] minute with one wrong submission",							//1		3
+		"[0] wrong submission(s) and did not solve",								//1		4
+				
+		"Solved at [0] hour [1] minute with no wrong submisson",					//2		5
+		"Solved at [0] hour [1] minute with one wrong submission",					//2		6
+		"Solved at [0] minute with [1] submission(s)",								//2		7
+		"Solved at [0] minute with [1] wrong submission(s)",						//2		8
+		"Solved at [1] minute with [0] submission(s)",								//2		9
+		"Solved at [1] minute with [0] wrong submission(s)",						//2		10
+		
+		"Solved at [0] hour [1] minute [2] second with no wrong submission",		//3		11
+		"Solved at [0] hour [1] minute with [2] submission(s)",						//3		12
+		"Solved at [0] hour [1] minute with [2] wrong submission(s)",				//3		13
+		"Solved at [1] hour [2] minute with [0] submission(s)",						//3		14
+		"Solved at [1] hour [2] minute with [0] wrong submission(s)",				//3		15
+		
+		"Solved at [0] hour [1] minute [2] second with [3] submission(s)",			//4		16
+		"Solved at [0] hour [1] minute [2] second with [3] wrong submission(s)",	//4		17
+		"Solved at [1] hour [2] minute [3] second with [0] submission(s)",			//4		18
+		"Solved at [1] hour [2] minute [3] second with [0] wrong submission(s)"		//4		19
+	};
+	
 	
 	/**
 	 * 根据提交ID查询结果
@@ -92,9 +135,8 @@ public class JudgeService extends BaseService {
 	 * @throws Exception
 	 */
 	public Object[] updateStandingData(Integer cid, boolean force) throws Exception{
-		long beginTime = ((Contest) this.query(Contest.class, cid)).getBeginTime().getTime();
-		List<Object[]> submissionList = this.query("select s.username, cp.num, s.status, s.subTime from Submission s, Cproblem cp where s.contest.id = " + cid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id order by s.id asc");
-		
+		Contest contest = (Contest) this.query("select contest from Contest contest left join fetch contest.replayStatus where contest.id = " + cid).get(0);
+
 		String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
 		String path = ApplicationContainer.sc.getRealPath(relativePath);
 		File data = new File(path, cid.toString());
@@ -106,20 +148,29 @@ public class JudgeService extends BaseService {
 		} else {
 			data.createNewFile();
 		}
-		FileWriter filewriter = new FileWriter(data, false);
-		StringBuffer sb = new StringBuffer("[");
+		FileOutputStream fos = new FileOutputStream(data);
+		Writer out = new OutputStreamWriter(fos, "UTF-8");
+		
+		if (contest.getReplayStatus() != null) {
+			out.write(contest.getReplayStatus().getData());
+		} else {
+			List<Object[]> submissionList = this.query("select s.username, cp.num, s.status, s.subTime from Submission s, Cproblem cp where s.contest.id = " + cid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id order by s.id asc");
+			long beginTime = contest.getBeginTime().getTime();
+			StringBuffer sb = new StringBuffer("[");
 
-		for (int i = 0; i < submissionList.size(); i++){
-			Object[] info = submissionList.get(i);
-			if (i > 0){
-				sb.append(",");
+			for (int i = 0; i < submissionList.size(); i++){
+				Object[] info = submissionList.get(i);
+				if (i > 0){
+					sb.append(",");
+				}
+				sb.append("[\"").append(info[0]).append("\",").append(((String)info[1]).charAt(0) - 'A').append(",").append("Accepted".equals(info[2]) ? 1 : 0).append(",").append((((Date)info[3]).getTime() - beginTime) / 1000L).append("]");
 			}
-			sb.append("[\"").append(info[0]).append("\",").append(((String)info[1]).charAt(0) - 'A').append(",").append("Accepted".equals(info[2]) ? 1 : 0).append(",").append((((Date)info[3]).getTime() - beginTime) / 1000L).append("]");
-		}
-		sb.append("]");
+			sb.append("]");
 
-		filewriter.write(sb.toString());
-		filewriter.close();
+			out.write(sb.toString());
+		}
+		out.close();
+		fos.close();
 
 		return res;
 	}
@@ -151,5 +202,268 @@ public class JudgeService extends BaseService {
 		submission.setIsOpen(1 - submission.getIsOpen());
 		this.addOrModify(submission);
 	}
+	
+	/**
+	 * 获取字符串中连续的数字段
+	 * @param input
+	 * @return
+	 */
+	private Integer[] getNumberSegments(String input) {
+		Matcher m = Pattern.compile("\\d+").matcher(input);
+		List<Integer> answer = new ArrayList<Integer>();
+		while (m.find()) {
+			answer.add(Integer.parseInt(m.group()));
+		}
+		return answer.toArray(new Integer[0]);
+	}
 
+	/**
+	 * 获取ranklist中单元格可能的选项
+	 * @param ranklistCells
+	 * @return
+	 */
+	public Map<String, Map<Integer, String> > getCellMeaningOptions(String[][] ranklistCells, long contestLength) {
+		Map<String, Set<Integer>> temp = new HashMap<String, Set<Integer>>();
+		Map<String, String> formatExample = new HashMap<String, String>();
+		for (int j = ranklistCells.length - 1; j >= 0; --j) {
+			String [] row = ranklistCells[j];
+			for (int i = 1; i < row.length; ++i) {
+				String symbolized = row[i].replaceAll("\\d+", "[d]");
+				Integer[] numberSegments = getNumberSegments(row[i]);
+				Set<Integer> curSet = temp.get(symbolized);
+				if (curSet == null) {
+					curSet = new HashSet<Integer>();
+					if (numberSegments.length == 0) {
+						curSet.addAll(Arrays.asList(new Integer[]{0, 1}));
+					} else if (numberSegments.length == 1) {
+						curSet.addAll(Arrays.asList(new Integer[]{2, 3, 4}));
+					} else if (numberSegments.length == 2) {
+						curSet.addAll(Arrays.asList(new Integer[]{5, 6, 7, 8, 9, 10}));
+					} else if (numberSegments.length == 3) {
+						curSet.addAll(Arrays.asList(new Integer[]{11, 12, 13, 14, 15}));
+					} else if (numberSegments.length == 4) {
+						curSet.addAll(Arrays.asList(new Integer[]{16, 17, 18, 19}));
+					}
+					temp.put(symbolized, curSet);
+					formatExample.put(symbolized, row[i]);
+				}
+				//时间错误
+				if (numberSegments.length == 1 && numberSegments[0] * 60000 > contestLength) {
+					curSet.remove(2);
+					curSet.remove(3);
+				}
+				if (numberSegments.length > 1 && (numberSegments[1] > 59 || numberSegments[0] * 3600000 + numberSegments[1] * 60000 > contestLength)) {
+					curSet.removeAll(Arrays.asList(new Integer[]{5, 6, 12, 13}));
+				}
+				if (numberSegments.length > 2 && (numberSegments[2] > 59 || numberSegments[1] * 3600000 + numberSegments[2] * 60000 > contestLength)) {
+					curSet.remove(14);
+					curSet.remove(15);
+				}
+				if (numberSegments.length > 2 && (numberSegments[1] > 59 || numberSegments[2] > 59 || numberSegments[0] * 3600000 + numberSegments[1] * 60000 + numberSegments[2] * 1000 > contestLength)) {
+					curSet.removeAll(Arrays.asList(new Integer[]{11, 16, 17}));
+				}
+				if (numberSegments.length > 3 && (numberSegments[2] > 59 || numberSegments[3] > 59 || numberSegments[1] * 3600000 + numberSegments[2] * 60000 + numberSegments[3] * 1000 > contestLength)) {
+					curSet.remove(18);
+					curSet.remove(19);
+				}
+				//提交次数错误(0次总提交却solved)
+				if (numberSegments.length > 0 && numberSegments[0] == 0) {
+					curSet.removeAll(Arrays.asList(new Integer[]{9, 14, 18}));
+				}
+				if (numberSegments.length > 1 && numberSegments[1] == 0) {
+					curSet.remove(7);
+				}
+				if (numberSegments.length > 2 && numberSegments[2] == 0) {
+					curSet.remove(12);
+				}
+				if (numberSegments.length > 3 && numberSegments[3] == 0) {
+					curSet.remove(16);
+				}
+			}
+		}
+		
+		Map<String, Map<Integer, String> > ans = new TreeMap<String, Map<Integer,String>>();
+		for (Iterator iterator = temp.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry entry = (Map.Entry) iterator.next();    
+			String symbolized = (String) entry.getKey();
+			Integer[] numberSegments = getNumberSegments(formatExample.get(symbolized));
+			Set<Integer> validOptionNumbers = (Set<Integer>) entry.getValue();
+			Map<Integer, String> map = new TreeMap<Integer, String>();
+			for (Iterator it = validOptionNumbers.iterator(); it.hasNext();) {
+				Integer integer = (Integer) it.next();
+				String template = cellOptions[integer];
+				for (int i = 0; i < numberSegments.length; i++) {
+					template = template.replaceAll("\\[" + i + "\\]", numberSegments[i].toString());
+				}
+				map.put(integer, template);
+			}
+			ans.put(formatExample.get(symbolized), map);
+		}
+		return ans;
+	}
+
+
+	/**
+	 * 分割csv文件为String[][]
+	 * @param csv
+	 * @param problemNumber
+	 * @return
+	 * @throws Exception
+	 */
+	public String[][] splitCells(File csv, int problemNumber) throws Exception {
+		if (csv == null) {
+			throw new Exception("Ranklist CSV is empty!");
+		}
+		String[][] result = null;
+		try {
+			FileReader fr = new FileReader(csv);
+			result = CSVParser.parse(fr);
+			fr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new Exception("Ranklist CSV has error!");
+		}
+		if (result.length > 500) {
+			throw new Exception("At most 500 teams!");
+		}
+		for (String[] contestantInfo : result) {
+			if (contestantInfo.length - 1 > problemNumber) {
+				throw new Exception("The number of problems do not match the contest's!");
+			}
+		}
+		return result;
+	}
+	
+	
+
+	/**
+	 * 生成replay的所有status
+	 * @param ranklistCells 原csv二维数组
+	 * @param cellMeaningOptions 所有可选cellMeaning
+	 * @param selectedCellMeaning 已选的cellMeaning
+	 * @param contestLength 比赛长度(ms)
+	 * @throws Exception 
+	 */
+	public ReplayStatus getReplayStatus(String[][] ranklistCells, Map cellMeaningOptions, List<String> selectedCellMeaning, long contestLength) throws Exception {
+		Map<String, Integer> meaningMap = new HashMap<String, Integer>();
+		int i = 0;
+		for (Iterator iterator = cellMeaningOptions.entrySet().iterator(); iterator.hasNext(); ++i) {
+			Map.Entry entry = (Map.Entry) iterator.next();    
+			String symbolized = ((String) entry.getKey()).replaceAll("\\d+", "[d]");
+			Map validOptions = (Map) entry.getValue();
+			Integer curMeaning = null;
+			try {
+				curMeaning = Integer.parseInt(selectedCellMeaning.get(i));
+			} catch (Exception e) {
+				throw new Exception("Invalid cell meaning selections!");
+			}
+			if (!validOptions.containsKey(curMeaning)) {
+				throw new Exception("Invalid cell meaning selections!");
+			}
+			meaningMap.put(symbolized, curMeaning);
+		}
+		List<Submission> submissions = new ArrayList<Submission>();
+		int totalSubmissionNumber = 0;
+		for (String[] row : ranklistCells) {
+			for (i = 1; i < row.length; ++i) {
+				Integer idx = meaningMap.get(row[i].replaceAll("\\d+", "[d]"));
+				long submissionInfo[] = getSubmissionInfo(getNumberSegments(row[i]), idx);
+				totalSubmissionNumber += submissionInfo[1];
+				if (totalSubmissionNumber > 10000) {
+					throw new Exception("At most 10000 submissions!");
+				}
+
+				long time = submissionInfo[0] < 0 ? contestLength : submissionInfo[0];
+				for (int j = 0; j < submissionInfo[1]; j++) {
+					Submission submission = new Submission();
+					submission.setUsername(row[0]);
+					submission.setId(i - 1);	//这里借用做存储题号
+					if (j < submissionInfo[1] - 1) {
+						submission.setSubTime(new Date(time - 1000L));
+						submission.setStatus("0");
+					} else {
+						submission.setSubTime(new Date(time));
+						submission.setStatus(submissionInfo[0] < 0 ? "0" : "1");
+					}
+					submissions.add(submission);
+				}
+			}
+		}
+		Collections.sort(submissions, new Comparator() {  
+			public int compare(Object o1, Object o2) {
+				Submission s1 = (Submission) o1;
+				Submission s2 = (Submission) o2;
+				return s1.getSubTime().compareTo(s2.getSubTime());
+			}
+		});
+		
+		StringBuffer sb = new StringBuffer("[");
+		for (Submission submission : submissions) {
+			if (sb.length() > 2){
+				sb.append(",");
+			}
+			sb.append("[\"").append(submission.getUsername().trim()).append("\",").append(submission.getId()).append(",").append(submission.getStatus()).append(",").append(submission.getSubTime().getTime() / 1000L).append("]");
+		}
+		sb.append("]");
+		
+		ReplayStatus replayStatus = new ReplayStatus();
+		replayStatus.setData(sb.toString());
+
+		return replayStatus;
+	}
+	
+	/**
+	 * 获取一个team一道题的提交信息
+	 * @param idx 
+	 * @param integers 
+	 * @return [0]:AC时刻(ms)(-1表示未AC)	[1]:总提交次数
+	 * @throws Exception 
+	 */
+	private long[] getSubmissionInfo(Integer[] val, Integer idx) throws Exception {
+		switch (idx) {
+		case 0:
+			return new long[]{-1, 0};
+		case 1:
+			return new long[]{-1, 1};
+		case 2:
+			return new long[]{val[0] * 60000, 1};
+		case 3:
+			return new long[]{val[0] * 60000, 2};
+		case 4:
+			return new long[]{-1, val[0]};
+		case 5:
+			return new long[]{val[0] * 3600000 + val[1] * 60000, 1};
+		case 6:
+			return new long[]{val[0] * 3600000 + val[1] * 60000, 2};
+		case 7:
+			return new long[]{val[0] * 60000, val[1]};
+		case 8:
+			return new long[]{val[0] * 60000, val[1] + 1};
+		case 9:
+			return new long[]{val[1] * 60000, val[0]};
+		case 10:
+			return new long[]{val[1] * 60000, val[0] + 1};
+		case 11:
+			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, 1};
+		case 12:
+			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2]};
+		case 13:
+			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2] + 1};
+		case 14:
+			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0]};
+		case 15:
+			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0] + 1};
+		case 16:
+			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3]};
+		case 17:
+			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3] + 1};
+		case 18:
+			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0]};
+		case 19:
+			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0] + 1};
+		default:
+			throw new Exception("Error occured!");
+		}
+	}
+	
 }

@@ -16,8 +16,9 @@ public class Contest {
 	private Date beginTime;
 	private Date endTime;
 	private String hashCode;	//按原题title
-	
+
 	private User manager;		//管理员
+	private ReplayStatus replayStatus;
 	
 	private Set<Submission> submissions;
 	private Set<Cproblem> cproblems;
@@ -86,6 +87,10 @@ public class Contest {
 	public void setCproblems(Set<Cproblem> cproblems) {
 		this.cproblems = cproblems;
 	}
-
-	
+	public ReplayStatus getReplayStatus() {
+		return replayStatus;
+	}
+	public void setReplayStatus(ReplayStatus replayStatus) {
+		this.replayStatus = replayStatus;
+	}
 }

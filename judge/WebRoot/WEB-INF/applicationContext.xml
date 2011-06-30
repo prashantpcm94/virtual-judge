@@ -49,6 +49,7 @@
 				<value>judge/bean/User.hbm.xml</value>
 				<value>judge/bean/Vlog.hbm.xml</value>
 				<value>judge/bean/Description.hbm.xml</value>
+				<value>judge/bean/ReplayStatus.hbm.xml</value>
 			</list>
 		</property>
 	</bean>

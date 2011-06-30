@@ -4,6 +4,7 @@
 
 package judge.action;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,7 @@ import judge.bean.Contest;
 import judge.bean.Cproblem;
 import judge.bean.DataTablesPage;
 import judge.bean.Problem;
+import judge.bean.ReplayStatus;
 import judge.bean.Submission;
 import judge.bean.User;
 import judge.service.IBaseService;
@@ -59,7 +61,6 @@ public class ContestAction extends BaseAction {
 	private long endTime;
 	private Integer isSup;
 	
-	
 	private List pids;
 	private List OJs;
 	private List probNums;
@@ -69,6 +70,12 @@ public class ContestAction extends BaseAction {
 	
 	private boolean s, r, e;	//比赛进行状态
 	private DataTablesPage dataTablesPage;
+	
+	private int contestType;	//0:普通比赛    1:比赛回放
+	private File ranklistCsv;	//ranklist数据(csv格式)
+	private List<String> selectedCellMeaning;	//选择的cell意义
+	
+	private Map cellMeaningOptions;
 	
 	
 	class ContestInfo{
@@ -133,11 +140,11 @@ public class ContestAction extends BaseAction {
 		if (iSortCol_0 != null){
 			if (iSortCol_0 == 0){			//按id
 				hql.append(" order by contest.id " + sSortDir_0);
-			} else if (iSortCol_0 == 1){	//按标题
+			} else if (iSortCol_0 == 2){	//按标题
 				hql.append(" order by contest.title " + sSortDir_0);
-			} else if (iSortCol_0 == 2){	//按开始时间
+			} else if (iSortCol_0 == 3){	//按开始时间
 				hql.append(" order by contest.beginTime " + sSortDir_0 + ", contest.id " + sSortDir_0);
-			} else if (iSortCol_0 == 6){	//按管理员用户名
+			} else if (iSortCol_0 == 7){	//按管理员用户名
 				hql.append(" order by user.username " + sSortDir_0);
 			}
 		}
@@ -149,6 +156,7 @@ public class ContestAction extends BaseAction {
 			user = (User) o[1];
 			Object[] res = {
 					contest.getId(),
+					contest.getReplayStatus() == null ? 0 : 1,
 					contest.getTitle(),
 					contest.getBeginTime().getTime(),
 					trans(contest.getEndTime().getTime() - contest.getBeginTime().getTime(), true),
@@ -205,6 +213,7 @@ public class ContestAction extends BaseAction {
 		}
 		contest.setBeginTime(new Date());
 		d_hour = 5;
+		contestType = 0;
 		return SUCCESS;
 	}
 	
@@ -268,16 +277,25 @@ public class ContestAction extends BaseAction {
 		long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
 		long start = contest.getBeginTime().getTime() - new Date().getTime();
 
-
-		/**
-		 * 开始时间不能比当前时间早, 比赛必须在30天内开始
-		 */
-		if (start < 1) {
-			this.addActionError("Begin time should be later than the current time!");
-		} else if (start > 2592000000L) {
-			this.addActionError("The contest should begin in 30 days from now!");
-		}
 		
+		if (contestType == 0) {
+			/**
+			 * 【普通比赛】:开始时间不能比当前时间早, 比赛必须在30天内开始
+			 */
+			if (start < 1) {
+				this.addActionError("Begin time should be later than the current time!");
+			} else if (start > 2592000000L) {
+				this.addActionError("The contest should begin in 30 days from now!");
+			}
+		} else {
+			/**
+			 * 【比赛回放】:比赛必须已经结束
+			 */
+			if (start + dur > 0) {
+				this.addActionError("The contest should have ended!");
+			}
+		}
+
 		/**
 		 * 结束时间必须比开始时间晚,持续时间必须短于30天
 		 */
@@ -286,6 +304,7 @@ public class ContestAction extends BaseAction {
 		} else if (dur > 2592000000L) {
 			this.addActionError("Contest duration should be shorter than 30 days!");
 		}
+
 	}
 
 	public String addContest() {
@@ -323,11 +342,60 @@ public class ContestAction extends BaseAction {
 		}
 		hashCode.append(pids.size());
 		contest.setHashCode(MD5.getMD5(hashCode.toString().replaceAll("&#\\d+;", "")));
-		baseService.addOrModify(dataList);
 		
+		if (contestType == 0) {
+			baseService.addOrModify(dataList);
+			return SUCCESS;
+		} else {
+			String[][] ranklistCells = null;
+			try {
+				ranklistCells = judgeService.splitCells(ranklistCsv, pids.size());
+				cellMeaningOptions = judgeService.getCellMeaningOptions(ranklistCells, contest.getEndTime().getTime() - contest.getBeginTime().getTime());
+			} catch (Exception e) {
+				e.printStackTrace();
+				this.addActionError(e.getMessage());
+				return INPUT;
+			}
+			session.put("contest", contest);
+			session.put("contestData", dataList);
+			session.put("ranklistCells", ranklistCells);
+			session.put("cellMeaningOptions", cellMeaningOptions);
+			return "choose_meaning";
+		}
+	}
+
+	public String addReplay() {
+		Map session = ActionContext.getContext().getSession();
+		try {
+			String[][] ranklistCells = (String[][]) session.get("ranklistCells");
+			cellMeaningOptions = (Map) session.get("cellMeaningOptions");
+			contest = (Contest) session.get("contest");
+			ReplayStatus replayStatus = judgeService.getReplayStatus(ranklistCells, cellMeaningOptions, selectedCellMeaning, contest.getEndTime().getTime() - contest.getBeginTime().getTime());
+			ReplayStatus oldReplayStatus = contest.getReplayStatus();
+			contest.setReplayStatus(replayStatus);
+		
+			dataList = (List) session.get("contestData");
+			dataList.add(replayStatus);
+			
+			if (oldReplayStatus != null) {
+				baseService.delete(oldReplayStatus);
+			}
+			baseService.execute("delete from Cproblem cproblem where cproblem.contest.id = " + contest.getId());
+			baseService.addOrModify(dataList);
+			
+			session.remove("cellMeaningOptions");
+			session.remove("ranklistCells");
+			session.remove("contestData");
+			session.remove("contest");
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.addActionError(e.getMessage());
+			return INPUT;
+		}
 		return SUCCESS;
 	}
-	
+
+		
 	public String viewContest() {
 		Map session = ActionContext.getContext().getSession();
 		User user = (User)session.get("visitor");
@@ -728,6 +796,7 @@ public class ContestAction extends BaseAction {
 			return ERROR;
 		}
 		baseService.execute("delete from Cproblem cproblem where cproblem.contest.id = " + cid);
+		baseService.delete(contest.getReplayStatus());
 		baseService.delete(contest);
 		return SUCCESS;
 	}
@@ -751,8 +820,8 @@ public class ContestAction extends BaseAction {
 		
 		List<Object []> cproblemList = baseService.query("select cproblem.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problem.id = p.id and cproblem.contest.id = " + cid + " order by cproblem.num asc");
 		
-		if (contest.getBeginTime().compareTo(curDate) < 0){
-			return "running";
+		if (contest.getReplayStatus() == null && curDate.compareTo(contest.getBeginTime()) > 0){
+			return "brief_edit";
 		}
 
 		pids = new ArrayList();
@@ -765,7 +834,8 @@ public class ContestAction extends BaseAction {
 			probNums.add(o[2]);
 			titles.add((String) o[3]);
 		}
-		return "scheduled";
+		contestType = contest.getReplayStatus() == null ? 0 : 1;
+		return "detail_edit";
 	}
 	
 	public String editContest(){
@@ -779,7 +849,7 @@ public class ContestAction extends BaseAction {
 		}
 		curDate = new Date();
 
-		if (curDate.compareTo(oContest.getBeginTime()) > 0){
+		if (oContest.getReplayStatus() == null && curDate.compareTo(oContest.getBeginTime()) > 0){
 			long dur = d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L;
 			oContest.setEndTime(new Date(oContest.getBeginTime().getTime() + dur));
 			if (dur > 2592000000L){
@@ -793,7 +863,7 @@ public class ContestAction extends BaseAction {
 			oContest.setDescription(contest.getDescription());
 			if (beiju){
 				contest = (Contest) baseService.query(Contest.class, cid);
-				return "running";
+				return "brief_edit";
 			}
 			baseService.addOrModify(oContest);
 			return SUCCESS;
@@ -803,7 +873,7 @@ public class ContestAction extends BaseAction {
 		
 		if (!this.getActionErrors().isEmpty()) {
 			contest = (Contest) baseService.query(Contest.class, cid);
-			return "scheduled";
+			return "detail_edit";
 		}
 		
 		dataList = new ArrayList();
@@ -819,7 +889,6 @@ public class ContestAction extends BaseAction {
 		} else {
 			oContest.setPassword(MD5.getMD5(contest.getPassword()));
 		}
-		baseService.execute("delete from Cproblem cproblem where cproblem.contest.id = " + cid);
 		for (int i = 0; i < pids.size(); i++) {
 			cproblem = new Cproblem();
 			cproblem.setContest(oContest);
@@ -836,8 +905,31 @@ public class ContestAction extends BaseAction {
 		}
 		hashCode.append(pids.size());
 		oContest.setHashCode(MD5.getMD5(hashCode.toString().replaceAll("&#\\d+;", "")));
-		baseService.addOrModify(dataList);
-		return SUCCESS;
+
+		if (contestType == 0 || ranklistCsv == null) {
+			if (contestType == 0 && oContest.getReplayStatus() != null) {
+				baseService.delete(oContest.getReplayStatus());
+				oContest.setReplayStatus(null);
+			}
+			baseService.execute("delete from Cproblem cproblem where cproblem.contest.id = " + cid);
+			baseService.addOrModify(dataList);
+			return SUCCESS;
+		} else {
+			String[][] ranklistCells = null;
+			try {
+				ranklistCells = judgeService.splitCells(ranklistCsv, pids.size());
+				cellMeaningOptions = judgeService.getCellMeaningOptions(ranklistCells, contest.getEndTime().getTime() - contest.getBeginTime().getTime());
+			} catch (Exception e) {
+				e.printStackTrace();
+				this.addActionError(e.getMessage());
+				return "detail_edit";
+			}
+			session.put("contest", oContest);
+			session.put("contestData", dataList);
+			session.put("ranklistCells", ranklistCells);
+			session.put("cellMeaningOptions", cellMeaningOptions);
+			return "choose_meaning";
+		}
 	}
 	
 	public String viewSource(){
@@ -1182,6 +1274,31 @@ public class ContestAction extends BaseAction {
 	public void setIsSup(Integer isSup) {
 		this.isSup = isSup;
 	}
+	public int getContestType() {
+		return contestType;
+	}
+	public void setContestType(int contestType) {
+		this.contestType = contestType;
+	}
+	public File getRanklistCsv() {
+		return ranklistCsv;
+	}
+	public void setRanklistCsv(File ranklistCsv) {
+		this.ranklistCsv = ranklistCsv;
+	}
+	public Map getCellMeaningOptions() {
+		return cellMeaningOptions;
+	}
+	public void setCellMeaningOptions(Map cellMeaningOptions) {
+		this.cellMeaningOptions = cellMeaningOptions;
+	}
+	public List<String> getSelectedCellMeaning() {
+		return selectedCellMeaning;
+	}
+	public void setSelectedCellMeaning(List<String> selectedCellMeaning) {
+		this.selectedCellMeaning = selectedCellMeaning;
+	}
+
 }
 
 

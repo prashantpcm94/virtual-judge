@@ -26,8 +26,13 @@ String basePath = (String)application.getAttribute("basePath");
 
 	<body>
 		<s:include value="/top.jsp" />
-		<form id="form" action="contest/addContest.action" method="post">
+		<div class="ptt">Add Contest</div>
+		<form id="form" action="contest/addContest.action" method="post" enctype="multipart/form-data">
 			<table>
+				<tr>
+					<td class="form_title">Type:</td>
+					<td><s:radio name="contestType" list="#{'0':'Real Contest', '1':'Replay'}" onclick="this.blur()" ></s:radio></td>
+				</tr>
 				<tr>
 					<td class="form_title">Title:</td>
 					<td><s:textfield name="contest.title" size="94" theme="simple" /></td>
@@ -94,6 +99,10 @@ String basePath = (String)application.getAttribute("basePath");
 							</tr>
 						</table>
 					</td>
+				</tr>
+				<tr id="ranklistData" style="display:none">
+					<td class="form_title">Ranklist<br />(csv):</td>
+					<td><s:file name="ranklistCsv" /></td>
 				</tr>
 				<tr>
 					<td></td>

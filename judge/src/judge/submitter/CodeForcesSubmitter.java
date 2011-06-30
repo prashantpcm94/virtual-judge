@@ -70,6 +70,7 @@ public class CodeForcesSubmitter extends Submitter {
 		languageList.put("10", "GNU C 4");
 		languageList.put("12", "Haskell GHC 6.12");
 		languageList.put("14", "ActiveTcl 8.5");
+		languageList.put("15", "Io-2008-01-07 (Win32)");
 		languageList.put("16", "GNU C++0x 4");
 		sc.setAttribute("CodeForces", languageList);
 	}
