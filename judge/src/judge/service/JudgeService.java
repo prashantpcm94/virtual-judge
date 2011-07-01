@@ -1,11 +1,21 @@
 package judge.service;
 
+import info.monitorenter.cpdetector.io.ASCIIDetector;
+import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
+import info.monitorenter.cpdetector.io.JChardetFacade;
+import info.monitorenter.cpdetector.io.ParsingDetector;
+import info.monitorenter.cpdetector.io.UnicodeDetector;
+
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -316,9 +326,27 @@ public class JudgeService extends BaseService {
 		}
 		String[][] result = null;
 		try {
-			FileReader fr = new FileReader(csv);
-			result = CSVParser.parse(fr);
-			fr.close();
+			//先检测文件编码
+			CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();  
+			detector.add(new ParsingDetector(false));   
+			detector.add(JChardetFacade.getInstance());  
+			detector.add(ASCIIDetector.getInstance());  
+			detector.add(UnicodeDetector.getInstance());  
+			Charset charset = Charset.forName("GB2312");
+			InputStream inputStream = new BufferedInputStream(new FileInputStream(csv));
+			int length = 100000;
+			while (length > 5) {
+				try {
+					charset = detector.detectCodepage(inputStream, length);
+					break;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					length = length * 2 / 3;
+				}
+			}
+			System.out.println(charset.name());
+			CSVParser shredder = new CSVParser(new InputStreamReader(inputStream, charset));
+			result = shredder.getAllValues();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new Exception("Ranklist CSV has error!");

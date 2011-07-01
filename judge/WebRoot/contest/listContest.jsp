@@ -53,7 +53,7 @@
 		
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="listContest">
 			<thead>
-				<tr><th>ID</th><th></th><th>Title</th><th>Begin Time</th><th>Length</th><th>Status</th><th>Type</th><th>Manager</th><th></th><th></th></tr>
+				<tr><th>ID</th><th></th><th>Title</th><th>Begin Time</th><th>Length</th><th>Status</th><th>Type</th><th style="width:85px">Manager</th><th></th><th></th></tr>
 			</thead>
 			<tbody>
 				<tr>

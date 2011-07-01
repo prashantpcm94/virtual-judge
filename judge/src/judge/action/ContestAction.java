@@ -382,7 +382,15 @@ public class ContestAction extends BaseAction {
 			}
 			baseService.execute("delete from Cproblem cproblem where cproblem.contest.id = " + contest.getId());
 			baseService.addOrModify(dataList);
-			
+
+			//删除原有的rank文件
+			String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
+			String path = ApplicationContainer.sc.getRealPath(relativePath);
+			File data = new File(path, contest.getId() + "");
+			if (data.exists()) {
+				data.delete();
+			}
+
 			session.remove("cellMeaningOptions");
 			session.remove("ranklistCells");
 			session.remove("contestData");
