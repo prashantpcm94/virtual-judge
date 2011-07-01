@@ -134,17 +134,24 @@ public class ContestAction extends BaseAction {
 		} else if (!s && !r && !e) {
 			hql.append(" and 1 = 0 ");
 		}
+		
+		if (contestType == 0) {
+			hql.append(" and contest.replayStatus is null");
+		} else {
+			hql.append(" and contest.replayStatus is not null");
+		}
+
 		dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString(), paraMap));
 		
 //		System.out.println("iSortCol_0 = " + iSortCol_0);
 		if (iSortCol_0 != null){
 			if (iSortCol_0 == 0){			//按id
 				hql.append(" order by contest.id " + sSortDir_0);
-			} else if (iSortCol_0 == 2){	//按标题
+			} else if (iSortCol_0 == 1){	//按标题
 				hql.append(" order by contest.title " + sSortDir_0);
-			} else if (iSortCol_0 == 3){	//按开始时间
+			} else if (iSortCol_0 == 2){	//按开始时间
 				hql.append(" order by contest.beginTime " + sSortDir_0 + ", contest.id " + sSortDir_0);
-			} else if (iSortCol_0 == 7){	//按管理员用户名
+			} else if (iSortCol_0 == 6){	//按管理员用户名
 				hql.append(" order by user.username " + sSortDir_0);
 			}
 		}
@@ -156,7 +163,6 @@ public class ContestAction extends BaseAction {
 			user = (User) o[1];
 			Object[] res = {
 					contest.getId(),
-					contest.getReplayStatus() == null ? 0 : 1,
 					contest.getTitle(),
 					contest.getBeginTime().getTime(),
 					trans(contest.getEndTime().getTime() - contest.getBeginTime().getTime(), true),
@@ -345,6 +351,7 @@ public class ContestAction extends BaseAction {
 		
 		if (contestType == 0) {
 			baseService.addOrModify(dataList);
+			cid = contest.getId();
 			return SUCCESS;
 		} else {
 			String[][] ranklistCells = null;
@@ -383,7 +390,7 @@ public class ContestAction extends BaseAction {
 			baseService.execute("delete from Cproblem cproblem where cproblem.contest.id = " + contest.getId());
 			baseService.addOrModify(dataList);
 
-			//删除原有的rank文件
+			//删除原有的replayStatus文件
 			String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
 			String path = ApplicationContainer.sc.getRealPath(relativePath);
 			File data = new File(path, contest.getId() + "");
@@ -395,6 +402,7 @@ public class ContestAction extends BaseAction {
 			session.remove("ranklistCells");
 			session.remove("contestData");
 			session.remove("contest");
+			cid = contest.getId();
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.addActionError(e.getMessage());

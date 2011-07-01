@@ -4,6 +4,10 @@ $(document).ready(function() {
 			$(this).removeAttr("checked");
 		}
 	});
+
+	if ($.cookie("contestType") != undefined) {
+		$("input[name='contestType']").get($.cookie("contestType")).checked = 1;
+	}
 	
 	var oTable = $('#listContest').dataTable({
 		"bProcessing": true,
@@ -12,7 +16,7 @@ $(document).ready(function() {
 		"iDisplayLength": 25,
 		"bAutoWidth": false,
 		"bStateSave": true,
-		"aaSorting": [[ 3, "desc" ]],
+		"aaSorting": [[ 2, "desc" ]],
 
 		"aoColumns": [
 		  			{ 
@@ -20,19 +24,13 @@ $(document).ready(function() {
 		  			},
 		  			{
 		  				"fnRender": function ( oObj ) {
-			  				return oObj.aData[1] == 1 ? "<img height='15px' border='0' src='images/replay.png' />" : "";
-		  				},
-		  				"bSortable": false
-		  			},
-		  			{
-		  				"fnRender": function ( oObj ) {
-			  				return "<a href='contest/viewContest.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[2] + "</a>";
+			  				return "<a href='contest/viewContest.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[1] + "</a>";
 		  				},
 		  				"sClass": "title"
 		  			},
 {
 		  				"fnRender": function ( oObj ) {
-			  				return new Date(parseInt(oObj.aData[3])).format("yyyy-MM-dd hh:mm:ss");
+			  				return new Date(parseInt(oObj.aData[2])).format("yyyy-MM-dd hh:mm:ss");
 		  				},
 		  				"sClass": "date"
 		  			},
@@ -50,7 +48,7 @@ $(document).ready(function() {
 		  			},
 		  			{ 
 		  				"fnRender": function ( oObj ) {
-		  					return "<a href='user/profile.action?uid=" + oObj.aData[8] + "'>" + oObj.aData[7] + "</a>";
+		  					return "<a href='user/profile.action?uid=" + oObj.aData[7] + "'>" + oObj.aData[6] + "</a>";
 		  				},
 		  				"sClass": "center"
 		  			},
@@ -59,7 +57,7 @@ $(document).ready(function() {
 		  			},
 		  			{ 
 		  				"fnRender": function ( oObj ) {
-		  					if (oObj.aData[9] == 1) {
+		  					if (oObj.aData[8] == 1) {
 		  						return "<a href='contest/toEditContest.action?cid=" + oObj.aData[0] + "'><img height='15px' border='0' src='images/wrench.gif' /></a>&nbsp;<a href='javascript:void(0)' onclick='comfirmDeleteContest(\"" + oObj.aData[0] + "\")'><img height='15px' border='0' src='images/recycle.gif' /></a>";
 		  					} else return "";
 		  				},
@@ -73,10 +71,12 @@ $(document).ready(function() {
 			var s = $("[name='scheduled']").attr("checked");
 			var r = $("[name='running']").attr("checked");
 			var e = $("[name='ended']").attr("checked");
+			var contestType = $("[name='contestType']:checked").val();
 		
 			aoData.push( { "name": "s", "value": s } );
 			aoData.push( { "name": "r", "value": r } );
 			aoData.push( { "name": "e", "value": e } );
+			aoData.push( { "name": "contestType", "value": contestType } );
 			$.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
@@ -86,9 +86,9 @@ $(document).ready(function() {
 			} );
 		},
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+		    $('td:eq(4)', nRow).addClass(aData[4]);
 		    $('td:eq(5)', nRow).addClass(aData[5]);
-		    $('td:eq(6)', nRow).addClass(aData[6]);
-		    nRow.className += " " + aData[5];
+		    nRow.className += " " + aData[4];
 			return nRow;
 		},
 		"bJQueryUI": true,
@@ -103,6 +103,12 @@ $(document).ready(function() {
 		$("[name='"+$(this).attr("name")+"']").attr("checked", $(this).attr("checked"));
 		oTable.fnDraw();
 	});
+	
+	$("input[name='contestType']").change(function(){
+		$.cookie("contestType", $(this).val(), {expires:7});
+		oTable.fnDraw();
+	});
+
 });
 
 function comfirmDeleteContest(id){

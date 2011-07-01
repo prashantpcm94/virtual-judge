@@ -47,7 +47,7 @@ public class JudgeService extends BaseService {
 
 	private static final String cellOptions []= {
 		"No submisson",																//0		0
-		"1 wrong submission and did not solve",										//0		1
+		"Not solved, with one wrong submission",									//0		1
 
 		"Solved at [0] minute with no wrong submisson",								//1		2
 		"Solved at [0] minute with one wrong submission",							//1		3
@@ -486,7 +486,7 @@ public class JudgeService extends BaseService {
 		case 3:
 			return new long[]{val[0] * 60000, 2, 1};
 		case 4:
-			return new long[]{contestLength, val[0], 1};
+			return new long[]{contestLength, val[0], 0};
 		case 5:
 			return new long[]{val[0] * 3600000 + val[1] * 60000, 1, 1};
 		case 6:
