@@ -804,8 +804,11 @@ public class ContestAction extends BaseAction {
 			return ERROR;
 		}
 		baseService.execute("delete from Cproblem cproblem where cproblem.contest.id = " + cid);
-		baseService.delete(contest.getReplayStatus());
+		ReplayStatus replayStatus = contest.getReplayStatus();
 		baseService.delete(contest);
+		if (replayStatus != null) {
+			baseService.delete(replayStatus);
+		}
 		return SUCCESS;
 	}
 	

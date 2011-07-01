@@ -71,9 +71,9 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ostermillerutils_1_07_00.jar" sourcepath="C:/Documents and Settings/Administrator/.m2/repository/org/ostermiller/utils/1.07.00/utils-1.07.00-sources.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ostermillerutils_1_07_00.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/chardet-1.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jargs-1.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/cpdetector_1.0.8.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jargs-1.0.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
