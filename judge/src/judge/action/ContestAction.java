@@ -427,7 +427,7 @@ public class ContestAction extends BaseAction {
 			return INPUT;
 		}
 		if (user != null && (user.getSup() == 1 || user.getId() == contest.getManager().getId()) || curDate.compareTo(contest.getBeginTime()) >= 0){
-			dataList = baseService.list("select cproblem.problem.id, cproblem.num, cproblem.title, cproblem.problem.id, cproblem.id from Cproblem cproblem where cproblem.contest.id = '" + cid + "' order by cproblem.id asc", 0, 100);
+			dataList = baseService.list("select cproblem.problem.id, cproblem.num, cproblem.title, cproblem.problem.id, cproblem.id, cproblem.problem.originOJ, cproblem.problem.originProb, cproblem.problem.url from Cproblem cproblem where cproblem.contest.id = '" + cid + "' order by cproblem.id asc", 0, 100);
 			for (int i = 0; i < dataList.size(); i++){
 				int pid = (Integer)((Object[])dataList.get(i))[0];
 				if (uid < 0){

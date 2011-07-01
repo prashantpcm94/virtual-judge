@@ -94,7 +94,11 @@ String basePath = (String)application.getAttribute("basePath");
 				</tr>
 				<tr id="ranklistData" style="display:none">
 					<td class="form_title">Ranklist<br />(csv):</td>
-					<td><s:file name="ranklistCsv" /></td>
+					<td>
+						<s:file name="ranklistCsv" />
+						&nbsp;<a href="http://acm.hust.edu.cn/forum/viewthread.php?tid=119" target="_blank"><img src="http://www.iconpng.com/png/cristal-intense/aide.png" border="0" height="20" /></a>
+						&nbsp;<span style="font-weight:bold;color:red">Note: It is preferred that your CSV file is in UTF-8. </span>
+					</td>
 				</tr>
 				<tr>
 					<td></td>

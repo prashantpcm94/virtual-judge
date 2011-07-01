@@ -111,8 +111,8 @@ $(document).ready(function() {
 
 });
 
-function comfirmDeleteContest(id){
+function comfirmDeleteContest(cid){
 	if (confirm("Sure to delete this contest?")){
-		location = 'contest/deleteContest.action?cid=' + id;
+		location = 'contest/deleteContest.action?cid=' + cid;
 	}
 }

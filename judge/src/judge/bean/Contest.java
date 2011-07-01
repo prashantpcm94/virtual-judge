@@ -41,7 +41,7 @@ public class Contest {
 	}
 	public void setDescription(String description) {
 		if (description != null) {
-			description = description.replaceAll("(?i)script", "scri_pt");
+			description = description.replaceAll("(?i)\\bscript\\b", "scri_pt");
 		}
 		this.description = description;
 	}

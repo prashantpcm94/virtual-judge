@@ -49,7 +49,7 @@ String basePath = (String)application.getAttribute("basePath");
 								<s:date name="%{contest.beginTime}" format="yyyy-MM-dd" />
 							</s:param>
 						</s:textfield>
-						<s:textfield name="hour" size="2" maxlength="2" cssClass="clk_select" />:<s:textfield name="minute" size="2" maxlength="2" cssClass="clk_select" />:00
+						<s:textfield name="hour" value="0" size="2" maxlength="2" cssClass="clk_select" />:<s:textfield name="minute" value="0" size="2" maxlength="2" cssClass="clk_select" />:00
 					</td>
 				</tr>
 				<tr>
@@ -105,7 +105,7 @@ String basePath = (String)application.getAttribute("basePath");
 					<td>
 						<s:file name="ranklistCsv" />
 						&nbsp;<a href="http://acm.hust.edu.cn/forum/viewthread.php?tid=119" target="_blank"><img src="http://www.iconpng.com/png/cristal-intense/aide.png" border="0" height="20" /></a>
-						&nbsp;<span style="font-weight:bold;color:red">Note: It is preferred that your CSV file is in UFT-8. </span>
+						&nbsp;<span style="font-weight:bold;color:red">Note: It is preferred that your CSV file is in UTF-8. </span>
 					</td>
 				</tr>
 				<tr>

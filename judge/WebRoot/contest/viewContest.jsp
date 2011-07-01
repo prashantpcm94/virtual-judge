@@ -52,17 +52,22 @@ String basePath = (String)application.getAttribute("basePath");
 
 		<s:if test="dataList != null">
 			<br />
-			<s:if test="curDate.compareTo(contest.endTime) > 0">
 				<div style="text-align:center;padding:10px">
-					[<a href="contest/toAddContest.action?cid=${cid}" title="Create a contest using the same problems, in which you can see the original score board.">Clone this contest</a>]
+					<s:if test="curDate.compareTo(contest.endTime) > 0">
+						[<a href="contest/toAddContest.action?cid=${cid}" title="Create a contest using the same problems, in which you can see the original score board.">Clone this contest</a>]
+					</s:if>
+					<s:if test="#session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
+						[<a href="contest/toEditContest.action?cid=${cid}">Edit</a>]
+						[<a href='javascript:void(0)' onclick='comfirmDeleteContest(${cid})'>Delete</a>]
+					</s:if>
 				</div>
-			</s:if>
 			<table style="width:960px" cellpadding="0" cellspacing="0" border="0" class="display" id="viewContest">
 				<thead>
 					<tr>
 						<th>Solved</th>
 						<th>ID</th>
-						<th>Title</th>
+						<th></th>
+						<th style="text-align: left">Title</th>
 						<th>Ratio(AC/att)</th>
 						<th></th>
 					</tr>
@@ -75,8 +80,13 @@ String basePath = (String)application.getAttribute("basePath");
 								Yes
 							</s:if>
 						</td>
-						<td class="title">
+						<td class="title center">
 							Problem <s:property value="dataList[#stat.index][1]" />
+						</td>
+						<td>
+							<s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
+								<a href="<s:property value="dataList[#stat.index][7]" />"><s:property value="dataList[#stat.index][5]" /> <s:property value="dataList[#stat.index][6]" /></a>
+							</s:if>
 						</td>
 						<td class="title">
 							<s:url id="viewProblem" action="viewProblem" namespace="/contest">

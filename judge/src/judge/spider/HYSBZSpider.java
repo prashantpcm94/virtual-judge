@@ -1,8 +1,12 @@
 package judge.spider;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+
 
 
 public class HYSBZSpider extends Spider {
@@ -34,11 +38,18 @@ public class HYSBZSpider extends Spider {
 		tLine = tLine.replaceAll("src='images", "src='http://www.zybbs.org/JudgeOnline/images");
 		tLine = tLine.replaceAll("src=\"images", "src=\"http://www.zybbs.org/JudgeOnline/images");
 		
-		
-		problem.setTitle(regFind(tLine, "<center><h2>([\\s\\S]*?)</h2>"));
+		problem.setTitle(regFind(tLine, "<center><h2>([\\s\\S]*?)</h2>").replaceAll(problem.getOriginProb() + ": ", ""));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
 			throw new Exception();
 		}
+
+		problem.setSource(regFind(tLine, "<h2>Source</h2>[\\s\\S]*?<div class=content><p>([\\s\\S]*?)</p></div><center>"));
+		Matcher matcher = Pattern.compile("\\[(.*)\\](.*)").matcher(problem.getTitle());
+		if (matcher.find()) {
+			problem.setTitle(matcher.group(2));
+			problem.setSource(matcher.group(1));
+		}
+
 		problem.setTimeLimit(1000 * Integer.parseInt(regFind(tLine, "Time Limit: </span>(\\d+) Sec")));
 		problem.setMemoryLimit(1024 * Integer.parseInt(regFind(tLine, "Memory Limit: </span>(\\d+) MB")));
 		description.setDescription(regFind(tLine, "<h2>Description</h2>([\\s\\S]*?)<h2>Input</h2>"));
@@ -47,7 +58,6 @@ public class HYSBZSpider extends Spider {
 		description.setSampleInput(regFind(tLine, "<h2>Sample Input</h2>([\\s\\S]*?)<h2>Sample Output</h2>").replaceAll("<span", "<pre").replaceAll("</span>", "</pre>"));
 		description.setSampleOutput(regFind(tLine, "<h2>Sample Output</h2>([\\s\\S]*?)<h2>HINT</h2>").replaceAll("<span", "<pre").replaceAll("</span>", "</pre>"));
 		description.setHint(regFind(tLine, "<h2>HINT</h2>([\\s\\S]*?)<h2>Source</h2>"));
-		problem.setSource(regFind(problem.getTitle(), "<h2>Source</h2>([\\s\\S]*?)<center>\\[<a"));
 		problem.setUrl("http://www.zybbs.org/JudgeOnline/problem.php?id=" + problem.getOriginProb());
 	}
 

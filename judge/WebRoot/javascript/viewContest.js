@@ -12,3 +12,9 @@ $(document).ready(function() {
 		$(this).html(new Date(parseInt($(this).html())).format("yyyy-MM-dd hh:mm:ss"));
 	});
 });
+
+function comfirmDeleteContest(cid){
+	if (confirm("Sure to delete this contest?")){
+		location = 'contest/deleteContest.action?cid=' + cid;
+	}
+}
