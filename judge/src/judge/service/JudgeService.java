@@ -51,8 +51,8 @@ public class JudgeService extends BaseService {
 
 		"Solved at [0] minute with no wrong submisson",								//1		2
 		"Solved at [0] minute with one wrong submission",							//1		3
-		"[0] wrong submission(s) and did not solve",								//1		4
-				
+		"Not solved, with [0] wrong submission(s)",									//1		4
+
 		"Solved at [0] hour [1] minute with no wrong submisson",					//2		5
 		"Solved at [0] hour [1] minute with one wrong submission",					//2		6
 		"Solved at [0] minute with [1] submission(s)",								//2		7
@@ -69,7 +69,17 @@ public class JudgeService extends BaseService {
 		"Solved at [0] hour [1] minute [2] second with [3] submission(s)",			//4		16
 		"Solved at [0] hour [1] minute [2] second with [3] wrong submission(s)",	//4		17
 		"Solved at [1] hour [2] minute [3] second with [0] submission(s)",			//4		18
-		"Solved at [1] hour [2] minute [3] second with [0] wrong submission(s)"		//4		19
+		"Solved at [1] hour [2] minute [3] second with [0] wrong submission(s)",	//4		19
+
+		"Not solved, with [0] wrong submissions, the last one at [1] minute",						//2		20
+		"Not solved, with [0] wrong submissions, the last one at [1] hour [2] minute",				//3		21
+		"Not solved, with [0] wrong submissions, the last one at [1] hour [2] minute [3] second",	//4		22
+
+		"Not solved, with [1] wrong submissions, the last one at [0] minute",						//2		23
+		"Not solved, with [2] wrong submissions, the last one at [0] hour [1] minute",				//3		24
+		"Not solved, with [3] wrong submissions, the last one at [0] hour [1] minute [2] second",	//4		25
+
+		"Not solved, with one wrong submission, at [0] minute",										//1		26
 	};
 	
 	
@@ -246,39 +256,57 @@ public class JudgeService extends BaseService {
 					if (numberSegments.length == 0) {
 						curSet.addAll(Arrays.asList(new Integer[]{0, 1}));
 					} else if (numberSegments.length == 1) {
-						curSet.addAll(Arrays.asList(new Integer[]{2, 3, 4}));
+						curSet.addAll(Arrays.asList(new Integer[]{2, 3, 4, 26}));
 					} else if (numberSegments.length == 2) {
-						curSet.addAll(Arrays.asList(new Integer[]{5, 6, 7, 8, 9, 10}));
+						curSet.addAll(Arrays.asList(new Integer[]{5, 6, 7, 8, 9, 10, 20, 23}));
 					} else if (numberSegments.length == 3) {
-						curSet.addAll(Arrays.asList(new Integer[]{11, 12, 13, 14, 15}));
+						curSet.addAll(Arrays.asList(new Integer[]{11, 12, 13, 14, 15, 21, 24}));
 					} else if (numberSegments.length == 4) {
-						curSet.addAll(Arrays.asList(new Integer[]{16, 17, 18, 19}));
+						curSet.addAll(Arrays.asList(new Integer[]{16, 17, 18, 19, 22, 25}));
 					}
 					temp.put(symbolized, curSet);
 					formatExample.put(symbolized, row[i]);
 				}
 				//时间错误
-				if (numberSegments.length == 1 && numberSegments[0] * 60000 > contestLength) {
+				if (numberSegments.length > 0 && numberSegments[0] * 60000 > contestLength) {
 					curSet.remove(2);
 					curSet.remove(3);
+					curSet.remove(23);
+					curSet.remove(26);
+				}
+				if (numberSegments.length > 1 && numberSegments[1] * 60000 > contestLength) {
+					curSet.remove(9);
+					curSet.remove(10);
+					curSet.remove(20);
 				}
 				if (numberSegments.length > 1 && (numberSegments[1] > 59 || numberSegments[0] * 3600000 + numberSegments[1] * 60000 > contestLength)) {
-					curSet.removeAll(Arrays.asList(new Integer[]{5, 6, 12, 13}));
+					curSet.remove(5);
+					curSet.remove(6);
+					curSet.remove(12);
+					curSet.remove(13);
+					curSet.remove(24);
 				}
 				if (numberSegments.length > 2 && (numberSegments[2] > 59 || numberSegments[1] * 3600000 + numberSegments[2] * 60000 > contestLength)) {
 					curSet.remove(14);
 					curSet.remove(15);
+					curSet.remove(21);
 				}
 				if (numberSegments.length > 2 && (numberSegments[1] > 59 || numberSegments[2] > 59 || numberSegments[0] * 3600000 + numberSegments[1] * 60000 + numberSegments[2] * 1000 > contestLength)) {
-					curSet.removeAll(Arrays.asList(new Integer[]{11, 16, 17}));
+					curSet.remove(11);
+					curSet.remove(16);
+					curSet.remove(17);
+					curSet.remove(25);
 				}
 				if (numberSegments.length > 3 && (numberSegments[2] > 59 || numberSegments[3] > 59 || numberSegments[1] * 3600000 + numberSegments[2] * 60000 + numberSegments[3] * 1000 > contestLength)) {
 					curSet.remove(18);
 					curSet.remove(19);
+					curSet.remove(22);
 				}
 				//提交次数错误(0次总提交却solved)
 				if (numberSegments.length > 0 && numberSegments[0] == 0) {
-					curSet.removeAll(Arrays.asList(new Integer[]{9, 14, 18}));
+					curSet.remove(9);
+					curSet.remove(14);
+					curSet.remove(18);
 				}
 				if (numberSegments.length > 1 && numberSegments[1] == 0) {
 					curSet.remove(7);
@@ -395,23 +423,22 @@ public class JudgeService extends BaseService {
 		for (String[] row : ranklistCells) {
 			for (i = 1; i < row.length; ++i) {
 				Integer idx = meaningMap.get(row[i].replaceAll("\\d+", "[d]"));
-				long submissionInfo[] = getSubmissionInfo(getNumberSegments(row[i]), idx);
+				long submissionInfo[] = getSubmissionInfo(getNumberSegments(row[i]), idx, contestLength);
 				totalSubmissionNumber += submissionInfo[1];
 				if (totalSubmissionNumber > 10000) {
 					throw new Exception("At most 10000 submissions!");
 				}
 
-				long time = submissionInfo[0] < 0 ? contestLength : submissionInfo[0];
 				for (int j = 0; j < submissionInfo[1]; j++) {
 					Submission submission = new Submission();
 					submission.setUsername(row[0]);
 					submission.setId(i - 1);	//这里借用做存储题号
 					if (j < submissionInfo[1] - 1) {
-						submission.setSubTime(new Date(time - 1000L));
+						submission.setSubTime(new Date(submissionInfo[0] - 1000L));
 						submission.setStatus("0");
 					} else {
-						submission.setSubTime(new Date(time));
-						submission.setStatus(submissionInfo[0] < 0 ? "0" : "1");
+						submission.setSubTime(new Date(submissionInfo[0]));
+						submission.setStatus(submissionInfo[2] == 0 ? "0" : "1");
 					}
 					submissions.add(submission);
 				}
@@ -443,52 +470,67 @@ public class JudgeService extends BaseService {
 	/**
 	 * 获取一个team一道题的提交信息
 	 * @param idx 
+	 * @param contestLength 
 	 * @param integers 
-	 * @return [0]:AC时刻(ms)(-1表示未AC)	[1]:总提交次数
+	 * @return [0]:最后一次提交时刻(ms)	[1]:总提交次数	[2]:0-(未AC) 1-(AC)	
 	 * @throws Exception 
 	 */
-	private long[] getSubmissionInfo(Integer[] val, Integer idx) throws Exception {
+	private long[] getSubmissionInfo(Integer[] val, Integer idx, long contestLength) throws Exception {
 		switch (idx) {
 		case 0:
-			return new long[]{-1, 0};
+			return new long[]{contestLength, 0, 0};
 		case 1:
-			return new long[]{-1, 1};
+			return new long[]{contestLength, 1, 0};
 		case 2:
-			return new long[]{val[0] * 60000, 1};
+			return new long[]{val[0] * 60000, 1, 1};
 		case 3:
-			return new long[]{val[0] * 60000, 2};
+			return new long[]{val[0] * 60000, 2, 1};
 		case 4:
-			return new long[]{-1, val[0]};
+			return new long[]{contestLength, val[0], 1};
 		case 5:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, 1};
+			return new long[]{val[0] * 3600000 + val[1] * 60000, 1, 1};
 		case 6:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, 2};
+			return new long[]{val[0] * 3600000 + val[1] * 60000, 2, 1};
 		case 7:
-			return new long[]{val[0] * 60000, val[1]};
+			return new long[]{val[0] * 60000, val[1], 1};
 		case 8:
-			return new long[]{val[0] * 60000, val[1] + 1};
+			return new long[]{val[0] * 60000, val[1] + 1, 1};
 		case 9:
-			return new long[]{val[1] * 60000, val[0]};
+			return new long[]{val[1] * 60000, val[0], 1};
 		case 10:
-			return new long[]{val[1] * 60000, val[0] + 1};
+			return new long[]{val[1] * 60000, val[0] + 1, 1};
 		case 11:
-			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, 1};
+			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, 1, 1};
 		case 12:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2]};
+			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2], 1};
 		case 13:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2] + 1};
+			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2] + 1, 1};
 		case 14:
-			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0]};
+			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0], 1};
 		case 15:
-			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0] + 1};
+			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0] + 1, 1};
 		case 16:
-			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3]};
+			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3], 1};
 		case 17:
-			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3] + 1};
+			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3] + 1, 1};
 		case 18:
-			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0]};
+			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0], 1};
 		case 19:
-			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0] + 1};
+			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0] + 1, 1};
+		case 20:
+			return new long[]{val[1] * 60000, val[0], 0};
+		case 21:
+			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0], 0};
+		case 22:
+			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0], 0};
+		case 23:
+			return new long[]{val[0] * 60000, val[1], 0};
+		case 24:
+			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2], 0};
+		case 25:
+			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3], 0};
+		case 26:
+			return new long[]{val[0] * 60000, 1, 0};
 		default:
 			throw new Exception("Error occured!");
 		}
