@@ -174,7 +174,7 @@ function init() {
 function calcScoreBoard(){
 	$("#status_processing").show();
 
-	var sb = {}, firstSolver = [];
+	var sb = {}, firstSolveTime = [];
 	$.each(onlyCid ? {onlyCid: data[onlyCid]} : data, function(curCid, sInfo){
 		$.each(sInfo, function(key, s){
 			if (s[3] > maxTime)return;
@@ -183,13 +183,13 @@ function calcScoreBoard(){
 				sb[name] = [];
 			}
 			if (sb[name][s[1]] == undefined){
-				sb[name][s[1]] = [0, 0];
+				sb[name][s[1]] = [-1, 0];
 			}
-			if (!sb[name][s[1]][0]){
+			if (sb[name][s[1]][0] < 0){
 				if (s[2]) {
 					sb[name][s[1]][0] = s[3];
-					if (!firstSolver[s[1]]) {
-						firstSolver[s[1]] = name;
+					if (firstSolveTime[s[1]] == undefined || s[3] < firstSolveTime[s[1]]) {
+						firstSolveTime[s[1]] = s[3];
 					}
 				} else {
 					sb[name][s[1]][1]++;
@@ -202,7 +202,7 @@ function calcScoreBoard(){
 	for (name in sb){
 		var solve = 0, penalty = 0;
 		for (i in sb[name]){
-			if (sb[name][i] && sb[name][i][0]){
+			if (sb[name][i] && sb[name][i][0] >= 0){
 				solve++;
 				penalty += sb[name][i][0] + 1200 * sb[name][i][1];
 			}
@@ -221,10 +221,9 @@ function calcScoreBoard(){
 	$.each(result, function(i, v1){
 		var $newRow = $originRow.clone().removeAttr("id").attr("class", "disp");
 		var splitIdx = v1[0].lastIndexOf("_");
-		var originName = v1[0];
 		var curCid = v1[0].substr(splitIdx + 1);
 		$.each(sb[v1[0]], function(j, v2){
-			v1.push(v2 ? (dateFormat(v2[0]) || " ") + "<br />" + (v2[1] ? "<span>(-" + v2[1] + ")</span>" : "　") : "");
+			v1.push(v2 ? (firstSolveTime[j] == v2[0] ? " " : "") + dateFormat(v2[0]) + "<br />" + (v2[1] ? "<span>(-" + v2[1] + ")</span>" : "　") : "");
 		});
 		v1[0] = v1[0].substr(0, splitIdx);
 		v1[2] = dateFormat(v1[2]);
@@ -242,7 +241,7 @@ function calcScoreBoard(){
 					$curTd.addClass("curTd");
 				}
 			} else if (v1[k].length){
-				$curTd.addClass(v1[k].charAt(0) == ' ' ? "red" : firstSolver[k - 3] == originName ? "solvedfirst" : "green");
+				$curTd.addClass(v1[k].charAt(0) == '　' ? "red" : v1[k].charAt(0) == ' ' ? "solvedfirst" : "green");
 			}
 			$curTd = $curTd.next();
 		}
@@ -262,7 +261,7 @@ function calcScoreBoard(){
 
 function dateFormat(time){
 	var formatIdx = $.cookie("penalty_format");
-	if (!time)return 0;
+	if (time < 0)return "　";
 	if (formatIdx == 0){
 		var h = Math.floor(time / 3600);
 		var m = Math.floor(time % 3600 / 60);
