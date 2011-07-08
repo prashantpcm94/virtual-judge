@@ -174,7 +174,7 @@ function init() {
 function calcScoreBoard(){
 	$("#status_processing").show();
 
-	var sb = {};
+	var sb = {}, firstSolver = [];
 	$.each(onlyCid ? {onlyCid: data[onlyCid]} : data, function(curCid, sInfo){
 		$.each(sInfo, function(key, s){
 			if (s[3] > maxTime)return;
@@ -188,6 +188,9 @@ function calcScoreBoard(){
 			if (!sb[name][s[1]][0]){
 				if (s[2]) {
 					sb[name][s[1]][0] = s[3];
+					if (!firstSolver[s[1]]) {
+						firstSolver[s[1]] = name;
+					}
 				} else {
 					sb[name][s[1]][1]++;
 				}
@@ -218,6 +221,7 @@ function calcScoreBoard(){
 	$.each(result, function(i, v1){
 		var $newRow = $originRow.clone().removeAttr("id").attr("class", "disp");
 		var splitIdx = v1[0].lastIndexOf("_");
+		var originName = v1[0];
 		var curCid = v1[0].substr(splitIdx + 1);
 		$.each(sb[v1[0]], function(j, v2){
 			v1.push(v2 ? (dateFormat(v2[0]) || " ") + "<br />" + (v2[1] ? "<span>(-" + v2[1] + ")</span>" : "　") : "");
@@ -229,6 +233,7 @@ function calcScoreBoard(){
 		var $curTd = $("td:eq(0)", $newRow);
 		$curTd.html(i + 1);
 		$curTd = $curTd.next();
+		
 		for (k in v1){
 			$curTd.html(v1[k]);
 			if (k <= 2){
@@ -237,7 +242,7 @@ function calcScoreBoard(){
 					$curTd.addClass("curTd");
 				}
 			} else if (v1[k].length){
-				$curTd.addClass(v1[k].charAt(0) == ' ' ? "red" : "green");
+				$curTd.addClass(v1[k].charAt(0) == ' ' ? "red" : firstSolver[k - 3] == originName ? "solvedfirst" : "green");
 			}
 			$curTd = $curTd.next();
 		}

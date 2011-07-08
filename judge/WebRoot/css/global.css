@@ -240,7 +240,7 @@ table.standing .standing_time {
 	font-size: 12px;
 }
 
-table.standing td span {
+td.green span, td.red span {
 	color: gray;
 }
 
@@ -267,6 +267,16 @@ div.processing {
     top: 300px;
     width: 250px;
     z-index: 1000;
+}
+
+td.solvedfirst {
+    background-color: #008800;
+    color: white;
+    font-weight: bold;
+}
+
+td.solvedfirst span {
+    color: #E3E3E3;
 }
 
 /********************Status*********************/
@@ -302,7 +312,7 @@ a.shared {
 }
 
 .length {
-	width: 60px;
+	width: 65px;
 	text-align: right;
 }
 
