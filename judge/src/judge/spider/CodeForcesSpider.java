@@ -38,7 +38,7 @@ public class CodeForcesSpider extends Spider {
 		description.setDescription(regFind(tLine, "<div class=\"legend\">([\\s\\S]*?)</div><div class=\"input-specification\">"));
 		description.setInput(regFind(tLine, "<div class=\"section-title\">Input</div>([\\s\\S]*?)</div><div class=\"output-specification\">"));
 		description.setOutput(regFind(tLine, "<div class=\"section-title\">Output</div>([\\s\\S]*?)</div><div class=\"sample-tests\">"));
-		description.setSampleInput("<style type=\"text/css\">.input, .output {border: 1px solid #888888;} .output {margin-bottom:1em;position:relative;top:-1px;} .output pre,.input pre {background-color:#EFEFEF;line-height:1.25em;margin:0;padding:0.25em;} .title {background-color:#FFFFFF;border-bottom: 1px solid #888888;font-family:arial;font-weight:bold;padding:0.25em;}</style>" + regFind(tLine, "<div class=\"sample-test\">([\\s\\S]*?</pre></div>)</div></div>"));
+		description.setSampleInput("<style type=\"text/css\">.input, .output {border: 1px solid #888888;} .output {margin-bottom:1em;position:relative;top:-1px;} .output pre,.input pre {background-color:#EFEFEF;line-height:1.25em;margin:0;padding:0.25em;} .title {background-color:#FFFFFF;border-bottom: 1px solid #888888;font-family:arial;font-weight:bold;padding:0.25em;}</style>" + regFind(tLine, "<div class=\"sample-test\">([\\s\\S]*?)</div>\\s*</div>\\s*</div>"));
 		description.setHint(regFind(tLine, "<div class=\"section-title\">Note</div>([\\s\\S]*?)</div></div><p> </p>"));
 		problem.setUrl("http://codeforces.com/problemset/problem/" + contestNum + "/" + problemNum);
 	}
