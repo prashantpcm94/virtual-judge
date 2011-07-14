@@ -5,8 +5,6 @@
     <include file="struts-Contest.xml" />
     <include file="struts-Problem.xml" />
     <include file="struts-User.xml" />
-    <include file="struts-Graph.xml" />
-    <include file="struts-plugin.xml" />
     <include file="struts-Stat.xml" />
 
 	<package name="default" extends="json-default">
