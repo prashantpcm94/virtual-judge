@@ -232,6 +232,7 @@ public class ContestAction extends BaseAction {
 		} else if (contest.getTitle().length() > 90) {
 			this.addActionError("Contest Title should be shorter than 90 characters!");
 		}
+		contest.setTitle(judgeService.toHTMLChar(contest.getTitle()));
 		
 		/**
 		 * 比赛描述不得多于65000字符
@@ -836,6 +837,7 @@ public class ContestAction extends BaseAction {
 		d_day = (int) (dur / 86400000);
 		d_hour = (int) (dur % 86400000 / 3600000);
 		d_minute = (int) (dur % 3600000 / 60000);
+		contest.setTitle(judgeService.toPlainChar(contest.getTitle()));
 		
 		List<Object []> cproblemList = baseService.query("select cproblem.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problem.id = p.id and cproblem.contest.id = " + cid + " order by cproblem.num asc");
 		
@@ -971,23 +973,7 @@ public class ContestAction extends BaseAction {
 			}
 		}
 		
-		StringBuffer sb = new StringBuffer();
-		String os = submission.getSource();
-		for (int i = 0; i < os.length(); i++){
-			char c = os.charAt(i);
-			if (c == '&'){
-				sb.append("&#38;");
-			} else if (c == '"'){
-				sb.append("&#34;");
-			} else if (c == '<'){
-				sb.append("&lt;");
-			} else if (c == '>'){
-				sb.append("&gt;");
-			} else {
-				sb.append(c);
-			}
-		}
-		submission.setSource(sb.toString());
+		submission.setSource(judgeService.toHTMLChar(submission.getSource()));
 		ServletContext sc = ServletActionContext.getServletContext();
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
 		submission.setLanguage(languageList.get(submission.getLanguage()));

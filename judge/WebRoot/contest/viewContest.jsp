@@ -22,7 +22,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<s:include value="/contest/top.jsp" />
 		
 		<div class="ptt">
-			<s:property value="contest.title" />
+			<s:property value="contest.title" escape="false" />
 		</div>
 		
 		<table style="margin:auto" class="plm">

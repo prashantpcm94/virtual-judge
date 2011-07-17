@@ -22,6 +22,7 @@ import judge.bean.Submission;
 import judge.bean.User;
 import judge.spider.Spider;
 import judge.submitter.Submitter;
+import judge.tool.ApplicationContainer;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -434,26 +435,8 @@ public class ProblemAction extends BaseAction{
 			return ERROR;
 		}
 		problem = submission.getProblem();
-		StringBuffer sb = new StringBuffer();
-		String os = submission.getSource();
-		for (int i = 0; i < os.length(); i++){
-			char c = os.charAt(i);
-			if (c == '&'){
-				sb.append("&#38;");
-			} else if (c == '"'){
-				sb.append("&#34;");
-			} else if (c == '<'){
-				sb.append("&lt;");
-			} else if (c == '>'){
-				sb.append("&gt;");
-			} else {
-				sb.append(c);
-			}
-		}
-		submission.setSource(sb.toString());
-
-		ServletContext sc = ServletActionContext.getServletContext();
-		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
+		submission.setSource(judgeService.toHTMLChar(submission.getSource()));
+		languageList = (Map<Object, String>) ApplicationContainer.sc.getAttribute(problem.getOriginOJ());
 		submission.setLanguage(languageList.get(submission.getLanguage()));
 		uid = submission.getUser().getId();
 		un = submission.getUser().getUsername();
