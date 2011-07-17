@@ -106,7 +106,9 @@ $(document).ready(function(){
 	$("[name='_beginTime']").datepicker({
 		dateFormat: 'yy-mm-dd',
 		maxDate: +30,
-		showAnim: 'blind'
+		showAnim: 'blind',
+		changeMonth: true,
+		changeYear: true
 	});
 	
 	$(".clk_select").click(function(){
