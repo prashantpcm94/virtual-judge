@@ -42,8 +42,10 @@ String basePath = (String)application.getAttribute("basePath");
 		<center>
 			<h1>悲剧啊，<font color="red">404</font>!</h1>
 			<br/><img src="images/beiju.jpg" />
-			<br/><img src="images/lr.gif" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<img src="images/beat.gif" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<br/><img src="images/lr.gif" />&nbsp;&nbsp;&nbsp;
+			<img src="images/beiju1.gif" />&nbsp;&nbsp;&nbsp;
+			<img src="images/beiju2.gif" />&nbsp;&nbsp;&nbsp;
+			<img src="images/beiju3.gif" />&nbsp;&nbsp;&nbsp;
 			<img src="images/rl.gif" />
 		</center>
 	</body>
