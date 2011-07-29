@@ -90,7 +90,7 @@ $(document).ready(function(){
 		}
 
 		var date = $("[name='_beginTime']").val().split("-");
-		$("[name='beginTime']").val(new Date(date[0], parseInt(date[1]) - 1, date[2], hour, minute, 0).getTime());
+		$("[name='beginTime']").val(new Date(date[0], parseInt(date[1], 10) - 1, date[2], hour, minute, 0).getTime());
 		
 		$("tr:not(:visible)").remove();
 	});
