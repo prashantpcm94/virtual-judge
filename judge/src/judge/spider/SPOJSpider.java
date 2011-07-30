@@ -10,25 +10,25 @@ public class SPOJSpider extends Spider {
 	public void crawl() throws Exception{
 		
 		String tLine = "";
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://www.spoj.pl/problems/" + problem.getOriginProb());
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-            int statusCode = httpClient.executeMethod(getMethod);
-            if(statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: "+getMethod.getStatusLine());
-            }
-            byte[] responseBody = getMethod.getResponseBody();
-            tLine = new String(responseBody, "UTF-8");
-        }
-        catch(Exception e) {
+		HttpClient httpClient = new HttpClient();
+		GetMethod getMethod = new GetMethod("http://www.spoj.pl/problems/" + problem.getOriginProb());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if(statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: "+getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		}
+		catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
-        }
-        
-        if (tLine.contains("Wrong problem code!") || !tLine.contains("<h2>SPOJ Problem Set (classical)</h2>")){
+		}
+		
+		if (tLine.contains("Wrong problem code!") || !tLine.contains("<h2>SPOJ Problem Set (classical)</h2>") && !tLine.contains("<h2>SPOJ Problem Set (tutorial)</h2>")){
 			throw new Exception();
-        }
+		}
 
 		tLine = tLine.replaceAll("src=\"/", "src=\"http://www.spoj.pl/");
 		
