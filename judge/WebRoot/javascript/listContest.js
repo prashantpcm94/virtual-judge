@@ -8,7 +8,7 @@ $(document).ready(function() {
 	if ($.cookie("contestType") != undefined) {
 		$("input[name='contestType']").get($.cookie("contestType")).checked = 1;
 	}
-	
+
 	var oTable = $('#listContest').dataTable({
 		"bProcessing": true,
 		"bServerSide": true,
@@ -97,6 +97,13 @@ $(document).ready(function() {
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers"
 	});
+	
+	var query = parseUrlParameter()['q'];
+	if (query) {
+		setTimeout(function(){
+			oTable.fnFilter(query);
+		}, 300);
+	}
 
 	$("div.head_status").insertBefore("div#listContest_processing").show();
 	$("div.dataTables_filter").css("width", "250px");
