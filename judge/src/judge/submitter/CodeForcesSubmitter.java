@@ -72,6 +72,7 @@ public class CodeForcesSubmitter extends Submitter {
 		languageList.put("14", "ActiveTcl 8.5");
 		languageList.put("15", "Io-2008-01-07 (Win32)");
 		languageList.put("16", "GNU C++0x 4");
+		languageList.put("17", "Pike 7.8");
 		sc.setAttribute("CodeForces", languageList);
 	}
 	
@@ -149,14 +150,14 @@ public class CodeForcesSubmitter extends Submitter {
 	}
 	
 	private void login(String username, String password) throws Exception{
-        PostMethod postMethod = new PostMethod("http://codeforces.com/enter");
-        postMethod.addParameter("handle", username);
-        postMethod.addParameter("password", password);
-        postMethod.addParameter("remember", "on");
-        postMethod.addParameter("submitted", "true");
-        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		PostMethod postMethod = new PostMethod("http://codeforces.com/enter");
+		postMethod.addParameter("handle", username);
+		postMethod.addParameter("password", password);
+		postMethod.addParameter("remember", "on");
+		postMethod.addParameter("submitted", "true");
+		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
-        System.out.println("login...");
+		System.out.println("login...");
 		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
 
@@ -168,7 +169,7 @@ public class CodeForcesSubmitter extends Submitter {
 	
 	public void getResult(String username) throws Exception{
 		String reg = username + "</a>    </td>[\\s\\S]*?submissionId=\"(\\d+)\" >([\\s\\S]*?)</td>[\\s\\S]*?(\\d+)[\\s\\S]*?(\\d+)", result;
-        Pattern p = Pattern.compile(reg);
+		Pattern p = Pattern.compile(reg);
 
 		GetMethod getMethod = new GetMethod("http://codeforces.com/problemset/status");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
@@ -186,14 +187,14 @@ public class CodeForcesSubmitter extends Submitter {
 					result = "processing";
 				}
 				submission.setStatus(result);
-    			if (!result.contains("ing")){
-    				if (result.equals("Accepted")){
-	    				submission.setTime(Integer.parseInt(m.group(3)));
-	    				submission.setMemory(Integer.parseInt(m.group(4)));
-    				}
-    				baseService.addOrModify(submission);
-    				return;
-    			}
+				if (!result.contains("ing")){
+					if (result.equals("Accepted")){
+						submission.setTime(Integer.parseInt(m.group(3)));
+						submission.setMemory(Integer.parseInt(m.group(4)));
+					}
+					baseService.addOrModify(submission);
+					return;
+				}
 				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
