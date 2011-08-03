@@ -101,6 +101,12 @@ $(document).ready(function() {
 			$("div#contestTitle").html($("input[type=checkbox][value=" + curCid + "]").parent().next().html());
 		}
 	});
+	
+	$("tr.disp").live("mouseover", function(){
+		$(this).css("background-color", "#CCEEFF")
+	}).live("mouseout", function(){
+		$(this).css("background-color", "transparent");
+	});
 
 	$("#refresh").click(function(){
 		getRemoteData();
