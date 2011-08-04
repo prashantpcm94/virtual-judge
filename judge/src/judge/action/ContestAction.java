@@ -880,6 +880,7 @@ public class ContestAction extends BaseAction {
 				this.addActionError("Contest description should be shorter than 65000 characters!");
 				beiju = true;
 			}
+			oContest.setTitle(contest.getTitle());
 			oContest.setDescription(contest.getDescription());
 			if (beiju){
 				contest = (Contest) baseService.query(Contest.class, cid);
