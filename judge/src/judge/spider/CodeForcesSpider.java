@@ -42,9 +42,4 @@ public class CodeForcesSpider extends Spider {
 		description.setHint(regFind(tLine, "<div class=\"section-title\">Note</div>([\\s\\S]*?)</div></div><p> </p>"));
 		problem.setUrl("http://codeforces.com/problemset/problem/" + contestNum + "/" + problemNum);
 	}
-
-	@Override
-	public void extraOptr() throws Exception {
-	}
-
 }

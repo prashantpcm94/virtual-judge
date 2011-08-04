@@ -12,25 +12,25 @@ public class ZOJSpider extends Spider {
 	public void crawl() throws Exception{
 		
 		String tLine = "";
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-        	int statusCode = httpClient.executeMethod(getMethod);
-        	if(statusCode != HttpStatus.SC_OK) {
-        		System.err.println("Method failed: "+getMethod.getStatusLine());
-        	}
-        	byte[] responseBody = getMethod.getResponseBody();
-        	tLine = new String(responseBody, "UTF-8");
-        }
-        catch(Exception e) {
-        	getMethod.releaseConnection();
-        	throw new Exception();
-        }
-        
-        if (tLine.contains("No such problem.")){
-        	throw new Exception();
-        }
+		HttpClient httpClient = new HttpClient();
+		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if(statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: "+getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		}
+		catch(Exception e) {
+			getMethod.releaseConnection();
+			throw new Exception();
+		}
+		
+		if (tLine.contains("No such problem.")){
+			throw new Exception();
+		}
 
 		tLine = tLine.replaceAll("showImage\\.do", "http://acm.zju.edu.cn/onlinejudge/showImage.do");
 		
@@ -52,9 +52,4 @@ public class ZOJSpider extends Spider {
 		problem.setSource(regFind(tLine, "Source: <strong>([\\s\\S]*?)</strong><br>"));
 		problem.setUrl("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
 	}
-
-	@Override
-	public void extraOptr() throws Exception {
-	}
-
 }

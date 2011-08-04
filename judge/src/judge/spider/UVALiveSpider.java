@@ -55,7 +55,4 @@ public class UVALiveSpider extends Spider {
 		}
 	}
 
-	@Override
-	public void extraOptr() throws Exception {
-	}
 }

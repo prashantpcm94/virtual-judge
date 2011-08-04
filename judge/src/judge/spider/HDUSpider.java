@@ -8,29 +8,29 @@ public class HDUSpider extends Spider {
 	
 	public void crawl() throws Exception{
 		String tLine = "";
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://acm.hdu.edu.cn/showproblem.php?pid=" + problem.getOriginProb());
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-            int statusCode = httpClient.executeMethod(getMethod);
-            if(statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: "+getMethod.getStatusLine());
-            }
-            byte[] responseBody = getMethod.getResponseBody();
-            tLine = new String(responseBody, "GB2312");
-        }
-        catch(Exception e) {
+		HttpClient httpClient = new HttpClient();
+		GetMethod getMethod = new GetMethod("http://acm.hdu.edu.cn/showproblem.php?pid=" + problem.getOriginProb());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if(statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: "+getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "GB2312");
+		}
+		catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
-        }
+		}
 
-        if (tLine.contains("<DIV>No such problem")){
+		if (tLine.contains("<DIV>No such problem")){
 			throw new Exception();
-        }
-        
-        tLine = tLine.replaceAll("src=[\\S]*?/images", "src=http://acm.hdu.edu.cn/data/images");
-        tLine = tLine.replaceAll("src='[\\S]*?/images", "src='http://acm.hdu.edu.cn/data/images");
-        tLine = tLine.replaceAll("src=\"[\\S]*?/images", "src=\"http://acm.hdu.edu.cn/data/images");
+		}
+		
+		tLine = tLine.replaceAll("src=[\\S]*?/images", "src=http://acm.hdu.edu.cn/data/images");
+		tLine = tLine.replaceAll("src='[\\S]*?/images", "src='http://acm.hdu.edu.cn/data/images");
+		tLine = tLine.replaceAll("src=\"[\\S]*?/images", "src=\"http://acm.hdu.edu.cn/data/images");
 		//System.out.println(tLine);
 		
 		problem.setTitle(regFind(tLine, "color:#1A5CC8'>([\\s\\S]*?)</h1>"));
@@ -56,9 +56,4 @@ public class HDUSpider extends Spider {
 		}
 		problem.setUrl("http://acm.hdu.edu.cn/showproblem.php?pid=" + problem.getOriginProb());
 	}
-
-	@Override
-	public void extraOptr() throws Exception {
-	}
-
 }

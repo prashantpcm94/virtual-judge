@@ -49,9 +49,4 @@ public class SPOJSpider extends Spider {
 		problem.setSource(regFind(tLine, "Resource:</td><td>([\\s\\S]*?)</td></tr>", 1));
 		problem.setUrl("http://www.spoj.pl/problems/" + problem.getOriginProb());
 	}
-
-	@Override
-	public void extraOptr() throws Exception {
-	}
-
 }

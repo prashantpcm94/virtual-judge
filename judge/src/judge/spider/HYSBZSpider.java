@@ -14,27 +14,27 @@ public class HYSBZSpider extends Spider {
 	public void crawl() throws Exception{
 		
 		String tLine = "";
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://www.zybbs.org/JudgeOnline/problem.php?id=" + problem.getOriginProb());
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-        	int statusCode = httpClient.executeMethod(getMethod);
-        	if(statusCode != HttpStatus.SC_OK) {
-        		System.err.println("Method failed: "+getMethod.getStatusLine());
-        	}
-        	byte[] responseBody = getMethod.getResponseBody();
-        	tLine = new String(responseBody, "UTF-8");
-        }
-        catch(Exception e) {
-        	getMethod.releaseConnection();
-        	throw new Exception();
-        }
-
-        if (tLine.contains("<title>Problem is not Availables")){
+		HttpClient httpClient = new HttpClient();
+		GetMethod getMethod = new GetMethod("http://www.zybbs.org/JudgeOnline/problem.php?id=" + problem.getOriginProb());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if(statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: "+getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		}
+		catch(Exception e) {
+			getMethod.releaseConnection();
 			throw new Exception();
-        }
-        
-        tLine = tLine.replaceAll("src=images", "src=http://www.zybbs.org/JudgeOnline/images");
+		}
+
+		if (tLine.contains("<title>Problem is not Availables")){
+			throw new Exception();
+		}
+		
+		tLine = tLine.replaceAll("src=images", "src=http://www.zybbs.org/JudgeOnline/images");
 		tLine = tLine.replaceAll("src='images", "src='http://www.zybbs.org/JudgeOnline/images");
 		tLine = tLine.replaceAll("src=\"images", "src=\"http://www.zybbs.org/JudgeOnline/images");
 		
@@ -60,9 +60,4 @@ public class HYSBZSpider extends Spider {
 		description.setHint(regFind(tLine, "<h2>HINT</h2>([\\s\\S]*?)<h2>Source</h2>"));
 		problem.setUrl("http://www.zybbs.org/JudgeOnline/problem.php?id=" + problem.getOriginProb());
 	}
-
-	@Override
-	public void extraOptr() throws Exception {
-	}
-
 }

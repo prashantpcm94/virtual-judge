@@ -10,25 +10,25 @@ public class HUSTSpider extends Spider {
 	public void crawl() throws Exception{
 		
 		String tLine = "";
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/problem.php?id=" + problem.getOriginProb());
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-            int statusCode = httpClient.executeMethod(getMethod);
-            if(statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: "+getMethod.getStatusLine());
-            }
-            byte[] responseBody = getMethod.getResponseBody();
-            tLine = new String(responseBody, "UTF-8");
-        }
-        catch(Exception e) {
+		HttpClient httpClient = new HttpClient();
+		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/problem.php?id=" + problem.getOriginProb());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if(statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: "+getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		}
+		catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
-        }
-        
-        if (tLine.contains("<title>No Such Problem!</title>")){
+		}
+		
+		if (tLine.contains("<title>No Such Problem!</title>")){
 			throw new Exception();
-        }
+		}
 
 		tLine = tLine.replaceAll("src=/thx", "src=http://acm.hust.edu.cn/thx");
 		tLine = tLine.replaceAll("src='/thx", "src='http://acm.hust.edu.cn/thx");
@@ -53,9 +53,4 @@ public class HUSTSpider extends Spider {
 		}
 		problem.setUrl("http://acm.hust.edu.cn/thx/problem.php?id=" + problem.getOriginProb());
 	}
-
-	@Override
-	public void extraOptr() throws Exception {
-	}
-
 }

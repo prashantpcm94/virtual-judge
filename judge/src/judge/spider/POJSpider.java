@@ -10,27 +10,27 @@ public class POJSpider extends Spider {
 	public void crawl() throws Exception{
 		
 		String tLine = "";
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://poj.org/problem?id=" + problem.getOriginProb());
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-            int statusCode = httpClient.executeMethod(getMethod);
-            if(statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: "+getMethod.getStatusLine());
-            }
-            byte[] responseBody = getMethod.getResponseBody();
-            tLine = new String(responseBody, "UTF-8");
-        }
-        catch(Exception e) {
+		HttpClient httpClient = new HttpClient();
+		GetMethod getMethod = new GetMethod("http://poj.org/problem?id=" + problem.getOriginProb());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if(statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: "+getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		}
+		catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
-       }
+	   }
 
 		if (tLine.contains("<li>Can not find problem")){
 			throw new Exception();
 		}
-        
-        tLine = tLine.replaceAll("src=images", "src=http://poj.org/images");
+		
+		tLine = tLine.replaceAll("src=images", "src=http://poj.org/images");
 		tLine = tLine.replaceAll("src='images", "src='http://poj.org/images");
 		tLine = tLine.replaceAll("src=\"images", "src=\"http://poj.org/images");
 		
@@ -53,9 +53,4 @@ public class POJSpider extends Spider {
 		description.setHint(regFind(tLine, "<p class=\"pst\">Hint</p>([\\s\\S]*?)<p class=\"pst\">"));
 		problem.setUrl("http://poj.org/problem?id=" + problem.getOriginProb());
 	}
-
-	@Override
-	public void extraOptr() throws Exception {
-	}
-
 }

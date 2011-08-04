@@ -10,25 +10,25 @@ public class URALSpider extends Spider {
 	public void crawl() throws Exception{
 		
 		String tLine = "";
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://acm.timus.ru/print.aspx?space=1&num=" + problem.getOriginProb());
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        try {
-            int statusCode = httpClient.executeMethod(getMethod);
-            if(statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: "+getMethod.getStatusLine());
-            }
-            byte[] responseBody = getMethod.getResponseBody();
-            tLine = new String(responseBody, "UTF-8");
-        }
-        catch(Exception e) {
+		HttpClient httpClient = new HttpClient();
+		GetMethod getMethod = new GetMethod("http://acm.timus.ru/print.aspx?space=1&num=" + problem.getOriginProb());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			int statusCode = httpClient.executeMethod(getMethod);
+			if(statusCode != HttpStatus.SC_OK) {
+				System.err.println("Method failed: "+getMethod.getStatusLine());
+			}
+			byte[] responseBody = getMethod.getResponseBody();
+			tLine = new String(responseBody, "UTF-8");
+		}
+		catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
-        }
-        
-        if (tLine.contains(">Problem not found</DIV>")){
+		}
+		
+		if (tLine.contains(">Problem not found</DIV>")){
 			throw new Exception();
-        }
+		}
 
 		tLine = tLine.replaceAll("SRC=\"", "SRC=\"http://acm.timus.ru");
 		
@@ -42,15 +42,10 @@ public class URALSpider extends Spider {
 		description.setInput(regFind(tLine, "problem_subtitle\">Input</H3>([\\s\\S]*?)<H3 CLASS=\"problem_subtitle\">Output"));
 		description.setOutput(regFind(tLine, "problem_subtitle\">Output</H3>([\\s\\S]*?)<H3 CLASS=\"problem_subtitle\">Sample"));
 		description.setSampleInput("<style type=\"text/css\">TABLE.sample{border-collapse:collapse;border: solid 1px #1A5CC8;}TABLE.sample TR TD, TABLE.sample TR TH{border: solid 1px #1A5CC8;vertical-align: top;padding: 3px;}TABLE.sample TR TH{color: #1A5CC8;}</style>"
-				 + regFind(tLine, "problem_subtitle\">Samples*</H3>([\\s\\S]*?)(<DIV CLASS=\"problem_source\">|<H3 CLASS=\"problem_subtitle\">Hint)"));
+				+ regFind(tLine, "problem_subtitle\">Samples*</H3>([\\s\\S]*?)(<DIV CLASS=\"problem_source\">|<H3 CLASS=\"problem_subtitle\">Hint)"));
 		description.setHint(regFind(tLine, "problem_subtitle\">Hint</H3>([\\s\\S]*?)<DIV CLASS=\"problem_source"));
 
 		problem.setSource(regFind(tLine, "<DIV CLASS=\"problem_source\">([\\s\\S]*?)</DIV></DIV>"));
 		problem.setUrl("http://acm.timus.ru/problem.aspx?space=1&num=" + problem.getOriginProb());
 	}
-
-	@Override
-	public void extraOptr() throws Exception {
-	}
-
 }

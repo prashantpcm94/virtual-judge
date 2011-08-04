@@ -56,20 +56,12 @@ public abstract class Spider extends Thread implements Cloneable {
 	 */
 	public abstract void crawl() throws Exception;
 	
-	/**
-	 * 抓取后续操作
-	 * @throws Exception
-	 */
-	public abstract void extraOptr() throws Exception;
-	
-	
 	public void run() {
 		try {
 			crawl();
 			description.setProblem(problem);
 			baseService.addOrModify(problem);
 			baseService.addOrModify(description);
-			extraOptr();
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (problem.getUrl() == null){
