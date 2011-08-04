@@ -164,9 +164,6 @@ public class UVASubmitter extends Submitter {
 
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
-				if (submission.getProblem().getTitle().matches("UVa P\\d+")) {
-					fetchExtraInfo(m.group(2));
-				}
 				result = m.group(3).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing").replaceAll("Received", "processing");
 				if (result.isEmpty()) {
 					result = "processing";
@@ -251,31 +248,4 @@ public class UVASubmitter extends Submitter {
 			using[idx] = false;
 		}
 	}
-	
-	/**
-	 * 获取题目的标题和时限
-	 * @param pid OJ原始题号
-	 * @throws Exception
-	 */
-	private void fetchExtraInfo(String pid) throws Exception {
-		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + pid);
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		String tLine = "";
-		try {
-			int statusCode = httpClient.executeMethod(getMethod);
-			if (statusCode != HttpStatus.SC_OK) {
-				System.err.println("Method failed: " + getMethod.getStatusLine());
-			}
-			byte[] responseBody = getMethod.getResponseBody();
-			tLine = new String(responseBody, "UTF-8");
-		} catch (Exception e) {
-			getMethod.releaseConnection();
-			throw new Exception();
-		}
-		Problem problem = submission.getProblem();
-		problem.setTitle(regFind(tLine, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>"));
-		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
-		baseService.addOrModify(problem);
-	}
-
 }

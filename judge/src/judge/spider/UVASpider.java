@@ -10,7 +10,7 @@ public class UVASpider extends Spider {
 	
 	public void crawl() throws Exception{
 		
-		if (problemNumberMap == null) {
+		if (problemNumberMap == null || problemNumberMap[12049] == null) {
 			new UVaSpiderInitializer("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8").start();
 		}
 		do {

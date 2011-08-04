@@ -36,8 +36,7 @@ $(document).ready(function() {
 		  				"fnRender": function ( oObj ) {
 			  				return new Date(parseInt(oObj.aData[3])).format("yyyy-MM-dd hh:mm:ss");
 		  				},
-		  				"sClass": "date",
-						"bSortable": false
+		  				"sClass": "date"
 					},
 		  			{},
 		  			{"bVisible": false},

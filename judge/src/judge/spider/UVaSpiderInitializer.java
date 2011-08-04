@@ -16,7 +16,7 @@ public class UVaSpiderInitializer extends Thread {
 	
 	public UVaSpiderInitializer(String url) {
 		if (UVASpider.problemNumberMap == null) {
-			UVASpider.problemNumberMap = new String[50000];
+			UVASpider.problemNumberMap = new String[20000];
 		}
 		rootUrl = url;
 	}

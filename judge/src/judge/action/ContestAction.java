@@ -278,7 +278,6 @@ public class ContestAction extends BaseAction {
 			}
 		}
 		
-//		contest.setBeginTime(new Date(year - 1900, month - 1, day, hour, minute, 0));
 		contest.setBeginTime(new Date(beginTime));
 		contest.setEndTime(new Date(contest.getBeginTime().getTime() + d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L));
 		long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
