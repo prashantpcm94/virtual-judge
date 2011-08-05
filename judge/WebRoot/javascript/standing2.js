@@ -179,7 +179,10 @@ function init() {
 }
 
 function calcScoreBoard(){
-	var sb = {}, firstSolveTime = [];
+	var sb = {}, firstSolveTime = [], totalSubmission = [], correctSubmission = [];
+	for (var j = 0; j < pnum; ++j) {
+		totalSubmission[j] = correctSubmission[j] = 0;
+	}
 	$.each(onlyCid ? {onlyCid: data[onlyCid]} : data, function(curCid, sInfo){
 		$.each(sInfo, function(key, s){
 			if (s[3] > maxTime)return;
@@ -191,11 +194,13 @@ function calcScoreBoard(){
 				sb[name][s[1]] = [-1, 0];
 			}
 			if (sb[name][s[1]][0] < 0){
+				totalSubmission[s[1]]++;
 				if (s[2]) {
 					sb[name][s[1]][0] = s[3];
 					if (firstSolveTime[s[1]] == undefined || s[3] < firstSolveTime[s[1]]) {
 						firstSolveTime[s[1]] = s[3];
 					}
+					correctSubmission[s[1]]++;
 				} else {
 					sb[name][s[1]][1]++;
 				}
@@ -255,8 +260,27 @@ function calcScoreBoard(){
 				sbHtml.push(">" + dateFormat(probInfo[0]) + "<br />" + (probInfo[1] ? "<span>(-" + probInfo[1] + ")</span>" : "　") + "</td>");
 			}
 		}
+		sbHtml.push("</tr>");
 	}
-	
+	if (sbHtml.length > 0) {
+		sbHtml.push("<tr><td colspan='4' style='background-color:#EAEBFF'>Submission statistics</td>");
+		var maxCorrectNumber = 0;
+		for (var j = 0; j < pnum; ++j) {
+			if (maxCorrectNumber < correctSubmission[j]) {
+				maxCorrectNumber = correctSubmission[j];
+			}
+		}
+		for (var j = 0; j < pnum; ++j) {
+			if (!totalSubmission[j]) {
+				sbHtml.push("<td style='background-color:#FFFFFF'/>");
+			} else {
+				var ratio = correctSubmission[j] / maxCorrectNumber;
+				sbHtml.push("<td style='background-color:" + grayDepth(ratio) + ";color:" + (ratio < .5 ? "black" : "white") + "'>" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + (!totalSubmission[j] ? 0 : Math.floor(100 * correctSubmission[j] / totalSubmission[j])) + "%</td>")
+			}
+		}
+		sbHtml.push("<td /></tr>");
+	}
+
 	standingTable.fnDestroy();
 	var standingTableDOM = document.getElementById("standing");
 	standingTableDOM.removeChild(standingTableDOM.lastChild);
@@ -294,5 +318,13 @@ function updateCheckAll() {
 		$("#checkAll").attr("checked", false);
 	} else if ($("[name=ids]:not(:checked)").length == 0){
 		$("#checkAll").attr("checked", true);
+	}
+}
+
+function grayDepth(ratio) {
+	if (ratio > 0.9999) {
+		return "#000000";
+	} else {
+		return "#" + (Math.floor((1 - ratio) * 0xff) * 0x010101).toString(16);
 	}
 }
