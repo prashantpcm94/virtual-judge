@@ -21,72 +21,70 @@ $(document).ready(function() {
 		"sPaginationType": "full_numbers",
 
 		"aoColumns": [
-		  			{},
-		  			{
-		  				"fnRender": function ( oObj ) {
-			  				return "<a href='user/profile.action?uid=" + oObj.aData[9] + "'>" + oObj.aData[1] + "</a>";
-		  				}
-		  			},
-		  			{
-		  				"fnRender": function ( oObj ) {
-			  				return "<a href='problem/viewProblem.action?id=" + oObj.aData[2] + "'>" + oObj.aData[11] + " " + oObj.aData[12] + "</a>";
-		  				},
-		  				"sClass": "prob_num"
-		  			},
-		  			{
-		  				"fnRender": function ( oObj ) {
-		  					return oObj.aData[3] == 'Judging Error 1' || oObj.aData[3] == 'Judging Error 2' && $("[name='isSup']").val() != 0 ? oObj.aData[3] + " <a href='#' class='rejudge' ><img border=0 height='15' src='images/refresh.png'/></a>" : oObj.aData[3];
-		  				},
+					{},
+					{
+						"fnRender": function ( oObj ) {
+							return "<a href='user/profile.action?uid=" + oObj.aData[9] + "'>" + oObj.aData[1] + "</a>";
+						}
+					},
+					{
+						"fnRender": function ( oObj ) {
+							return "<a href='problem/viewProblem.action?id=" + oObj.aData[2] + "'>" + oObj.aData[11] + " " + oObj.aData[12] + "</a>";
+						},
+						"sClass": "prob_num"
+					},
+					{
+						"fnRender": function ( oObj ) {
+							return oObj.aData[3] == 'Judging Error 1' || oObj.aData[3] == 'Judging Error 2' && $("[name='isSup']").val() != 0 ? oObj.aData[3] + " <a href='#' class='rejudge' ><img border=0 height='15' src='images/refresh.png'/></a>" : oObj.aData[3];
+						},
 						"sClass": "result"
 					},
-		  			{
-		  				"fnRender": function ( oObj ) {
-		  					return oObj.aData[3] == 'Accepted' ? oObj.aData[4] + " KB" : "";
-		  				},
+					{
+						"fnRender": function ( oObj ) {
+							return oObj.aData[3] == 'Accepted' ? oObj.aData[4] + " KB" : "";
+						},
 						"sClass": "memory"
-		  			},
-		  			{ 
-		  				"fnRender": function ( oObj ) {
-		  					return oObj.aData[3] == 'Accepted' ? oObj.aData[5] + " ms" : "";
-		  				},
-		  				"sClass": "time"
-		  			},
-		  			{ 
-		  				"fnRender": function ( oObj ) {
-	  						return oObj.aData[10] ? "<a " + (oObj.aData[10] == 2 ? "class='shared'" : "") + " href='problem/viewSource.action?id=" + oObj.aData[0] + "'>" + oObj.aData[6] + "</a>" : oObj.aData[6];
-		  				},
-		  				"sClass": "language"
 					},
-		  			{
-		  				"fnRender": function ( oObj ) {
-		  					return oObj.aData[7] + " B";
-		  				},
-		  				"sClass": "length"
-		  			},
-		  			{
-		  				"fnRender": function ( oObj ) {
-		  					return new Date(parseInt(oObj.aData[8])).format("yyyy-MM-dd hh:mm:ss");
-		  				},
-		  				"sClass": "date"
-		  			},
-		  			{
-		  				"fnRender": function ( oObj ) {
-	  						return oObj.aData[13] > 0 ? "<a href='contest/viewContest.action?cid=" + oObj.aData[13] + "'>*</a>" : "";
-		  				}
-		  			},
-		  			{"bVisible": false},
-		  			{"bVisible": false},
-		  			{"bVisible": false},
+					{ 
+						"fnRender": function ( oObj ) {
+							return oObj.aData[3] == 'Accepted' ? oObj.aData[5] + " ms" : "";
+						},
+						"sClass": "time"
+					},
+					{ 
+						"fnRender": function ( oObj ) {
+							return oObj.aData[10] ? "<a " + (oObj.aData[10] == 2 ? "class='shared'" : "") + " href='problem/viewSource.action?id=" + oObj.aData[0] + "'>" + oObj.aData[6] + "</a>" : oObj.aData[6];
+						},
+						"sClass": "language"
+					},
+					{
+						"fnRender": function ( oObj ) {
+							return oObj.aData[7] + " B";
+						},
+						"sClass": "length"
+					},
+					{
+						"fnRender": function ( oObj ) {
+							return new Date(parseInt(oObj.aData[8])).format("yyyy-MM-dd hh:mm:ss");
+						},
+						"sClass": "date"
+					},
+					{
+						"fnRender": function ( oObj ) {
+							return oObj.aData[13] > 0 ? "<a href='contest/viewContest.action?cid=" + oObj.aData[13] + "'>*</a>" : "";
+						}
+					},
+					{"bVisible": false},
+					{"bVisible": false},
+					{"bVisible": false},
 					{"bVisible": false}
-		  		],
+				],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
-			var inContest = $("[name='inContest']:checked").length > 0;
 			var un = $("[name='un']").val();
 			var OJId = $("[name='OJId']").val();
 			var probNum = $("[name='probNum']").val();
 			var res = $("[name='res']").val();
 		
-			aoData.push( { "name": "inContest", "value": inContest } );
 			aoData.push( { "name": "un", "value": un } );
 			if (first){
 				aoData.push( { "name": "id", "value": id } );
@@ -104,13 +102,13 @@ $(document).ready(function() {
 			} );
 		},
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-		    $(nRow).addClass(aData[3]=="Accepted" ? "yes" : aData[3].indexOf("ing") < 0 || aData[3].indexOf("rror") >= 0 ? "no" : "pending");
-		    $(nRow).attr("id", aData[0]);
-		    
-		    if ($(nRow).hasClass("pending")){
-		    	getResult(aData[0]);
-		    }
-		    
+			$(nRow).addClass(aData[3]=="Accepted" ? "yes" : aData[3].indexOf("ing") < 0 || aData[3].indexOf("rror") >= 0 ? "no" : "pending");
+			$(nRow).attr("id", aData[0]);
+			
+			if ($(nRow).hasClass("pending")){
+				getResult(aData[0]);
+			}
+			
 			return nRow;
 		}
 	});
@@ -151,10 +149,6 @@ $(document).ready(function() {
 		return false;
 	});
 
-	$("[name='inContest']").click(function(){
-		oTable.fnPageChange( 'first' );
-	});
-	
 	if (location.href.indexOf("reset") >= 0 || location.href.indexOf("id=") >= 0){
 		oTable.fnPageChange( 'first' );
 	}

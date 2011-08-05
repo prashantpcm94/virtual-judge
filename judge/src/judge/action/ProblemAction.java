@@ -43,7 +43,6 @@ public class ProblemAction extends BaseAction{
 	private String source;
 	private String redir;
 	private String un;
-	private boolean inContest;
 	private String _64Format;
 	private Integer isSup;
 	private DataTablesPage dataTablesPage;
@@ -321,9 +320,7 @@ public class ProblemAction extends BaseAction{
 
 		dataTablesPage.setITotalRecords(9999999L);
 
-		if (!inContest){
-			hql.append(" where s.contest is null ");
-		} else if (sup == 0){
+		if (sup == 0){
 			hql.append(" left join s.contest c where s.isPrivate = 0 and (c is null or c.endTime < :currentTime) ");
 			paraMap.put("currentTime", new Date());
 		} else {
@@ -621,12 +618,6 @@ public class ProblemAction extends BaseAction{
 	}
 	public void setProbNum2(String probNum2) {
 		this.probNum2 = probNum2;
-	}
-	public boolean isInContest() {
-		return inContest;
-	}
-	public void setInContest(boolean inContest) {
-		this.inContest = inContest;
 	}
 	public Integer getIsSup() {
 		return isSup;

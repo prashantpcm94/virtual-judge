@@ -7,17 +7,17 @@ String basePath = (String)application.getAttribute("basePath");
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- Problem</title>
+		<base href="<%=basePath%>" />
+		<title>Virtual Judge -- Problem</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
-	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
-	    <script type='text/javascript' src='dwr/util.js'></script>
+		<script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/problem_status.js"></script>
 	</head>
@@ -27,7 +27,6 @@ String basePath = (String)application.getAttribute("basePath");
 		<s:actionerror/>
 		
 		<form id="form_status">
-			Contest:<input type="checkbox" name="inContest" checked="true" />
 			Username:<input type="text" name="un" value="${un}" />&nbsp;&nbsp;
 			OJ:<s:select id="OJId" name="OJId" value="%{OJId}" list="OJListAll" />&nbsp;&nbsp;
 			Problem ID:<s:textfield name="probNum" />&nbsp;&nbsp;

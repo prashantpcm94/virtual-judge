@@ -149,6 +149,7 @@ function getRemoteData(){
 				data[res[0]] = contestData;
 				if (++ccnt == cnum){
 					init();
+					$("#status_processing").hide();
 				}
 			});
 		});
@@ -165,21 +166,19 @@ function init() {
 		max: ti[0],
 		value: ti[1],
 		slide: function( event, ui ) {
+			$("#status_processing").show();
 			if (ui.value > ti[1])return false;
 		},
 		stop: function( event, ui ) {
 			maxTime = ui.value;
 			calcScoreBoard();
 			changed = true;
+			$("#status_processing").hide();
 		}
 	});
-
-	$("#status_processing").hide();
 }
 
 function calcScoreBoard(){
-	$("#status_processing").show();
-
 	var sb = {}, firstSolveTime = [];
 	$.each(onlyCid ? {onlyCid: data[onlyCid]} : data, function(curCid, sInfo){
 		$.each(sInfo, function(key, s){
@@ -220,40 +219,56 @@ function calcScoreBoard(){
 		return b[1] - a[1] || a[2] - b[2];
 	});
 
-	standingTable.fnDestroy();
-	$("tr.disp").remove();
-
 	var $originRow = $("tr#template");
-	$.each(result, function(i, v1){
-		var $newRow = $originRow.clone().removeAttr("id").attr("class", "disp");
-		var splitIdx = v1[0].lastIndexOf("_");
-		var curCid = v1[0].substr(splitIdx + 1);
-		$.each(sb[v1[0]], function(j, v2){
-			v1.push(v2 ? (firstSolveTime[j] == v2[0] ? " " : "") + dateFormat(v2[0]) + "<br />" + (v2[1] ? "<span>(-" + v2[1] + ")</span>" : "　") : "");
-		});
-		v1[0] = v1[0].substr(0, splitIdx);
-		v1[2] = dateFormat(v1[2]);
-		$newRow.attr("cid", curCid);
-
-		var $curTd = $("td:eq(0)", $newRow);
-		$curTd.html(i + 1);
-		$curTd = $curTd.next();
-		
-		for (k in v1){
-			$curTd.html(v1[k]);
-			if (k <= 2){
-				$curTd.addClass("meta_td");
-				if (cid == curCid){
-					$curTd.addClass("curTd");
-				}
-			} else if (v1[k].length){
-				$curTd.addClass(v1[k].charAt(0) == '　' ? "red" : v1[k].charAt(0) == ' ' ? "solvedfirst" : "green");
-			}
-			$curTd = $curTd.next();
+	var sbHtml = [];
+	for (var i = 0; i < result.length; ++i) {
+		var curInfo = result[i];
+		var splitIdx = curInfo[0].lastIndexOf("_");
+		var curCid = curInfo[0].substr(splitIdx + 1);
+		sbHtml.push("<tr class='disp' style='background:transparent' cid='" + curCid + "'><td>" + (i + 1) + "</td><td class='meta_td");
+		if (cid == curCid) {
+			sbHtml.push(" curTd");
 		}
-		$newRow.insertBefore($originRow).show();
-	});
+		sbHtml.push("'>" + curInfo[0].substr(0, splitIdx) + "</td><td class='meta_td");
+		if (cid == curCid) {
+			sbHtml.push(" curTd");
+		}
+		sbHtml.push("'>" + curInfo[1] + "</td><td class='meta_td");
+		if (cid == curCid) {
+			sbHtml.push(" curTd");
+		}
+		sbHtml.push("'>" + dateFormat(curInfo[2]) + "</td>");
+
+		var thisSb = sb[curInfo[0]];
+		for (var j = 0; j < thisSb.length; ++j) {
+			var probInfo = thisSb[j];
+			if (!probInfo) {
+				sbHtml.push("<td />");
+			} else {
+				sbHtml.push("<td ");
+				if (probInfo[0] < 0) {
+					sbHtml.push("class='red'");
+				} else if (firstSolveTime[j] == probInfo[0]) {
+					sbHtml.push("class='solvedfirst'");
+				} else {
+					sbHtml.push("class='green'");
+				}
+				sbHtml.push(">" + dateFormat(probInfo[0]) + "<br />" + (probInfo[1] ? "<span>(-" + probInfo[1] + ")</span>" : "　") + "</td>");
+			}
+		}
+		sbHtml.push("<td /></tr>");
+	}
+	
+	standingTable.fnDestroy();
+	var standingTableDOM = document.getElementById("standing");
+	standingTableDOM.removeChild(standingTableDOM.lastChild);
+
+	var $newTbody = $("<tbody id='standing_tbody' />")
+	$("table#standing").append($newTbody);
+	$("#standing_tbody").html(sbHtml.join(""));
+
 	standingTable.dataTable(standingTableSetting);
+
 	setTimeout(function(){
 		oFH = new FixedHeader( standingTable );
 	}, 100);
@@ -261,8 +276,6 @@ function calcScoreBoard(){
 	var formatIdx = $.cookie("penalty_format");
 	$("#time_index").css("width", (2 - formatIdx + 100 * maxTime / ti[0]) + "%");
 	$("#time_index span").text(dateFormat(maxTime));
-
-	$("#status_processing").hide();
 }
 
 function dateFormat(time){

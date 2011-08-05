@@ -23,9 +23,9 @@ String basePath = (String)application.getAttribute("basePath");
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 		<script type="text/javascript" src="javascript/FixedHeader.js"></script>
 
-	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
-	    <script type='text/javascript' src='dwr/util.js'></script>
+		<script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/standing2.js"></script>
 	</head>
@@ -76,19 +76,13 @@ String basePath = (String)application.getAttribute("basePath");
 							<th />
 						</tr>
 					</thead>
-					<tbody>
-						<tr id="template" style="display:none;background:transparent;">
-							<td></td>
-							<td></td>
-							<td></td>
-							<td class="standing_time"></td>
-							<s:iterator value="tList" status="stat">
-								<td class="standing_time"></td>
-							</s:iterator>
-							<td />
-						</tr>
-					</tbody>
+					<tbody id="standing_tbody" />
 				</table>
+				<div style="display:none">
+					<table>
+						<tr id="template" style="background:transparent;"><td /><td /><td /><td /><s:iterator value="tList" status="stat"><td /></s:iterator><td /></tr>
+					</table>				
+				</div>
 			</div>
 			<div id="setting">
 				<div style="width:960px;font-size:14px;margin-left:auto;margin-right:auto;">
