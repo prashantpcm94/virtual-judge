@@ -149,7 +149,7 @@ function getRemoteData(){
 			});
 		});
 	}
-	if (ccnt == 0) {
+	if (ids[0].length == 0) {
 		init();
 		$("#status_processing").hide();
 	}
