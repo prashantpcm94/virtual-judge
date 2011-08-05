@@ -6,7 +6,7 @@ var standingTableSetting = {
 	"bFilter": true,
 	"bInfo": false,
 	"bAutoWidth": false,
-	"aoColumns": [{"sType": "numeric"}, {"sType": "string"}, {"sType": "numeric"}, {"sType": "date"}]
+	"aoColumns": [{"sType":"numeric", "bSortable":false}, {"sType":"string", "bSortable":false}, {"sType":"numeric", "bSortable":false}, {"sType":"date", "bSortable":false}]
 };
 
 $(document).ready(function() {
