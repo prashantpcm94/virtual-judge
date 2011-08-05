@@ -20,6 +20,8 @@ $(document).ready(function() {
 	if ($.cookie("penalty_format") == undefined){
 		$.cookie("penalty_format", 0, { expires: 30 });
 	}
+	
+	standingTable = $('#standing').dataTable(standingTableSetting);
 
 	$( "#tabs" ).tabs({
 		show: function(event, ui) {
@@ -44,8 +46,6 @@ $(document).ready(function() {
 
 	$( "#tabs" ).removeClass("ui-widget-content");
 	$( "#tabs" ).addClass("ui-widget-content-custom");
-
-	standingTable = $('#standing').dataTable(standingTableSetting);
 
 	$('#setting table').dataTable({
 		"bPaginate": false,
@@ -129,21 +129,16 @@ $(document).ready(function() {
 
 function getRemoteData(){
 	$("#status_processing").show();
-	var ids = $.cookie("contest_" + cid);
-	if (!ids){
-		$("tr.disp").remove();
-		$("#status_processing").hide();
-		return;
-	}
+	var ids = $.cookie("contest_" + cid) || "";
 
 	DWREngine.setAsync(false);
 	judgeService.getContestTimeInfo(cid, function(res){ti = res;});
 	DWREngine.setAsync(true);
-
+	
 	ids = ids.split("/");
 	var cnum = ids.length, ccnt = 0;
 	data = {};
-	for (i in ids){
+	for (i in ids) if (ids[i].length) {
 		judgeService.getStandingData(ids[i], function(res){
 			$.getJSON(res[1], function(contestData) {
 				data[res[0]] = contestData;
@@ -153,6 +148,10 @@ function getRemoteData(){
 				}
 			});
 		});
+	}
+	if (ccnt == 0) {
+		init();
+		$("#status_processing").hide();
 	}
 }
 
@@ -272,15 +271,14 @@ function calcScoreBoard(){
 		}
 		for (var j = 0; j < pnum; ++j) {
 			if (!totalSubmission[j]) {
-				sbHtml.push("<td style='background-color:#FFFFFF'/>");
+				sbHtml.push("<td style='background-color:white'/>");
 			} else {
 				var ratio = correctSubmission[j] / maxCorrectNumber;
 				sbHtml.push("<td style='background-color:" + grayDepth(ratio) + ";color:" + (ratio < .5 ? "black" : "white") + "'>" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + (!totalSubmission[j] ? 0 : Math.floor(100 * correctSubmission[j] / totalSubmission[j])) + "%</td>")
 			}
 		}
-		sbHtml.push("<td /></tr>");
+		sbHtml.push("<td style='background-color:white'/></tr>");
 	}
-
 	standingTable.fnDestroy();
 	var standingTableDOM = document.getElementById("standing");
 	standingTableDOM.removeChild(standingTableDOM.lastChild);
@@ -292,7 +290,11 @@ function calcScoreBoard(){
 	standingTable.dataTable(standingTableSetting);
 
 	setTimeout(function(){
-		oFH.fnUpdate();
+		if (!oFH) {
+			oFH = new FixedHeader( standingTable );
+		} else {
+			oFH.fnUpdate();
+		}
 	}, 100);
 	
 	var formatIdx = $.cookie("penalty_format");

@@ -17,31 +17,31 @@ $(document).ready(function() {
 		"aaSorting": [[ 1, "asc" ]],
 		"aoColumns": [
 					{
-		  				"sClass": "center",
+						"sClass": "center",
 						"bSortable": false
 					},
-		  			{
-		  				"fnRender": function ( oObj ) {
-			  				return "<a href='" + oObj.aData[6] + "'>" + oObj.aData[1] + "</a>";
-		  				},
-		  				"sClass": "center"
-		  			},
-		  			{
-		  				"fnRender": function ( oObj ) {
-			  				return "<a href='problem/viewProblem.action?id=" + oObj.aData[5] + "'>" + oObj.aData[2] + "</a>";
-		  				},
-		  				"sClass": ""
-		  			},
-		  			{
-		  				"fnRender": function ( oObj ) {
-			  				return new Date(parseInt(oObj.aData[3])).format("yyyy-MM-dd hh:mm:ss");
-		  				},
-		  				"sClass": "date"
+					{
+						"fnRender": function ( oObj ) {
+							return "<a href='" + oObj.aData[6] + "'>" + oObj.aData[1] + "</a>";
+						},
+						"sClass": "center"
 					},
-		  			{},
-		  			{"bVisible": false},
-		  			{"bVisible": false}
-              ],
+					{
+						"fnRender": function ( oObj ) {
+							return "<a href='problem/viewProblem.action?id=" + oObj.aData[5] + "'>" + oObj.aData[2] + "</a>";
+						},
+						"sClass": ""
+					},
+					{
+						"fnRender": function ( oObj ) {
+							return new Date(parseInt(oObj.aData[3])).format("yyyy-MM-dd hh:mm:ss");
+						},
+						"sClass": "date"
+					},
+					{},
+					{"bVisible": false},
+					{"bVisible": false}
+			],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 			var OJId = $("#OJId").val();
 			aoData.push( { "name": "OJId", "value": OJId } );
