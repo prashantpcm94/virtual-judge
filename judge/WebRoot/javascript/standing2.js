@@ -1,4 +1,4 @@
-var cid, onlyCid, data, ti, maxTime, changed, standingTable, oFH;
+var cid, onlyCid, data, ti, pnum, maxTime, changed, standingTable, oFH;
 
 var standingTableSetting = {
 	"bPaginate": false,
@@ -12,7 +12,7 @@ var standingTableSetting = {
 $(document).ready(function() {
 
 	cid = $("[name=cid]").val();
-	pnum = $("tr#template td").length - 5;
+	pnum = $("#standing th").length - 5;
 
 	if ($.cookie("contest_" + cid) == undefined){
 		$.cookie("contest_" + cid, cid, { expires: 3 });
@@ -219,7 +219,6 @@ function calcScoreBoard(){
 		return b[1] - a[1] || a[2] - b[2];
 	});
 
-	var $originRow = $("tr#template");
 	var sbHtml = [];
 	for (var i = 0; i < result.length; ++i) {
 		var curInfo = result[i];
@@ -240,7 +239,7 @@ function calcScoreBoard(){
 		sbHtml.push("'>" + dateFormat(curInfo[2]) + "</td>");
 
 		var thisSb = sb[curInfo[0]];
-		for (var j = 0; j < thisSb.length; ++j) {
+		for (var j = 0; j <= pnum; ++j) {
 			var probInfo = thisSb[j];
 			if (!probInfo) {
 				sbHtml.push("<td />");
@@ -256,7 +255,6 @@ function calcScoreBoard(){
 				sbHtml.push(">" + dateFormat(probInfo[0]) + "<br />" + (probInfo[1] ? "<span>(-" + probInfo[1] + ")</span>" : "　") + "</td>");
 			}
 		}
-		sbHtml.push("<td /></tr>");
 	}
 	
 	standingTable.fnDestroy();
@@ -270,7 +268,7 @@ function calcScoreBoard(){
 	standingTable.dataTable(standingTableSetting);
 
 	setTimeout(function(){
-		oFH = new FixedHeader( standingTable );
+		oFH.fnUpdate();
 	}, 100);
 	
 	var formatIdx = $.cookie("penalty_format");

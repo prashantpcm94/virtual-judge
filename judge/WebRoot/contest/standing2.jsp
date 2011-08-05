@@ -78,11 +78,6 @@ String basePath = (String)application.getAttribute("basePath");
 					</thead>
 					<tbody id="standing_tbody" />
 				</table>
-				<div style="display:none">
-					<table>
-						<tr id="template" style="background:transparent;"><td /><td /><td /><td /><s:iterator value="tList" status="stat"><td /></s:iterator><td /></tr>
-					</table>				
-				</div>
 			</div>
 			<div id="setting">
 				<div style="width:960px;font-size:14px;margin-left:auto;margin-right:auto;">
