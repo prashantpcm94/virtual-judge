@@ -327,6 +327,8 @@ function grayDepth(ratio) {
 	if (ratio > 0.9999) {
 		return "#000000";
 	} else {
-		return "#" + (Math.floor((1 - ratio) * 0xff) * 0x010101).toString(16);
+		var res = (Math.floor((1 - ratio) * 0xff) * 0x010101).toString(16);
+		while (res.length < 6) res = '0' + res;
+		return "#" + res;
 	}
 }
