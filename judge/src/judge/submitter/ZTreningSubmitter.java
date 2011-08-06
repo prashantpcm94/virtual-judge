@@ -3,26 +3,25 @@ package judge.submitter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.MultipartPostMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
+@SuppressWarnings("deprecation")
 public class ZTreningSubmitter extends Submitter {
 
 	static final String OJ_NAME = "Z-Trening";
@@ -58,149 +57,96 @@ public class ZTreningSubmitter extends Submitter {
 		}
 		
 		Map<String, String> languageList = new TreeMap<String, String>();
-		languageList.put("1", "GNU C++ 4.6");
-		languageList.put("2", "Microsoft Visual C++ 2005+");
-		languageList.put("3", "Delphi 7");
-		languageList.put("4", "Free Pascal 2");
-		languageList.put("5", "Java 6");
-		languageList.put("6", "PHP 5.2+");
-		languageList.put("7", "Python 2.6+");
-		languageList.put("8", "Ruby 1.7+");
-		languageList.put("9", "C# Mono 2.6+");
-		languageList.put("10", "GNU C 4");
-		languageList.put("12", "Haskell GHC 6.12");
-		languageList.put("14", "ActiveTcl 8.5");
-		languageList.put("15", "Io-2008-01-07 (Win32)");
-		languageList.put("16", "GNU C++0x 4");
-		languageList.put("17", "Pike 7.8");
-		sc.setAttribute("CodeForces", languageList);
-	}
-	
-	private void getMaxRunId() throws Exception {
-		GetMethod getMethod = new GetMethod("http://codeforces.com/problemset/status");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		Pattern p = Pattern.compile("submissionId=\"(\\d+)\"");
-
-		int count = 0;
-		while (true) {
-			try {
-				httpClient.executeMethod(getMethod);
-				break;
-			} catch (SocketException e) {
-				if (!e.getMessage().contains("reset") || ++count > 5) {
-					getMethod.releaseConnection();
-					throw e;
-				}
-				Thread.sleep(4000);
-			}
-		}
-		
-		byte[] responseBody = getMethod.getResponseBody();
-		String tLine = new String(responseBody, "UTF-8");
-		Matcher m = p.matcher(tLine);
-		if (m.find()) {
-			maxRunId = Integer.parseInt(m.group(1));
-			System.out.println("maxRunId : " + maxRunId);
-		} else {
-			throw new Exception();
-		}
+		languageList.put("1", "Pascal");
+		languageList.put("2", "C");
+		languageList.put("3", "C++");
+		languageList.put("4", "Java");
+		languageList.put("5", "Python");
+		languageList.put("6", "PHP");
+		languageList.put("7", "Perl");
+		languageList.put("8", "Ruby");
+		languageList.put("9", "Scheme");
+		languageList.put("10", "Fortran");
+		languageList.put("11", "YBASIC");
+		languageList.put("12", "GPC");
+		sc.setAttribute("Z-Trening", languageList);
 	}
 	
 	private void submit() throws Exception{
-		GetMethod getMethod = new GetMethod("http://codeforces.com/profile");
-		int statusCode = httpClient.executeMethod(getMethod);
-		if (statusCode == HttpStatus.SC_OK) {
-			byte[] responseBody = getMethod.getResponseBody();
-			String tLine = new String(responseBody, "UTF-8");
-			if (tLine.contains("Login - Codeforces")) {
-				throw new Exception();
-			}
-		} else if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
-			if (getMethod.getResponseHeader("Location").getValue().contains("enter")) {
-				throw new Exception();
-			}
+		File file = new File(idx + "");
+		try{
+			FileWriter filewriter = new FileWriter(file, false);
+			filewriter.write(submission.getSource());
+			filewriter.close();
+		}catch(IOException e){
+			throw e;
+		}catch (Exception ex) {
+			throw ex;
 		}
 		
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
-		String source = submission.getSource() + "\n";
-		int random = (int) (Math.random() * 87654321);
-		while (random > 0) {
-			source += random % 2 == 0 ? ' ' : '\t';
-			random /= 2;
-		}
-		PostMethod postMethod = new PostMethod("http://codeforces.com/problemset/submit");
-		postMethod.addParameter("action", "submitSolutionFormSubmitted");
-		postMethod.addParameter("submittedProblemCode", problem.getOriginProb());
-		postMethod.addParameter("language", submission.getLanguage());
-		postMethod.addParameter("source", source);
-		postMethod.addParameter("sourceFile", "");
+		MultipartPostMethod postMethod = new MultipartPostMethod("http://www.z-trening.com/submit_ajax.php?submit=" + (5000000000L + Integer.parseInt(submission.getOriginProb())));
+		postMethod.addParameter("submit_lang", submission.getLanguage());
+		postMethod.addParameter("source_file", file);
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.getParams().setContentCharset("UTF-8"); 
 
 		System.out.println("submit...");
-		statusCode = httpClient.executeMethod(postMethod);
+		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
+
+		String content = new String(postMethod.getResponseBody(), "UTF-8");
+		if (content.contains("<P>Please login!</P>")){
+			throw new Exception();
+		}
 		
-		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
-			throw new Exception();
+		String fetchCode = regFind(content, "'(\\w+)'\\);");
+		GetMethod getMethod = new GetMethod("http://www.z-trening.com/submit_ajax.php?wait_grade=" + fetchCode);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		HttpClient client = new HttpClient();
+		client.setTimeout(300000);
+		client.executeMethod(getMethod);
+		String result = new String(getMethod.getResponseBody(), "UTF-8");
+		
+		if (result.contains("Compile ERROR")) {
+			submission.setStatus("Compile Error");
+			baseService.addOrModify(submission);
+			return;
 		}
-		if (!postMethod.getResponseHeader("Location").getValue().contains("status")) {
-			throw new Exception();
+
+		Matcher matcher = Pattern.compile("Time: (\\S+)s<br> Memory: (\\S+) MB").matcher(result);
+		if (matcher.find()) {
+			Double memory = Double.parseDouble(matcher.group(2)) * 1024;
+			submission.setMemory(memory.intValue());
+			submission.setTime(Integer.parseInt(matcher.group(1)) * 1000);
+			submission.setStatus("Accepted");
+			baseService.addOrModify(submission);
+			return;
 		}
+		
+		matcher = Pattern.compile("(dfailed|dwrong)[\\s\\S]*?div(\\d+)[\\s\\S]*?<P CLASS=\"smallerText\">(.*?)</P>").matcher(result);
+		matcher.find();
+		if (matcher.group(1).equals("dwrong")) {
+			submission.setStatus("WA on test " + matcher.group(2));
+		} else {
+			submission.setStatus(matcher.group(3) + " on test " + matcher.group(2));
+		}
+		baseService.addOrModify(submission);
 	}
 	
 	private void login(String username, String password) throws Exception{
-		PostMethod postMethod = new PostMethod("http://codeforces.com/enter");
-		postMethod.addParameter("handle", username);
+		PostMethod postMethod = new PostMethod("http://www.z-trening.com/index.php?login=1");
+		postMethod.addParameter("username", username);
 		postMethod.addParameter("password", password);
-		postMethod.addParameter("remember", "on");
-		postMethod.addParameter("submitted", "true");
+		postMethod.addParameter("remember", "remember");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
 		System.out.println("login...");
 		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
-
-		//注意:此处判断登陆成功条件并不充分,相当于默认成功
-		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
+		String content = new String(postMethod.getResponseBody(), "UTF-8");
+		if (!content.contains(">My Profile<")) {
 			throw new Exception();
 		}
-	}
-	
-	public void getResult(String username) throws Exception{
-		String reg = username + "</a>    </td>[\\s\\S]*?submissionId=\"(\\d+)\" >([\\s\\S]*?)</td>[\\s\\S]*?(\\d+)[\\s\\S]*?(\\d+)", result;
-		Pattern p = Pattern.compile(reg);
-
-		GetMethod getMethod = new GetMethod("http://codeforces.com/problemset/status");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		long cur = new Date().getTime(), interval = 2000;
-		while (new Date().getTime() - cur < 600000){
-			System.out.println("getResult...");
-			httpClient.executeMethod(getMethod);
-			byte[] responseBody = getMethod.getResponseBody();
-			String tLine = new String(responseBody, "UTF-8");
-
-			Matcher m = p.matcher(tLine);
-			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
-				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing");
-				if (result.isEmpty()) {
-					result = "processing";
-				}
-				submission.setStatus(result);
-				if (!result.contains("ing")){
-					if (result.equals("Accepted")){
-						submission.setTime(Integer.parseInt(m.group(3)));
-						submission.setMemory(Integer.parseInt(m.group(4)));
-					}
-					baseService.addOrModify(submission);
-					return;
-				}
-				baseService.addOrModify(submission);
-			}
-			Thread.sleep(interval);
-			interval += 500;
-		}
-		throw new Exception();
 	}
 	
 	private int getIdleClient() {
@@ -231,7 +177,6 @@ public class ZTreningSubmitter extends Submitter {
 		int errorCode = 1;
 
 		try {
-			getMaxRunId();
 			try {
 				//第一次尝试提交
 				submit();
@@ -243,11 +188,6 @@ public class ZTreningSubmitter extends Submitter {
 				Thread.sleep(2000);
 				submit();
 			}
-			errorCode = 2;
-			submission.setStatus("Running & Judging");
-			baseService.addOrModify(submission);
-			Thread.sleep(2000);
-			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			submission.setStatus("Judging Error " + errorCode);
@@ -262,7 +202,7 @@ public class ZTreningSubmitter extends Submitter {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}	//CodeForces貌似不限制每两次提交之间的提交间隔
+		}	//Z-Trening貌似不限制每两次提交之间的提交间隔
 		synchronized (using) {
 			using[idx] = false;
 		}

@@ -30,6 +30,10 @@ public class ZTreningSpider extends Spider {
 			getMethod.releaseConnection();
 			throw new Exception();
 		}
+		
+		if (tLine.contains("<H1>Error</H1>")) {
+			throw new Exception();
+		}
 
 		problem.setTitle(regFind(tLine, "<TITLE>Task :: ([\\s\\S]*?)</TITLE>"));
 		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
