@@ -12,6 +12,7 @@ public class Contest {
 	private int id;
 	private String title;
 	private String description;
+	private String announcement;
 	private String password;
 	private Date beginTime;
 	private Date endTime;
@@ -92,5 +93,11 @@ public class Contest {
 	}
 	public void setReplayStatus(ReplayStatus replayStatus) {
 		this.replayStatus = replayStatus;
+	}
+	public String getAnnouncement() {
+		return announcement;
+	}
+	public void setAnnouncement(String announcement) {
+		this.announcement = announcement;
 	}
 }

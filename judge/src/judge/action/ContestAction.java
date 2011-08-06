@@ -197,6 +197,7 @@ public class ContestAction extends BaseAction {
 
 			contest.setTitle(null);
 			contest.setDescription(null);
+			contest.setAnnouncement(null);
 			contest.setPassword(null);
 			
 			List<Object []> cproblemList = baseService.query("select p.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problem.id = p.id and cproblem.contest.id = " + cid + " order by cproblem.num asc");
@@ -208,7 +209,7 @@ public class ContestAction extends BaseAction {
 				pids.add(o[0]);
 				OJs.add(o[1]);
 				probNums.add(o[2]);
-				titles.add((String) o[3]);
+				titles.add(judgeService.toPlainChar((String) o[3]));
 			}
 			long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
 			d_day = (int) (dur / 86400000);
@@ -239,6 +240,13 @@ public class ContestAction extends BaseAction {
 		 */
 		if (contest.getDescription() != null && contest.getDescription().length() > 65000) {
 			this.addActionError("Contest description should be shorter than 65000 characters!");
+		}
+
+		/**
+		 * 比赛公告不得多于65000字符
+		 */
+		if (contest.getAnnouncement() != null && contest.getAnnouncement().length() > 65000) {
+			this.addActionError("Contest announcement should be shorter than 65000 characters!");
 		}
 
 		/**
@@ -340,7 +348,7 @@ public class ContestAction extends BaseAction {
 			if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
 				cproblem.setTitle(problem.getTitle());
 			} else {
-				cproblem.setTitle(titles.get(i).trim());
+				cproblem.setTitle(judgeService.toHTMLChar(titles.get(i).trim()));
 			}
 			cproblem.setNum((char)('A' + i) + "");
 			dataList.add(cproblem);
@@ -504,8 +512,8 @@ public class ContestAction extends BaseAction {
 		}
 		cproblem = (Cproblem) baseService.query(Cproblem.class, pid);
 		cid = cproblem.getContest().getId();
+		contest = (Contest) baseService.query(Contest.class, cid);
 		if (session.get("C" + cid) == null){
-			contest = (Contest) baseService.query(Contest.class, cid);
 			if (contest.getPassword() == null || user != null && user.getSup() == 1){
 				session.put("C" + cid, 1);
 			} else {
@@ -594,9 +602,9 @@ public class ContestAction extends BaseAction {
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		isSup = user == null ? 0 : user.getSup();
-		
+		contest = (Contest) baseService.query(Contest.class, cid);
+
 		if (session.get("C" + cid) == null){
-			contest = (Contest) baseService.query(Contest.class, cid);
 			if (contest.getPassword() == null || user != null && user.getSup() == 1){
 				session.put("C" + cid, 1);
 			} else {
@@ -852,7 +860,7 @@ public class ContestAction extends BaseAction {
 			pids.add(o[0]);
 			OJs.add(o[1]);
 			probNums.add(o[2]);
-			titles.add((String) o[3]);
+			titles.add(judgeService.toPlainChar((String) o[3]));
 		}
 		contestType = contest.getReplayStatus() == null ? 0 : 1;
 		return "detail_edit";
@@ -880,8 +888,13 @@ public class ContestAction extends BaseAction {
 				this.addActionError("Contest description should be shorter than 65000 characters!");
 				beiju = true;
 			}
-			oContest.setTitle(contest.getTitle());
+			if (contest.getAnnouncement().length() > 65000) {
+				this.addActionError("Contest announcement should be shorter than 65000 characters!");
+				beiju = true;
+			}
+			oContest.setTitle(judgeService.toHTMLChar(contest.getTitle()));
 			oContest.setDescription(contest.getDescription());
+			oContest.setAnnouncement(contest.getAnnouncement());
 			if (beiju){
 				contest = (Contest) baseService.query(Contest.class, cid);
 				return "brief_edit";
@@ -903,6 +916,7 @@ public class ContestAction extends BaseAction {
 		StringBuffer hashCode = new StringBuffer();
 		oContest.setTitle(contest.getTitle());
 		oContest.setDescription(contest.getDescription());
+		oContest.setAnnouncement(contest.getAnnouncement());
 		oContest.setBeginTime(contest.getBeginTime());
 		oContest.setEndTime(contest.getEndTime());
 		if (contest.getPassword().isEmpty()) {
@@ -918,7 +932,7 @@ public class ContestAction extends BaseAction {
 			if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
 				cproblem.setTitle(problem.getTitle());
 			} else {
-				cproblem.setTitle((String) titles.get(i));
+				cproblem.setTitle(judgeService.toHTMLChar(titles.get(i).trim()));
 			}
 			cproblem.setNum((char)('A' + i) + "");
 			dataList.add(cproblem);

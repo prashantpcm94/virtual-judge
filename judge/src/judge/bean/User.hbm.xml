@@ -11,25 +11,25 @@
             <generator class="native" />
         </id>
         <property name="username" type="java.lang.String">
-            <column name="C_USERNAME" length="40"/>
+            <column name="C_USERNAME" />
         </property>
         <property name="password" type="java.lang.String">
-            <column name="C_PASSWORD" length="40"/>
+            <column name="C_PASSWORD" />
         </property>
         <property name="nickname" type="java.lang.String">
-            <column name="C_NICKNAME" length="100"/>
+            <column name="C_NICKNAME" />
         </property>
         <property name="qq" type="java.lang.String">
-            <column name="C_QQ" length="20"/>
+            <column name="C_QQ" />
         </property>
         <property name="school" type="java.lang.String">
-            <column name="C_SCHOOL" length="100"/>
+            <column name="C_SCHOOL" />
         </property>
         <property name="email" type="java.lang.String">
-            <column name="C_EMAIL" length="100"/>
+            <column name="C_EMAIL" />
         </property>
         <property name="blog" type="java.lang.String">
-            <column name="C_BLOG" length="1000"/>
+            <column name="C_BLOG" />
         </property>
         <property name="share" type="java.lang.Integer">
             <column name="C_SHARE" precision="10" scale="0"/>

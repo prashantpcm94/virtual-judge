@@ -42,6 +42,10 @@ String basePath = (String)application.getAttribute("basePath");
 					<td><s:textarea name="contest.description" cols="80" rows="5" theme="simple" /></td>
 				</tr>
 				<tr>
+					<td class="form_title">Announcement:</td>
+					<td><s:textarea name="contest.announcement" cols="80" rows="3" theme="simple" /></td>
+				</tr>
+				<tr>
 					<td class="form_title">Begin Time:</td>
 					<td>
 						<s:textfield name="_beginTime" size="10" readonly="true" >

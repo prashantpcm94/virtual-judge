@@ -33,11 +33,15 @@ String basePath = (String)application.getAttribute("basePath");
 				</tr>
 				<tr>
 					<td class="form_title">Title:</td>
-					<td><s:textfield name="contest.title" value="%{contest.title}" size="94" theme="simple" /></td>
+					<td><s:textfield name="contest.title" size="94" theme="simple" /></td>
 				</tr>
 				<tr>
 					<td class="form_title">Description:</td>
-					<td><s:textarea name="contest.description" value="%{contest.description}" cols="80" rows="5" theme="simple" /></td>
+					<td><s:textarea name="contest.description" cols="80" rows="5" theme="simple" /></td>
+				</tr>
+				<tr>
+					<td class="form_title">Announcement:</td>
+					<td><s:textarea name="contest.announcement" cols="80" rows="3" theme="simple" /></td>
 				</tr>
 				<tr>
 					<td class="form_title">Begin Time:</td>

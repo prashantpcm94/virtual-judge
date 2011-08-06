@@ -1,0 +1,1 @@
+ALTER TABLE `vhoj`.`t_contest` ADD COLUMN `C_ANNOUNCEMENT` text COLLATE utf8_unicode_ci;

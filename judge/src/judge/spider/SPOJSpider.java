@@ -39,7 +39,8 @@ public class SPOJSpider extends Spider {
 		if (problem.getTitle() != null){
 			problem.setTitle(problem.getTitle().trim());
 		}
-		problem.setTimeLimit(1000 * Integer.parseInt(regFind(tLine, "Time limit:</td><td>([\\s\\S]*?)s", 1)));
+		Double timeLimit = 1000 * Double.parseDouble(regFind(tLine, "Time limit:</td><td>([\\s\\S]*?)s", 1));
+		problem.setTimeLimit(timeLimit.intValue());
 		description.setDescription(regFind(tLine, "<p align=\"justify\">([\\s\\S]*?)(<h3[^<>]*>Input|<hr>)", 1));
 		description.setInput(regFind(tLine, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
 		description.setOutput(regFind(tLine, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));

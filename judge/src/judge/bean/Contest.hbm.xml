@@ -11,19 +11,22 @@
             <generator class="native" />
         </id>
 		<property name="title" type="java.lang.String">
-		    <column name="C_TITLE" length="100"/>
+		    <column name="C_TITLE" />
 		</property>
 		<property name="description" type="java.lang.String">
-		    <column name="C_DESCRIPTION" length="65000"/>
+		    <column name="C_DESCRIPTION" />
+		</property>
+		<property name="announcement" type="java.lang.String">
+		    <column name="C_ANNOUNCEMENT" />
 		</property>
 		<property name="password" type="java.lang.String">
-		    <column name="C_PASSWORD" length="40"/>
+		    <column name="C_PASSWORD" />
 		</property>
 		<property name="beginTime" type="java.sql.Timestamp">
-		    <column name="C_BEGINTIME" length="7" />
+		    <column name="C_BEGINTIME" />
 		</property>
 		<property name="endTime" type="java.sql.Timestamp">
-		    <column name="C_ENDTIME" length="7" />
+		    <column name="C_ENDTIME" />
 		</property>
 		<property name="hashCode" type="java.lang.String">
 		    <column name="C_HASH_CODE" />

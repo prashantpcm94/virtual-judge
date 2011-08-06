@@ -11,22 +11,22 @@
             <generator class="native" />
         </id>
         <property name="sessionId" type="java.lang.String">
-            <column name="C_SESSIONID" length="40"/>
+            <column name="C_SESSIONID" />
         </property>
 		<property name="ip" type="java.lang.String">
-		    <column name="C_IP" length="40"/>
+		    <column name="C_IP" />
 		</property>
         <property name="createTime" type="java.sql.Timestamp">
- 		    <column name="C_CREATETIME" length="7" />
+ 		    <column name="C_CREATETIME" />
 		</property>
         <property name="duration" type="java.lang.Long">
- 		    <column name="C_DURATION" length="20" />
+ 		    <column name="C_DURATION" />
 		</property>
         <property name="referer" type="java.lang.String">
-            <column name="C_REFERER" length="500"/>
+            <column name="C_REFERER" />
         </property>
         <property name="userAgent" type="java.lang.String">
-            <column name="C_USERAGENT" length="500"/>
+            <column name="C_USERAGENT" />
         </property>
         <property name="loginer" type="java.lang.Integer">
 		    <column name="C_LOGINER" />
