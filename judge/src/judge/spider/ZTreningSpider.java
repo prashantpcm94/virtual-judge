@@ -1,5 +1,11 @@
 package judge.spider;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -7,16 +13,30 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 public class ZTreningSpider extends Spider {
 	
+	private static Set<String> validIds;
+	
 	public void crawl() throws Exception{
+		if (validIds == null) {
+			validIds = new HashSet<String>();
+			initValidIds("http://www.z-trening.com/training.php?all_tasks=1");
+			initValidIds("http://www.z-trening.com/training.php?all_user_tasks=1");
+		}
+		while (!validIds.contains("1437")) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		
-		if (!problem.getOriginProb().matches("\\d{1,6}")) {
+		//这货居然还记录非法的题目访问，故为保险起见，先初始化抓取合法的题号集合，在vj服务器端判断题号是否合法
+		if (!validIds.contains(problem.getOriginProb())) {
 			throw new Exception();
 		}
-		problem.setUrl("http://www.z-trening.com/tasks.php?show_task=" + (5000000000L + Integer.parseInt(problem.getOriginProb())) + "&lang=uk");
 
 		String tLine = "";
 		HttpClient httpClient = new HttpClient();
-		GetMethod getMethod = new GetMethod(problem.getUrl());
+		GetMethod getMethod = new GetMethod("http://www.z-trening.com/tasks.php?show_task=" + (5000000000L + Integer.parseInt(problem.getOriginProb())) + "&lang=uk");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
 			int statusCode = httpClient.executeMethod(getMethod);
@@ -43,5 +63,17 @@ public class ZTreningSpider extends Spider {
 		problem.setTimeLimit(timeLimit.intValue());
 		problem.setMemoryLimit(1024 * Integer.parseInt(regFind(tLine, "Memory:</TD><TD CLASS=\"right\">(\\d+) MB")));
 		description.setDescription(regFind(tLine, "<DIV CLASS=\"taskText\">([\\s\\S]*?)</DIV></DIV><DIV CLASS=\"boxHeader\">Submit Solution"));
+		problem.setUrl("http://www.z-trening.com/tasks.php?show_task=" + (5000000000L + Integer.parseInt(problem.getOriginProb())) + "&lang=uk");
+	}
+
+	private void initValidIds(String url) throws HttpException, IOException {
+		GetMethod getMethod = new GetMethod(url);
+		HttpClient httpClient = new HttpClient();
+		httpClient.executeMethod(getMethod);
+		String html = new String(getMethod.getResponseBody(), "UTF-8");
+		Matcher matcher = Pattern.compile("show_task=(\\d+)").matcher(html);
+		while (matcher.find()) {
+			validIds.add(Long.parseLong(matcher.group(1)) - 5000000000L + "");
+		}
 	}
 }

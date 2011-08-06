@@ -40,7 +40,7 @@ String basePath = (String)application.getAttribute("basePath");
 						<td>
 							<b>Memory Limit:</b>
 							<s:if test="problem.memoryLimit == 0">Unknown</s:if>
-							<s:else>${problem.memoryLimit}K</s:else>
+							<s:else>${problem.memoryLimit}KB</s:else>
 						</td>
 						<td width="10px"></td>
 						<td>
