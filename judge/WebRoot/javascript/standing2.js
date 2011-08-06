@@ -273,7 +273,7 @@ function calcScoreBoard(){
 			if (!totalSubmission[j]) {
 				sbHtml.push("<td style='background-color:white'/>");
 			} else {
-				var ratio = correctSubmission[j] / maxCorrectNumber;
+				var ratio = maxCorrectNumber ? correctSubmission[j] / maxCorrectNumber : 0.0;
 				sbHtml.push("<td style='background-color:" + grayDepth(ratio) + ";color:" + (ratio < .5 ? "black" : "white") + "'>" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + (!totalSubmission[j] ? 0 : Math.floor(100 * correctSubmission[j] / totalSubmission[j])) + "%</td>")
 			}
 		}
