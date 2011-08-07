@@ -1,12 +1,34 @@
 var cid, onlyCid, data, ti, pnum, maxTime, changed, standingTable, oFH;
 
+jQuery.fn.dataTableExt.oSort['rank-asc']  = function(x, y) {
+	var v1 = parseInt(x), v2 = parseInt(y);
+	if (isNaN(v1)) {
+		return 1;
+	} else if (isNaN(v2)) {
+		return -1;
+	} else {
+		return v1 < v2 ? -1 : 1;
+	}
+};
+
+jQuery.fn.dataTableExt.oSort['rank-desc'] = function(x, y) {
+	var v1 = parseInt(x), v2 = parseInt(y);
+	if (isNaN(v1)) {
+		return 1;
+	} else if (isNaN(v2)) {
+		return -1;
+	} else {
+		return v1 > v2 ? -1 : 1;
+	}
+};
+
 var standingTableSetting = {
 	"bPaginate": false,
 	"bLengthChange": false,
 	"bFilter": true,
 	"bInfo": false,
 	"bAutoWidth": false,
-	"aoColumns": [{"sType":"numeric", "bSortable":false}, {"sType":"string", "bSortable":false}, {"sType":"numeric", "bSortable":false}, {"sType":"date", "bSortable":false}]
+	"aoColumns": [{"sType":"rank", "bSortable":false}, {"sType":"string", "bSortable":false}, {"sType":"numeric", "bSortable":false}, {"sType":"date", "bSortable":false}]
 };
 
 $(document).ready(function() {
