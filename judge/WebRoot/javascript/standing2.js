@@ -52,7 +52,11 @@ $(document).ready(function() {
 				$("div#contestTitle").text("　");
 				getRemoteData();
 				setTimeout(function(){
-					oFH = new FixedHeader( standingTable );
+					if (!oFH) {
+						oFH = new FixedHeader( standingTable );
+					} else {
+						oFH.fnUpdate();
+					}
 				}, 100);
 			}
 		},
