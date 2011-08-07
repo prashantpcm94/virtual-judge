@@ -5,9 +5,10 @@ $(document).ready(function() {
 		}
 	});
 
-	if ($.cookie("contestType") != undefined) {
-		$("input[name='contestType']").get($.cookie("contestType")).checked = 1;
+	if ($.cookie("contestType") == undefined) {
+		$.cookie("contestType", 0, {expires:7});
 	}
+	$("input[name='contestType']").get($.cookie("contestType")).checked = 1;
 
 	var oTable = $('#listContest').dataTable({
 		"bProcessing": true,
