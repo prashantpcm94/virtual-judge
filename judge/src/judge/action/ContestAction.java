@@ -30,6 +30,7 @@ import judge.service.IBaseService;
 import judge.submitter.Submitter;
 import judge.tool.ApplicationContainer;
 import judge.tool.MD5;
+import judge.tool.Tools;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -209,7 +210,7 @@ public class ContestAction extends BaseAction {
 				pids.add(o[0]);
 				OJs.add(o[1]);
 				probNums.add(o[2]);
-				titles.add(judgeService.toPlainChar((String) o[3]));
+				titles.add(Tools.toPlainChar((String) o[3]));
 			}
 			long dur = contest.getEndTime().getTime() - contest.getBeginTime().getTime();
 			d_day = (int) (dur / 86400000);
@@ -228,16 +229,17 @@ public class ContestAction extends BaseAction {
 		/**
 		 * 标题不能为空，不能超过90字符
 		 */
+		contest.setTitle(Tools.toHTMLChar(contest.getTitle()));
 		if (contest.getTitle() == null || contest.getTitle().isEmpty()) {
 			this.addActionError("Contest Title shouldn't be empty!");
 		} else if (contest.getTitle().length() > 90) {
 			this.addActionError("Contest Title should be shorter than 90 characters!");
 		}
-		contest.setTitle(judgeService.toHTMLChar(contest.getTitle()));
 		
 		/**
 		 * 比赛描述不得多于65000字符
 		 */
+		contest.setDescription(Tools.dropScript(contest.getDescription()));
 		if (contest.getDescription() != null && contest.getDescription().length() > 65000) {
 			this.addActionError("Contest description should be shorter than 65000 characters!");
 		}
@@ -245,6 +247,7 @@ public class ContestAction extends BaseAction {
 		/**
 		 * 比赛公告不得多于65000字符
 		 */
+		contest.setAnnouncement(Tools.dropScript(contest.getAnnouncement()));
 		if (contest.getAnnouncement() != null && contest.getAnnouncement().length() > 65000) {
 			this.addActionError("Contest announcement should be shorter than 65000 characters!");
 		}
@@ -348,7 +351,7 @@ public class ContestAction extends BaseAction {
 			if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
 				cproblem.setTitle(problem.getTitle());
 			} else {
-				cproblem.setTitle(judgeService.toHTMLChar(titles.get(i).trim()));
+				cproblem.setTitle(Tools.toHTMLChar(titles.get(i).trim()));
 			}
 			cproblem.setNum((char)('A' + i) + "");
 			dataList.add(cproblem);
@@ -844,7 +847,7 @@ public class ContestAction extends BaseAction {
 		d_day = (int) (dur / 86400000);
 		d_hour = (int) (dur % 86400000 / 3600000);
 		d_minute = (int) (dur % 3600000 / 60000);
-		contest.setTitle(judgeService.toPlainChar(contest.getTitle()));
+		contest.setTitle(Tools.toPlainChar(contest.getTitle()));
 		
 		List<Object []> cproblemList = baseService.query("select cproblem.id, p.originOJ, p.originProb, cproblem.title from Cproblem cproblem, Problem p where cproblem.problem.id = p.id and cproblem.contest.id = " + cid + " order by cproblem.num asc");
 		
@@ -860,7 +863,7 @@ public class ContestAction extends BaseAction {
 			pids.add(o[0]);
 			OJs.add(o[1]);
 			probNums.add(o[2]);
-			titles.add(judgeService.toPlainChar((String) o[3]));
+			titles.add(Tools.toPlainChar((String) o[3]));
 		}
 		contestType = contest.getReplayStatus() == null ? 0 : 1;
 		return "detail_edit";
@@ -892,9 +895,9 @@ public class ContestAction extends BaseAction {
 				this.addActionError("Contest announcement should be shorter than 65000 characters!");
 				beiju = true;
 			}
-			oContest.setTitle(judgeService.toHTMLChar(contest.getTitle()));
-			oContest.setDescription(contest.getDescription());
-			oContest.setAnnouncement(contest.getAnnouncement());
+			oContest.setTitle(Tools.toHTMLChar(contest.getTitle()));
+			oContest.setDescription(Tools.dropScript(contest.getDescription()));
+			oContest.setAnnouncement(Tools.dropScript(contest.getAnnouncement()));
 			if (beiju){
 				contest = (Contest) baseService.query(Contest.class, cid);
 				return "brief_edit";
@@ -932,7 +935,7 @@ public class ContestAction extends BaseAction {
 			if (titles.get(i) == null || titles.get(i).trim().isEmpty()){
 				cproblem.setTitle(problem.getTitle());
 			} else {
-				cproblem.setTitle(judgeService.toHTMLChar(titles.get(i).trim()));
+				cproblem.setTitle(Tools.toHTMLChar(titles.get(i).trim()));
 			}
 			cproblem.setNum((char)('A' + i) + "");
 			dataList.add(cproblem);
@@ -987,7 +990,7 @@ public class ContestAction extends BaseAction {
 			}
 		}
 		
-		submission.setSource(judgeService.toHTMLChar(submission.getSource()));
+		submission.setSource(Tools.toHTMLChar(submission.getSource()));
 		ServletContext sc = ServletActionContext.getServletContext();
 		languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
 		submission.setLanguage(languageList.get(submission.getLanguage()));

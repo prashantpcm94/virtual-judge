@@ -28,8 +28,8 @@ public class CodeForcesSpider extends Spider {
 			throw new Exception();
 		}
 
-		problem.setTitle(regFind(tLine, "<div class=\"title\">" + problemNum + "\\. ([\\s\\S]*?)</div>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "<div class=\"title\">" + problemNum + "\\. ([\\s\\S]*?)</div>").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		

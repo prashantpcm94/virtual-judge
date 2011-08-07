@@ -32,8 +32,8 @@ public class URALSpider extends Spider {
 
 		tLine = tLine.replaceAll("SRC=\"", "SRC=\"http://acm.timus.ru");
 		
-		problem.setTitle(regFind(tLine, "problem_title\">\\d{4}. ([\\s\\S]*?)</H2>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "problem_title\">\\d{4}. ([\\s\\S]*?)</H2>").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		problem.setTimeLimit((int)(1000 * Double.parseDouble(regFind(tLine, "Time Limit: ([\\d\\.]*?) second"))));

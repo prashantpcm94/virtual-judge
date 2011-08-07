@@ -38,8 +38,8 @@ public class HYSBZSpider extends Spider {
 		tLine = tLine.replaceAll("src='images", "src='http://www.zybbs.org/JudgeOnline/images");
 		tLine = tLine.replaceAll("src=\"images", "src=\"http://www.zybbs.org/JudgeOnline/images");
 		
-		problem.setTitle(regFind(tLine, "<center><h2>([\\s\\S]*?)</h2>").replaceAll(problem.getOriginProb() + ": ", ""));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "<center><h2>([\\s\\S]*?)</h2>").replaceAll(problem.getOriginProb() + ": ", "").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 

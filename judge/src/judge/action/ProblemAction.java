@@ -23,6 +23,7 @@ import judge.bean.User;
 import judge.spider.Spider;
 import judge.submitter.Submitter;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -432,7 +433,7 @@ public class ProblemAction extends BaseAction{
 			return ERROR;
 		}
 		problem = submission.getProblem();
-		submission.setSource(judgeService.toHTMLChar(submission.getSource()));
+		submission.setSource(Tools.toHTMLChar(submission.getSource()));
 		languageList = (Map<Object, String>) ApplicationContainer.sc.getAttribute(problem.getOriginOJ());
 		submission.setLanguage(languageList.get(submission.getLanguage()));
 		uid = submission.getUser().getId();

@@ -33,16 +33,16 @@ public class SGUSpider extends Spider {
 		}
 		
 		String tl = regFind(tLine, "ime limit per test: ([\\d\\.]*)");
-		if (tl != null){
+		if (tl.length() > 0){
 			problem.setTimeLimit((int)(1000 * Double.parseDouble(tl)));
 		}
 		
 		String ml = regFind(tLine, "emory limit per test: ([\\d]*)");
-		if (ml != null){
+		if (ml.length() > 0){
 			problem.setMemoryLimit(Integer.parseInt(ml));
 		} else {
 			ml = regFind(tLine, "emory limit: ([\\d]*)");
-			if (ml != null){
+			if (ml.length() > 0){
 				problem.setMemoryLimit(Integer.parseInt(ml));
 			}
 		}

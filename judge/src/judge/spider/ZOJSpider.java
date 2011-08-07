@@ -34,8 +34,8 @@ public class ZOJSpider extends Spider {
 
 		tLine = tLine.replaceAll("showImage\\.do", "http://acm.zju.edu.cn/onlinejudge/showImage.do");
 		
-		problem.setTitle(regFind(tLine, "<span class=\"bigProblemTitle\">([\\s\\S]*?)</span>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "<span class=\"bigProblemTitle\">([\\s\\S]*?)</span>").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		problem.setTimeLimit(1000 * Integer.parseInt(regFind(tLine, "Time Limit: </font> ([\\s\\S]*?) Second")));

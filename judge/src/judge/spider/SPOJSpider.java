@@ -32,12 +32,9 @@ public class SPOJSpider extends Spider {
 
 		tLine = tLine.replaceAll("src=\"/", "src=\"http://www.spoj.pl/");
 		
-		problem.setTitle(regFind(tLine, "<h1>\\d+\\.([\\s\\S]*?)</h1>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "<h1>\\d+\\.([\\s\\S]*?)</h1>").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
-		}
-		if (problem.getTitle() != null){
-			problem.setTitle(problem.getTitle().trim());
 		}
 		Double timeLimit = 1000 * Double.parseDouble(regFind(tLine, "Time limit:</td><td>([\\s\\S]*?)s", 1));
 		problem.setTimeLimit(timeLimit.intValue());

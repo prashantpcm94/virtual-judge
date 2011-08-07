@@ -33,8 +33,8 @@ public class HDUSpider extends Spider {
 		tLine = tLine.replaceAll("src=\"[\\S]*?/images", "src=\"http://acm.hdu.edu.cn/data/images");
 		//System.out.println(tLine);
 		
-		problem.setTitle(regFind(tLine, "color:#1A5CC8'>([\\s\\S]*?)</h1>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "color:#1A5CC8'>([\\s\\S]*?)</h1>").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		
@@ -46,14 +46,11 @@ public class HDUSpider extends Spider {
 		description.setSampleInput(regFind(tLine, "Sample Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
 		description.setSampleOutput(regFind(tLine, "Sample Output</div>([\\s\\S]*?)(<br><[^<>]*?panel_title[^<>]*?>|<[^<>]*?><[^<>]*?><i>Hint)") + "</div></div>");
 		description.setHint(regFind(tLine, "<i>Hint</i></div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		if (description.getHint() != null){
+		if (description.getHint().length() > 0){
 			description.setHint("<pre>" + description.getHint() + "</pre>");
 		}
 		
-		problem.setSource(regFind(tLine, "Source</div> <div class=panel_content>([\\s\\S]*?)<[^<>]*?panel_[^<>]*?>"));
-		if (problem.getSource() != null){
-			problem.setSource(problem.getSource().replaceAll("<[\\s\\S]*?>", ""));
-		}
+		problem.setSource(regFind(tLine, "Source</div> <div class=panel_content>([\\s\\S]*?)<[^<>]*?panel_[^<>]*?>").replaceAll("<[\\s\\S]*?>", ""));
 		problem.setUrl("http://acm.hdu.edu.cn/showproblem.php?pid=" + problem.getOriginProb());
 	}
 }

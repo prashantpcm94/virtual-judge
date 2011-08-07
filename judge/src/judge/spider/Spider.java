@@ -25,7 +25,7 @@ public abstract class Spider extends Thread implements Cloneable {
 //			System.out.println("RESULT : " + res);
 			return res;
 		}
-		return null;
+		return "";
 	}
 
 	public String regFind(String text, String reg, int x){
@@ -36,7 +36,7 @@ public abstract class Spider extends Thread implements Cloneable {
 //			System.out.println("RESULT : " + res);
 			return res;
 		}
-		return null;
+		return "";
 	}
 
 	

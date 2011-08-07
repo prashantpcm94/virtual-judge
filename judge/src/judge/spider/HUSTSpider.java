@@ -34,8 +34,8 @@ public class HUSTSpider extends Spider {
 		tLine = tLine.replaceAll("src='/thx", "src='http://acm.hust.edu.cn/thx");
 		tLine = tLine.replaceAll("src=\"/thx", "src=\"http://acm.hust.edu.cn/thx");
 		
-		problem.setTitle(regFind(tLine, "<title>[\\s\\S]*?-- ([\\s\\S]*?)</title>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "<title>[\\s\\S]*?-- ([\\s\\S]*?)</title>").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		
@@ -47,10 +47,7 @@ public class HUSTSpider extends Spider {
 		description.setSampleInput(regFind(tLine, "<h2>Sample Input</h2>([\\s\\S]*?)<h2>"));
 		description.setSampleOutput(regFind(tLine, "<h2>Sample Output</h2>([\\s\\S]*?)<h2>"));
 		description.setHint(regFind(tLine, "<h2>HINT</h2>([\\s\\S]*?)<h2>"));
-		problem.setSource(regFind(tLine, "<h2>Source</h2>([\\s\\S]*?)<center>"));
-		if (problem.getSource() != null){
-			problem.setSource(problem.getSource().replaceAll("<[\\s\\S]*?>", ""));
-		}
+		problem.setSource(regFind(tLine, "<h2>Source</h2>([\\s\\S]*?)<center>").replaceAll("<[\\s\\S]*?>", ""));
 		problem.setUrl("http://acm.hust.edu.cn/thx/problem.php?id=" + problem.getOriginProb());
 	}
 }

@@ -48,10 +48,7 @@ public class UVASpider extends Spider {
 		tLine = tLine.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://uva.onlinejudge.org/external/" + category + "/");
 
 		problem.setMemoryLimit(0);
-		description.setDescription(regFind(tLine, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1));
-		if (description.getDescription() == null || description.getDescription().trim().isEmpty()) {
-			description.setDescription(tLine.replaceAll("(?i)</?html>", ""));
-		}
+		description.setDescription(regFind(tLine, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1).replaceAll("(?i)</?html>", ""));
 		problem.setUrl("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
 
 		getMethod = new GetMethod(problem.getUrl());
@@ -67,7 +64,7 @@ public class UVASpider extends Spider {
 			getMethod.releaseConnection();
 			throw new Exception();
 		}
-		problem.setTitle(regFind(tLine, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>"));
+		problem.setTitle(regFind(tLine, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>").trim());
 		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
 	}
 

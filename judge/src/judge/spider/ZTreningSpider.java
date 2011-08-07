@@ -55,8 +55,8 @@ public class ZTreningSpider extends Spider {
 			throw new Exception();
 		}
 
-		problem.setTitle(regFind(tLine, "<TITLE>Task :: ([\\s\\S]*?)</TITLE>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "<TITLE>Task :: ([\\s\\S]*?)</TITLE>").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		Double timeLimit = 1000 * Double.parseDouble(regFind(tLine, "Time:</TD><TD CLASS=\"right\">(\\S*?) sec"));

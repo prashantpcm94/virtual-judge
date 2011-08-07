@@ -24,7 +24,7 @@ public class POJSpider extends Spider {
 		catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
-	   }
+	}
 
 		if (tLine.contains("<li>Can not find problem")){
 			throw new Exception();
@@ -34,8 +34,8 @@ public class POJSpider extends Spider {
 		tLine = tLine.replaceAll("src='images", "src='http://poj.org/images");
 		tLine = tLine.replaceAll("src=\"images", "src=\"http://poj.org/images");
 		
-		problem.setTitle(regFind(tLine, "<title>\\d{3,} -- ([\\s\\S]*?)</title>"));
-		if (problem.getTitle() == null || problem.getTitle().trim().isEmpty()){
+		problem.setTitle(regFind(tLine, "<title>\\d{3,} -- ([\\s\\S]*?)</title>").trim());
+		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		
@@ -47,9 +47,7 @@ public class POJSpider extends Spider {
 		description.setSampleInput(regFind(tLine, "<p class=\"pst\">Sample Input</p>([\\s\\S]*?)<p class=\"pst\">"));
 		description.setSampleOutput(regFind(tLine, "<p class=\"pst\">Sample Output</p>([\\s\\S]*?)<p class=\"pst\">"));
 		problem.setSource(regFind(tLine, "<p class=\"pst\">Source</p>([\\s\\S]*?)</td></tr></table>"));
-		if (problem.getSource() != null){
-			problem.setSource(problem.getSource().replaceAll("<a href=\"searchproblem", "<a href=\"http://poj.org/searchproblem"));
-		}
+		problem.setSource(problem.getSource().replaceAll("<a href=\"searchproblem", "<a href=\"http://poj.org/searchproblem"));
 		description.setHint(regFind(tLine, "<p class=\"pst\">Hint</p>([\\s\\S]*?)<p class=\"pst\">"));
 		problem.setUrl("http://poj.org/problem?id=" + problem.getOriginProb());
 	}
