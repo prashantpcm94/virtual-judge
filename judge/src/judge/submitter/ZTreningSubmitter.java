@@ -115,9 +115,10 @@ public class ZTreningSubmitter extends Submitter {
 
 		Matcher matcher = Pattern.compile("Time: (\\S+)s<br> Memory: (\\S+) MB").matcher(result);
 		if (matcher.find()) {
+			Double time = Double.parseDouble(matcher.group(1)) * 1000;
 			Double memory = Double.parseDouble(matcher.group(2)) * 1024;
+			submission.setTime(time.intValue());
 			submission.setMemory(memory.intValue());
-			submission.setTime(Integer.parseInt(matcher.group(1)) * 1000);
 			submission.setStatus("Accepted");
 			baseService.addOrModify(submission);
 			return;
@@ -174,7 +175,7 @@ public class ZTreningSubmitter extends Submitter {
 	
 	public void work() {
 		idx = getIdleClient();
-		int errorCode = 1;
+		int errorCode = 2;
 
 		try {
 			try {
