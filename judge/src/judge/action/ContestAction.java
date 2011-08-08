@@ -73,7 +73,7 @@ public class ContestAction extends BaseAction {
 	private DataTablesPage dataTablesPage;
 	
 	private int contestType;	//0:普通比赛    1:比赛回放
-	private File ranklistCsv;	//ranklist数据(csv格式)
+	private File ranklistFile;	//ranklist数据(csv或excel格式)
 	private List<String> selectedCellMeaning;	//选择的cell意义
 	
 	private Map cellMeaningOptions;
@@ -367,7 +367,7 @@ public class ContestAction extends BaseAction {
 		} else {
 			String[][] ranklistCells = null;
 			try {
-				ranklistCells = judgeService.splitCells(ranklistCsv, pids.size());
+				ranklistCells = judgeService.splitCells(ranklistFile, pids.size());
 				cellMeaningOptions = judgeService.getCellMeaningOptions(ranklistCells, contest.getEndTime().getTime() - contest.getBeginTime().getTime());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -944,7 +944,7 @@ public class ContestAction extends BaseAction {
 		hashCode.append(pids.size());
 		oContest.setHashCode(MD5.getMD5(hashCode.toString().replaceAll("&#\\d+;", "")));
 
-		if (contestType == 0 || ranklistCsv == null) {
+		if (contestType == 0 || ranklistFile == null) {
 			if (contestType == 0 && oContest.getReplayStatus() != null) {
 				baseService.delete(oContest.getReplayStatus());
 				oContest.setReplayStatus(null);
@@ -955,7 +955,7 @@ public class ContestAction extends BaseAction {
 		} else {
 			String[][] ranklistCells = null;
 			try {
-				ranklistCells = judgeService.splitCells(ranklistCsv, pids.size());
+				ranklistCells = judgeService.splitCells(ranklistFile, pids.size());
 				cellMeaningOptions = judgeService.getCellMeaningOptions(ranklistCells, contest.getEndTime().getTime() - contest.getBeginTime().getTime());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1302,11 +1302,11 @@ public class ContestAction extends BaseAction {
 	public void setContestType(int contestType) {
 		this.contestType = contestType;
 	}
-	public File getRanklistCsv() {
-		return ranklistCsv;
+	public File getRanklistFile() {
+		return ranklistFile;
 	}
-	public void setRanklistCsv(File ranklistCsv) {
-		this.ranklistCsv = ranklistCsv;
+	public void setRanklistFile(File ranklistFile) {
+		this.ranklistFile = ranklistFile;
 	}
 	public Map getCellMeaningOptions() {
 		return cellMeaningOptions;

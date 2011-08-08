@@ -22,12 +22,12 @@ public class UVASpider extends Spider {
 		} while (UVaSpiderInitializer.threadCnt > 0);
 
 		String realProblemNumber = problemNumberMap[Integer.parseInt(problem.getOriginProb())];
+		if (realProblemNumber == null) {
+			throw new Exception();
+		}
 
 		String tLine = "";
 		HttpClient httpClient = new HttpClient();
-		if (!problem.getOriginProb().matches("\\d+")) {
-			throw new Exception();
-		}
 		int category = Integer.parseInt(problem.getOriginProb()) / 100;
 		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".html");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());

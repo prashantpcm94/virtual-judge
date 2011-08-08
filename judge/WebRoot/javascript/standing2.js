@@ -35,7 +35,7 @@ $(document).ready(function() {
 
 	cid = $("[name=cid]").val();
 	pnum = $("#standing th").length - 5;
-
+	
 	if ($.cookie("contest_" + cid) == undefined){
 		$.cookie("contest_" + cid, cid, { expires: 3 });
 	}
@@ -314,6 +314,10 @@ function calcScoreBoard(){
 	$("#standing_tbody").html(sbHtml.join(""));
 
 	standingTable.dataTable(standingTableSetting);
+	
+	if ($.browser.msie) {
+		$("#for_ie").show().appendTo($("#scoreboard"));
+	}
 
 	setTimeout(function(){
 		if (!oFH) {

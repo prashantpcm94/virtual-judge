@@ -7,8 +7,8 @@ String basePath = (String)application.getAttribute("basePath");
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- Contest</title>
+		<base href="<%=basePath%>" />
+		<title>Virtual Judge -- Contest</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<link rel="stylesheet" type="text/css" href="css/redmond/jquery-ui-1.8.9.custom.css" />
@@ -17,9 +17,9 @@ String basePath = (String)application.getAttribute("basePath");
 		
 		<script type="text/javascript" src="javascript/common.js"></script>
 
-	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
-	    <script type='text/javascript' src='dwr/util.js'></script>
+		<script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/editContest.js"></script>
 	</head>
@@ -105,11 +105,10 @@ String basePath = (String)application.getAttribute("basePath");
 					</td>
 				</tr>
 				<tr id="ranklistData" style="display:none">
-					<td class="form_title">Ranklist<br />(csv):</td>
+					<td class="form_title">Ranklist<br />(csv/excel):</td>
 					<td>
-						<s:file name="ranklistCsv" />
+						<s:file name="ranklistFile" />
 						&nbsp;<a href="http://acm.hust.edu.cn/forum/forum.php?mod=viewthread&tid=119" target="_blank"><img src="http://www.iconpng.com/png/cristal-intense/aide.png" border="0" height="20" /></a>
-						&nbsp;<span style="font-weight:bold;color:red">Note: It is preferred that your CSV file is in UTF-8. </span>
 					</td>
 				</tr>
 				<tr>

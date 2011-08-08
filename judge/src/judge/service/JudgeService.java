@@ -9,6 +9,7 @@ import info.monitorenter.cpdetector.io.UnicodeDetector;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +42,9 @@ import judge.bean.Submission;
 import judge.service.imp.BaseService;
 import judge.submitter.Submitter;
 import judge.tool.ApplicationContainer;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 @SuppressWarnings("unchecked")
 public class JudgeService extends BaseService {
@@ -221,20 +225,7 @@ public class JudgeService extends BaseService {
 		submission.setIsOpen(1 - submission.getIsOpen());
 		this.addOrModify(submission);
 	}
-	
-	/**
-	 * 获取字符串中连续的数字段
-	 * @param input
-	 * @return
-	 */
-	private Integer[] getNumberSegments(String input) {
-		Matcher m = Pattern.compile("\\d+").matcher(input);
-		List<Integer> answer = new ArrayList<Integer>();
-		while (m.find()) {
-			answer.add(Integer.parseInt(m.group()));
-		}
-		return answer.toArray(new Integer[0]);
-	}
+
 
 	/**
 	 * 获取ranklist中单元格可能的选项
@@ -264,8 +255,12 @@ public class JudgeService extends BaseService {
 						curSet.addAll(Arrays.asList(new Integer[]{16, 17, 18, 19, 22, 25}));
 					}
 					temp.put(symbolized, curSet);
+				}
+				String existingFormatExample = formatExample.get(symbolized);
+				if (charSum(row[i]) > charSum(existingFormatExample)) {
 					formatExample.put(symbolized, row[i]);
 				}
+
 				//时间错误
 				if (numberSegments.length > 0 && numberSegments[0] * 60000 > contestLength) {
 					curSet.remove(2);
@@ -340,44 +335,37 @@ public class JudgeService extends BaseService {
 	}
 
 
+
+
 	/**
 	 * 分割csv文件为String[][]
-	 * @param csv
+	 * @param file
 	 * @param problemNumber
 	 * @return
 	 * @throws Exception
 	 */
-	public String[][] splitCells(File csv, int problemNumber) throws Exception {
-		if (csv == null) {
-			throw new Exception("Ranklist CSV is empty!");
+	public String[][] splitCells(File file, int problemNumber) throws Exception {
+		if (file == null) {
+			throw new Exception("Ranklist file is empty!");
 		}
 		String[][] result = null;
+		
 		try {
-			//先检测文件编码
-			CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();  
-			detector.add(new ParsingDetector(false));   
-			detector.add(JChardetFacade.getInstance());  
-			detector.add(ASCIIDetector.getInstance());  
-			detector.add(UnicodeDetector.getInstance());  
-			Charset charset = Charset.forName("GB2312");
-			InputStream inputStream = new BufferedInputStream(new FileInputStream(csv));
-			int length = 100000;
-			while (length > 5) {
-				try {
-					charset = detector.detectCodepage(inputStream, length);
-					break;
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					length = length * 2 / 3;
-				}
+			result = splitCellsFromExcel(file);
+		} catch (Exception e) {
+			System.err.println("Not valid excel!");
+			try {
+				result = splitCellsFromCsv(file);
+				return result;
+			} catch (Exception e1) {
+				System.err.println("Not valid csv!");
 			}
-			System.out.println(charset.name());
-			CSVParser shredder = new CSVParser(new InputStreamReader(inputStream, charset));
-			result = shredder.getAllValues();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new Exception("Ranklist CSV has error!");
 		}
+		
+		if (result == null) {
+			throw new Exception("The file is not valid Excel/CSV!");
+		}
+
 		if (result.length > 500) {
 			throw new Exception("At most 500 teams!");
 		}
@@ -389,7 +377,58 @@ public class JudgeService extends BaseService {
 		return result;
 	}
 	
-	
+	/**
+	 * 获取Excel中第一个sheet内容
+	 * @param xls
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 * @throws BiffException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private String[][] splitCellsFromExcel(File xls) throws IndexOutOfBoundsException, BiffException, FileNotFoundException, IOException {
+		Sheet rs = Workbook.getWorkbook(new FileInputStream(xls)).getSheet(0);
+		ArrayList<String[]> tmpContent = new ArrayList<String[]>();
+		for (int i = 0; i < rs.getRows(); i++) {
+			List row = new ArrayList<String>(); 
+			for (int j = 0; j < rs.getColumns(); j++) {
+				row.add(rs.getCell(j, i).getContents().trim());
+			}
+			tmpContent.add((String[]) row.toArray(new String[0]));
+		}
+		return tmpContent.toArray(new String[0][]);
+	}
+
+	/**
+	 * 获取csv内容
+	 * @param csv
+	 * @return
+	 * @throws IOException
+	 */
+	private String[][] splitCellsFromCsv(File csv) throws IOException {
+		//先检测文件编码
+		CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();  
+		detector.add(new ParsingDetector(false));   
+		detector.add(JChardetFacade.getInstance());  
+		detector.add(ASCIIDetector.getInstance());  
+		detector.add(UnicodeDetector.getInstance());  
+		Charset charset = Charset.forName("GB2312");
+		InputStream inputStream = new BufferedInputStream(new FileInputStream(csv));
+		int length = 100000;
+		while (length > 5) {
+			try {
+				charset = detector.detectCodepage(inputStream, length);
+				break;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				length = length * 2 / 3;
+			}
+		}
+		System.out.println(charset.name());
+		CSVParser shredder = new CSVParser(new InputStreamReader(inputStream, charset));
+		return shredder.getAllValues();
+	}
+
 
 	/**
 	 * 生成replay的所有status
@@ -533,6 +572,36 @@ public class JudgeService extends BaseService {
 		default:
 			throw new Exception("Error occured!");
 		}
+	}
+	
+	/**
+	 * 获取字符串中连续的数字段
+	 * @param input
+	 * @return
+	 */
+	private Integer[] getNumberSegments(String input) {
+		Matcher m = Pattern.compile("\\d+").matcher(input);
+		List<Integer> answer = new ArrayList<Integer>();
+		while (m.find()) {
+			answer.add(Integer.parseInt(m.group()));
+		}
+		return answer.toArray(new Integer[0]);
+	}
+	
+	/**
+	 * 字符串各个字符ascii值之和
+	 * @param string
+	 * @return
+	 */
+	private int charSum(String string) {
+		if (string == null) {
+			return 0;
+		}
+		int sum = 0;
+		for (int i = 0; i < string.length(); ++i) {
+			sum += string.charAt(i);
+		}
+		return sum;
 	}
 	
 }

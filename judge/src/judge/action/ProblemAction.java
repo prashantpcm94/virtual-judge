@@ -143,8 +143,8 @@ public class ProblemAction extends BaseAction{
 				l = r;
 				r = tmp;
 			}
-			if (r - l > 9){
-				session.put("error", "You can add 10 problems at most for each time!");
+			if (r - l > 19){
+				session.put("error", "You can add 20 problems at most for each time!");
 				return ERROR;
 			}
 			for (Integer a = l; a <= r; ++a) {

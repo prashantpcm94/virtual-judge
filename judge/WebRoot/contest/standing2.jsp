@@ -78,6 +78,9 @@ String basePath = (String)application.getAttribute("basePath");
 					</thead>
 					<tbody id="standing_tbody" />
 				</table>
+				<div id="for_ie" style="display:none;padding-top:30px;">
+					<table><tr><td><image src="images/warning.png" height="30" /></td><td>Due to IE's poor performance with Javascript, it's recommended to view this page in Firefox or Chrome.</td></tr></table>
+				</div>
 			</div>
 			<div id="setting">
 				<div style="width:960px;font-size:14px;margin-left:auto;margin-right:auto;">

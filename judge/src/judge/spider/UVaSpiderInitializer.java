@@ -27,7 +27,7 @@ public class UVaSpiderInitializer extends Thread {
 			String html = null;
 			GetMethod getMethod = new GetMethod(rootUrl);
 			HttpClient httpClient = new HttpClient();
-			getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+			getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(30, true));
 			try {
 				int statusCode = httpClient.executeMethod(getMethod);
 				if (statusCode != HttpStatus.SC_OK) {
@@ -37,20 +37,20 @@ public class UVaSpiderInitializer extends Thread {
 				byte[] responseBody = getMethod.getResponseBody();
 				html = new String(responseBody, "UTF-8");
 				html = html.substring(html.indexOf("Total Users / Solving"));
+
+				Matcher matcher = Pattern.compile("category=(\\d+)\">").matcher(html);
+				while (matcher.find()) {
+					new UVaSpiderInitializer("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=" + matcher.group(1)).start();
+				}
+				
+				matcher = Pattern.compile("page=show_problem&amp;problem=(\\d+)\">(\\d+)").matcher(html);
+				while (matcher.find()) {
+					System.out.println(matcher.group(2) + "->" +  matcher.group(1));
+					UVASpider.problemNumberMap[Integer.parseInt(matcher.group(2))] = matcher.group(1);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				getMethod.releaseConnection();
-			}
-			
-			Matcher matcher = Pattern.compile("category=(\\d+)\">").matcher(html);
-			while (matcher.find()) {
-				new UVaSpiderInitializer("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=" + matcher.group(1)).start();
-			}
-			
-			matcher = Pattern.compile("page=show_problem&amp;problem=(\\d+)\">(\\d+)").matcher(html);
-			while (matcher.find()) {
-				System.out.println(matcher.group(2) + "->" +  matcher.group(1));
-				UVASpider.problemNumberMap[Integer.parseInt(matcher.group(2))] = matcher.group(1);
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
