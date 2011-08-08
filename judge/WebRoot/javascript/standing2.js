@@ -1,4 +1,4 @@
-var cid, onlyCid, data, ti, pnum, maxTime, changed, standingTable, oFH;
+var cid, onlyCid, data, ti, pnum, maxTime, changed, standingTable, oFH, autoRefresh;
 
 jQuery.fn.dataTableExt.oSort['rank-asc']  = function(x, y) {
 	var v1 = parseInt(x), v2 = parseInt(y);
@@ -42,7 +42,13 @@ $(document).ready(function() {
 	if ($.cookie("penalty_format") == undefined){
 		$.cookie("penalty_format", 0, { expires: 30 });
 	}
-	
+	if ($.cookie("auto_refresh_period") == undefined){
+		$.cookie("auto_refresh_period", 0, { expires: 30 });
+	}
+	$("input[name=autoRefreshPeriod]").click(function(){
+		this.select();
+	});
+
 	standingTable = $('#standing').dataTable(standingTableSetting);
 
 	$( "#tabs" ).tabs({
@@ -62,6 +68,7 @@ $(document).ready(function() {
 		},
 		select: function(event, ui) {
 			if (ui.index != 0) {
+				clearTimeout(autoRefresh);
 				$("div.FixedHeader_Cloned").hide();
 			} else {
 				$("div.FixedHeader_Cloned").show();
@@ -73,7 +80,7 @@ $(document).ready(function() {
 	$( "#tabs" ).removeClass("ui-widget-content");
 	$( "#tabs" ).addClass("ui-widget-content-custom");
 
-	$('#setting table').dataTable({
+	$('#setting table.display').dataTable({
 		"bPaginate": false,
 		"bLengthChange": false,
 		"bFilter": false,
@@ -102,6 +109,15 @@ $(document).ready(function() {
 
 	$("[name=penaltyFormat]").change(function(){
 		$.cookie("penalty_format", $(this).val(), { expires: 30 });
+	});
+
+	$("[name=autoRefreshPeriod]").blur(function(){
+		var period = /^\d{1,5}$/.test($(this).val()) ? parseInt($(this).val(), 10) : 0;
+		if (period < 10) {
+			period = 0;
+		}
+		$(this).val(period);
+		$.cookie("auto_refresh_period", period, { expires: 30 });
 	});
 
 	$("td.meta_td").live("mouseover", function(){
@@ -134,11 +150,6 @@ $(document).ready(function() {
 		$(this).css("background-color", "transparent");
 	});
 
-	$("#refresh").click(function(){
-		getRemoteData();
-		return false;
-	});
-
 	var ids = $.cookie("contest_" + cid);
 	if (!!ids) {
 		ids = ids.split("/");
@@ -147,9 +158,9 @@ $(document).ready(function() {
 		}
 	}
 
-	var formatIdx = $.cookie("penalty_format");
-	$("[name=penaltyFormat]").get(formatIdx).checked = 1;
-	
+	$("[name=penaltyFormat]").get($.cookie("penalty_format")).checked = 1;
+	$("[name=autoRefreshPeriod]").val($.cookie("auto_refresh_period"));
+
 	updateCheckAll();
 });
 
@@ -185,25 +196,36 @@ function init() {
 	maxTime = ti[1];
 	calcScoreBoard();
 
-	$( "#time_controller" ).slider({
+	var exceedMax = false;
+	var sl = $( "#time_controller" ).slider({
 		range: "min",
 		min: 0,
 		max: ti[0],
 		value: ti[1],
 		slide: function( event, ui ) {
 			$("#status_processing").show();
-			if (ui.value > ti[1])return false;
+			if (ui.value > ti[1]) {
+				exceedMax = true;
+				return false;
+			}
 		},
 		stop: function( event, ui ) {
-			maxTime = ui.value;
-			calcScoreBoard();
+			if (exceedMax) {
+				sl.slider("value", ti[1]);
+				maxTime = ti[1];
+				exceedMax = false;
+				getRemoteData();
+			} else {
+				maxTime = ui.value;
+				calcScoreBoard();
+			}
 			changed = true;
 			$("#status_processing").hide();
 		}
 	});
 }
 
-function calcScoreBoard(){
+function calcScoreBoard() {
 	var sb = {}, firstSolveTime = [], totalSubmission = [], correctSubmission = [];
 	for (var j = 0; j < pnum; ++j) {
 		totalSubmission[j] = correctSubmission[j] = 0;
@@ -327,9 +349,14 @@ function calcScoreBoard(){
 		}
 	}, 100);
 	
-	var formatIdx = $.cookie("penalty_format");
-	$("#time_index").css("width", (2 - formatIdx + 100 * maxTime / ti[0]) + "%");
+	$("#time_index").css("width", (2 - $.cookie("penalty_format") + 100 * maxTime / ti[0]) + "%");
 	$("#time_index span").text(dateFormat(maxTime));
+	
+	clearTimeout(autoRefresh);
+	var period = $.cookie("auto_refresh_period");
+	if (period >= 10 && period < 100000) {
+		autoRefresh = setTimeout('getRemoteData()', period * 1000);
+	}
 }
 
 function dateFormat(time){

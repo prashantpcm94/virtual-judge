@@ -16,6 +16,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<style type="text/css">
 			.ui-tabs .ui-tabs-panel {padding:15px 0px}
 			table#standing th {background-color: #EDFFED;}
+			td.blue_border {border:1px solid #A6C9E2;}
 		</style>
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
@@ -35,32 +36,21 @@ String basePath = (String)application.getAttribute("basePath");
 	
 		<s:include value="/contest/top.jsp" />
 
-		<div class="ptt">Contest Standing -- <s:property value="contest.title" /></div>
+		<div class="ptt">Contest Standing -- <s:property value="contest.title" escape="false" /></div>
 		
 		<div id="tabs">
 			<ul>
 				<li><a href="#scoreboard">Score Board</a></li>
-				<li><a href="#setting">Time Machine</a></li>
-				<li><a href="#penaltyformat">Penalty Format</a></li>
+				<li><a href="#setting">Setting</a></li>
 				<li><a href="contest/standing.action?cid=${cid}">Old Version</a></li>
 			</ul>
 			<div id="scoreboard">
-				<table width="100%">
-					<tr>
-						<td width="18">
-							<a href="#" id="refresh"><img src="images/refresh.png" height="18" border="0" /></a>
-						</td>
-						<td>
-							<div id="time_container">
-								<div id="time_index" style="text-align:right">
-									<span></span>
-								</div>
-								<div id="time_controller"></div>
-							</div>
-						</td>
-					</tr>
-				</table>
-
+				<div id="time_container" style="height:50px;">
+					<div id="time_index" style="text-align:right">
+						<span></span>
+					</div>
+					<div id="time_controller"></div>
+				</div>
 				<div id="contestTitle" style="width:960px;font-size:14px;padding-top:15px;margin-left:auto;margin-right:auto;text-align:center;font: 20px 'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;" >　</div>
 				<div id="status_processing" class="processing" style="display:none">Processing...</div>
 				<table cellpadding="0" cellspacing="1" class="display standing" id="standing">
@@ -83,44 +73,54 @@ String basePath = (String)application.getAttribute("basePath");
 				</div>
 			</div>
 			<div id="setting">
-				<div style="width:960px;font-size:14px;margin-left:auto;margin-right:auto;">
-					<p style="text-align:center;margin-top:5px;font: 20px 'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;">Contests using the same problems:</p>
-					<table class="display" cellpadding="0" cellspacing="0" border="0">
-						<thead>
-							<tr>
-								<th style="text-align:left;padding-left:3px"><s:checkbox id="checkAll" name="checkAll" /></th>
-								<th>Title</th>
-								<th>Begin Time</th>
-								<th>Length</th>
-								<th>Manager</th>
-							</tr>
-						</thead>
-						<tbody>
-							<s:iterator value="sameContests" status="stat">
-							<tr class="<s:property value='sameContests[#stat.index][6]' />">
-								<td><s:checkbox fieldValue="%{sameContests[#stat.index][0]}" name="ids" /></td>
-								<td>
-									<s:if test="sameContests[#stat.index][0] == cid || contest.endTime.compareTo(curDate) > 0">
-										<s:property value="sameContests[#stat.index][1]" />
-									</s:if>
-									<s:else>
-										<a href="contest/viewContest.action?cid=<s:property value='sameContests[#stat.index][0]' />" target="_blank"><s:property value="sameContests[#stat.index][1]" /></a>
-									</s:else>
-								</td>
-								<td class="date"><s:date name="sameContests[#stat.index][2]" format="yyyy-MM-dd HH:mm:ss" /></td>
-								<td class="date"><s:property value='sameContests[#stat.index][3]' /></td>
-								<td class="center"><a href="user/profile.action?uid=<s:property value='sameContests[#stat.index][5]' />"><s:property value="sameContests[#stat.index][4]" /></a></td>
-							</tr>
-							</s:iterator>	
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div id="penaltyformat">
-				<div style="width:960px;font-size:14px;margin-left:auto;margin-right:auto;text-align:center;">
-					<p style="margin-top:5px;font: 20px 'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;">Penalty time format:</p>
-					<s:radio name="penaltyFormat" list="%{#{'0':'hh:mm:ss','1':'mm'}}" onclick="this.blur()" />
-				</div>
+				<table style="border:1px solid #A6C9E2;border-collapse:collapse;margin:20px auto 100px auto;" border="1">
+					<tr>
+						<td class="blue_border" style="width:200px;vertical-align:top;padding-top:25px;font:15px 'Lucida Grande',Verdana;">Time Machine:<br /><br /><br />(Check them to include their standings to your score board)</td>
+						<td class="blue_border">
+							<table class="display" cellpadding="0" cellspacing="0" border="0">
+								<thead>
+									<tr>
+										<th style="text-align:left;padding-left:3px"><s:checkbox id="checkAll" name="checkAll" /></th>
+										<th>Title</th>
+										<th>Begin Time</th>
+										<th>Length</th>
+										<th>Manager</th>
+									</tr>
+								</thead>
+								<tbody>
+									<s:iterator value="sameContests" status="stat">
+									<tr class="<s:property value='sameContests[#stat.index][6]' />">
+										<td><s:checkbox fieldValue="%{sameContests[#stat.index][0]}" name="ids" /></td>
+										<td>
+											<s:if test="sameContests[#stat.index][0] == cid || contest.endTime.compareTo(curDate) > 0">
+												<s:property value="sameContests[#stat.index][1]" escape="false" />
+											</s:if>
+											<s:else>
+												<a href="contest/viewContest.action?cid=<s:property value='sameContests[#stat.index][0]' escape="false" />" target="_blank"><s:property value="sameContests[#stat.index][1]" /></a>
+											</s:else>
+										</td>
+										<td class="date"><s:date name="sameContests[#stat.index][2]" format="yyyy-MM-dd HH:mm:ss" /></td>
+										<td class="date"><s:property value='sameContests[#stat.index][3]' /></td>
+										<td class="center"><a href="user/profile.action?uid=<s:property value='sameContests[#stat.index][5]' />"><s:property value="sameContests[#stat.index][4]" /></a></td>
+									</tr>
+									</s:iterator>	
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="blue_border" style="padding:8px;font:15px 'Lucida Grande',Verdana;">Time format</td>
+						<td class="blue_border" style="">
+							<s:radio name="penaltyFormat" list="%{#{'0':'hh:mm:ss','1':'mm'}}" onclick="this.blur()" />
+						</td>
+					</tr>
+					<tr>
+						<td class="blue_border" style="padding:8px;font:15px 'Lucida Grande',Verdana;">Auto Refresh Period (s):</td>
+						<td class="blue_border" style="padding:8px;">
+							<s:textfield name="autoRefreshPeriod" /> (At least 10s. 0 means no auto refresh)
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 
