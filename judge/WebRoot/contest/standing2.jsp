@@ -45,7 +45,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<li><a href="contest/standing.action?cid=${cid}">Old Version</a></li>
 			</ul>
 			<div id="scoreboard">
-				<div id="time_container" style="height:50px;">
+				<div id="time_container" style="height:40px;">
 					<div id="time_index" style="text-align:right">
 						<span></span>
 					</div>
@@ -73,7 +73,7 @@ String basePath = (String)application.getAttribute("basePath");
 				</div>
 			</div>
 			<div id="setting">
-				<table style="border:1px solid #A6C9E2;border-collapse:collapse;margin:20px auto 100px auto;" border="1">
+				<table style="width:95%;border:1px solid #A6C9E2;border-collapse:collapse;margin:20px auto 100px auto;" border="1">
 					<tr>
 						<td class="blue_border" style="width:200px;vertical-align:top;padding-top:25px;font:15px 'Lucida Grande',Verdana;">Time Machine:<br /><br /><br />(Check them to include their standings to your score board)</td>
 						<td class="blue_border">

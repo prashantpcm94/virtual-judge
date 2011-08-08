@@ -354,7 +354,7 @@ function calcScoreBoard() {
 	
 	clearTimeout(autoRefresh);
 	var period = $.cookie("auto_refresh_period");
-	if (period >= 10 && period < 100000) {
+	if (ti[1] < ti[0] && period >= 10 && period < 100000) {
 		autoRefresh = setTimeout('getRemoteData()', period * 1000);
 	}
 }
