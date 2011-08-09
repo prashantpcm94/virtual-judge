@@ -26,7 +26,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<td class="alignRight"><b>Current Time: </b></td>
 				<td class="alignLeft"><span class="currentTime" /></td>
 				<td class="alignRight"><b>Contest Type: </b></td>
-				<td class="alignLeft"><s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Priavte</font></s:else></td>
+				<td class="alignLeft"><s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Private</font></s:else></td>
 			</tr>
 			<tr>
 				<td class="alignRight"><b>Start Time: </b></td>
