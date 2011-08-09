@@ -29,7 +29,7 @@ public class Description {
 		if (string != null){
 			string = string.replaceAll("(?i)(?<=(\\b|java))script\\b", "ｓcript").replaceAll("<pre>\\s*", "<pre>").trim();
 			if (!string.contains("img") && !string.contains("IMG") && !string.contains("iframe") && string.matches("(<[^<>]*>\\s*)*")){
-				string = null;
+				string = "";
 			}
 		}
 		return string;
