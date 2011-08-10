@@ -311,8 +311,10 @@ function calcScoreBoard() {
 	}
 	if (sbHtml.length > 0) {
 		sbHtml.push("<tr><td colspan='4' style='background-color:#EAEBFF'>Submission statistics</td>");
-		var maxCorrectNumber = 0;
+		var maxCorrectNumber = 0, totalNumber = 0, totalCorrectNumber = 0;
 		for (var j = 0; j < pnum; ++j) {
+			totalNumber += totalSubmission[j];
+			totalCorrectNumber += correctSubmission[j];
 			if (maxCorrectNumber < correctSubmission[j]) {
 				maxCorrectNumber = correctSubmission[j];
 			}
@@ -322,10 +324,10 @@ function calcScoreBoard() {
 				sbHtml.push("<td style='background-color:white'/>");
 			} else {
 				var ratio = maxCorrectNumber ? correctSubmission[j] / maxCorrectNumber : 0.0;
-				sbHtml.push("<td style='background-color:" + grayDepth(ratio) + ";color:" + (ratio < .5 ? "black" : "white") + "'>" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + (!totalSubmission[j] ? 0 : Math.floor(100 * correctSubmission[j] / totalSubmission[j])) + "%</td>")
+				sbHtml.push("<td style='background-color:" + grayDepth(ratio) + ";color:" + (ratio < .5 ? "black" : "white") + "'>" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + Math.floor(100 * correctSubmission[j] / totalSubmission[j]) + "%</td>")
 			}
 		}
-		sbHtml.push("<td style='background-color:white'/></tr>");
+		sbHtml.push("<td style='background-color:#EAEBFF'>" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%</td></tr>");
 	}
 	standingTable.fnDestroy();
 	var standingTableDOM = document.getElementById("standing");
