@@ -300,7 +300,7 @@ function calcScoreBoard() {
 		if (username[uid]) {
 			sbHtml.push("'><a href='user/profile.action?uid=" + uid + "'>" + (showNick > 0 ? nickname[uid] || username[uid] : username[uid]) + "</a></td><td class='meta_td");
 		} else {
-			sbHtml.push("'>" + uid + "</td><td class='meta_td");
+			sbHtml.push(" replay'>" + uid + "</td><td class='meta_td");
 		}
 		if (cid == curCid) {
 			sbHtml.push(" curTd");

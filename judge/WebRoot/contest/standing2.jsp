@@ -19,6 +19,7 @@ String basePath = (String)application.getAttribute("basePath");
 			td.blue_border {border:1px solid #A6C9E2;}
 			tr.disp a:link {color: black;}
 			tr.disp a:visited {color: black;}
+			td.replay {color:gray;}
 		</style>
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
