@@ -159,6 +159,9 @@ public class UserAction extends ActionSupport {
 		if (username.length() < 2 || username.length() > 16){
 			this.addActionError("Username should have at least 2 characters and at most 16 characters!");
 		}
+		if (nickname.length() > 20){
+			this.addActionError("Nickname should have at most 20 characters!");
+		}
 		if (password.length() < 4 || password.length() > 30){
 			this.addActionError("Password should have at least 4 characters and at most 30 characters!");
 		}
@@ -184,7 +187,7 @@ public class UserAction extends ActionSupport {
 			return INPUT;
 		}
 		User user = new User(username, MD5.getMD5(password));
-		user.setNickname(nickname);
+		user.setNickname(nickname.trim());
 		user.setQq(qq);
 		user.setSchool(school);
 		user.setEmail(email);
@@ -230,6 +233,9 @@ public class UserAction extends ActionSupport {
 			}
 			user.setPassword(MD5.getMD5(newpassword));
 		}
+		if (nickname.length() > 20){
+			this.addActionError("Nickname should have at most 20 characters!");
+		}
 		if (qq.length() > 15){
 			this.addActionError("QQ is too long!");
 		}
@@ -245,7 +251,7 @@ public class UserAction extends ActionSupport {
 		if (!this.getActionErrors().isEmpty()){
 			return INPUT;
 		}
-		user.setNickname(nickname);
+		user.setNickname(nickname.trim());
 		user.setQq(qq);
 		user.setSchool(school);
 		user.setEmail(email);

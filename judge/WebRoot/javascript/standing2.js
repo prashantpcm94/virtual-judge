@@ -32,7 +32,7 @@ var standingTableSetting = {
 };
 
 $(document).ready(function() {
-
+	
 	cid = $("[name=cid]").val();
 	pnum = $("#standing th").length - 5;
 	
@@ -41,6 +41,9 @@ $(document).ready(function() {
 	}
 	if ($.cookie("penalty_format") == undefined){
 		$.cookie("penalty_format", 0, { expires: 30 });
+	}
+	if ($.cookie("show_nick") == undefined){
+		$.cookie("show_nick", 0, { expires: 30 });
 	}
 	if ($.cookie("auto_refresh_period") == undefined){
 		$.cookie("auto_refresh_period", 0, { expires: 30 });
@@ -110,6 +113,9 @@ $(document).ready(function() {
 	$("[name=penaltyFormat]").change(function(){
 		$.cookie("penalty_format", $(this).val(), { expires: 30 });
 	});
+	$("[name=showNick]").change(function(){
+		$.cookie("show_nick", $(this).val(), { expires: 30 });
+	});
 
 	$("[name=autoRefreshPeriod]").blur(function(){
 		var period = /^\d{1,5}$/.test($(this).val()) ? parseInt($(this).val(), 10) : 0;
@@ -159,6 +165,7 @@ $(document).ready(function() {
 	}
 
 	$("[name=penaltyFormat]").get($.cookie("penalty_format")).checked = 1;
+	$("[name=showNick]").get($.cookie("show_nick")).checked = 1;
 	$("[name=autoRefreshPeriod]").val($.cookie("auto_refresh_period"));
 
 	updateCheckAll();
@@ -226,12 +233,20 @@ function init() {
 }
 
 function calcScoreBoard() {
-	var sb = {}, firstSolveTime = [], totalSubmission = [], correctSubmission = [];
+	var sb = {}, firstSolveTime = [], totalSubmission = [], correctSubmission = [], username = {}, nickname = {};
 	for (var j = 0; j < pnum; ++j) {
 		totalSubmission[j] = correctSubmission[j] = 0;
 	}
 	$.each(onlyCid ? {onlyCid: data[onlyCid]} : data, function(curCid, sInfo){
-		$.each(sInfo, function(key, s){
+		$.each(sInfo, function(key, s) {
+			if (key == 0) {
+				for (uid in s) {
+					var name = s[uid];
+					username[uid] = name[0];
+					nickname[uid] = name[1];
+				}
+				return;
+			}
 			if (s[3] > maxTime)return;
 			var name = s[0] + "_" + curCid;
 			if (!sb[name]){
@@ -270,17 +285,23 @@ function calcScoreBoard() {
 	result.sort(function(a, b){
 		return b[1] - a[1] || a[2] - b[2];
 	});
-
+	
+	var showNick = $.cookie("show_nick");
 	var sbHtml = [];
 	for (var i = 0; i < result.length; ++i) {
 		var curInfo = result[i];
 		var splitIdx = curInfo[0].lastIndexOf("_");
+		var uid = curInfo[0].substr(0, splitIdx);
 		var curCid = curInfo[0].substr(splitIdx + 1);
 		sbHtml.push("<tr class='disp' style='background:transparent' cid='" + curCid + "'><td>" + (i + 1) + "</td><td class='meta_td");
 		if (cid == curCid) {
 			sbHtml.push(" curTd");
 		}
-		sbHtml.push("'>" + curInfo[0].substr(0, splitIdx) + "</td><td class='meta_td");
+		if (username[uid]) {
+			sbHtml.push("'><a href='user/profile.action?uid=" + uid + "'>" + (showNick > 0 ? nickname[uid] || username[uid] : username[uid]) + "</a></td><td class='meta_td");
+		} else {
+			sbHtml.push("'>" + uid + "</td><td class='meta_td");
+		}
 		if (cid == curCid) {
 			sbHtml.push(" curTd");
 		}

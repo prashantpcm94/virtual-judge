@@ -7,6 +7,7 @@ import javax.servlet.ServletContext;
 
 import judge.bean.Contest;
 import judge.bean.Description;
+import judge.bean.ReplayStatus;
 import judge.bean.Submission;
 import judge.service.IBaseService;
 
@@ -15,6 +16,14 @@ public class Customize {
 	
 	static public ServletContext sc = ApplicationContainer.sc;
 	static public IBaseService baseService = (IBaseService) SpringBean.getBean("baseService", sc);
+	
+	static public void transReplay() {
+		List<ReplayStatus> list = baseService.query("select rs from ReplayStatus rs");
+		for (ReplayStatus replayStatus : list) {
+			replayStatus.setData("[{}," + replayStatus.getData().substring(1));
+		}
+		baseService.addOrModify(list);
+	}
 	
 	static public void fixSubmissionPrivacy() throws Exception{
 		int interval = 3000;

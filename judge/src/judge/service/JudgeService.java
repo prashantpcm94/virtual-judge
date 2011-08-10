@@ -177,20 +177,35 @@ public class JudgeService extends BaseService {
 		if (contest.getReplayStatus() != null) {
 			out.write(contest.getReplayStatus().getData());
 		} else {
-			List<Object[]> submissionList = this.query("select s.username, cp.num, s.status, s.subTime from Submission s, Cproblem cp where s.contest.id = " + cid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id order by s.id asc");
+			List<Object[]> submissionList = this.query("select s.user.id, cp.num, s.status, s.subTime, s.username, s.user.nickname from Submission s, Cproblem cp where s.contest.id = " + cid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id order by s.id asc");
 			long beginTime = contest.getBeginTime().getTime();
-			StringBuffer sb = new StringBuffer("[");
+
+			StringBuffer submissionData = new StringBuffer("");
+			StringBuffer nameData = new StringBuffer("");
+			
+			Map userMap = new HashMap();
 
 			for (int i = 0; i < submissionList.size(); i++){
 				Object[] info = submissionList.get(i);
-				if (i > 0){
-					sb.append(",");
-				}
-				sb.append("[\"").append(info[0]).append("\",").append(((String)info[1]).charAt(0) - 'A').append(",").append("Accepted".equals(info[2]) ? 1 : 0).append(",").append((((Date)info[3]).getTime() - beginTime) / 1000L).append("]");
+				submissionData.append(",[").append(info[0]).append(",").append(((String)info[1]).charAt(0) - 'A').append(",").append("Accepted".equals(info[2]) ? 1 : 0).append(",").append((((Date)info[3]).getTime() - beginTime) / 1000L).append("]");
+				userMap.put(info[0], new Object[]{info[4], info[5]});
 			}
-			sb.append("]");
+			
+			Iterator it = userMap.entrySet().iterator();    
+			while (it.hasNext())    
+			{    
+				Map.Entry entry = (Map.Entry) it.next();    
+				Integer uid = (Integer) entry.getKey();
+				Object[] name = (Object[]) entry.getValue();
+				if (nameData.length() > 0) {
+					nameData.append(",");
+				}
+				nameData.append("\"").append(uid).append("\":[\"").append(name[0]).append("\",\"").append(name[1]).append("\"]");
+			}
+			
+			StringBuffer standingData = new StringBuffer("[{").append(nameData).append("}").append(submissionData).append("]");
 
-			out.write(sb.toString());
+			out.write(standingData.toString());
 		}
 		out.close();
 		fos.close();
@@ -490,12 +505,9 @@ public class JudgeService extends BaseService {
 			}
 		});
 		
-		StringBuffer sb = new StringBuffer("[");
+		StringBuffer sb = new StringBuffer("[{}");
 		for (Submission submission : submissions) {
-			if (sb.length() > 2){
-				sb.append(",");
-			}
-			sb.append("[\"").append(submission.getUsername().trim()).append("\",").append(submission.getId()).append(",").append(submission.getStatus()).append(",").append(submission.getSubTime().getTime() / 1000L).append("]");
+			sb.append(",[\"").append(submission.getUsername().trim().replaceAll("\"", "'")).append("\",").append(submission.getId()).append(",").append(submission.getStatus()).append(",").append(submission.getSubTime().getTime() / 1000L).append("]");
 		}
 		sb.append("]");
 		

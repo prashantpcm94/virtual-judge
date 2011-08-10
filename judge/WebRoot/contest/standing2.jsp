@@ -17,6 +17,8 @@ String basePath = (String)application.getAttribute("basePath");
 			.ui-tabs .ui-tabs-panel {padding:15px 0px}
 			table#standing th {background-color: #EDFFED;}
 			td.blue_border {border:1px solid #A6C9E2;}
+			tr.disp a:link {color: black;}
+			tr.disp a:visited {color: black;}
 		</style>
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
@@ -109,9 +111,15 @@ String basePath = (String)application.getAttribute("basePath");
 						</td>
 					</tr>
 					<tr>
-						<td class="blue_border" style="padding:8px;font:15px 'Lucida Grande',Verdana;">Time format</td>
+						<td class="blue_border" style="padding:8px;font:15px 'Lucida Grande',Verdana;">Time Format:</td>
 						<td class="blue_border" style="">
 							<s:radio name="penaltyFormat" list="%{#{'0':'hh:mm:ss','1':'mm'}}" onclick="this.blur()" />
+						</td>
+					</tr>
+					<tr>
+						<td class="blue_border" style="padding:8px;font:15px 'Lucida Grande',Verdana;">Team Name:</td>
+						<td class="blue_border" style="">
+							<s:radio name="showNick" list="%{#{'0':'Username','1':'Nickname'}}" onclick="this.blur()" />
 						</td>
 					</tr>
 					<tr>
