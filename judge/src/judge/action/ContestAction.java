@@ -230,7 +230,7 @@ public class ContestAction extends BaseAction {
 		 * 标题不能为空，不能超过90字符
 		 */
 		contest.setTitle(Tools.toHTMLChar(contest.getTitle()));
-		if (contest.getTitle() == null || contest.getTitle().isEmpty()) {
+		if (contest.getTitle() == null || contest.getTitle().trim().isEmpty()) {
 			this.addActionError("Contest Title shouldn't be empty!");
 		} else if (contest.getTitle().length() > 90) {
 			this.addActionError("Contest Title should be shorter than 90 characters!");
@@ -887,17 +887,37 @@ public class ContestAction extends BaseAction {
 				this.addActionError("Contest duration should be shorter than 30 days!");
 				beiju = true;
 			}
-			if (contest.getDescription().length() > 65000) {
+			
+			/**
+			 * 标题不能为空，不能超过90字符
+			 */
+			contest.setTitle(Tools.toHTMLChar(contest.getTitle()));
+			if (contest.getTitle() == null || contest.getTitle().trim().isEmpty()) {
+				this.addActionError("Contest Title shouldn't be empty!");
+				beiju = true;
+			} else if (contest.getTitle().length() > 90) {
+				this.addActionError("Contest Title should be shorter than 90 characters!");
+				beiju = true;
+			}
+			
+			/**
+			 * 比赛描述不得多于65000字符
+			 */
+			contest.setDescription(Tools.dropScript(contest.getDescription()));
+			if (contest.getDescription() != null && contest.getDescription().length() > 65000) {
 				this.addActionError("Contest description should be shorter than 65000 characters!");
-				beiju = true;
 			}
-			if (contest.getAnnouncement().length() > 65000) {
+
+			/**
+			 * 比赛公告不得多于65000字符
+			 */
+			contest.setAnnouncement(Tools.dropScript(contest.getAnnouncement()));
+			if (contest.getAnnouncement() != null && contest.getAnnouncement().length() > 65000) {
 				this.addActionError("Contest announcement should be shorter than 65000 characters!");
-				beiju = true;
 			}
-			oContest.setTitle(Tools.toHTMLChar(contest.getTitle()));
-			oContest.setDescription(Tools.dropScript(contest.getDescription()));
-			oContest.setAnnouncement(Tools.dropScript(contest.getAnnouncement()));
+			oContest.setTitle(contest.getTitle());
+			oContest.setDescription(contest.getDescription());
+			oContest.setAnnouncement(contest.getAnnouncement());
 			if (beiju){
 				contest = (Contest) baseService.query(Contest.class, cid);
 				return "brief_edit";
