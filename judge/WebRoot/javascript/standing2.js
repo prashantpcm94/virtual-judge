@@ -327,7 +327,7 @@ function calcScoreBoard() {
 				sbHtml.push("<td style='background-color:" + grayDepth(ratio) + ";color:" + (ratio < .5 ? "black" : "white") + "'>" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + Math.floor(100 * correctSubmission[j] / totalSubmission[j]) + "%</td>")
 			}
 		}
-		sbHtml.push("<td style='background-color:#EAEBFF'>" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%</td></tr>");
+		sbHtml.push("<td style='background-color:#D3D6FF'>" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%</td></tr>");
 	}
 	standingTable.fnDestroy();
 	var standingTableDOM = document.getElementById("standing");
