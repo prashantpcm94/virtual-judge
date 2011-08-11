@@ -200,7 +200,7 @@ public class JudgeService extends BaseService {
 				if (nameData.length() > 0) {
 					nameData.append(",");
 				}
-				nameData.append("\"").append(uid).append("\":[\"").append(name[0]).append("\",\"").append(name[1]).append("\"]");
+				nameData.append("\"").append(uid).append("\":[\"").append(name[0]).append("\",\"").append(((String)name[1]).replaceAll("\"", "'")).append("\"]");
 			}
 			
 			StringBuffer standingData = new StringBuffer("[{").append(nameData).append("}").append(submissionData).append("]");
