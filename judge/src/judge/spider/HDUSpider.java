@@ -28,9 +28,9 @@ public class HDUSpider extends Spider {
 			throw new Exception();
 		}
 		
-		tLine = tLine.replaceAll("src=[\\S]*?/images", "src=http://acm.hdu.edu.cn/data/images");
-		tLine = tLine.replaceAll("src='[\\S]*?/images", "src='http://acm.hdu.edu.cn/data/images");
-		tLine = tLine.replaceAll("src=\"[\\S]*?/images", "src=\"http://acm.hdu.edu.cn/data/images");
+		tLine = tLine.replaceAll("src=[^'\"]*?/images", "src=http://acm.hdu.edu.cn/data/images");
+		tLine = tLine.replaceAll("src='[^'\"]*?/images", "src='http://acm.hdu.edu.cn/data/images");
+		tLine = tLine.replaceAll("src=\"[^'\"]*?/images", "src=\"http://acm.hdu.edu.cn/data/images");
 		//System.out.println(tLine);
 		
 		problem.setTitle(regFind(tLine, "color:#1A5CC8'>([\\s\\S]*?)</h1>").trim());
