@@ -141,6 +141,18 @@ public class CodeForcesSubmitter extends Submitter {
 		statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
 		
+		String tLine = new String(postMethod.getResponseBody(), "UTF-8");
+		if (tLine.contains("error for__language")) {
+			submission.setStatus("Language Error");
+			baseService.addOrModify(submission);
+			throw new Exception("Language Error");
+		}
+		if (tLine.contains("error for__source")) {
+			submission.setStatus("Source Code Error");
+			baseService.addOrModify(submission);
+			throw new Exception("Source Code Error");
+		}
+		
 		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
 			throw new Exception();
 		}
@@ -250,8 +262,10 @@ public class CodeForcesSubmitter extends Submitter {
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			submission.setStatus("Judging Error " + errorCode);
-			baseService.addOrModify(submission);
+			if (e.getMessage() == null){
+				submission.setStatus("Judging Error " + errorCode);
+				baseService.addOrModify(submission);
+			}
 		}
 		
 	}

@@ -100,6 +100,11 @@ public class SGUSubmitter extends Submitter {
 		httpClient.executeMethod(postMethod);
 		byte[] responseBody = postMethod.getResponseBody();
 		String tLine = new String(responseBody, "UTF-8");
+		if (tLine.contains("Your source seems to be dangerous")) {
+			submission.setStatus("Dangerous Code Error");
+			baseService.addOrModify(submission);
+			throw new Exception("Dangerous Code Error");
+		}
 		if (!tLine.contains("successfully submitted")){
 			throw new Exception();
 		}
@@ -176,8 +181,10 @@ public class SGUSubmitter extends Submitter {
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			submission.setStatus("Judging Error " + errorCode);
-			baseService.addOrModify(submission);
+			if (e.getMessage() == null){
+				submission.setStatus("Judging Error " + errorCode);
+				baseService.addOrModify(submission);
+			}
 		}
 	}
 
