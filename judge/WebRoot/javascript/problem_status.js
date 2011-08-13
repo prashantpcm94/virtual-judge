@@ -1,4 +1,4 @@
-var first = 1;
+var first = 1, timeoutInstance = {};
 
 $(document).ready(function() {
 
@@ -170,7 +170,8 @@ function cb(back){
 	if ($row.length){
 		$(".result", $row).html(result);
 		if (result.indexOf("ing") >= 0 && result.indexOf("rror") < 0){
-			setTimeout("getResult(" + id + ")", 3000);
+			clearTimeout(timeoutInstance[id]);
+			timeoutInstance[id] = setTimeout("getResult(" + id + ")", 3000);
 		} else if (result == "Accepted"){
 			$row.removeClass("pending");
 			$row.addClass("yes");
