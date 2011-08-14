@@ -18,6 +18,11 @@ $(document).ready(function() {
 		"bAutoWidth": false,
 		"bStateSave": true,
 		"sDom": '<"H"pfr>t<"F"il>',
+		"oLanguage": {
+			"sInfo": "_START_ to _END_ of _TOTAL_ contests",
+			"sInfoEmpty": "No contests",
+			"sInfoFiltered": " (filtering from _MAX_ total contests)"
+		},
 		"aaSorting": [[ 2, "desc" ]],
 		"aoColumnDefs": [
 			{ "asSorting": [ "desc", "asc" ], "aTargets": [ "_all" ] }

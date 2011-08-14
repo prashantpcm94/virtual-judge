@@ -9,6 +9,11 @@ $(document).ready(function() {
 		"sDom": '<"H"pfr>t<"F"il>',
 		"bAutoWidth": false,
 		"bStateSave": true,
+		"oLanguage": {
+			"sInfo": "_START_ to _END_ of _TOTAL_ problems",
+			"sInfoEmpty": "No problems",
+			"sInfoFiltered": " (filtering from _MAX_ total problems)"
+		},
 		"aaSorting": [[ 1, "asc" ]],
 		"aoColumns": [
 					{
