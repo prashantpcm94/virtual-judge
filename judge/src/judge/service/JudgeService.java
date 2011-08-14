@@ -101,8 +101,8 @@ public class JudgeService extends BaseService {
 		Map paraMap = new HashMap<String, String>();
 		paraMap.put("OJ", OJ.trim());
 		paraMap.put("pid", problemId.trim());
-		List<Object[]> list = query("select p.id, p.title, p.timeLimit from Problem p left join fetch p.descriptions where p.originOJ = :OJ and p.originProb = :pid", paraMap);
-		if (list.isEmpty() || (Integer) list.get(0)[2] == 1){
+		List<Object[]> list = query("select p.id, p.title, p.timeLimit from Problem p where p.originOJ = :OJ and p.originProb = :pid", paraMap);
+		if (list.isEmpty() || (Integer)list.get(0)[2] == 1){
 			return null;
 		}
 		List res = new ArrayList();

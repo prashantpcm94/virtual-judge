@@ -25,6 +25,7 @@ String basePath = (String)application.getAttribute("basePath");
 		
 		<table width="100%"><tr>
 		<td id="left_view">
+			<span style="text-align:left;font-family:Verdana;color:green">${problem.originOJ} - ${problem.originProb}</span>
 			<div class="ptt">
 				<a href="${problem.url}">${problem.title}</a>
 			</div>
@@ -81,6 +82,7 @@ String basePath = (String)application.getAttribute("basePath");
 		</td>
 		
 		<td id="right_view">
+			<div style="background-color:#EAEBFF;border-radius: 8px 8px 8px 8px;text-align:left;padding:10px;font-family:Verdana;">Problem descriptions:</div>
 			<s:iterator value="problem.descriptions" status="stat">
 				<div class="desc_info">
 					<div id="info<s:property value="#stat.index" />">
