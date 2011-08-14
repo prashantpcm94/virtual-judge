@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import judge.tool.Tools;
+
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -34,7 +36,7 @@ public class ZTreningSpider extends Spider {
 			throw new Exception();
 		}
 
-		String tLine = "";
+		String html = "";
 		HttpClient httpClient = new HttpClient();
 		GetMethod getMethod = new GetMethod("http://www.z-trening.com/tasks.php?show_task=" + (5000000000L + Integer.parseInt(problem.getOriginProb())) + "&lang=uk");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
@@ -43,26 +45,24 @@ public class ZTreningSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
-			byte[] responseBody = getMethod.getResponseBody();
-			tLine = new String(responseBody, "UTF-8");
-		}
-		catch(Exception e) {
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream());
+		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
 		}
 		
-		if (tLine.contains("<H1>Error</H1>")) {
+		if (html.contains("<H1>Error</H1>")) {
 			throw new Exception();
 		}
 
-		problem.setTitle(regFind(tLine, "<TITLE>Task :: ([\\s\\S]*?)</TITLE>").trim());
+		problem.setTitle(regFind(html, "<TITLE>Task :: ([\\s\\S]*?)</TITLE>").trim());
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
-		Double timeLimit = 1000 * Double.parseDouble(regFind(tLine, "Time:</TD><TD CLASS=\"right\">(\\S*?) sec"));
+		Double timeLimit = 1000 * Double.parseDouble(regFind(html, "Time:</TD><TD CLASS=\"right\">(\\S*?) sec"));
 		problem.setTimeLimit(timeLimit.intValue());
-		problem.setMemoryLimit(1024 * Integer.parseInt(regFind(tLine, "Memory:</TD><TD CLASS=\"right\">(\\d+) MB")));
-		description.setDescription(regFind(tLine, "<DIV CLASS=\"taskText\">([\\s\\S]*?)</DIV></DIV><DIV CLASS=\"boxHeader\">Submit Solution"));
+		problem.setMemoryLimit(1024 * Integer.parseInt(regFind(html, "Memory:</TD><TD CLASS=\"right\">(\\d+) MB")));
+		description.setDescription(regFind(html, "<DIV CLASS=\"taskText\">([\\s\\S]*?)</DIV></DIV><DIV CLASS=\"boxHeader\">Submit Solution"));
 		problem.setUrl("http://www.z-trening.com/tasks.php?show_task=" + (5000000000L + Integer.parseInt(problem.getOriginProb())) + "&lang=uk");
 	}
 

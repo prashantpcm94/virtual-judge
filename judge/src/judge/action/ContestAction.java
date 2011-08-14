@@ -284,8 +284,10 @@ public class ContestAction extends BaseAction {
 		for (int i = 0; this.getActionErrors().isEmpty() && i < pids.size(); i++) {
 			problem = (Problem) baseService.query(Problem.class, Integer.parseInt((String) pids.get(i)));
 			pList.add(problem);
-			if (problem == null || problem.getTimeLimit() == 1) {
+			if (problem == null) {
 				this.addActionError("Problem " + pids.get(i) + " doesn't exist!");
+			} else if (problem.getTimeLimit() == 1) {
+				this.addActionError("Problem " + problem.getOriginOJ() + " " + problem.getOriginProb() + " doesn't finish crawling!");
 			}
 		}
 		

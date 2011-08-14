@@ -3,6 +3,8 @@ package judge.spider;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import judge.tool.Tools;
+
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -34,8 +36,7 @@ public class UVaSpiderInitializer extends Thread {
 					System.err.println("Method failed: " + getMethod.getStatusLine());
 					throw new Exception();
 				}
-				byte[] responseBody = getMethod.getResponseBody();
-				html = new String(responseBody, "UTF-8");
+				html = Tools.getHtml(getMethod.getResponseBodyAsStream());
 				html = html.substring(html.indexOf("Total Users / Solving"));
 
 				Matcher matcher = Pattern.compile("category=(\\d+)\">").matcher(html);

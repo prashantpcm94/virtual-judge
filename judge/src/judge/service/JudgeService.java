@@ -1,22 +1,9 @@
 package judge.service;
 
-import info.monitorenter.cpdetector.io.ASCIIDetector;
-import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
-import info.monitorenter.cpdetector.io.JChardetFacade;
-import info.monitorenter.cpdetector.io.ParsingDetector;
-import info.monitorenter.cpdetector.io.UnicodeDetector;
-
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,8 +19,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.Ostermiller.util.CSVParser;
-
 import judge.action.BaseAction;
 import judge.bean.Contest;
 import judge.bean.Problem;
@@ -42,9 +27,7 @@ import judge.bean.Submission;
 import judge.service.imp.BaseService;
 import judge.submitter.Submitter;
 import judge.tool.ApplicationContainer;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
+import judge.tool.Tools;
 
 @SuppressWarnings("unchecked")
 public class JudgeService extends BaseService {
@@ -118,13 +101,13 @@ public class JudgeService extends BaseService {
 		Map paraMap = new HashMap<String, String>();
 		paraMap.put("OJ", OJ.trim());
 		paraMap.put("pid", problemId.trim());
-		List list = query("select p from Problem p left join fetch p.descriptions where p.originOJ = :OJ and p.originProb = :pid", paraMap);
-		if (list.isEmpty()){
+		List<Object[]> list = query("select p.id, p.title, p.timeLimit from Problem p left join fetch p.descriptions where p.originOJ = :OJ and p.originProb = :pid", paraMap);
+		if (list.isEmpty() || (Integer) list.get(0)[2] == 1){
 			return null;
 		}
 		List res = new ArrayList();
-		res.add(((Problem)list.get(0)).getId());
-		res.add(((Problem)list.get(0)).getTitle());
+		res.add(list.get(0)[0]);
+		res.add(list.get(0)[1]);
 		return res;
 	}
 	
@@ -349,9 +332,6 @@ public class JudgeService extends BaseService {
 		return ans;
 	}
 
-
-
-
 	/**
 	 * 分割csv文件为String[][]
 	 * @param file
@@ -366,11 +346,11 @@ public class JudgeService extends BaseService {
 		String[][] result = null;
 		
 		try {
-			result = splitCellsFromExcel(file);
+			result = Tools.splitCellsFromExcel(file);
 		} catch (Exception e) {
 			System.err.println("Not valid excel!");
 			try {
-				result = splitCellsFromCsv(file);
+				result = Tools.splitCellsFromCsv(file);
 				return result;
 			} catch (Exception e1) {
 				System.err.println("Not valid csv!");
@@ -392,57 +372,6 @@ public class JudgeService extends BaseService {
 		return result;
 	}
 	
-	/**
-	 * 获取Excel中第一个sheet内容
-	 * @param xls
-	 * @return
-	 * @throws IndexOutOfBoundsException
-	 * @throws BiffException
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private String[][] splitCellsFromExcel(File xls) throws IndexOutOfBoundsException, BiffException, FileNotFoundException, IOException {
-		Sheet rs = Workbook.getWorkbook(new FileInputStream(xls)).getSheet(0);
-		ArrayList<String[]> tmpContent = new ArrayList<String[]>();
-		for (int i = 0; i < rs.getRows(); i++) {
-			List row = new ArrayList<String>(); 
-			for (int j = 0; j < rs.getColumns(); j++) {
-				row.add(rs.getCell(j, i).getContents().trim());
-			}
-			tmpContent.add((String[]) row.toArray(new String[0]));
-		}
-		return tmpContent.toArray(new String[0][]);
-	}
-
-	/**
-	 * 获取csv内容
-	 * @param csv
-	 * @return
-	 * @throws IOException
-	 */
-	private String[][] splitCellsFromCsv(File csv) throws IOException {
-		//先检测文件编码
-		CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();  
-		detector.add(new ParsingDetector(false));   
-		detector.add(JChardetFacade.getInstance());  
-		detector.add(ASCIIDetector.getInstance());  
-		detector.add(UnicodeDetector.getInstance());  
-		Charset charset = Charset.forName("GB2312");
-		InputStream inputStream = new BufferedInputStream(new FileInputStream(csv));
-		int length = 100000;
-		while (length > 5) {
-			try {
-				charset = detector.detectCodepage(inputStream, length);
-				break;
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				length = length * 2 / 3;
-			}
-		}
-		System.out.println(charset.name());
-		CSVParser shredder = new CSVParser(new InputStreamReader(inputStream, charset));
-		return shredder.getAllValues();
-	}
 
 
 	/**

@@ -1,5 +1,7 @@
 package judge.spider;
 
+import judge.tool.Tools;
+
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -26,7 +28,7 @@ public class UVASpider extends Spider {
 			throw new Exception();
 		}
 
-		String tLine = "";
+		String html = "";
 		HttpClient httpClient = new HttpClient();
 		int category = Integer.parseInt(problem.getOriginProb()) / 100;
 		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".html");
@@ -37,18 +39,17 @@ public class UVASpider extends Spider {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			byte[] responseBody = getMethod.getResponseBody();
-			tLine = new String(responseBody, "UTF-8");
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream());
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
 		}
 
-		tLine = tLine.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://uva.onlinejudge.org/external/" + category + "/");
-		tLine = tLine.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://uva.onlinejudge.org/external/" + category + "/");
+		html = html.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://uva.onlinejudge.org/external/" + category + "/");
+		html = html.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://uva.onlinejudge.org/external/" + category + "/");
 
 		problem.setMemoryLimit(0);
-		description.setDescription(regFind(tLine, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1).replaceAll("(?i)</?html>", ""));
+		description.setDescription(regFind(html, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1).replaceAll("(?i)</?html>", ""));
 		problem.setUrl("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
 
 		getMethod = new GetMethod(problem.getUrl());
@@ -58,14 +59,13 @@ public class UVASpider extends Spider {
 			if (statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 			}
-			byte[] responseBody = getMethod.getResponseBody();
-			tLine = new String(responseBody, "UTF-8");
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream());
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
 		}
-		problem.setTitle(regFind(tLine, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>").trim());
-		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
+		problem.setTitle(regFind(html, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>").trim());
+		problem.setTimeLimit(Integer.parseInt(regFind(html, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
 	}
 
 }

@@ -1,6 +1,8 @@
 package judge.spider;
 
 
+import judge.tool.Tools;
+
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -11,7 +13,7 @@ public class ZOJSpider extends Spider {
 
 	public void crawl() throws Exception{
 		
-		String tLine = "";
+		String html = "";
 		HttpClient httpClient = new HttpClient();
 		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
@@ -20,36 +22,34 @@ public class ZOJSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
-			byte[] responseBody = getMethod.getResponseBody();
-			tLine = new String(responseBody, "UTF-8");
-		}
-		catch(Exception e) {
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream());
+		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
 		}
 		
-		if (tLine.contains("No such problem.")){
+		if (html.contains("No such problem.")){
 			throw new Exception();
 		}
 
-		tLine = tLine.replaceAll("showImage\\.do", "http://acm.zju.edu.cn/onlinejudge/showImage.do");
+		html = html.replaceAll("showImage\\.do", "http://acm.zju.edu.cn/onlinejudge/showImage.do");
 		
-		problem.setTitle(regFind(tLine, "<span class=\"bigProblemTitle\">([\\s\\S]*?)</span>").trim());
+		problem.setTitle(regFind(html, "<span class=\"bigProblemTitle\">([\\s\\S]*?)</span>").trim());
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
-		problem.setTimeLimit(1000 * Integer.parseInt(regFind(tLine, "Time Limit: </font> ([\\s\\S]*?) Second")));
-		problem.setMemoryLimit(Integer.parseInt(regFind(tLine, "Memory Limit: </font> ([\\s\\S]*?) KB")));
-		if (tLine.contains("Input<") && tLine.contains("Output<") && tLine.contains("Sample Input<") && tLine.contains("Sample Output<")){
-			description.setDescription(regFind(tLine, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)>[\\s]*Input"));
-			description.setInput(regFind(tLine, ">[\\s]*Input([\\s\\S]*?)>[\\s]*Output"));
-			description.setOutput(regFind(tLine, ">[\\s]*Output([\\s\\S]*?)>[\\s]*Sample Input"));
-			description.setSampleInput(regFind(tLine, ">[\\s]*Sample Input([\\s\\S]*?)>[\\s]*Sample Output"));
-			description.setSampleOutput(regFind(tLine, ">[\\s]*Sample Output([\\s\\S]*?)<hr"));
+		problem.setTimeLimit(1000 * Integer.parseInt(regFind(html, "Time Limit: </font> ([\\s\\S]*?) Second")));
+		problem.setMemoryLimit(Integer.parseInt(regFind(html, "Memory Limit: </font> ([\\s\\S]*?) KB")));
+		if (html.contains("Input<") && html.contains("Output<") && html.contains("Sample Input<") && html.contains("Sample Output<")){
+			description.setDescription(regFind(html, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)>[\\s]*Input"));
+			description.setInput(regFind(html, ">[\\s]*Input([\\s\\S]*?)>[\\s]*Output"));
+			description.setOutput(regFind(html, ">[\\s]*Output([\\s\\S]*?)>[\\s]*Sample Input"));
+			description.setSampleInput(regFind(html, ">[\\s]*Sample Input([\\s\\S]*?)>[\\s]*Sample Output"));
+			description.setSampleOutput(regFind(html, ">[\\s]*Sample Output([\\s\\S]*?)<hr"));
 		} else {
-			description.setDescription(regFind(tLine, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)<hr"));
+			description.setDescription(regFind(html, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)<hr"));
 		}
-		problem.setSource(regFind(tLine, "Source: <strong>([\\s\\S]*?)</strong><br>"));
+		problem.setSource(regFind(html, "Source: <strong>([\\s\\S]*?)</strong><br>"));
 		problem.setUrl("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
 	}
 }

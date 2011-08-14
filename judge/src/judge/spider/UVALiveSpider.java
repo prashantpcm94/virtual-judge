@@ -1,5 +1,7 @@
 package judge.spider;
 
+import judge.tool.Tools;
+
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -8,7 +10,7 @@ public class UVALiveSpider extends Spider {
 
 	public void crawl() throws Exception{
 
-		String tLine = "";
+		String html = "";
 		HttpClient httpClient = new HttpClient();
 		if (!problem.getOriginProb().matches("\\d+")) {
 			throw new Exception();
@@ -23,14 +25,13 @@ public class UVALiveSpider extends Spider {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			byte[] responseBody = getMethod.getResponseBody();
-			tLine = new String(responseBody, "UTF-8");
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream());
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
 		}
-		problem.setTitle(regFind(tLine, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>").trim());
-		problem.setTimeLimit(Integer.parseInt(regFind(tLine, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
+		problem.setTitle(regFind(html, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>").trim());
+		problem.setTimeLimit(Integer.parseInt(regFind(html, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
 		problem.setMemoryLimit(0);
 		problem.setUrl("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + (Integer.parseInt(problem.getOriginProb()) - 1999));
 
@@ -46,10 +47,9 @@ public class UVALiveSpider extends Spider {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			byte[] responseBody = getMethod.getResponseBody();
-			tLine = new String(responseBody, "UTF-8");
-			tLine = pdfLink + tLine.replaceAll("(?i)(src=\"?)(?!\"*http)", "$1http://livearchive.onlinejudge.org/external/" + category + "/");
-			description.setDescription(tLine);
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream());
+			html = pdfLink + html.replaceAll("(?i)(src=\"?)(?!\"*http)", "$1http://livearchive.onlinejudge.org/external/" + category + "/");
+			description.setDescription(html);
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 		}
