@@ -45,7 +45,7 @@ public class ZTreningSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream());
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type").getValue());
 		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();

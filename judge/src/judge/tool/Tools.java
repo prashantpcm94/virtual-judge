@@ -1,10 +1,7 @@
 package judge.tool;
 
-import info.monitorenter.cpdetector.io.ASCIIDetector;
 import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
 import info.monitorenter.cpdetector.io.JChardetFacade;
-import info.monitorenter.cpdetector.io.ParsingDetector;
-import info.monitorenter.cpdetector.io.UnicodeDetector;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -87,35 +84,31 @@ public class Tools {
 	/**
 	 * 从html中判断字符编码并将内容转成String返回
 	 * @param stream
+	 * @param contentType 
 	 * @return
 	 * @throws IOException
 	 */
-	public static String getHtml(InputStream stream) throws IOException {
+	public static String getHtml(InputStream stream, String contentType) throws IOException {
 		byte[] contentInByte = IOUtils.toByteArray(stream);
-		Charset charset = Charset.forName("UTF-8");
-		String tmpHtml = new String(contentInByte, charset);
-		Matcher matcher = Pattern.compile("(?i)charset=([-\\w]+)").matcher(tmpHtml);
-		if (matcher.find()) {
-			charset = Charset.forName(matcher.group(1));
-		} else {
-			CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();  
-			detector.add(new ParsingDetector(false));   
-			detector.add(JChardetFacade.getInstance());  
-			detector.add(ASCIIDetector.getInstance());  
-			detector.add(UnicodeDetector.getInstance());  
-			int length = 10000;
-			while (length > 5) {
-				try {
-					charset = detector.detectCodepage(new BufferedInputStream(stream), length);
-					break;
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					length = length * 2 / 3;
-				}
+		Charset charset = null;
+		if (contentType != null) {
+			Matcher matcher = Pattern.compile("(?i)charset=([-\\w]+)").matcher(contentType);
+			if (matcher.find()) {
+				charset = Charset.forName(matcher.group(1));
 			}
 		}
+		if (charset == null) {
+			String tmpHtml = new String(contentInByte, charset);
+			Matcher matcher = Pattern.compile("(?i)charset=([-\\w]+)").matcher(tmpHtml);
+			if (matcher.find()) {
+				charset = Charset.forName(matcher.group(1));
+			}
+		}
+		if (charset == null) {
+			charset = Charset.forName("UTF-8");
+		}
 		System.out.println(charset.name());
-		return charset.equals(Charset.forName("UTF-8")) ? tmpHtml : new String(contentInByte, charset);
+		return new String(contentInByte, charset);
 	}
 	
 	/**

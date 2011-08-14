@@ -17,6 +17,7 @@ $(document).ready(function() {
 		"iDisplayLength": 25,
 		"bAutoWidth": false,
 		"bStateSave": true,
+		"sDom": '<"H"pfr>t<"F"il>',
 		"aaSorting": [[ 2, "desc" ]],
 		"aoColumnDefs": [
 			{ "asSorting": [ "desc", "asc" ], "aTargets": [ "_all" ] }

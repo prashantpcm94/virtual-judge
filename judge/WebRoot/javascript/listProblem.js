@@ -6,12 +6,7 @@ $(document).ready(function() {
 		"bServerSide": true,
 		"sAjaxSource": "problem/listProblem.action",
 		"iDisplayLength": 25,
-		
-//		"bPaginate": false,
-//		"bLengthChange": false,
-//		"bFilter": false,
-//		"bSort": false,
-//		"bInfo": false,
+		"sDom": '<"H"pfr>t<"F"il>',
 		"bAutoWidth": false,
 		"bStateSave": true,
 		"aaSorting": [[ 1, "asc" ]],

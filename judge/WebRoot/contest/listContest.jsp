@@ -33,7 +33,7 @@
 		<s:include value="/top.jsp" />
 		<s:actionerror />
 		
-		<div class="head_status" style="float:right;display:none">
+		<div class="head_status" style="float:left;display:none">
 			<input name="contestType" id="contestType0" checked="checked" value="0" onclick="this.blur()" type="radio" /><label for="contestType0"><img src="images/contest.jpg" height="20" title="Real contest" /></label>
 			<input name="contestType" id="contestType1" value="1" onclick="this.blur()" type="radio" /><label for="contestType1"><img src="images/replay.png" height="20" title="Replay" /></label>
 			<span class="Scheduled">&nbsp;&nbsp;&nbsp;&nbsp;Scheduled:</span><input type="checkbox" name="scheduled" checked="checked" value="1" />  

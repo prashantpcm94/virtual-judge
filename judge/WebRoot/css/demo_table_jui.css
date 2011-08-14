@@ -43,10 +43,6 @@
 	* cursor: hand;
 }
 
-.paging_full_numbers {
-	width: 350px !important;
-}
-
 .fg-toolbar {
 	padding: 5px;
 }
@@ -99,12 +95,12 @@ table.display thead th {
 	background-color: white;
 }
 
-.dataTables_length {
-	width: 40%;
+.dataTables_filter {
 	float: left;
+	text-align: left;
 }
 
-.dataTables_filter {
+.dataTables_paginate {
 	width: 50%;
 	float: right;
 	text-align: right;
@@ -115,9 +111,7 @@ table.display thead th {
 	float: left;
 }
 
-.dataTables_paginate {
-	width: 44px;
-	* width: 50px;
+.dataTables_length {
 	float: right;
 	text-align: right;
 }
