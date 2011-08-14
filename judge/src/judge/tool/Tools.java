@@ -20,6 +20,7 @@ import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.io.IOUtils;
 
 import com.Ostermiller.util.CSVParser;
@@ -83,22 +84,22 @@ public class Tools {
 
 	/**
 	 * 从html中判断字符编码并将内容转成String返回
-	 * @param stream
-	 * @param contentType 
+	 * @param stream body stream
+	 * @param header Content-type
 	 * @return
 	 * @throws IOException
 	 */
-	public static String getHtml(InputStream stream, String contentType) throws IOException {
+	public static String getHtml(InputStream stream, Header header) throws IOException {
 		byte[] contentInByte = IOUtils.toByteArray(stream);
 		Charset charset = null;
-		if (contentType != null) {
-			Matcher matcher = Pattern.compile("(?i)charset=([-\\w]+)").matcher(contentType);
+		if (header != null) {
+			Matcher matcher = Pattern.compile("(?i)charset=([-\\w]+)").matcher(header.getValue());
 			if (matcher.find()) {
 				charset = Charset.forName(matcher.group(1));
 			}
 		}
 		if (charset == null) {
-			String tmpHtml = new String(contentInByte, charset);
+			String tmpHtml = new String(contentInByte, "UTF-8");
 			Matcher matcher = Pattern.compile("(?i)charset=([-\\w]+)").matcher(tmpHtml);
 			if (matcher.find()) {
 				charset = Charset.forName(matcher.group(1));

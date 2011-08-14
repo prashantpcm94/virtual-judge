@@ -9,7 +9,7 @@ $(document).ready(function() {
 		$.cookie("contestType", 0, {expires:7});
 	}
 	$("input[name='contestType']").get($.cookie("contestType")).checked = 1;
-
+	
 	var oTable = $('#listContest').dataTable({
 		"bProcessing": true,
 		"bServerSide": true,

@@ -25,7 +25,7 @@ public class UVALiveSpider extends Spider {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type").getValue());
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
@@ -47,7 +47,7 @@ public class UVALiveSpider extends Spider {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type").getValue());
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
 			html = pdfLink + html.replaceAll("(?i)(src=\"?)(?!\"*http)", "$1http://livearchive.onlinejudge.org/external/" + category + "/");
 			description.setDescription(html);
 		} catch (Exception e) {

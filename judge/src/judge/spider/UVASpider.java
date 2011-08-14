@@ -39,7 +39,7 @@ public class UVASpider extends Spider {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type").getValue());
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
@@ -59,7 +59,7 @@ public class UVASpider extends Spider {
 			if (statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type").getValue());
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();

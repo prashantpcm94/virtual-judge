@@ -67,4 +67,10 @@ $(document).ready(function() {
 		oTable.fnDraw();
 	});
 	
+	$("#addProblem").submit(function(){
+		if ($("select[name='OJId']").val() == 'All') {
+			return false;
+		}
+	});
+	
 });

@@ -20,7 +20,7 @@ public class HUSTSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type").getValue());
+			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
 		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
