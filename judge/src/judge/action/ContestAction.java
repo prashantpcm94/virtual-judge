@@ -188,7 +188,7 @@ public class ContestAction extends BaseAction {
 		if (user == null) {
 			return ERROR;
 		}
-		if (cid > 0){
+		if (cid > 0 && session.get("C" + cid) != null) {
 			contest = (Contest) baseService.query(Contest.class, cid);
 			
 			//比赛结束后才能clone

@@ -296,7 +296,7 @@ a.shared {
 }
 
 .prob_num {
-	width: 120px;
+	width: 130px;
 }
 
 .memory {
@@ -305,7 +305,7 @@ a.shared {
 }
 
 .time {
-	width: 90px;
+	width: 100px;
 	text-align: right;
 }
 

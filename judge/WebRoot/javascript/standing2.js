@@ -128,10 +128,10 @@ $(document).ready(function() {
 
 	$("td.meta_td").live("mouseover", function(){
 		var curCid = $(this).parent().attr("cid");
-		$("tr[cid=" + curCid + "] td.meta_td").addClass("sameTd")
+		$("tr[cid=" + curCid + "] td.meta_td").addClass("same_td");
 	}).live("mouseout", function(){
 		var curCid = $(this).parent().attr("cid");
-		$("tr[cid=" + curCid + "] td.meta_td").removeClass("sameTd")
+		$("tr[cid=" + curCid + "] td.meta_td").removeClass("same_td");
 	}).live("click", function(){
 		var curCid = $(this).parent().attr("cid");
 		if (onlyCid){
@@ -288,28 +288,26 @@ function calcScoreBoard() {
 	
 	var showNick = $.cookie("show_nick");
 	var sbHtml = [];
+	var my_username = $("#my_username").html();
 	for (var i = 0; i < result.length; ++i) {
 		var curInfo = result[i];
 		var splitIdx = curInfo[0].lastIndexOf("_");
 		var uid = curInfo[0].substr(0, splitIdx);
 		var curCid = curInfo[0].substr(splitIdx + 1);
-		sbHtml.push("<tr class='disp' style='background:transparent' cid='" + curCid + "'><td>" + (i + 1) + "</td><td class='meta_td");
+		sbHtml.push("<tr class='disp");
 		if (cid == curCid) {
-			sbHtml.push(" curTd");
+			sbHtml.push(" cur_tr");
+			if (my_username == username[uid]) {
+				sbHtml.push(" my_tr");
+			}
 		}
+		sbHtml.push("' style='background:transparent' cid='" + curCid + "'><td>" + (i + 1) + "</td><td class='meta_td");
 		if (username[uid]) {
 			sbHtml.push("'><a href='user/profile.action?uid=" + uid + "'>" + (showNick > 0 ? nickname[uid] || username[uid] : username[uid]) + "</a></td><td class='meta_td");
 		} else {
 			sbHtml.push(" replay'>" + uid + "</td><td class='meta_td");
 		}
-		if (cid == curCid) {
-			sbHtml.push(" curTd");
-		}
-		sbHtml.push("'>" + curInfo[1] + "</td><td class='meta_td");
-		if (cid == curCid) {
-			sbHtml.push(" curTd");
-		}
-		sbHtml.push("'>" + dateFormat(curInfo[2]) + "</td>");
+		sbHtml.push("'>" + curInfo[1] + "</td><td class='meta_td'>" + dateFormat(curInfo[2]) + "</td>");
 
 		var thisSb = sb[curInfo[0]];
 		for (var j = 0; j <= pnum; ++j) {
