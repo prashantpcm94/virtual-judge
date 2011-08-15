@@ -7,13 +7,13 @@ String basePath = (String)application.getAttribute("basePath");
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- Contest</title>
+		<base href="<%=basePath%>" />
+		<title>Virtual Judge -- Contest</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
-	    <script type='text/javascript' src='dwr/util.js'></script>
+		<script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
@@ -25,14 +25,13 @@ String basePath = (String)application.getAttribute("basePath");
 
 		<table width="100%"><tr>
 		<td id="left_view">
+			<span style="text-align:left;font-family:Verdana;color:green">Problem ${cproblem.num}</span>
 			<div class="ptt">
 				<s:if test="contestOver == 1 || #session.visitor.sup == 1">
-					<a href="${problem.url}">${cproblem.num} - ${cproblem.title}</a>
+					<a href="${problem.url}">${cproblem.title}</a>
 					<a href="problem/viewProblem.action?id=${problem.id}"><font color="green"><sub>p</sub></font></a>
 				</s:if>
-				<s:else>
-					${cproblem.num} - ${cproblem.title}
-				</s:else>
+				<s:else>${cproblem.title}</s:else>
 			</div>
 			<div class="plm">
 				<table align="center">
