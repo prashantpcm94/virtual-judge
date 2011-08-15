@@ -329,18 +329,20 @@ public class ProblemAction extends BaseAction{
 		}
 
 		if (un != null && !un.trim().isEmpty()){
-			un = un.toLowerCase().trim();
-			hql.append(" and s.username = '" + un + "' ");
+			hql.append(" and s.username = :un ");
+			paraMap.put("un", un.toLowerCase().trim());
 		}
 
 		if (id != 0){
 			hql.append(" and s.problem.id = " + id);
 		} else {
 			if (!probNum.isEmpty()){
-				hql.append(" and s.originProb = '" + probNum + "' ");
+				hql.append(" and s.originProb = :probNum ");
+				paraMap.put("probNum", probNum);
 			}
 			if (OJList.contains(OJId)){
-				hql.append(" and s.originOJ = '" + OJId + "' ");
+				hql.append(" and s.originOJ = :OJId ");
+				paraMap.put("OJId", OJId);
 			}
 		}
 
