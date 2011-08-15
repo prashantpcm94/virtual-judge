@@ -17,9 +17,6 @@ String basePath = (String)application.getAttribute("basePath");
 			.ui-tabs .ui-tabs-panel {padding:15px 0px}
 			table#standing th {background-color: #EDFFED;}
 			td.blue_border {border:1px solid #A6C9E2;}
-			tr.disp a:link {color: black;}
-			tr.disp a:visited {color: black;}
-			td.replay {color:gray;}
 		</style>
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
@@ -71,6 +68,12 @@ String basePath = (String)application.getAttribute("basePath");
 					</thead>
 					<tbody id="standing_tbody" />
 				</table>
+
+				<div class="find_me" style="display:none" id="toolFindMe">
+					<a id="aFindMe" title="where am I" class="find_me1">C</a>
+				</div>
+
+				<div id="find_me"></div>
 				<div id="for_ie" style="display:none;padding-top:30px;">
 					<table><tr><td><image src="images/warning.png" height="30" /></td><td>Due to IE's poor performance with Javascript, it's recommended to view this page in Firefox or Chrome.</td></tr></table>
 				</div>

@@ -247,12 +247,49 @@ td.green span, td.red span {
 	color: gray;
 }
 
-table.standing td.curTd {
+tr.disp a:link {
+	color: black;
+}
+
+tr.disp a:visited {
+	color: black;
+}
+
+tr.my_tr a:link {
+	color: white;
+}
+
+tr.my_tr a:visited {
+	color: white;
+}
+
+td.replay {
+	color:gray;
+}
+
+table.standing tr.cur_tr td.meta_td {
 	background-color: #CCDDFF;
 }
 
-table.standing td.sameTd {
+table.standing tr.my_tr td.meta_td {
+	background-color: #5C9CCC;
+	font-size: 12px;
+	color: white;
+	font-weight: bold;
+}
+
+table.standing td.same_td {
 	background-color: #FFFFBB;
+}
+
+td.solvedfirst {
+	background-color: #008800;
+	color: white;
+	font-weight: bold;
+}
+
+td.solvedfirst span {
+	color: #E3E3E3;
 }
 
 div.processing {
@@ -272,14 +309,24 @@ div.processing {
 	z-index: 1000;
 }
 
-td.solvedfirst {
-	background-color: #008800;
-	color: white;
-	font-weight: bold;
+.find_me {
+    bottom: 15px;
+    overflow: hidden;
+    position: fixed;
+    right: 10px;
+    width: 50px;
+    z-index: 999;
 }
 
-td.solvedfirst span {
-	color: #E3E3E3;
+.find_me .find_me1 {
+    background: url("../images/find_me.png") no-repeat scroll 100% 100% transparent;
+    display: block;
+    float: right;
+    height: 50px;
+    width: 50px;
+    margin-left: 10px;
+    outline: 0 none;
+    text-indent: -9999em;
 }
 
 /********************Status*********************/

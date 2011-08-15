@@ -361,6 +361,20 @@ function calcScoreBoard() {
 	if ($.browser.msie) {
 		$("#for_ie").show().appendTo($("#scoreboard"));
 	}
+	
+	var myHeight = 0, windowHeight = window.screen.availHeight, $myRow = $("tr.my_tr");
+	if ($myRow.length) {
+		myHeight = $myRow[0].offsetTop + 400;
+	}
+	if (myHeight > windowHeight) {
+		$("#toolFindMe").show();
+	} else {
+		$("#toolFindMe").hide();
+	}
+	$("#aFindMe").click(function(){
+		window.scrollTo(0, myHeight - windowHeight / 2 - 80);
+		return false;
+	});
 
 	setTimeout(function(){
 		if (!oFH) {
