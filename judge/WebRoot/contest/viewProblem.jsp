@@ -36,33 +36,43 @@ String basePath = (String)application.getAttribute("basePath");
 			<div class="plm">
 				<table align="center">
 					<tr>
-						<td>
-							<b>Time Limit:</b>
-							<s:if test="problem.timeLimit == 0">Unknown</s:if>
-							<s:else>${problem.timeLimit}MS</s:else> 
-						</td>
-						<td width="10px"></td>
-						<td>
-							<b>Memory Limit:</b>
-							<s:if test="problem.memoryLimit == 0">Unknown</s:if>
-							<s:else>${problem.memoryLimit}KB</s:else>
-						</td>
-						<td width="10px"></td>
-						<td>
-							<b>64bit IO Format:</b>
-							${_64Format}
-						</td>
+						<s:if test="problem.timeLimit == 1">
+							<td><b><font color="green">Crawling in process...</font></b></td>
+						</s:if>
+						<s:elseif test="problem.timeLimit == 2">
+							<td><b><font color="red">Crawling failed</font></b></td>
+						</s:elseif>
+						<s:else>
+							<td>
+								<b>Time Limit:</b>
+								<s:if test="problem.timeLimit == 0">Unknown</s:if>
+								<s:else>${problem.timeLimit}MS</s:else> 
+							</td>
+							<td width="10px"></td>
+							<td>
+								<b>Memory Limit:</b>
+								<s:if test="problem.memoryLimit == 0">Unknown</s:if>
+								<s:else>${problem.memoryLimit}KB</s:else>
+							</td>
+							<td width="10px"></td>
+							<td>
+								<b>64bit IO Format:</b>
+								${_64Format}
+							</td>
+						</s:else>
 					</tr>
 				</table>
 			</div>
 	
-			<p align="center">
-				<font size="3" color="#333399">
-					[<a href="contest/toSubmit.action?pid=${pid}">Submit</a>]&nbsp;&nbsp;
-					[<a href="javascript:history.go(-1)">Go Back</a>]&nbsp;&nbsp;
-					[<a href="contest/status.action?cid=${cid}&num=${num}">Status</a>]
-				</font>
-			</p>
+			<s:if test="problem.timeLimit != 1 && problem.timeLimit != 2">
+				<p align="center">
+					<font size="3" color="#333399">
+						[<a href="contest/toSubmit.action?pid=${pid}">Submit</a>]&nbsp;&nbsp;
+						[<a href="javascript:history.go(-1)">Go Back</a>]&nbsp;&nbsp;
+						[<a href="contest/status.action?cid=${cid}&num=${num}">Status</a>]
+					</font>
+				</p>
+			</s:if>
 			
 			<div class="hiddable" id="vj_description"><p class="pst">Description</p><div class="textBG"></div></div>
 			<div class="hiddable" id="vj_input"><p class="pst">Input</p><div class="textBG"></div></div>
@@ -71,13 +81,15 @@ String basePath = (String)application.getAttribute("basePath");
 			<div class="hiddable" id="vj_sampleOutput"><p class="pst">Sample Output</p><div class="textBG"></div></div>
 			<div class="hiddable" id="vj_hint"><p class="pst">Hint</p><div class="textBG"></div></div>
 
-			<p align="center">
-				<font size="3" color="#333399">
-					[<a href="contest/toSubmit.action?pid=${pid}">Submit</a>]&nbsp;&nbsp;
-					[<a href="javascript:history.go(-1)">Go Back</a>]&nbsp;&nbsp;
-					[<a href="contest/status.action?cid=${cid}&num=${num}">Status</a>]
-				</font>
-			</p>
+			<s:if test="problem.timeLimit != 1 && problem.timeLimit != 2">
+				<p align="center">
+					<font size="3" color="#333399">
+						[<a href="contest/toSubmit.action?pid=${pid}">Submit</a>]&nbsp;&nbsp;
+						[<a href="javascript:history.go(-1)">Go Back</a>]&nbsp;&nbsp;
+						[<a href="contest/status.action?cid=${cid}&num=${num}">Status</a>]
+					</font>
+				</p>
+			</s:if>
 		</td>
 		
 		<td id=mid_view>

@@ -20,13 +20,13 @@ public class StartUpListener implements ServletContextListener {
 		ServletContext sc = event.getServletContext();
 		ApplicationContainer.sc = sc;
 		
-        Properties prop = new Properties();
-        FileInputStream in;
+		Properties prop = new Properties();
+		FileInputStream in;
 		try {
 			in = new FileInputStream(sc.getRealPath("WEB-INF" + File.separator + "web.properties"));
-            prop.load(in);
-            String basePath = prop.getProperty("basePath").trim();
-            sc.setAttribute("basePath", basePath);
+			prop.load(in);
+			String basePath = prop.getProperty("basePath").trim();
+			sc.setAttribute("basePath", basePath);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -35,7 +35,7 @@ public class StartUpListener implements ServletContextListener {
 		
 		JudgeService judgeService = (JudgeService) SpringBean.getBean("judgeService", sc);
 		judgeService.initJudge();
-		
+		judgeService.initProblemSpiding();
 	}
 
 	/* 监听服务器关闭 */

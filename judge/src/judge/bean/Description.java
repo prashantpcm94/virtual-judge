@@ -27,7 +27,7 @@ public class Description {
 	 */
 	private String trans(String string){
 		if (string != null){
-			string = string.replaceAll("(?i)(?<=(\\b|java))script\\b", "ｓcript").replaceAll("<pre>\\s*", "<pre>").trim();
+			string = string.replaceAll("(?i)(?<=(\\b|java))script\\b", "ｓcript").trim();
 			if (!string.contains("img") && !string.contains("IMG") && !string.contains("iframe") && string.matches("(<[^<>]*>\\s*)*")){
 				string = "";
 			}

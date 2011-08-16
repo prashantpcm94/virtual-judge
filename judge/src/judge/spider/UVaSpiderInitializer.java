@@ -1,5 +1,7 @@
 package judge.spider;
 
+import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +15,8 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 public class UVaSpiderInitializer extends Thread {
 	
-	public static int threadCnt;
+	public static int threadCnt = 0;
+	private static ConcurrentHashMap<String, Long> map = new ConcurrentHashMap<String, Long>();
 	private String rootUrl;
 	
 	public UVaSpiderInitializer(String url) {
@@ -24,6 +27,15 @@ public class UVaSpiderInitializer extends Thread {
 	}
 	
 	public void run() {
+		Long lastTime = map.get(rootUrl);
+		if (lastTime == null) {
+			lastTime = 0L;
+		}
+		if (new Date().getTime() - lastTime > 300000L) {
+			map.put(rootUrl, new Date().getTime());
+		} else {
+			return;
+		}
 		++threadCnt;
 		try {
 			String html = null;
@@ -53,7 +65,7 @@ public class UVaSpiderInitializer extends Thread {
 				e.printStackTrace();
 				getMethod.releaseConnection();
 			}
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		--threadCnt;

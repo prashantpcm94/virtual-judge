@@ -1,5 +1,7 @@
 package judge.spider;
 
+import java.util.Date;
+
 import judge.tool.Tools;
 
 import org.apache.commons.httpclient.*;
@@ -9,9 +11,13 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 public class UVASpider extends Spider {
 	
 	public static String problemNumberMap[];
+	public static Long lastTime = 0L;
 	
 	public void crawl() throws Exception{
-		
+		if (new Date().getTime() - lastTime > 7 * 86400 * 1000L) {
+			problemNumberMap = null;
+			lastTime = new Date().getTime();
+		}
 		if (problemNumberMap == null || problemNumberMap[12049] == null) {
 			new UVaSpiderInitializer("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8").start();
 		}

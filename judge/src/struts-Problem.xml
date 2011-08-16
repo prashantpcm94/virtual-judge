@@ -25,6 +25,11 @@
 				<param name="namespace">/problem</param>
 				<param name="OJId">${OJId}</param>
 			</result>
+			<result name="recrawl" type="redirectAction">
+				<param name="actionName">viewProblem</param>
+				<param name="namespace">/problem</param>
+				<param name="id">${id}</param>
+			</result>
 			<result name="error" type="redirectAction">
 				<param name="actionName">toListProblem</param>
 				<param name="namespace">/problem</param>

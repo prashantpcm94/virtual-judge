@@ -1,6 +1,7 @@
 package judge.spider;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -16,8 +17,13 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 public class ZTreningSpider extends Spider {
 	
 	private static Set<String> validIds;
+	public static Long lastTime = 0L;
 	
 	public void crawl() throws Exception{
+		if (new Date().getTime() - lastTime > 7 * 86400 * 1000L) {
+			validIds = null;
+			lastTime = new Date().getTime();
+		}
 		if (validIds == null) {
 			validIds = new HashSet<String>();
 			initValidIds("http://www.z-trening.com/training.php?all_tasks=1");

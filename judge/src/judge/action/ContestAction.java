@@ -286,7 +286,7 @@ public class ContestAction extends BaseAction {
 			pList.add(problem);
 			if (problem == null) {
 				this.addActionError("Problem " + pids.get(i) + " doesn't exist!");
-			} else if (problem.getTimeLimit() == 1) {
+			} else if (problem.getTimeLimit() == 1 || problem.getTimeLimit() == 2) {
 				this.addActionError("Problem " + problem.getOriginOJ() + " " + problem.getOriginProb() + " doesn't finish crawling!");
 			}
 		}
@@ -558,6 +558,10 @@ public class ContestAction extends BaseAction {
 		User user = (User) session.get("visitor");
 		if (user == null){
 			return ERROR;
+		}
+		if (problem.getTimeLimit() == 1 || problem.getTimeLimit() == 2){
+			this.addActionError("Crawling has not finished!");
+			return INPUT;
 		}
 		if (!languageList.containsKey(language)){
 			this.addActionError("No such language!");

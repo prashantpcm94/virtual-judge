@@ -102,7 +102,7 @@ public class JudgeService extends BaseService {
 		paraMap.put("OJ", OJ.trim());
 		paraMap.put("pid", problemId.trim());
 		List<Object[]> list = query("select p.id, p.title, p.timeLimit from Problem p where p.originOJ = :OJ and p.originProb = :pid", paraMap);
-		if (list.isEmpty() || (Integer)list.get(0)[2] == 1){
+		if (list.isEmpty() || (Integer)list.get(0)[2] == 1 || (Integer)list.get(0)[2] == 2){
 			return null;
 		}
 		List res = new ArrayList();
@@ -126,11 +126,18 @@ public class JudgeService extends BaseService {
 		}
 	}
 	
+	/**
+	 * 将上次停止服务时正在判的提交置为Judging Error 1
+	 */
 	public void initJudge(){
-		List<Submission> sList = this.query("select s from Submission s left join fetch s.problem where s.status like '%ing%' and s.status not like '%rror%' ");
-		for (Submission submission : sList) {
-			this.rejudge(submission);
-		}
+		this.execute("update Submission s set s.status = 'Judging Error 1' where s.status like '%ing%' and s.status not like '%rror%'");
+	}
+	
+	/**
+	 * 将上次停止服务时正在抓取的题目置为“抓取失败”
+	 */
+	public void initProblemSpiding() {
+		this.execute("update Problem p set p.timeLimit = 2 where p.timeLimit = 1");
 	}
 	
 	/**
@@ -544,5 +551,7 @@ public class JudgeService extends BaseService {
 		}
 		return sum;
 	}
+
+
 	
 }

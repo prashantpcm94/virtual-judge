@@ -103,13 +103,20 @@ public class ProblemAction extends BaseAction{
 
 	public String addProblem(){
 		Map session = ActionContext.getContext().getSession();
+		
+		if (id > 0) {
+			problem = (Problem) baseService.query(Problem.class, id);
+			if (problem == null) {
+				session.put("error", "Please choose a legal OJ!");
+				return ERROR;
+			}
+			OJId = problem.getOriginOJ();
+			probNum1 = problem.getOriginProb();
+			probNum2 = null;
+		}
+		
 		if (!OJList.contains(OJId)){
 			session.put("error", "Please choose a legal OJ!");
-			return ERROR;
-		}
-		User user = (User) session.get("visitor");
-		if (user == null){
-			session.put("error", "Please login first!");
 			return ERROR;
 		}
 
@@ -189,7 +196,7 @@ public class ProblemAction extends BaseAction{
 			spider.start();
 		}
 
-		return SUCCESS;
+		return id > 0 ? "recrawl" : SUCCESS;
 	}
 
 	public String viewProblem(){
@@ -245,7 +252,7 @@ public class ProblemAction extends BaseAction{
 			this.addActionError("Please submit via normal approach!");
 			return INPUT;
 		}
-		if (problem.getTimeLimit() == 1){
+		if (problem.getTimeLimit() == 1 || problem.getTimeLimit() == 2){
 			this.addActionError("Crawling has not finished!");
 			return INPUT;
 		}
