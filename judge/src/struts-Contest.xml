@@ -185,7 +185,7 @@
 		</action>
 		
 		<!-- 获取提交信息 -->
-		<action name="fetchSubmissionInfo" class="problemAction" method="fetchSubmissionInfo">
+		<action name="fetchSubmissionInfo" class="contestAction" method="fetchSubmissionInfo">
 			<result type="json">
 				<param name="root">submissionInfo</param>
 				<param name="noCache">true</param>

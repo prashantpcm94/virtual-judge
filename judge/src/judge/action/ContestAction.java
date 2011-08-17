@@ -1098,7 +1098,28 @@ public class ContestAction extends BaseAction {
 	}
 	
 	public String fetchSubmissionInfo() {
-		submission = (Submission) baseService.query(Submission.class, id);
+		List<Submission> list = baseService.query("select s from Submission s left join fetch s.contest where s.id = " + id);
+		if (list.isEmpty()) {
+			submissionInfo = "Invalid request!";
+			return SUCCESS;
+		}
+		submission = list.get(0);
+		contest = submission.getContest();
+		if (contest == null) {
+			submissionInfo = "Invalid request!";
+			return SUCCESS;
+		}
+		User user = (User) ActionContext.getContext().getSession().get("visitor");
+		if (user == null || user.getSup() == 0 && user.getId() != submission.getUser().getId()){
+			if (submission.getIsOpen() == 0){
+				submissionInfo = "No access to this info!";
+				return SUCCESS;
+			}
+			if ((new Date()).compareTo(contest.getEndTime())< 0){
+				submissionInfo = "Come back when the contest ends, please :)";
+				return SUCCESS;
+			}
+		}
 		submissionInfo = submission.getAdditionalInfo();
 		return SUCCESS;
 	}
