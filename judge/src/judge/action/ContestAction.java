@@ -77,7 +77,9 @@ public class ContestAction extends BaseAction {
 	private List<String> selectedCellMeaning;	//选择的cell意义
 	
 	private Map cellMeaningOptions;
-	
+
+	private String submissionInfo;
+
 	
 	class ContestInfo{
 		public String handle;
@@ -642,7 +644,7 @@ public class ContestAction extends BaseAction {
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 		
-		StringBuffer hql = new StringBuffer("select s.id, s.username, cp.num, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, cp.id from Submission s, Cproblem cp where s.contest.id = " + cid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, cp.num, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, cp.id, s.additionalInfo from Submission s, Cproblem cp where s.contest.id = " + cid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id ");
 
 		dataTablesPage = new DataTablesPage();
 
@@ -682,6 +684,7 @@ public class ContestAction extends BaseAction {
 		for (Object[] o : aaData) {
 			o[8] = ((Date)o[8]).getTime();
 			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0;
+			o[12] = o[12] == null ? 0 : 1;
 		}
 
 		dataTablesPage.setAaData(aaData);
@@ -1094,6 +1097,12 @@ public class ContestAction extends BaseAction {
 		}
 	}
 	
+	public String fetchSubmissionInfo() {
+		submission = (Submission) baseService.query(Submission.class, id);
+		submissionInfo = submission.getAdditionalInfo();
+		return SUCCESS;
+	}
+
 	public int getRes() {
 		return res;
 	}
@@ -1346,7 +1355,12 @@ public class ContestAction extends BaseAction {
 	public void setSelectedCellMeaning(List<String> selectedCellMeaning) {
 		this.selectedCellMeaning = selectedCellMeaning;
 	}
-
+	public String getSubmissionInfo() {
+		return submissionInfo;
+	}
+	public void setSubmissionInfo(String submissionInfo) {
+		this.submissionInfo = submissionInfo;
+	}
 }
 
 

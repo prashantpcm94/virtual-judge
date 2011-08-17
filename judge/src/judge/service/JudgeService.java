@@ -72,15 +72,16 @@ public class JudgeService extends BaseService {
 	/**
 	 * 根据提交ID查询结果
 	 * @param id
-	 * @return 0:ID 1:结果 2:内存 3:时间
+	 * @return 0:ID 1:结果 2:内存 3:时间 4:额外信息
 	 */
 	public Object[] getResult(int id){
-		Object[] ret = new Object[4];
+		Object[] ret = new Object[5];
 		Submission s = (Submission) query(Submission.class, id);
 		ret[0] = id;
 		ret[1] = s.getStatus();
 		ret[2] = s.getMemory();
 		ret[3] = s.getTime();
+		ret[4] = s.getAdditionalInfo() == null ? 0 : 1;
 		return ret;
 	}
 	
@@ -116,6 +117,7 @@ public class JudgeService extends BaseService {
 			return;
 		}
 		submission.setStatus("Pending Rejudge");
+		submission.setAdditionalInfo(null);
 		this.addOrModify(submission);
 		try {
 			Submitter submitter = (Submitter) BaseAction.submitterMap.get(submission.getOriginOJ()).clone();

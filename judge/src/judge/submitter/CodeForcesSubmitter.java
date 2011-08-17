@@ -15,9 +15,11 @@ import java.util.regex.Pattern;
 
 import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -199,10 +201,13 @@ public class CodeForcesSubmitter extends Submitter {
 					result = "processing";
 				}
 				submission.setStatus(result);
+				submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
 					if (result.equals("Accepted")){
 						submission.setTime(Integer.parseInt(m.group(3)));
 						submission.setMemory(Integer.parseInt(m.group(4)));
+					} else if (result.contains("Compilation")) {
+						getAdditionalInfo(submission.getRealRunId());
 					}
 					baseService.addOrModify(submission);
 					return;
@@ -215,6 +220,17 @@ public class CodeForcesSubmitter extends Submitter {
 		throw new Exception();
 	}
 	
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		PostMethod postMethod = new PostMethod("http://codeforces.com/data/judgeProtocol");
+		postMethod.addParameter("submissionId", runId);
+		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		httpClient.executeMethod(postMethod);
+		String additionalInfo = Tools.getHtml(postMethod.getResponseBodyAsStream(), postMethod.getResponseHeader("Content-Type"));
+		
+		submission.setAdditionalInfo(additionalInfo.replaceAll("\\\\\\\\", "\\\\").replaceAll("\\\\r\\\\n", "\n"));
+	}
+
 	private int getIdleClient() {
 		int length = usernameList.length;
 		int begIdx = (int) (Math.random() * length);

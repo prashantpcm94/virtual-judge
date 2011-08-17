@@ -13,6 +13,12 @@
 		<property name="status" type="java.lang.String">
 		    <column name="C_STATUS" />
 		</property>
+		<property name="additionalInfo" type="java.lang.String">
+		    <column name="C_ADDITIONAL_INFO" />
+		</property>
+		<property name="realRunId" type="java.lang.String">
+		    <column name="C_REAL_RUNID" />
+		</property>
 		<property name="time" type="java.lang.Integer">
 		    <column name="C_TIME" precision="10" scale="0"/>
 		</property>

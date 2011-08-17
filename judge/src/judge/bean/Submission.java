@@ -19,6 +19,9 @@ public class Submission {
 	//Output Limit Exceeded
 	//Runtime Error
 	//Compile Error
+
+	private String additionalInfo;	//额外信息，记录编译错误等信息
+	private String realRunId;	//在原OJ的RunId
 	
 	private int time;			//运行时间(未AC提交为空	单位:ms)
 	private int memory;			//运行内存(未AC提交为空	单位:KB)
@@ -137,5 +140,16 @@ public class Submission {
 	public void setIsPrivate(int isPrivate) {
 		this.isPrivate = isPrivate;
 	}
-
+	public String getAdditionalInfo() {
+		return additionalInfo;
+	}
+	public void setAdditionalInfo(String additionalInfo) {
+		this.additionalInfo = additionalInfo;
+	}
+	public String getRealRunId() {
+		return realRunId;
+	}
+	public void setRealRunId(String realRunId) {
+		this.realRunId = realRunId;
+	}
 }

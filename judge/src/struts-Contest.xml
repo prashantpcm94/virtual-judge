@@ -184,5 +184,16 @@
 			<result name="success">/index.jsp</result>
 		</action>
 		
+		<!-- 获取提交信息 -->
+		<action name="fetchSubmissionInfo" class="problemAction" method="fetchSubmissionInfo">
+			<result type="json">
+				<param name="root">submissionInfo</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">true</param>
+				<param name="contentType">application/json-rpc</param>
+			</result>
+		</action>
+		
+		
 	</package>
 </struts>

@@ -32,7 +32,11 @@ $(document).ready(function() {
 					},
 					{
 						"fnRender": function ( oObj ) {
-							return oObj.aData[3] == 'Judging Error 1' || oObj.aData[3] == 'Judging Error 2' && $("[name='isSup']").val() != 0 ? oObj.aData[3] + " <a href='#' class='rejudge' ><img border=0 height='15' src='images/refresh.png'/></a>" : oObj.aData[3];
+							var info = oObj.aData[3] == 'Judging Error 1' || oObj.aData[3] == 'Judging Error 2' && $("[name='isSup']").val() != 0 ? oObj.aData[3] + " <a href='#' class='rejudge' ><img border=0 height='15' src='images/refresh.png'/></a>" : oObj.aData[3];
+							if (oObj.aData[12]) {
+								info = "<a href='contest/fetchSubmissionInfo.action?id=" + oObj.aData[0] + "' rel='facebox'>" + info + "</a>";
+							}
+							return info;
 						},
 						"sClass": "result"
 					},
@@ -68,6 +72,7 @@ $(document).ready(function() {
 					},
 					{"bVisible": false},
 					{"bVisible": false},
+					{"bVisible": false},
 					{"bVisible": false}
 				],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
@@ -90,7 +95,10 @@ $(document).ready(function() {
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).addClass(aData[3]=="Accepted" ? "yes" : aData[3].indexOf("ing") < 0 || aData[3].indexOf("rror") >= 0 ? "no" : "pending");
 			$(nRow).attr("id", aData[0]);
-			
+			$('a[rel=facebox]', $(nRow)).facebox({
+				loadingImage : 'facebox/loading.gif',
+				closeImage   : 'facebox/closelabel.png'
+			});
 			if ($(nRow).hasClass("pending")){
 				getResult(aData[0]);
 			}
@@ -145,9 +153,17 @@ function cb(back){
 	var result = back[1];
 	var memory = back[2];
 	var time = back[3];
+	var info = back[4];
 	var $row = $("#" + id);
 	if ($row.length){
+		if (info) {
+			result = "<a href='problem/fetchSubmissionInfo.action?id=" + id + "' rel='facebox'>" + result + "</a>";
+		}
 		$(".result", $row).html(result);
+		$('a[rel=facebox]', $row).facebox({
+			loadingImage : 'facebox/loading.gif',
+			closeImage   : 'facebox/closelabel.png'
+		});
 		if (result.indexOf("ing") >= 0 && result.indexOf("rror") < 0){
 			clearTimeout(timeoutInstance[id]);
 			timeoutInstance[id] = setTimeout("getResult(" + id + ")", 3000);

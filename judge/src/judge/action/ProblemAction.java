@@ -48,6 +48,7 @@ public class ProblemAction extends BaseAction{
 	private Integer isSup;
 	private DataTablesPage dataTablesPage;
 	private Map<Object, String> languageList;
+	private String submissionInfo;
 
 	public String toListProblem() {
 		Map session = ActionContext.getContext().getSession();
@@ -322,7 +323,7 @@ public class ProblemAction extends BaseAction{
 		int userId = user != null ? user.getId() : -1;
 		int sup = user != null ? user.getSup() : 0;
 
-		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problem.id, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, s.originOJ, s.originProb, s.contest.id from Submission s ");
+		StringBuffer hql = new StringBuffer("select s.id, s.username, s.problem.id, s.status, s.memory, s.time, s.dispLanguage, length(s.source), s.subTime, s.user.id, s.isOpen, s.originOJ, s.originProb, s.contest.id, s.additionalInfo from Submission s ");
 
 		dataTablesPage = new DataTablesPage();
 
@@ -378,6 +379,7 @@ public class ProblemAction extends BaseAction{
 		for (Object[] o : aaData) {
 			o[8] = ((Date)o[8]).getTime();
 			o[10] = (Integer)o[10] > 0 ? 2 : sup > 0 || (Integer)o[9] == userId ? 1 : 0;
+			o[14] = o[14] == null ? 0 : 1;
 		}
 
 		dataTablesPage.setAaData(aaData);
@@ -513,6 +515,12 @@ public class ProblemAction extends BaseAction{
 		judgeService.rejudge(submission);
 		return SUCCESS;
 	}
+	
+	public String fetchSubmissionInfo() {
+		submission = (Submission) baseService.query(Submission.class, id);
+		submissionInfo = submission.getAdditionalInfo();
+		return SUCCESS;
+	}
 
 	public int getUid() {
 		return uid;
@@ -635,5 +643,10 @@ public class ProblemAction extends BaseAction{
 	public void setIsSup(Integer isSup) {
 		this.isSup = isSup;
 	}
-
+	public String getSubmissionInfo() {
+		return submissionInfo;
+	}
+	public void setSubmissionInfo(String submissionInfo) {
+		this.submissionInfo = submissionInfo;
+	}
 }

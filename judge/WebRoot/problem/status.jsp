@@ -12,8 +12,10 @@ String basePath = (String)application.getAttribute("basePath");
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
+		<link href="facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
+		<script type="text/javascript" src="facebox/facebox.js"></script>
 
 		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
@@ -52,11 +54,12 @@ String basePath = (String)application.getAttribute("basePath");
 					<th></th>
 					<th></th>
 					<th></th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td colspan="14">Loading data from server</td>
+					<td colspan="15">Loading data from server</td>
 				</tr>
 			</tbody>
 		</table>
