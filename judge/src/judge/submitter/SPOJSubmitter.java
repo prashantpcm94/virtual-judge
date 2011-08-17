@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 
 import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -163,8 +165,9 @@ public class SPOJSubmitter extends Submitter {
 			String tLine = new String(responseBody, "UTF-8");
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
-				result = m.group(2).replaceAll("edit", "").replaceAll(">run<", "><").replaceAll("<[\\s\\S]*?>", "").trim();
+				result = m.group(2).replaceAll("edit", "").replaceAll(">run<", "><").replaceAll("<[\\s\\S]*?>", "").replaceAll("&nbsp;", "").trim();
 				submission.setStatus(result);
+				submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
 					if (result.contains("accepted")){
 						submission.setStatus("Accepted");
@@ -172,6 +175,8 @@ public class SPOJSubmitter extends Submitter {
 						int mul = result.contains("M") ? 1024 : 1;
 						submission.setMemory((int)(0.5 + mul * Double.parseDouble(result.replaceAll("[Mk]", ""))));
 						submission.setTime((int)(0.5 + 1000 * Double.parseDouble(m.group(3).replaceAll("<[\\s\\S]*?>", "").trim())));
+					} else if (result.contains("compilation error")) {
+						getAdditionalInfo(submission.getRealRunId());
 					}
 					baseService.addOrModify(submission);
 					return;
@@ -184,6 +189,16 @@ public class SPOJSubmitter extends Submitter {
 		throw new Exception();
 	}
 	
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		GetMethod getMethod = new GetMethod("http://www.spoj.pl/error/" + runId);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		httpClient.executeMethod(getMethod);
+		String additionalInfo = Tools.getHtml(getMethod, null);
+		
+		submission.setAdditionalInfo("<pre>" + Tools.regFind(additionalInfo, "<div align=\"left\"><pre><small>([\\s\\S]*?)</small></pre>") + "</pre>");
+	}
+
 	private int getIdleClient() {
 		int length = usernameList.length;
 		int begIdx = (int) (Math.random() * length);

@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 
 import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -156,7 +158,7 @@ public class UVASubmitter extends Submitter {
 		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
-		while (new Date().getTime() - cur < 1800000){
+		while (new Date().getTime() - cur < 900000){
 			System.out.println("getResult...");
 			httpClient.executeMethod(getMethod);
 			byte[] responseBody = getMethod.getResponseBody();
@@ -169,9 +171,12 @@ public class UVASubmitter extends Submitter {
 					result = "processing";
 				}
 				submission.setStatus(result);
+				submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
 					if (result.equals("Accepted")){
 						submission.setTime(Integer.parseInt(m.group(4).replaceAll("\\.", "")));
+					} else if (result.contains("Compilation error")) {
+						getAdditionalInfo(submission.getRealRunId());
 					}
 					baseService.addOrModify(submission);
 					return;
@@ -184,6 +189,15 @@ public class UVASubmitter extends Submitter {
 		throw new Exception();
 	}
 	
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		GetMethod getMethod = new GetMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9&page=show_compilationerror&submission=" + runId);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		httpClient.executeMethod(getMethod);
+		String additionalInfo = Tools.getHtml(getMethod, null);
+		
+		submission.setAdditionalInfo(Tools.regFind(additionalInfo, "Compilation error for submission " + runId + "</div>\\s*(<pre>[\\s\\S]*?</pre>)"));
+	}	
 	private int getIdleClient() {
 		int length = usernameList.length;
 		int begIdx = (int) (Math.random() * length);

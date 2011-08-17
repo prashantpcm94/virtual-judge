@@ -20,7 +20,7 @@ public class POJSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
+			html = Tools.getHtml(getMethod, null);
 		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
@@ -34,21 +34,21 @@ public class POJSpider extends Spider {
 		html = html.replaceAll("src='images", "src='http://poj.org/images");
 		html = html.replaceAll("src=\"images", "src=\"http://poj.org/images");
 		
-		problem.setTitle(regFind(html, "<title>\\d{3,} -- ([\\s\\S]*?)</title>").trim());
+		problem.setTitle(Tools.regFind(html, "<title>\\d{3,} -- ([\\s\\S]*?)</title>").trim());
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		
-		problem.setTimeLimit(Integer.parseInt(regFind(html, "<b>Time Limit:</b> (\\d{3,})MS</td>")));
-		problem.setMemoryLimit(Integer.parseInt(regFind(html, "<b>Memory Limit:</b> (\\d{2,})K</td>")));
-		description.setDescription(regFind(html, "<p class=\"pst\">Description</p>([\\s\\S]*?)<p class=\"pst\">"));
-		description.setInput(regFind(html, "<p class=\"pst\">Input</p>([\\s\\S]*?)<p class=\"pst\">"));
-		description.setOutput(regFind(html, "<p class=\"pst\">Output</p>([\\s\\S]*?)<p class=\"pst\">"));
-		description.setSampleInput(regFind(html, "<p class=\"pst\">Sample Input</p>([\\s\\S]*?)<p class=\"pst\">"));
-		description.setSampleOutput(regFind(html, "<p class=\"pst\">Sample Output</p>([\\s\\S]*?)<p class=\"pst\">"));
-		problem.setSource(regFind(html, "<p class=\"pst\">Source</p>([\\s\\S]*?)</td></tr></table>"));
+		problem.setTimeLimit(Integer.parseInt(Tools.regFind(html, "<b>Time Limit:</b> (\\d{3,})MS</td>")));
+		problem.setMemoryLimit(Integer.parseInt(Tools.regFind(html, "<b>Memory Limit:</b> (\\d{2,})K</td>")));
+		description.setDescription(Tools.regFind(html, "<p class=\"pst\">Description</p>([\\s\\S]*?)<p class=\"pst\">"));
+		description.setInput(Tools.regFind(html, "<p class=\"pst\">Input</p>([\\s\\S]*?)<p class=\"pst\">"));
+		description.setOutput(Tools.regFind(html, "<p class=\"pst\">Output</p>([\\s\\S]*?)<p class=\"pst\">"));
+		description.setSampleInput(Tools.regFind(html, "<p class=\"pst\">Sample Input</p>([\\s\\S]*?)<p class=\"pst\">"));
+		description.setSampleOutput(Tools.regFind(html, "<p class=\"pst\">Sample Output</p>([\\s\\S]*?)<p class=\"pst\">"));
+		problem.setSource(Tools.regFind(html, "<p class=\"pst\">Source</p>([\\s\\S]*?)</td></tr></table>"));
 		problem.setSource(problem.getSource().replaceAll("<a href=\"searchproblem", "<a href=\"http://poj.org/searchproblem"));
-		description.setHint(regFind(html, "<p class=\"pst\">Hint</p>([\\s\\S]*?)<p class=\"pst\">"));
+		description.setHint(Tools.regFind(html, "<p class=\"pst\">Hint</p>([\\s\\S]*?)<p class=\"pst\">"));
 		problem.setUrl("http://poj.org/problem?id=" + problem.getOriginProb());
 	}
 }

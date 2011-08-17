@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 
 import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -131,10 +133,13 @@ public class HUSTSubmitter extends Submitter {
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
 				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
+				submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
 					if (result.equals("Accepted")){
 						submission.setMemory(Integer.parseInt(m.group(3).replaceAll(" <font[\\s\\S]*?font>", "")));
 						submission.setTime(Integer.parseInt(m.group(4).replaceAll(" <font[\\s\\S]*?font>", "")));
+					} else if (result.contains("Compile Error")) {
+						getAdditionalInfo(submission.getRealRunId());
 					}
 					baseService.addOrModify(submission);
 					return;
@@ -145,6 +150,16 @@ public class HUSTSubmitter extends Submitter {
 			interval += 500;
         }
     	throw new Exception();
+	}
+	
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/JudgeOnline/ceinfo.php?sid=" + runId);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		httpClient.executeMethod(getMethod);
+		String additionalInfo = Tools.getHtml(getMethod, "ISO-8859-1");
+		
+		submission.setAdditionalInfo(Tools.regFind(additionalInfo, "<title>Compile Error Info</title>\\s*(<pre>[\\s\\S]*?</pre>)"));
 	}
 
 	private int getIdleClient() {

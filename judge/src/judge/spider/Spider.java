@@ -1,8 +1,5 @@
 package judge.spider;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import judge.bean.Description;
 import judge.bean.Problem;
 import judge.service.IBaseService;
@@ -17,29 +14,6 @@ public abstract class Spider extends Thread implements Cloneable {
 	public Problem problem;
 	public Description description;
 
-	public String regFind(String text, String reg){
-		Pattern p = Pattern.compile(reg);
-		Matcher m = p.matcher(text);
-		if (m.find()){
-			String res = m.group(1);
-//			System.out.println("RESULT : " + res);
-			return res;
-		}
-		return "";
-	}
-
-	public String regFind(String text, String reg, int x){
-		Pattern p = Pattern.compile(reg, Pattern.CASE_INSENSITIVE);
-		Matcher m = p.matcher(text);
-		if (m.find()){
-			String res = m.group(1);
-//			System.out.println("RESULT : " + res);
-			return res;
-		}
-		return "";
-	}
-
-	
 	public Object clone() {
 		Spider o = null;
 		try {

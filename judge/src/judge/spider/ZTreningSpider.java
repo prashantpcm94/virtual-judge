@@ -51,7 +51,7 @@ public class ZTreningSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
+			html = Tools.getHtml(getMethod, null);
 		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
@@ -61,14 +61,14 @@ public class ZTreningSpider extends Spider {
 			throw new Exception();
 		}
 
-		problem.setTitle(regFind(html, "<TITLE>Task :: ([\\s\\S]*?)</TITLE>").trim());
+		problem.setTitle(Tools.regFind(html, "<TITLE>Task :: ([\\s\\S]*?)</TITLE>").trim());
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
-		Double timeLimit = 1000 * Double.parseDouble(regFind(html, "Time:</TD><TD CLASS=\"right\">(\\S*?) sec"));
+		Double timeLimit = 1000 * Double.parseDouble(Tools.regFind(html, "Time:</TD><TD CLASS=\"right\">(\\S*?) sec"));
 		problem.setTimeLimit(timeLimit.intValue());
-		problem.setMemoryLimit(1024 * Integer.parseInt(regFind(html, "Memory:</TD><TD CLASS=\"right\">(\\d+) MB")));
-		description.setDescription(regFind(html, "<DIV CLASS=\"taskText\">([\\s\\S]*?)</DIV></DIV><DIV CLASS=\"boxHeader\">Submit Solution"));
+		problem.setMemoryLimit(1024 * Integer.parseInt(Tools.regFind(html, "Memory:</TD><TD CLASS=\"right\">(\\d+) MB")));
+		description.setDescription(Tools.regFind(html, "<DIV CLASS=\"taskText\">([\\s\\S]*?)</DIV></DIV><DIV CLASS=\"boxHeader\">Submit Solution"));
 		problem.setUrl("http://www.z-trening.com/tasks.php?show_task=" + (5000000000L + Integer.parseInt(problem.getOriginProb())) + "&lang=uk");
 	}
 

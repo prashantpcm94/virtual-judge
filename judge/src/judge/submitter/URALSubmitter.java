@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 
 import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -121,11 +123,14 @@ public class URALSubmitter extends Submitter {
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
     			result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
+				submission.setRealRunId(m.group(1));
     			if (!result.contains("ing")){
     				if (result.equals("Accepted")){
 	    				submission.setMemory(Integer.parseInt(m.group(4).replaceAll(" ", "")));
 	    				submission.setTime((int)(0.5 + 1000 * Double.parseDouble(m.group(3))));
-    				}
+    				} else if (result.contains("Compilation error")) {
+						getAdditionalInfo(submission.getRealRunId());
+					}
     				baseService.addOrModify(submission);
     				return;
     			}
@@ -137,6 +142,16 @@ public class URALSubmitter extends Submitter {
 		throw new Exception();
 	}
 	
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		GetMethod getMethod = new GetMethod("http://acm.timus.ru/ce.aspx?id=" + runId);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		httpClient.executeMethod(getMethod);
+		String additionalInfo = Tools.getHtml(getMethod, null);
+		
+		submission.setAdditionalInfo("<pre>" + additionalInfo + "</pre>");
+	}
+
 	private int getIdleClient() {
 		int length = usernameList.length;
 		int begIdx = (int) (Math.random() * length);

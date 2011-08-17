@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
@@ -99,7 +100,7 @@ public class ZTreningSubmitter extends Submitter {
 			throw new Exception();
 		}
 		
-		String fetchCode = regFind(content, "'(\\w+)'\\);");
+		String fetchCode = Tools.regFind(content, "'(\\w+)'\\);");
 		GetMethod getMethod = new GetMethod("http://www.z-trening.com/submit_ajax.php?wait_grade=" + fetchCode);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		HttpClient client = new HttpClient();

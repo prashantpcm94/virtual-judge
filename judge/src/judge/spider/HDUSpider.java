@@ -18,7 +18,7 @@ public class HDUSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
+			html = Tools.getHtml(getMethod, null);
 		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
@@ -33,24 +33,24 @@ public class HDUSpider extends Spider {
 		html = html.replaceAll("src=\"[^'\"]*?/images", "src=\"http://acm.hdu.edu.cn/data/images");
 		//System.out.println(tLine);
 		
-		problem.setTitle(regFind(html, "color:#1A5CC8'>([\\s\\S]*?)</h1>").trim());
+		problem.setTitle(Tools.regFind(html, "color:#1A5CC8'>([\\s\\S]*?)</h1>").trim());
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
 		
-		problem.setTimeLimit(Integer.parseInt(regFind(html, "(\\d*) MS")));
-		problem.setMemoryLimit(Integer.parseInt(regFind(html, "/(\\d*) K")));
-		description.setDescription(regFind(html, "Problem Description</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		description.setInput(regFind(html, "Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		description.setOutput(regFind(html, "Output</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		description.setSampleInput(regFind(html, "Sample Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
-		description.setSampleOutput(regFind(html, "Sample Output</div>([\\s\\S]*?)(<br><[^<>]*?panel_title[^<>]*?>|<[^<>]*?><[^<>]*?><i>Hint)") + "</div></div>");
-		description.setHint(regFind(html, "<i>Hint</i></div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		problem.setTimeLimit(Integer.parseInt(Tools.regFind(html, "(\\d*) MS")));
+		problem.setMemoryLimit(Integer.parseInt(Tools.regFind(html, "/(\\d*) K")));
+		description.setDescription(Tools.regFind(html, "Problem Description</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setInput(Tools.regFind(html, "Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setOutput(Tools.regFind(html, "Output</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setSampleInput(Tools.regFind(html, "Sample Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+		description.setSampleOutput(Tools.regFind(html, "Sample Output</div>([\\s\\S]*?)(<br><[^<>]*?panel_title[^<>]*?>|<[^<>]*?><[^<>]*?><i>Hint)") + "</div></div>");
+		description.setHint(Tools.regFind(html, "<i>Hint</i></div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
 		if (description.getHint().length() > 0){
 			description.setHint("<pre>" + description.getHint() + "</pre>");
 		}
 		
-		problem.setSource(regFind(html, "Source</div> <div class=panel_content>([\\s\\S]*?)<[^<>]*?panel_[^<>]*?>").replaceAll("<[\\s\\S]*?>", ""));
+		problem.setSource(Tools.regFind(html, "Source</div> <div class=panel_content>([\\s\\S]*?)<[^<>]*?panel_[^<>]*?>").replaceAll("<[\\s\\S]*?>", ""));
 		problem.setUrl("http://acm.hdu.edu.cn/showproblem.php?pid=" + problem.getOriginProb());
 	}
 }

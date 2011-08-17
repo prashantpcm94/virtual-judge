@@ -21,6 +21,7 @@ import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
 import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.io.IOUtils;
 
 import com.Ostermiller.util.CSVParser;
@@ -84,25 +85,35 @@ public class Tools {
 
 	/**
 	 * 从html中判断字符编码并将内容转成String返回
-	 * @param stream body stream
-	 * @param header Content-type
+	 * @param method http方法
+	 * @param proposedCharset 推荐的charset
 	 * @return
 	 * @throws IOException
 	 */
-	public static String getHtml(InputStream stream, Header header) throws IOException {
-		byte[] contentInByte = IOUtils.toByteArray(stream);
+	public static String getHtml(HttpMethodBase method, String proposedCharset) throws IOException {
+		byte[] contentInByte = IOUtils.toByteArray(method.getResponseBodyAsStream());
 		Charset charset = null;
-		if (header != null) {
-			Matcher matcher = Pattern.compile("(?i)charset=([-\\w]+)").matcher(header.getValue());
-			if (matcher.find()) {
-				charset = Charset.forName(matcher.group(1));
+		try {
+			charset = Charset.forName(proposedCharset);
+		} catch (Exception e) {}
+		if (charset == null) {
+			Header header = method.getResponseHeader("Content-Type");
+			if (header != null) {
+				Matcher matcher = Pattern.compile("(?i)charset=([-_\\w]+)").matcher(header.getValue());
+				if (matcher.find()) {
+					try {
+						charset = Charset.forName(matcher.group(1));
+					} catch (Exception e) {}
+				}
 			}
 		}
 		if (charset == null) {
 			String tmpHtml = new String(contentInByte, "UTF-8");
-			Matcher matcher = Pattern.compile("(?i)charset=([-\\w]+)").matcher(tmpHtml);
+			Matcher matcher = Pattern.compile("(?i)charset=([-_\\w]+)").matcher(tmpHtml);
 			if (matcher.find()) {
-				charset = Charset.forName(matcher.group(1));
+				try {
+					charset = Charset.forName(matcher.group(1));
+				} catch (Exception e) {}
 			}
 		}
 		if (charset == null) {
@@ -160,6 +171,28 @@ public class Tools {
 		CSVParser shredder = new CSVParser(new InputStreamReader(inputStream, charset));
 		return shredder.getAllValues();
 	}
+	
+	/**
+	 * 按照reg解析text,获取第i组
+	 * @param text
+	 * @param reg
+	 * @param i
+	 * @return
+	 */
+	public static String regFind(String text, String reg, int i){
+		Matcher m = Pattern.compile(reg, Pattern.CASE_INSENSITIVE).matcher(text);
+		return m.find() ? m.group(i) : "";
+	}
 
+	/**
+	 * 按照reg解析text,获取第1组
+	 * @param text
+	 * @param reg
+	 * @param i
+	 * @return
+	 */
+	public static String regFind(String text, String reg){
+		return regFind(text, reg, 1);
+	}
 
 }

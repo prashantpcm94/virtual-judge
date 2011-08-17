@@ -1,8 +1,5 @@
 package judge.submitter;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.servlet.ServletContext;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -43,17 +40,6 @@ public abstract class Submitter extends Thread implements Cloneable {
 		}
 	}
 
-	public String regFind(String text, String reg){
-		Pattern p = Pattern.compile(reg);
-		Matcher m = p.matcher(text);
-		if (m.find()){
-			String res = m.group(1);
-			System.out.println("RESULT : " + res);
-			return res;
-		}
-		return null;
-	}
-	
 	public Object clone() {
 		Submitter o = null;
 		try {

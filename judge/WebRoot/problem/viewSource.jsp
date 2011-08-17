@@ -59,6 +59,15 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 						<font color=blue>${submission.status}</font>
 					</td>
 				</tr>
+				<tr>
+					<td>
+						<b>VJ RunId: </b>${submission.id}
+					</td>
+					<td width=10px></td>
+					<td>
+						<b>Real RunId: </b>${submission.realRunId}
+					</td>
+				</tr>
 				<s:if test="#session.visitor.id == uid || #session.visitor.sup != 0">
 					<tr>
 						<td>

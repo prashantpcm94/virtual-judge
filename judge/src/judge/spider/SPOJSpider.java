@@ -20,7 +20,7 @@ public class SPOJSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
+			html = Tools.getHtml(getMethod, null);
 		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
@@ -32,19 +32,19 @@ public class SPOJSpider extends Spider {
 
 		html = html.replaceAll("src=\"/", "src=\"http://www.spoj.pl/");
 		
-		problem.setTitle(regFind(html, "<h1>\\d+\\.([\\s\\S]*?)</h1>").trim());
+		problem.setTitle(Tools.regFind(html, "<h1>\\d+\\.([\\s\\S]*?)</h1>").trim());
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
-		Double timeLimit = 1000 * Double.parseDouble(regFind(html, "Time limit:</td><td>([\\s\\S]*?)s", 1));
+		Double timeLimit = 1000 * Double.parseDouble(Tools.regFind(html, "Time limit:</td><td>([\\s\\S]*?)s", 1));
 		problem.setTimeLimit(timeLimit.intValue());
-		description.setDescription(regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<h3[^<>]*>Input|<hr>)", 1));
-		description.setInput(regFind(html, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
-		description.setOutput(regFind(html, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
-		description.setSampleInput(regFind(html, "<h3[^<>]*>Example</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
-		description.setHint(regFind(html, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)<hr>", 1) + regFind(html, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)<hr>", 1));
+		description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<h3[^<>]*>Input|<hr>)", 1));
+		description.setInput(Tools.regFind(html, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
+		description.setOutput(Tools.regFind(html, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
+		description.setSampleInput(Tools.regFind(html, "<h3[^<>]*>Example</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
+		description.setHint(Tools.regFind(html, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)<hr>", 1) + Tools.regFind(html, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)<hr>", 1));
 		
-		problem.setSource(regFind(html, "Resource:</td><td>([\\s\\S]*?)</td></tr>", 1));
+		problem.setSource(Tools.regFind(html, "Resource:</td><td>([\\s\\S]*?)</td></tr>", 1));
 		problem.setUrl("http://www.spoj.pl/problems/" + problem.getOriginProb());
 	}
 }

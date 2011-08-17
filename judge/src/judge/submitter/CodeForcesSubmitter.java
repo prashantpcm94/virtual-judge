@@ -226,9 +226,9 @@ public class CodeForcesSubmitter extends Submitter {
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
 		httpClient.executeMethod(postMethod);
-		String additionalInfo = Tools.getHtml(postMethod.getResponseBodyAsStream(), postMethod.getResponseHeader("Content-Type"));
+		String additionalInfo = Tools.getHtml(postMethod, null);
 		
-		submission.setAdditionalInfo(additionalInfo.replaceAll("\\\\\\\\", "\\\\").replaceAll("\\\\r\\\\n", "\n"));
+		submission.setAdditionalInfo("<pre>" + additionalInfo.replaceAll("(\\\\r)?\\\\n", "\n").replaceAll("\\\\\\\\", "\\\\") + "</pre>");
 	}
 
 	private int getIdleClient() {

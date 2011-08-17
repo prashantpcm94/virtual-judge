@@ -144,6 +144,9 @@ public class Submission {
 		return additionalInfo;
 	}
 	public void setAdditionalInfo(String additionalInfo) {
+		if (additionalInfo != null && additionalInfo.length() > 10000) {
+			additionalInfo = additionalInfo.substring(0, 10000) + "\n\n…………";
+		}
 		this.additionalInfo = additionalInfo;
 	}
 	public String getRealRunId() {

@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 
 import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -93,7 +95,7 @@ public class ZOJSubmitter extends Submitter {
 		int statusCode = httpClient.executeMethod(getMethod);
 		byte[] responseBody = getMethod.getResponseBody();
 		String tLine = new String(responseBody, "UTF-8");
-		String problemId = regFind(tLine, "problemId=([\\s\\S]*?)\"><font");
+		String problemId = Tools.regFind(tLine, "problemId=([\\s\\S]*?)\"><font");
 
 		try {
 			Thread.sleep(2000);
@@ -150,10 +152,14 @@ public class ZOJSubmitter extends Submitter {
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
 				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("loating ", "loat-");
 				submission.setStatus(result);
+				submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")) {
 					if (result.equals("Accepted")) {
 						submission.setMemory(Integer.parseInt(m.group(4)));
 						submission.setTime(Integer.parseInt(m.group(3)));
+					} else if (result.contains("Compilation Error")) {
+						String wierdRunId = Tools.regFind(m.group(2), "submissionId=(\\d+)");
+						getAdditionalInfo(wierdRunId);
 					}
 					baseService.addOrModify(submission);
 					return;
@@ -164,6 +170,16 @@ public class ZOJSubmitter extends Submitter {
 			interval += 500;
 		}
 		throw new Exception();
+	}
+	
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		GetMethod getMethod = new GetMethod("http://acm.zju.edu.cn/onlinejudge/showJudgeComment.do?submissionId=" + runId);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		httpClient.executeMethod(getMethod);
+		String additionalInfo = Tools.getHtml(getMethod, null);
+		
+		submission.setAdditionalInfo("<pre>" + additionalInfo + "</pre>");
 	}
 	
 	private int getIdleClient() {

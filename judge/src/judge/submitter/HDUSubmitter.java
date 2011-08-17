@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 
 import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -136,11 +138,14 @@ public class HDUSubmitter extends Submitter {
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
 				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
+				submission.setRealRunId(m.group(1));
     			if (!result.contains("ing")){
     				if (result.equals("Accepted")){
 	    				submission.setTime(Integer.parseInt(m.group(3)));
 	    				submission.setMemory(Integer.parseInt(m.group(4)));
-    				}
+    				} else if (result.contains("Compilation")) {
+						getAdditionalInfo(submission.getRealRunId());
+					}
     				baseService.addOrModify(submission);
     				return;
     			}
@@ -150,7 +155,17 @@ public class HDUSubmitter extends Submitter {
 			interval += 500;
         }
     	throw new Exception();
-	}			
+	}
+	
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		GetMethod getMethod = new GetMethod("http://acm.hdu.edu.cn/viewerror.php?rid=" + runId);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		httpClient.executeMethod(getMethod);
+		String additionalInfo = Tools.getHtml(getMethod, null);
+		
+		submission.setAdditionalInfo(Tools.regFind(additionalInfo, "(<pre>[\\s\\S]*?</pre>)"));
+	}
 
 	private int getIdleClient() {
 		int length = usernameList.length;

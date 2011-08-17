@@ -48,7 +48,7 @@ public class UVaSpiderInitializer extends Thread {
 					System.err.println("Method failed: " + getMethod.getStatusLine());
 					throw new Exception();
 				}
-				html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
+				html = Tools.getHtml(getMethod, null);
 				html = html.substring(html.indexOf("Total Users / Solving"));
 
 				Matcher matcher = Pattern.compile("category=(\\d+)\">").matcher(html);

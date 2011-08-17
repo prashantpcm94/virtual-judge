@@ -22,7 +22,7 @@ public class ZOJSpider extends Spider {
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod.getResponseBodyAsStream(), getMethod.getResponseHeader("Content-Type"));
+			html = Tools.getHtml(getMethod, null);
 		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
@@ -34,22 +34,22 @@ public class ZOJSpider extends Spider {
 
 		html = html.replaceAll("showImage\\.do", "http://acm.zju.edu.cn/onlinejudge/showImage.do");
 		
-		problem.setTitle(regFind(html, "<span class=\"bigProblemTitle\">([\\s\\S]*?)</span>").trim());
+		problem.setTitle(Tools.regFind(html, "<span class=\"bigProblemTitle\">([\\s\\S]*?)</span>").trim());
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
-		problem.setTimeLimit(1000 * Integer.parseInt(regFind(html, "Time Limit: </font> ([\\s\\S]*?) Second")));
-		problem.setMemoryLimit(Integer.parseInt(regFind(html, "Memory Limit: </font> ([\\s\\S]*?) KB")));
+		problem.setTimeLimit(1000 * Integer.parseInt(Tools.regFind(html, "Time Limit: </font> ([\\s\\S]*?) Second")));
+		problem.setMemoryLimit(Integer.parseInt(Tools.regFind(html, "Memory Limit: </font> ([\\s\\S]*?) KB")));
 		if (html.contains("Input<") && html.contains("Output<") && html.contains("Sample Input<") && html.contains("Sample Output<")){
-			description.setDescription(regFind(html, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)>[\\s]*Input"));
-			description.setInput(regFind(html, ">[\\s]*Input([\\s\\S]*?)>[\\s]*Output"));
-			description.setOutput(regFind(html, ">[\\s]*Output([\\s\\S]*?)>[\\s]*Sample Input"));
-			description.setSampleInput(regFind(html, ">[\\s]*Sample Input([\\s\\S]*?)>[\\s]*Sample Output"));
-			description.setSampleOutput(regFind(html, ">[\\s]*Sample Output([\\s\\S]*?)<hr"));
+			description.setDescription(Tools.regFind(html, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)>[\\s]*Input"));
+			description.setInput(Tools.regFind(html, ">[\\s]*Input([\\s\\S]*?)>[\\s]*Output"));
+			description.setOutput(Tools.regFind(html, ">[\\s]*Output([\\s\\S]*?)>[\\s]*Sample Input"));
+			description.setSampleInput(Tools.regFind(html, ">[\\s]*Sample Input([\\s\\S]*?)>[\\s]*Sample Output"));
+			description.setSampleOutput(Tools.regFind(html, ">[\\s]*Sample Output([\\s\\S]*?)<hr"));
 		} else {
-			description.setDescription(regFind(html, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)<hr"));
+			description.setDescription(Tools.regFind(html, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)<hr"));
 		}
-		problem.setSource(regFind(html, "Source: <strong>([\\s\\S]*?)</strong><br>"));
+		problem.setSource(Tools.regFind(html, "Source: <strong>([\\s\\S]*?)</strong><br>"));
 		problem.setUrl("http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=" + problem.getOriginProb());
 	}
 }

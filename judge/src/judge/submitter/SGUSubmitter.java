@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 
 import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -127,11 +129,14 @@ public class SGUSubmitter extends Submitter {
     		if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
     			result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
+				submission.setRealRunId(m.group(1));
     			if (!result.contains("ing")){
     				if (result.equals("Accepted")){
 	    				submission.setMemory(Integer.parseInt(m.group(4)));
 	    				submission.setTime(Integer.parseInt(m.group(3)));
-    				}
+    				} else if (result.contains("Compilation Error")) {
+						getAdditionalInfo(submission.getRealRunId());
+					}
     				baseService.addOrModify(submission);
     				return;
     			}
@@ -143,6 +148,16 @@ public class SGUSubmitter extends Submitter {
 		throw new Exception();
 	}
 	
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		GetMethod getMethod = new GetMethod("http://acm.sgu.ru/cerror.php?id=" + runId);
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+		httpClient.executeMethod(getMethod);
+		String additionalInfo = Tools.getHtml(getMethod, null);
+		
+		submission.setAdditionalInfo(Tools.regFind(additionalInfo, runId + "</TD><TD>(<pre>[\\s\\S]*?</pre>)"));
+	}
+
 	private int getIdleClient() {
 		int length = usernameList.length;
 		int begIdx = (int) (Math.random() * length);
