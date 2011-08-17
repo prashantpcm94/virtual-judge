@@ -545,7 +545,7 @@ public class JudgeService extends BaseService {
 	 */
 	private int charSum(String string) {
 		if (string == null) {
-			return 0;
+			return -1;
 		}
 		int sum = 0;
 		for (int i = 0; i < string.length(); ++i) {
