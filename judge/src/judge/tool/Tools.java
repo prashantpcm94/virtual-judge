@@ -196,6 +196,29 @@ public class Tools {
 	}
 	
 	/**
+	 * 按照reg解析text,获取第i组(区分大小写)
+	 * @param text
+	 * @param reg
+	 * @param i
+	 * @return
+	 */
+	public static String regFindCaseSensitive(String text, String reg, int i){
+		Matcher m = Pattern.compile(reg).matcher(text);
+		return m.find() ? m.group(i) : "";
+	}
+
+	/**
+	 * 按照reg解析text,获取第1组(区分大小写)
+	 * @param text
+	 * @param reg
+	 * @param i
+	 * @return
+	 */
+	public static String regFindCaseSensitive(String text, String reg){
+		return regFindCaseSensitive(text, reg, 1);
+	}
+	
+	/**
 	 * 全角转半角
 	 * @param input 全角字符串.
 	 * @return 半角字符串

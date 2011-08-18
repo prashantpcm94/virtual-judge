@@ -7,6 +7,7 @@ import java.util.Map;
 
 import judge.service.IBaseService;
 import judge.service.JudgeService;
+import judge.spider.AizuSpider;
 import judge.spider.CodeForcesSpider;
 import judge.spider.HDUSpider;
 import judge.spider.HUSTSpider;
@@ -20,6 +21,7 @@ import judge.spider.UVALiveSpider;
 import judge.spider.UVASpider;
 import judge.spider.ZOJSpider;
 import judge.spider.ZTreningSpider;
+import judge.submitter.AizuSubmitter;
 import judge.submitter.CodeForcesSubmitter;
 import judge.submitter.HDUSubmitter;
 import judge.submitter.HUSTSubmitter;
@@ -73,6 +75,7 @@ public class BaseAction extends ActionSupport{
 		OJList.add("UVA");
 		OJList.add("CodeForces");
 		OJList.add("Z-Trening");
+		OJList.add("Aizu");
 	}
 	
 	static private List<String> OJListAll = new ArrayList<String>();
@@ -95,6 +98,7 @@ public class BaseAction extends ActionSupport{
 		spiderMap.put("UVA", new UVASpider());
 		spiderMap.put("CodeForces", new CodeForcesSpider());
 		spiderMap.put("Z-Trening", new ZTreningSpider());
+		spiderMap.put("Aizu", new AizuSpider());
 	}
 	
 	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
@@ -111,6 +115,7 @@ public class BaseAction extends ActionSupport{
 		submitterMap.put("UVA", new UVASubmitter());
 		submitterMap.put("CodeForces", new CodeForcesSubmitter());
 		submitterMap.put("Z-Trening", new ZTreningSubmitter());
+		submitterMap.put("Aizu", new AizuSubmitter());
 	}
 	
 	static public Map<String, String> lf = new HashMap<String, String>();
@@ -127,6 +132,7 @@ public class BaseAction extends ActionSupport{
 		lf.put("UVA", "%lld & %llu");
 		lf.put("CodeForces", "%I64d & %I64u");
 		lf.put("Z-Trening", "%lld & %llu");
+		lf.put("Aizu", "%lld & %llu");
 	}
 	
 
