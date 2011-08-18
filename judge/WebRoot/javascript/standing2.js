@@ -297,7 +297,7 @@ function calcScoreBoard() {
 		sbHtml.push("<tr class='disp");
 		if (cid == curCid) {
 			sbHtml.push(" cur_tr");
-			if (my_username == username[uid]) {
+			if (my_username && my_username == username[uid]) {
 				sbHtml.push(" my_tr");
 			}
 		}
