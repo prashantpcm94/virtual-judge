@@ -61,7 +61,7 @@ public class ProblemAction extends BaseAction{
 
 	public String listProblem() {
 		Map session = ActionContext.getContext().getSession();
-		StringBuffer hql = new StringBuffer("select problem.originOJ, problem.originProb, problem.title, problem.triggerTime, problem.source, problem.id, problem.url from Problem problem where 1=1 ");
+		StringBuffer hql = new StringBuffer("select problem.originOJ, problem.originProb, problem.title, problem.triggerTime, problem.source, problem.id, problem.url, problem.timeLimit from Problem problem where 1=1 ");
 		long cnt = baseService.count(hql.toString());
 		dataTablesPage = new DataTablesPage();
 		dataTablesPage.setITotalRecords(cnt);

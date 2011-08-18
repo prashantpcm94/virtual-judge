@@ -6,8 +6,8 @@ String basePath = (String)application.getAttribute("basePath");
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- Problem</title>
+		<base href="<%=basePath%>" />
+		<title>Virtual Judge -- Problem</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
@@ -26,9 +26,9 @@ String basePath = (String)application.getAttribute("basePath");
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="javascript/jquery.dataTables.js"></script>
 
-	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
-	    <script type='text/javascript' src='dwr/util.js'></script>
+		<script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/listProblem.js"></script>
 	</head>
@@ -64,11 +64,12 @@ String basePath = (String)application.getAttribute("basePath");
 					<th>Source</th>
 					<th></th>
 					<th></th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td colspan="7">Loading data from server</td>
+					<td colspan="8">Loading data from server</td>
 				</tr>
 			</tbody>
 		</table>

@@ -43,6 +43,7 @@ $(document).ready(function() {
 						"sClass": "source"
 					},
 					{"bVisible": false},
+					{"bVisible": false},
 					{"bVisible": false}
 			],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
@@ -54,9 +55,14 @@ $(document).ready(function() {
 				"url": sSource, 
 				"data": aoData, 
 				"success": fnCallback
-			} );
+			});
 		},
-
+		"fnRowCallback": function( nRow, aData ) {
+			if (aData[7] == 1 || aData[7] == 2){
+				nRow.className += " Running"; 
+			}
+			return nRow;
+		},
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers"
 	});

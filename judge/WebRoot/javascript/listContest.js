@@ -86,17 +86,16 @@ $(document).ready(function() {
 			aoData.push( { "name": "r", "value": r } );
 			aoData.push( { "name": "e", "value": e } );
 			aoData.push( { "name": "contestType", "value": contestType } );
-			$.ajax( {
+			$.ajax({
 				"dataType": 'json', 
 				"type": "POST", 
 				"url": sSource, 
 				"data": aoData, 
 				"success": fnCallback
-			} );
+			});
 		},
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$('td:eq(4)', nRow).addClass(aData[4]);
-//			$('td:eq(5)', nRow).addClass(aData[5]);
 			nRow.className += " " + aData[8];
 			return nRow;
 		},
