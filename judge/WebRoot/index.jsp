@@ -7,8 +7,8 @@ String basePath = (String)application.getAttribute("basePath");
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge</title>
+		<base href="<%=basePath%>" />
+		<title>Virtual Judge</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/demo_page.css" />
 		<link rel="stylesheet" type="text/css" href="css/demo_table.css" />
@@ -18,16 +18,14 @@ String basePath = (String)application.getAttribute("basePath");
 
 	<body>
 		<s:include value="/top.jsp" />
-		<center>
-			<h1>Virtual Judge</h1>
-		</center>
+		<div id="title">Virtual Judge</div>
 		<div style="width:900px;MARGIN-RIGHT:auto;MARGIN-LEFT:auto;">
 			<p>
 				Virtual Judge is not a real online judge. It can grabs problems from other regular online judges and simulate submissions to other online judges.
-				It aims to enable holding contests when you don't have the test data.
-			</p>
-			<p>
+				It aims to enable holding contests when you don't have the test data.<br /><br />
 				Currently, this system supports the following online judges:<br />
+			</p>
+			<p id="ojs" style="line-height:30px;">
 				<a href="http://acm.pku.edu.cn/JudgeOnline/" target="_blank">POJ</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://acm.zju.edu.cn/onlinejudge/" target="_blank">ZOJ</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://livearchive.onlinejudge.org/index.php" target="_blank">UVALive</a>&nbsp;&nbsp;&nbsp;
@@ -40,6 +38,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<a href="http://uva.onlinejudge.org/" target="_blank">UVA</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://codeforces.com/" target="_blank">CodeForces</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://www.z-trening.com/" target="_blank">Z-Trening</a>&nbsp;&nbsp;&nbsp;
+				<a href="http://judge.u-aizu.ac.jp/" target="_blank">Aizu</a>&nbsp;&nbsp;&nbsp;
 			</p>
 			<br />
 			<b>Change Log:</b>
@@ -54,7 +53,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<li>2010-07-20 : Implement syntax highlighting in source viewing by using <a href="http://shjs.sourceforge.net">SHJS</a>.</li>
 				<li>2010-08-17 : Use AJAX pagination in problem list to avoid overload.</li>
 				<li>2010-08-17 : Post-contest submitting is enabled. Try it yourself :)</li>
-				<li>2010-10-07 : Refer to <a href="http://code.google.com/p/virtual-judge/source/list">this page</a>, and this section will not update.</li>
+				<li>2010-10-07 : Refer to <a href="http://code.google.com/p/virtual-judge/updates/list">this page</a>, and this section will not update.</li>
 			</ul>
 		</div>
 		

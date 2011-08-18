@@ -171,6 +171,27 @@ table.display {
 	margin: 2px;
 }
 
+/*************** home page ******************/
+div#title {
+	margin: 22px;
+	text-align: center;
+	font-size: 32px;
+	font-family: "Courier New", Courier;
+	font-weight: bold;
+}
+
+#ojs a:link {
+	font-size: 16px;
+	font-family: Verdana;
+	color: green;
+}
+
+#ojs a:visited {
+	font-size: 16px;
+	font-family: Verdana;
+	color: green;
+}
+
 /********************listProblem*********************/
 #listProblem td.oj {
 	width: 100px;
