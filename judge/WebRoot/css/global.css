@@ -54,9 +54,7 @@ pre.sio {
 	text-align: center;
 }
 
-.title {
-	font-family: Arial, Helvetica, sans-serif;
-}
+
 
 .time {
 	text-align: center;
@@ -116,9 +114,7 @@ pre.sio {
 	width: 80px;
 }
 
-.type{
-	width: 80px;
-}
+
 
 .select{
 	width: 180px;
@@ -175,6 +171,26 @@ table.display {
 	margin: 2px;
 }
 
+/********************listProblem*********************/
+#listProblem td.oj {
+	width: 100px;
+}
+
+#listProblem td.prob_num {
+	width: 120px;
+}
+
+#listProblem td.title {
+}
+
+#listProblem td.source {
+	white-space: normal;
+	word-break: break-all;
+	word-wrap: break-word;
+	width: 500px;
+}
+
+
 
 /********************listContest*********************/
 tr.Ended.odd {
@@ -209,16 +225,35 @@ td.Private {
 	color: red;
 }
 
-td.Ended, span.Ended {
+span.Ended {
 	color: green;
 }
 
-td.Running, span.Running {
+span.Running {
 	color: red;
 }
 
-td.Scheduled, span.Scheduled {
+span.Scheduled {
 	color: blue;
+}
+
+#listContest td.title {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#listContest div.title {
+	white-space: normal;
+	word-break: break-all;
+	word-wrap: break-word;
+	width: 400px;
+}
+
+#listContest td.type{
+	width: 80px;
+}
+
+#listContest td.manager {
+	width: 150px;
 }
 
 /********************standing*********************/
@@ -310,23 +345,23 @@ div.processing {
 }
 
 .find_me {
-    bottom: 15px;
-    overflow: hidden;
-    position: fixed;
-    right: 10px;
-    width: 50px;
-    z-index: 999;
+	bottom: 15px;
+	overflow: hidden;
+	position: fixed;
+	right: 10px;
+	width: 50px;
+	z-index: 999;
 }
 
 .find_me .find_me1 {
-    background: url("../images/find_me.png") no-repeat scroll 100% 100% transparent;
-    display: block;
-    float: right;
-    height: 50px;
-    width: 50px;
-    margin-left: 10px;
-    outline: 0 none;
-    text-indent: -9999em;
+	background: url("../images/find_me.png") no-repeat scroll 100% 100% transparent;
+	display: block;
+	float: right;
+	height: 50px;
+	width: 50px;
+	margin-left: 10px;
+	outline: 0 none;
+	text-indent: -9999em;
 }
 
 /********************Status*********************/

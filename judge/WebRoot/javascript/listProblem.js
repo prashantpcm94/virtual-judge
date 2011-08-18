@@ -17,14 +17,14 @@ $(document).ready(function() {
 		"aaSorting": [[ 1, "asc" ]],
 		"aoColumns": [
 					{
-						"sClass": "center",
+						"sClass": "center oj",
 						"bSortable": false
 					},
 					{
 						"fnRender": function ( oObj ) {
 							return "<a href='" + oObj.aData[6] + "'>" + oObj.aData[1] + "</a>";
 						},
-						"sClass": "center"
+						"sClass": "center prob_num"
 					},
 					{
 						"fnRender": function ( oObj ) {
@@ -39,7 +39,9 @@ $(document).ready(function() {
 						"sClass": "date",
 						"bSortable": false
 					},
-					{},
+					{
+						"sClass": "source"
+					},
 					{"bVisible": false},
 					{"bVisible": false}
 			],

@@ -169,11 +169,11 @@ public class ContestAction extends BaseAction {
 					contest.getTitle(),
 					contest.getBeginTime().getTime(),
 					trans(contest.getEndTime().getTime() - contest.getBeginTime().getTime(), true),
-					curDate.compareTo(contest.getBeginTime()) < 0 ? "Scheduled" : curDate.compareTo(contest.getEndTime()) < 0 ? "Running" : "Ended",
 					contest.getPassword() == null ? "Public" : "Private",
 					user.getUsername(),
 					user.getId(),
-					sup > 0 || user.getId() == userId ? 1 : 0
+					sup > 0 || user.getId() == userId ? 1 : 0,
+					curDate.compareTo(contest.getBeginTime()) < 0 ? "Scheduled" : curDate.compareTo(contest.getEndTime()) < 0 ? "Running" : "Ended"
 			};
 			aaData.add(res);
 		}

@@ -34,7 +34,7 @@ $(document).ready(function() {
 					},
 					{
 						"fnRender": function ( oObj ) {
-							return "<a href='contest/viewContest.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[1] + "</a>";
+							return "<div class='title'><a href='contest/viewContest.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[1] + "</a></div>";
 						},
 						"sClass": "title"
 					},
@@ -48,26 +48,19 @@ $(document).ready(function() {
 						"bSortable": false,
 						"sClass": "time"
 					},
-					{
-						"bSortable": false,
-						"sClass": "center status"
-					},
 					{ 
 						"bSortable": false,
 						"sClass": "center type"
 					},
 					{ 
 						"fnRender": function ( oObj ) {
-							return "<a href='user/profile.action?uid=" + oObj.aData[7] + "'>" + oObj.aData[6] + "</a>";
+							return "<a href='user/profile.action?uid=" + oObj.aData[6] + "'>" + oObj.aData[5] + "</a>";
 						},
-						"sClass": "center"
-					},
-					{
-						"bVisible": false
+						"sClass": "manager center"
 					},
 					{ 
 						"fnRender": function ( oObj ) {
-							if (oObj.aData[8] == 1) {
+							if (oObj.aData[7] == 1) {
 								return "<a href='contest/toEditContest.action?cid=" + oObj.aData[0] + "'><img height='15px' border='0' src='images/wrench.gif' /></a>&nbsp;<a href='javascript:void(0)' onclick='comfirmDeleteContest(\"" + oObj.aData[0] + "\")'><img height='15px' border='0' src='images/recycle.gif' /></a>";
 							} else return "";
 						},
@@ -75,6 +68,12 @@ $(document).ready(function() {
 						"bSearchable": false,
 						"bSortable": false,
 						"sClass": "id icon"
+					},
+					{
+						"bVisible": false
+					},
+					{
+						"bVisible": false
 					}
 				],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
@@ -97,8 +96,8 @@ $(document).ready(function() {
 		},
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$('td:eq(4)', nRow).addClass(aData[4]);
-			$('td:eq(5)', nRow).addClass(aData[5]);
-			nRow.className += " " + aData[4];
+//			$('td:eq(5)', nRow).addClass(aData[5]);
+			nRow.className += " " + aData[8];
 			return nRow;
 		},
 		"bJQueryUI": true,
