@@ -103,7 +103,8 @@ public class UVALiveSubmitter extends Submitter {
 		if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
 			throw new Exception();
 		}
-		if (postMethod.getResponseHeader("Location").getValue().contains("not+exist")){
+		String headerLocation = postMethod.getResponseHeader("Location").getValue();
+		if (!headerLocation.contains("Submission+received+with+ID")){
 			throw new Exception();
 		}
 	}
