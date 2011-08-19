@@ -99,14 +99,14 @@ String basePath = (String)application.getAttribute("basePath");
 									<tr class="<s:property value='sameContests[#stat.index][7]' />">
 										<td><s:checkbox fieldValue="%{sameContests[#stat.index][0]}" name="ids" /></td>
 										<td><s:if test="sameContests[#stat.index][1] != null"><img height="20" title="Replay" src="images/replay.png"></s:if></td>
-										<td>
+										<td><div style="white-space:normal;word-break:break-all;word-wrap:break-word;width:400px;">
 											<s:if test="sameContests[#stat.index][0] == cid || contest.endTime.compareTo(curDate) > 0">
 												<s:property value="sameContests[#stat.index][2]" escape="false" />
 											</s:if>
 											<s:else>
 												<a href="contest/viewContest.action?cid=<s:property value='sameContests[#stat.index][0]' escape="false" />" target="_blank"><s:property value="sameContests[#stat.index][2]" /></a>
 											</s:else>
-										</td>
+										</div></td>
 										<td class="date"><s:date name="sameContests[#stat.index][3]" format="yyyy-MM-dd HH:mm:ss" /></td>
 										<td class="date"><s:property value='sameContests[#stat.index][4]' /></td>
 										<td class="center"><a href="user/profile.action?uid=<s:property value='sameContests[#stat.index][6]' />"><s:property value="sameContests[#stat.index][5]" /></a></td>

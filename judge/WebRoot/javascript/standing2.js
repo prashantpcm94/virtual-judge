@@ -1,4 +1,4 @@
-var cid, onlyCid, data, ti, pnum, maxTime, changed, standingTable, oFH, autoRefresh;
+var cid, onlyCid, data, ti, pnum, maxTime, standingTable, oFH, autoRefresh;
 
 jQuery.fn.dataTableExt.oSort['rank-asc']  = function(x, y) {
 	var v1 = parseInt(x), v2 = parseInt(y);
@@ -136,17 +136,13 @@ $(document).ready(function() {
 		var curCid = $(this).parent().attr("cid");
 		if (onlyCid){
 			onlyCid = 0;
-			if (changed){
-				calcScoreBoard();
-			} else {
-				$("tr.disp").show();
-			}
+			$("tr.disp").show();
 			$("div#contestTitle").text("　");
 		} else {
 			onlyCid = curCid;
-			changed = false;
+			var $tmpTd = $("input[type=checkbox][value=" + curCid + "]").parent().next();
 			$("tr.disp[cid!=" + curCid + "]").hide();
-			$("div#contestTitle").html($("input[type=checkbox][value=" + curCid + "]").parent().next().html());
+			$("div#contestTitle").html($tmpTd.html() + $tmpTd.next().find("div").html());
 		}
 	});
 	
@@ -226,7 +222,6 @@ function init() {
 				maxTime = ui.value;
 				calcScoreBoard();
 			}
-			changed = true;
 			$("#status_processing").hide();
 		}
 	});
@@ -237,7 +232,7 @@ function calcScoreBoard() {
 	for (var j = 0; j < pnum; ++j) {
 		totalSubmission[j] = correctSubmission[j] = 0;
 	}
-	$.each(onlyCid ? {onlyCid: data[onlyCid]} : data, function(curCid, sInfo){
+	$.each(data, function(curCid, sInfo){
 		$.each(sInfo, function(key, s) {
 			if (key == 0) {
 				for (uid in s) {
@@ -301,7 +296,11 @@ function calcScoreBoard() {
 				sbHtml.push(" my_tr");
 			}
 		}
-		sbHtml.push("' style='background:transparent' cid='" + curCid + "'><td>" + (i + 1) + "</td><td class='meta_td");
+		sbHtml.push("' style='background:transparent");
+		if (onlyCid && onlyCid != curCid) {
+			sbHtml.push(";display:none");
+		}
+		sbHtml.push(";' cid='" + curCid + "'><td>" + (i + 1) + "</td><td class='meta_td");
 		if (username[uid]) {
 			sbHtml.push("'><a href='user/profile.action?uid=" + uid + "'>" + (showNick > 0 ? nickname[uid] || username[uid] : username[uid]) + "</a></td><td class='meta_td");
 		} else {
