@@ -137,7 +137,7 @@ public class AizuSubmitter extends Submitter {
 	}
 
 	private int calcMemory(String s) {
-		String memory = Tools.regFind(s, "\\d+");
+		String memory = Tools.regFind(s, "(\\d+)");
 		return memory.isEmpty() ? 0 : Integer.parseInt(memory);
 	}
 
