@@ -299,6 +299,10 @@ table.standing td {
 	font-size: 12px;
 }
 
+table#time_machine tr.my_tr {
+	font-weight: bold;
+}
+
 td.green span, td.red span {
 	color: gray;
 }
@@ -311,11 +315,11 @@ tr.disp a:visited {
 	color: black;
 }
 
-tr.my_tr a:link {
+table.standing tr.my_tr a:link {
 	color: white;
 }
 
-tr.my_tr a:visited {
+table.standing tr.my_tr a:visited {
 	color: white;
 }
 

@@ -22,6 +22,7 @@ String basePath = (String)application.getAttribute("basePath");
 		<s:include value="/contest/top.jsp" />
 		
 		<div class="ptt">
+			<s:if test="contest.replayStatus != null"><img height="25" title="Replay" src="images/replay.png"></s:if>
 			<s:property value="contest.title" escape="false" />
 		</div>
 		
@@ -68,7 +69,7 @@ String basePath = (String)application.getAttribute("basePath");
 						<th>ID</th>
 						<th></th>
 						<th style="text-align: left">Title</th>
-						<th>Ratio(AC/att)</th>
+						<th><s:if test="contest.replayStatus == null">Ratio(AC/att)</s:if></th>
 						<th></th>
 					</tr>
 				</thead>
@@ -97,7 +98,7 @@ String basePath = (String)application.getAttribute("basePath");
 							</a>
 						</td>
 						<td class="center">
-							<s:property value="dataList[#stat.index][3]" />
+							<s:if test="contest.replayStatus == null"><s:property value="dataList[#stat.index][3]" /></s:if>
 						</td>
 						<td>
 							<s:url id="toSubmit" action="toSubmit" namespace="/contest">

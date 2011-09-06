@@ -36,7 +36,7 @@ String basePath = (String)application.getAttribute("basePath");
 	
 		<s:include value="/contest/top.jsp" />
 
-		<div class="ptt">Contest Standing -- <s:property value="contest.title" escape="false" /></div>
+		<div class="ptt"><s:if test="contest.replayStatus != null"><img height="25" title="Replay" src="images/replay.png"></s:if><s:property value="contest.title" escape="false" /></div>
 		
 		<div id="tabs">
 			<ul>
@@ -83,7 +83,7 @@ String basePath = (String)application.getAttribute("basePath");
 					<tr>
 						<td class="blue_border" style="width:200px;vertical-align:top;padding-top:25px;font:15px 'Lucida Grande',Verdana;">Time Machine:<br /><br /><br />(Check them to include their standings to your score board)</td>
 						<td class="blue_border">
-							<table class="display" cellpadding="0" cellspacing="0" border="0">
+							<table id="time_machine" class="display" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th style="text-align:left;padding-left:3px"><s:checkbox id="checkAll" name="checkAll" /></th>
@@ -104,7 +104,7 @@ String basePath = (String)application.getAttribute("basePath");
 												<s:property value="sameContests[#stat.index][2]" escape="false" />
 											</s:if>
 											<s:else>
-												<a href="contest/viewContest.action?cid=<s:property value='sameContests[#stat.index][0]' escape="false" />" target="_blank"><s:property value="sameContests[#stat.index][2]" /></a>
+												<a href="contest/viewContest.action?cid=<s:property value='sameContests[#stat.index][0]' escape="false" />" target="_blank"><s:property value="sameContests[#stat.index][2]" escape="false" /></a>
 											</s:else>
 										</div></td>
 										<td class="date"><s:date name="sameContests[#stat.index][3]" format="yyyy-MM-dd HH:mm:ss" /></td>
