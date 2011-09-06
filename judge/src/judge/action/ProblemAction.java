@@ -4,6 +4,7 @@
 
 package judge.action;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -164,6 +165,7 @@ public class ProblemAction extends BaseAction{
 		}
 
 		for (String probNum : probNumList) {
+			probNum = probNum.replaceAll("\\W", "");
 			description = null;
 			problem = judgeService.findProblem(OJId.trim(), probNum);
 			if (problem == null){
@@ -239,7 +241,7 @@ public class ProblemAction extends BaseAction{
 	}
 
 
-	public String submit(){
+	public String submit() throws UnsupportedEncodingException{
 		Map session = ActionContext.getContext().getSession();
 		User user = (User) session.get("visitor");
 		if (user == null){
@@ -266,8 +268,8 @@ public class ProblemAction extends BaseAction{
 			this.addActionError("Source code should be longer than 50 characters!");
 			return INPUT;
 		}
-		if (source.length() > 30000){
-			this.addActionError("Source code should be shorter than 30000 characters!");
+		if (source.getBytes("UTF-8").length > 30000){
+			this.addActionError("Source code should be shorter than 30000 bytes in UTF-8!");
 			return INPUT;
 		}
 		submission = new Submission();

@@ -47,9 +47,20 @@ public class UVALiveSpider extends Spider {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			html = Tools.getHtml(getMethod, null);
-			html = pdfLink + html.replaceAll("(?i)(src=\"?)(?!\"*http)", "$1http://livearchive.onlinejudge.org/external/" + category + "/");
-			description.setDescription(html);
+			html = Tools.getHtml(getMethod, null).replaceAll("(?i)src\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "src=$1http://livearchive.onlinejudge.org/external/" + category + "/");
+			description.setDescription(pdfLink + Tools.regFind(html, "([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
+			description.setInput(Tools.regFind(html, "Input</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
+			description.setOutput(Tools.regFind(html, "Output</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
+			description.setSampleInput(Tools.regFind(html, "Sample Input</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
+			description.setSampleOutput(Tools.regFind(html, "Sample Output</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*)"));
+			
+			if (description.getSampleInput().isEmpty() || description.getSampleOutput().isEmpty()) {
+				description.setDescription(pdfLink + html);
+				description.setInput(null);
+				description.setOutput(null);
+				description.setSampleInput(null);
+				description.setSampleOutput(null);
+			}
 		} catch (Exception e) {
 			getMethod.releaseConnection();
 		}

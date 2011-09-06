@@ -5,6 +5,7 @@
 package judge.action;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -534,7 +535,7 @@ public class ContestAction extends BaseAction {
 		return SUCCESS;
 	}
 	
-	public String submit(){
+	public String submit() throws UnsupportedEncodingException{
 		Map session = ActionContext.getContext().getSession();
 		List<Object[]> list = baseService.query("select cp, p, c from Cproblem cp left join cp.problem p left join cp.contest c where cp.id = " + pid);
 		cproblem = (Cproblem) list.get(0)[0];
@@ -573,8 +574,8 @@ public class ContestAction extends BaseAction {
 			this.addActionError("Source code should be longer than 50 characters!");
 			return INPUT;
 		}
-		if (source.length() > 30000){
-			this.addActionError("Source code should be shorter than 30000 characters!");
+		if (source.getBytes("UTF-8").length > 30000){
+			this.addActionError("Source code should be shorter than 30000 bytes in UTF-8!");
 			return INPUT;
 		}
 		Submission submission = new Submission();
