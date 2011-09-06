@@ -192,7 +192,7 @@ public class JudgeService extends BaseService {
 				if (nameData.length() > 0) {
 					nameData.append(",");
 				}
-				nameData.append("\"").append(uid).append("\":[\"").append(name[0]).append("\",\"").append(((String)name[1]).replaceAll("\"", "'")).append("\"]");
+				nameData.append("\"").append(uid).append("\":[\"").append(name[0]).append("\",\"").append(((String)name[1]).replace("\\", "\\\\").replace("\"", "\\\"")).append("\"]");
 			}
 			
 			StringBuffer standingData = new StringBuffer("[{").append(nameData).append("}").append(submissionData).append("]");
@@ -445,7 +445,7 @@ public class JudgeService extends BaseService {
 		
 		StringBuffer sb = new StringBuffer("[{}");
 		for (Submission submission : submissions) {
-			sb.append(",[\"").append(submission.getUsername().trim().replaceAll("\"", "'")).append("\",").append(submission.getId()).append(",").append(submission.getStatus()).append(",").append(submission.getSubTime().getTime() / 1000L).append("]");
+			sb.append(",[\"").append(submission.getUsername().trim().replace("\\", "\\\\").replace("\"", "\\\"")).append("\",").append(submission.getId()).append(",").append(submission.getStatus()).append(",").append(submission.getSubTime().getTime() / 1000L).append("]");
 		}
 		sb.append("]");
 		
