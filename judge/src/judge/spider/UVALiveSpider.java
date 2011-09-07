@@ -49,9 +49,9 @@ public class UVALiveSpider extends Spider {
 			}
 			html = Tools.getHtml(getMethod, null).replaceAll("(?i)src\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "src=$1http://livearchive.onlinejudge.org/external/" + category + "/");
 			description.setDescription(pdfLink + Tools.regFind(html, "([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
-			description.setInput(Tools.regFind(html, "Input</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
+			description.setInput(Tools.regFind(html, "Int?put</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
 			description.setOutput(Tools.regFind(html, "Output</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
-			description.setSampleInput(Tools.regFind(html, "Sample Input</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
+			description.setSampleInput(Tools.regFind(html, "Sample Int?put</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
 			description.setSampleOutput(Tools.regFind(html, "Sample Output</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*)"));
 			
 			if (description.getSampleInput().isEmpty() || description.getSampleOutput().isEmpty()) {
