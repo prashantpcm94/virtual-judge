@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
 import judge.tool.Tools;
 
@@ -123,7 +122,10 @@ public class CodeForcesSubmitter extends Submitter {
 			}
 		}
 		
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
+		String probNum = submission.getOriginProb();
+		getMethod = new GetMethod("http://codeforces.com/problemset/problem/" + probNum.substring(0, probNum.length() - 1) + "/" + probNum.substring(probNum.length() - 1));
+		httpClient.executeMethod(getMethod);
+		
 		String source = submission.getSource() + "\n";
 		int random = (int) (Math.random() * 87654321);
 		while (random > 0) {
@@ -132,7 +134,7 @@ public class CodeForcesSubmitter extends Submitter {
 		}
 		PostMethod postMethod = new PostMethod("http://codeforces.com/problemset/submit");
 		postMethod.addParameter("action", "submitSolutionFormSubmitted");
-		postMethod.addParameter("submittedProblemCode", problem.getOriginProb());
+		postMethod.addParameter("submittedProblemCode", submission.getOriginProb());
 		postMethod.addParameter("language", submission.getLanguage());
 		postMethod.addParameter("source", source);
 		postMethod.addParameter("sourceFile", "");
