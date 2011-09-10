@@ -12,7 +12,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import judge.bean.Problem;
 import judge.tool.ApplicationContainer;
 import judge.tool.Tools;
 
@@ -84,12 +83,10 @@ public class UVASubmitter extends Submitter {
 	}
 	
 	private void submit() throws Exception{
-		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
-
 		PostMethod postMethod = new PostMethod("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=25&page=save_submission");
 		postMethod.addParameter("problemid", "");
 		postMethod.addParameter("category", "");
-		postMethod.addParameter("localid", problem.getOriginProb());
+		postMethod.addParameter("localid", submission.getOriginProb());
 		postMethod.addParameter("language", submission.getLanguage());
 		postMethod.addParameter("code", submission.getSource());
 		postMethod.addParameter("codeupl", "");
@@ -107,6 +104,9 @@ public class UVASubmitter extends Submitter {
 		if (!headerLocation.contains("Submission+received+with+ID")){
 			throw new Exception();
 		}
+		String submissionId = Tools.regFind(headerLocation, "with\\+ID\\+(\\d+)");
+		submission.setRealRunId(submissionId);
+		baseService.addOrModify(submission);
 	}
 	
 	private void login(String username, String password) throws Exception{
@@ -172,7 +172,7 @@ public class UVASubmitter extends Submitter {
 					result = "processing";
 				}
 				submission.setStatus(result);
-				submission.setRealRunId(m.group(1));
+				//submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
 					if (result.equals("Accepted")){
 						submission.setTime(Integer.parseInt(m.group(4).replaceAll("\\.", "")));
