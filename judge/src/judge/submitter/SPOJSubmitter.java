@@ -140,14 +140,10 @@ public class SPOJSubmitter extends Submitter {
 		byte[] responseBody = postMethod.getResponseBody();
 		String tLine = new String(responseBody, "UTF-8");
 		if (tLine.contains("submit in this language for this problem")){
-			submission.setStatus("Language Error");
-			baseService.addOrModify(submission);
-			throw new Exception("Language Error");
+			throw new Exception("judge_exception:Language Error");
 		}
 		if (tLine.contains("solution is too long")){
-			submission.setStatus("Code length exceeded");
-			baseService.addOrModify(submission);
-			throw new Exception("Code length exceeded");
+			throw new Exception("judge_exception:Code length exceeded");
 		}
 		//注意:此处判断登陆成功条件并不充分,相当于默认成功
 	}
@@ -237,10 +233,12 @@ public class SPOJSubmitter extends Submitter {
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			if (e.getMessage() == null){
+			if (e.getMessage() != null && e.getMessage().startsWith("judge_exception:")){
+				submission.setStatus(e.getMessage().substring(16));
+			} else {
 				submission.setStatus("Judging Error " + errorCode);
-				baseService.addOrModify(submission);
 			}
+			baseService.addOrModify(submission);
 		}
 		
 	}

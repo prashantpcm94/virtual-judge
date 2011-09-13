@@ -68,7 +68,7 @@ public class AizuSubmitter extends Submitter {
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.executeMethod(getMethod);
 		String html = Tools.getHtml(getMethod, null);
-		maxRunId = Integer.parseInt(Tools.regFind(html, "<td class=\"text-left\">#(\\d{6,})</td>"));
+		maxRunId = Integer.parseInt(Tools.regFind(html, "show_code\\.jsp\\?runID=(\\d{6,})"));
 		System.out.println("maxRunId : " + maxRunId);
 	}
 	
@@ -91,7 +91,7 @@ public class AizuSubmitter extends Submitter {
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "#(\\d{6,})</td>\\s*<td[^<>]*><a[^<>]*>" + username + "[\\s\\S]*?icon\\w+\">:([\\s\\S]*?)</span>[\\s\\S]*?text-right\">([\\s\\S]*?)<[\\s\\S]*?text-right\">([\\s\\S]*?)<", result;
+		String reg = "#(\\d{6,})</a></td>\\s*<td[^<>]*><a[^<>]*>" + username + "[\\s\\S]*?icon\\w+\">:([\\s\\S]*?)</span>[\\s\\S]*?text-right\">([\\s\\S]*?)<[\\s\\S]*?text-right\">([\\s\\S]*?)<", result;
 		Pattern p = Pattern.compile(reg);
 
 		GetMethod getMethod = new GetMethod("http://judge.u-aizu.ac.jp/onlinejudge/status.jsp");
@@ -189,10 +189,8 @@ public class AizuSubmitter extends Submitter {
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			if (e.getMessage() == null){
-				submission.setStatus("Judging Error " + errorCode);
-				baseService.addOrModify(submission);
-			}
+			submission.setStatus("Judging Error " + errorCode);
+			baseService.addOrModify(submission);
 		}
 	}
 

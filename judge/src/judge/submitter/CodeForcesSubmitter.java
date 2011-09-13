@@ -147,14 +147,10 @@ public class CodeForcesSubmitter extends Submitter {
 		
 		String tLine = new String(postMethod.getResponseBody(), "UTF-8");
 		if (tLine.contains("error for__language")) {
-			submission.setStatus("Language Error");
-			baseService.addOrModify(submission);
-			throw new Exception("Language Error");
+			throw new Exception("judge_exception:Language Error");
 		}
 		if (tLine.contains("error for__source")) {
-			submission.setStatus("Source Code Error");
-			baseService.addOrModify(submission);
-			throw new Exception("Source Code Error");
+			throw new Exception("judge_exception:Source Code Error");
 		}
 		
 		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
@@ -280,10 +276,12 @@ public class CodeForcesSubmitter extends Submitter {
 			getResult(usernameList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
-			if (e.getMessage() == null){
+			if (e.getMessage() != null && e.getMessage().startsWith("judge_exception:")){
+				submission.setStatus(e.getMessage().substring(16));
+			} else {
 				submission.setStatus("Judging Error " + errorCode);
-				baseService.addOrModify(submission);
 			}
+			baseService.addOrModify(submission);
 		}
 		
 	}
