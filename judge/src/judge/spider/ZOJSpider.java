@@ -42,10 +42,10 @@ public class ZOJSpider extends Spider {
 		problem.setMemoryLimit(Integer.parseInt(Tools.regFind(html, "Memory Limit: </font> ([\\s\\S]*?) KB")));
 		if (html.contains("Input<") && html.contains("Output<") && html.contains("Sample Input<") && html.contains("Sample Output<")){
 			description.setDescription(Tools.regFind(html, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)>[\\s]*Input"));
-			description.setInput(Tools.regFind(html, ">[\\s]*Input([\\s\\S]*?)>[\\s]*Output"));
-			description.setOutput(Tools.regFind(html, ">[\\s]*Output([\\s\\S]*?)>[\\s]*Sample Input"));
-			description.setSampleInput(Tools.regFind(html, ">[\\s]*Sample Input([\\s\\S]*?)>[\\s]*Sample Output"));
-			description.setSampleOutput(Tools.regFind(html, ">[\\s]*Sample Output([\\s\\S]*?)<hr"));
+			description.setInput(Tools.regFindCaseSensitive(html, ">[\\s]*Input([\\s\\S]*?)>[\\s]*Out?put"));
+			description.setOutput(Tools.regFindCaseSensitive(html, ">[\\s]*Out?put([\\s\\S]*?)>[\\s]*Sample Input"));
+			description.setSampleInput(Tools.regFind(html, ">[\\s]*Sample Input([\\s\\S]*?)>[\\s]*Sample Out?put"));
+			description.setSampleOutput(Tools.regFind(html, ">[\\s]*Sample Out?put([\\s\\S]*?)<hr"));
 		} else {
 			description.setDescription(Tools.regFind(html, "KB[\\s\\S]*?</center>[\\s\\S]*?<hr>([\\s\\S]*?)<hr"));
 		}
