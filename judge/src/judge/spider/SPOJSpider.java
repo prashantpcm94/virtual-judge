@@ -38,17 +38,17 @@ public class SPOJSpider extends Spider {
 		}
 		Double timeLimit = 1000 * Double.parseDouble(Tools.regFind(html, "Time limit:</td><td>([\\s\\S]*?)s"));
 		problem.setTimeLimit(timeLimit.intValue());
-		description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<h3[^<>]*>Input|<hr>)"));
-		description.setInput(Tools.regFind(html, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)"));
-		description.setOutput(Tools.regFind(html, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)"));
-		description.setSampleInput(Tools.regFind(html, "<h3[^<>]*>Example</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)"));
-		description.setHint(Tools.regFind(html, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)<hr>") + Tools.regFind(html, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)<hr>"));
+		description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<h3|<hr|<script)"));
+		description.setInput(Tools.regFind(html, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3|<hr|<script)"));
+		description.setOutput(Tools.regFind(html, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3|<hr|<script)"));
+		description.setSampleInput(Tools.regFind(html, "<h3[^<>]*>Example</h3>([\\s\\S]*?)(<h3|<hr|<script)"));
+		description.setHint(Tools.regFind(html, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)(<h3|<hr|<script)") + Tools.regFind(html, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)(<h3|<hr|<script)"));
 		
 		if (description.getDescription().isEmpty() || 
 			description.getInput().isEmpty() || 
 			description.getOutput().isEmpty() || 
 			description.getSampleInput().isEmpty()) {
-			description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)<hr>"));
+			description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<hr|<script)"));
 			description.setInput(null);
 			description.setOutput(null);
 			description.setSampleInput(null);
