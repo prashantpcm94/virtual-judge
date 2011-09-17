@@ -36,15 +36,27 @@ public class SPOJSpider extends Spider {
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
-		Double timeLimit = 1000 * Double.parseDouble(Tools.regFind(html, "Time limit:</td><td>([\\s\\S]*?)s", 1));
+		Double timeLimit = 1000 * Double.parseDouble(Tools.regFind(html, "Time limit:</td><td>([\\s\\S]*?)s"));
 		problem.setTimeLimit(timeLimit.intValue());
-		description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<h3[^<>]*>Input|<hr>)", 1));
-		description.setInput(Tools.regFind(html, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
-		description.setOutput(Tools.regFind(html, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
-		description.setSampleInput(Tools.regFind(html, "<h3[^<>]*>Example</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)", 1));
-		description.setHint(Tools.regFind(html, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)<hr>", 1) + Tools.regFind(html, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)<hr>", 1));
+		description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<h3[^<>]*>Input|<hr>)"));
+		description.setInput(Tools.regFind(html, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)"));
+		description.setOutput(Tools.regFind(html, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)"));
+		description.setSampleInput(Tools.regFind(html, "<h3[^<>]*>Example</h3>([\\s\\S]*?)(<h3[^<>]*>|<hr>)"));
+		description.setHint(Tools.regFind(html, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)<hr>") + Tools.regFind(html, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)<hr>"));
 		
-		problem.setSource(Tools.regFind(html, "Resource:</td><td>([\\s\\S]*?)</td></tr>", 1));
+		if (description.getDescription().isEmpty() || 
+			description.getInput().isEmpty() || 
+			description.getOutput().isEmpty() || 
+			description.getSampleInput().isEmpty()) {
+			description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)<hr>"));
+			description.setInput(null);
+			description.setOutput(null);
+			description.setSampleInput(null);
+			description.setSampleOutput(null);
+			description.setHint(null);
+		}
+		
+		problem.setSource(Tools.regFind(html, "Resource:</td><td>([\\s\\S]*?)</td></tr>"));
 		problem.setUrl("http://www.spoj.pl/problems/" + problem.getOriginProb());
 	}
 }
