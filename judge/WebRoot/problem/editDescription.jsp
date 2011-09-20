@@ -7,12 +7,8 @@ String basePath = (String)application.getAttribute("basePath");
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- Problem</title>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/redmond/jquery-ui-1.8.9.custom.css" />
-
+		<title>Virtual Judge -- Problem</title>
+		<s:include value="/header.jsp" />
 
 		<style id="styles" type="text/css">
 			#editorsForm {
@@ -23,9 +19,8 @@ String basePath = (String)application.getAttribute("basePath");
 				padding: 0;
 			}
 		</style>
-		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
-		<script type="text/javascript" src="javascript/jquery-ui-1.8.9.custom.min.js"></script>
+		<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
 
 		<script type="text/javascript" src="javascript/editDescription.js"></script>
 	</head>

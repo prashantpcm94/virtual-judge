@@ -34,3 +34,94 @@ Date.prototype.format = function(format){
 			format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
 	return format;
 }
+
+$(function(){
+	var allFields = $( [] ).add( $( "input.text" ) ).add( $( "#blog" ) ),
+		tips = $( ".validateTips" );
+
+	function updateTips( t ) {
+		tips.text( t ).addClass( "ui-state-highlight" );
+		setTimeout(function() {
+			tips.removeClass( "ui-state-highlight", 1500 );
+		}, 500 );
+	}
+
+	$( "#dialog-form-login" ).dialog({
+		autoOpen: false,
+		height: 270,
+		width: 350,
+		modal: true,
+		buttons: {
+			"Login": function() {
+				var info = {username: $("#username").val(), password: $("#password").val()};
+				$.post('user/login.action', info, function(data) {
+					if (data == "success") {
+						$( this ).dialog( "close" );
+						window.location.reload();
+					} else {
+						updateTips(data);						
+					}
+				});
+			},
+			"Cancel": function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			allFields.val( "" );
+		}
+	});
+	
+	$( "#dialog-form-register" ).dialog({
+		autoOpen: false,
+		height: 570,
+		width: 480,
+		modal: true,
+		buttons: {
+			"Register": function() {
+				var info = {
+					username: $("#username1").val(),
+					password: $("#password1").val(),
+					repassword: $("#repassword").val(),
+					nickname: $("#nickname").val(),
+					school: $("#school").val(),
+					qq: $("#qq").val(),
+					email: $("#email").val(),
+					blog: $("#blog").val(),
+					share: $("#share").val()
+				};
+				$.post('user/register.action', info, function(data) {
+					if (data == "success") {
+						$( this ).dialog( "close" );
+						window.location.reload();
+					} else {
+						updateTips(data);						
+					}
+				});
+			},
+			"Cancel": function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			allFields.val( "" );
+		}
+	});
+
+	$("#login").click(function(){
+		tips.html("Fill the blank");
+		$( "#dialog-form-login" ).dialog( "open" );
+	});
+
+	$("#register").click(function(){
+		tips.html("Fill the blank");
+		$( "#dialog-form-register" ).dialog( "open" );
+	});
+
+	$("#logout").click(function(){
+		$.get("user/logout.action", function(){
+			window.location.reload();
+		});
+	});
+
+});

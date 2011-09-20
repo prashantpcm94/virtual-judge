@@ -77,9 +77,9 @@ $(document).ready(function() {
 					}
 				],
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
-			var s = $("[name='scheduled']").attr("checked");
-			var r = $("[name='running']").attr("checked");
-			var e = $("[name='ended']").attr("checked");
+			var s = $("[name='scheduled']").prop("checked");
+			var r = $("[name='running']").prop("checked");
+			var e = $("[name='ended']").prop("checked");
 			var contestType = $("[name='contestType']:checked").val();
 		
 			aoData.push( { "name": "s", "value": s } );
@@ -113,9 +113,10 @@ $(document).ready(function() {
 	$("div.head_status").insertBefore("div#listContest_processing").show();
 	$("div.dataTables_filter").css("width", "250px");
 
-	$("input[type='checkbox']").change(function(){
-		$.cookie("checked_" + $(this).attr("name"), $(this).attr("checked"), {expires:7});
-		$("[name='"+$(this).attr("name")+"']").attr("checked", $(this).attr("checked"));
+	$("input[type='checkbox']").change(function() {
+//		alert("checked_" + $(this).attr("name") + "     " +  ($(this).prop("checked")));
+		$.cookie("checked_" + $(this).attr("name"), $(this).prop("checked"), {expires:7});
+//		$("[name='"+$(this).attr("name")+"']").attr("checked", $(this).attr("checked"));
 		oTable.fnDraw();
 	});
 	

@@ -8,16 +8,14 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- Source Code</title>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<s:include value="/header.jsp" />
+		<title>Virtual Judge -- Source Code</title>
 		<script type="text/javascript" src="shjs/sh_main.min.js" ></script>
 		<script type="text/javascript" src="<%=langFile%>" ></script>
 		<link type="text/css" rel="stylesheet" href="shjs/css/sh_style.min.css" />
-		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
-	    <script type="text/javascript" src="dwr/interface/judgeService.js"></script>
+		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
-	    <script type='text/javascript' src='dwr/util.js'></script>
+		<script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/viewSource.js"></script>
 	</head>

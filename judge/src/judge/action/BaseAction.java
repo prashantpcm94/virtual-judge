@@ -57,6 +57,8 @@ public class BaseAction extends ActionSupport{
 	protected Integer iSortCol_0;
 	protected String sSortDir_0;
 	protected String sEcho;
+	
+	protected String jsonInfo;
 
 	protected IBaseService baseService;
 	protected JudgeService judgeService;
@@ -207,6 +209,12 @@ public class BaseAction extends ActionSupport{
 	}
 	public void setJudgeService(JudgeService judgeService) {
 		this.judgeService = judgeService;
+	}
+	public String getJsonInfo() {
+		return jsonInfo;
+	}
+	public void setJsonInfo(String jsonInfo) {
+		this.jsonInfo = jsonInfo;
 	}
 	
 }

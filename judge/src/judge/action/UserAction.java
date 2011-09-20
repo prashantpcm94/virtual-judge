@@ -6,20 +6,20 @@ package judge.action;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletRequestAware;
 
 import judge.bean.User;
 import judge.service.IUserService;
 import judge.tool.MD5;
 
 import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-
-
 
 @SuppressWarnings("unchecked")
-public class UserAction extends ActionSupport {
+public class UserAction extends BaseAction implements ServletRequestAware {
 	
 	private static final long serialVersionUID = -4110838947220309361L;
 	private User user;
@@ -35,6 +35,7 @@ public class UserAction extends ActionSupport {
 	private String repassword;
 	private String newpassword;
 	private String redir;
+	private HttpServletRequest request; 
 	private IUserService userService;
 	
 	
@@ -122,69 +123,52 @@ public class UserAction extends ActionSupport {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
-	public String toLogin(){
-		redir = ServletActionContext.getRequest().getHeader("Referer");
-		return SUCCESS;
+	public void setServletRequest(HttpServletRequest request) {
+		this.request = request;
 	}
 	
 	public String login(){
 		Map session = ActionContext.getContext().getSession();
 		User user = userService.getByUsername(username);
-		if (user == null || !user.getPassword().equals(MD5.getMD5(password))){
-			this.addActionError("Username and password don't match!");
-			return INPUT;
+		if (user == null || !user.getPassword().equals(MD5.getMD5(password))) {
+			jsonInfo = "Username and password don't match!";
+		} else {
+			jsonInfo = "success";
+			session.put("visitor", user);
 		}
-		session.put("visitor", user);
 		return SUCCESS;
 	}
 	
 	public String logout(){
-		Map session = ActionContext.getContext().getSession();
-		session.remove("visitor");
-		redir = ServletActionContext.getRequest().getHeader("Referer");
+		request.getSession().invalidate();
 		return SUCCESS;
 	}
 
-	public String toRegister(){
-		redir = ServletActionContext.getRequest().getHeader("Referer");
-		return SUCCESS;
-	}
-	
 	public String register(){
+		jsonInfo = null;
 		if (!username.matches("[0-9a-zA-Z_]+")){
-			this.addActionError("Username should only contain digits, letters, or '_'s !");
+			jsonInfo = "Username should only contain digits, letters, or '_'s !";
+		} else if (username.length() < 2 || username.length() > 16){
+			jsonInfo = "Username should have at least 2 characters and at most 16 characters!";
+		} else if (nickname.length() > 20){
+			jsonInfo = "Nickname should have at most 20 characters!";
+		} else if (password.length() < 4 || password.length() > 30){
+			jsonInfo = "Password should have at least 4 characters and at most 30 characters!";
+		} else if (!password.equals(repassword)){
+			jsonInfo = "Two passwords are not the same!";
+		} else if (userService.checkUsername(username)){
+			jsonInfo = "Username has been registered!";
+		} else if (qq.length() > 15){
+			jsonInfo = "QQ is too long!";
+		} else if (school.length() > 95){
+			jsonInfo = "School is too long!";
+		} else if (email.length() > 95){
+			jsonInfo = "Email is too long!";
+		} else if (blog.length() > 995){
+			jsonInfo = "Blog is too long!";
 		}
-		if (username.length() < 2 || username.length() > 16){
-			this.addActionError("Username should have at least 2 characters and at most 16 characters!");
-		}
-		if (nickname.length() > 20){
-			this.addActionError("Nickname should have at most 20 characters!");
-		}
-		if (password.length() < 4 || password.length() > 30){
-			this.addActionError("Password should have at least 4 characters and at most 30 characters!");
-		}
-		if (!password.equals(repassword)){
-			this.addActionError("Passwords are not match!");
-		}
-		if (userService.checkUsername(username)){
-			this.addActionError("Username has been registered!");
-		}
-		if (qq.length() > 15){
-			this.addActionError("QQ is too long!");
-		}
-		if (school.length() > 95){
-			this.addActionError("School is too long!");
-		}
-		if (email.length() > 95){
-			this.addActionError("Email is too long!");
-		}
-		if (blog.length() > 995){
-			this.addActionError("Blog is too long!");
-		}
-		if (!this.getActionErrors().isEmpty()){
-			return INPUT;
+		if (jsonInfo != null){
+			return SUCCESS;
 		}
 		User user = new User(username, MD5.getMD5(password));
 		user.setNickname(nickname.trim());
@@ -196,6 +180,7 @@ public class UserAction extends ActionSupport {
 		userService.addOrModify(user);
 		Map session = ActionContext.getContext().getSession();
 		session.put("visitor", user);
+		jsonInfo = "success";
 		return SUCCESS;
 	}
 	
