@@ -89,7 +89,7 @@ public class URALSubmitter extends Submitter {
 	private void submit(String password) throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		
-        PostMethod postMethod = new PostMethod("http://acm.timus.ru/submit.aspx");
+		PostMethod postMethod = new PostMethod("http://acm.timus.ru/submit.aspx");
 		postMethod.addParameter("Action", "submit");
 		postMethod.addParameter("Language", submission.getLanguage());
 		postMethod.addParameter("ProblemNum", problem.getOriginProb());
@@ -97,9 +97,9 @@ public class URALSubmitter extends Submitter {
 		postMethod.addParameter("JudgeID", password);
 		postMethod.addParameter("SpaceID", "1");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-        httpClient.getParams().setContentCharset("UTF-8"); 
+		httpClient.getParams().setContentCharset("UTF-8"); 
 
-        System.out.println("submit...");
+		System.out.println("submit...");
 		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
 		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
@@ -108,37 +108,37 @@ public class URALSubmitter extends Submitter {
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "aspx/(\\d+)\\.txt[\\s\\S]*?class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
-        Pattern p = Pattern.compile(reg);
-        GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx?author=" + username.substring(0, 5));
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		String reg = "aspx/(\\d+)[\\s\\S]*?class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
+		Pattern p = Pattern.compile(reg);
+		GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx?author=" + username.substring(0, 5));
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			System.out.println("getResult...");
-	        httpClient.executeMethod(getMethod);
-	        byte[] responseBody = getMethod.getResponseBody();
-	        String tLine = new String(responseBody, "UTF-8");
+			httpClient.executeMethod(getMethod);
+			byte[] responseBody = getMethod.getResponseBody();
+			String tLine = new String(responseBody, "UTF-8");
 			Matcher m = p.matcher(tLine);
 			
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
-    			result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
+				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
 				submission.setRealRunId(m.group(1));
-    			if (!result.contains("ing")){
-    				if (result.equals("Accepted")){
-	    				submission.setMemory(Integer.parseInt(m.group(4).replaceAll(" ", "")));
-	    				submission.setTime((int)(0.5 + 1000 * Double.parseDouble(m.group(3))));
-    				} else if (result.contains("Compilation error")) {
+				if (!result.contains("ing")){
+					if (result.equals("Accepted")){
+						submission.setMemory(Integer.parseInt(m.group(4).replaceAll(" ", "")));
+						submission.setTime((int)(0.5 + 1000 * Double.parseDouble(m.group(3))));
+					} else if (result.contains("Compilation error")) {
 						getAdditionalInfo(submission.getRealRunId());
 					}
-    				baseService.addOrModify(submission);
-    				return;
-    			}
+					baseService.addOrModify(submission);
+					return;
+				}
 				baseService.addOrModify(submission);
-    		}
+			}
 			Thread.sleep(interval);
 			interval += 500;
-        }
+		}
 		throw new Exception();
 	}
 	
