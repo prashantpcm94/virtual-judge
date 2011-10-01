@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+
 @SuppressWarnings("unchecked")
 public interface IBaseService {
 	/**
@@ -37,5 +39,17 @@ public interface IBaseService {
 
 	public void execute(String hql);
 	public void execute(String hql, Map parMap);
+
+	/**
+	 * 从baseDao获取一个session，以方便完成原子操作
+	 * @return session
+	 */
+	public Session getSession();
+	
+	/**
+	 * 释放getSession()获取的session
+	 * @param session
+	 */
+	public void releaseSession(Session session);
 
 }

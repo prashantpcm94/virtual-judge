@@ -10,8 +10,11 @@ String basePath = (String)application.getAttribute("basePath");
 		<s:include value="/header.jsp" />
 		<title>Virtual Judge -- Contest</title>
 		<link href="facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
+		<style type="text/css" media="screen">
+			.dataTables_paginate {float: right; text-align: right}
+		</style>
+
 		<script type="text/javascript" src="facebox/facebox.js"></script>
-		
 		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
 		<script type='text/javascript' src='dwr/util.js'></script>

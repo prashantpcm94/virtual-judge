@@ -34,7 +34,7 @@ $(document).ready(function() {
 					},
 					{
 						"fnRender": function ( oObj ) {
-							return "<div class='title'><a href='contest/viewContest.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[1] + "</a></div>";
+							return "<div class='title'><a cid='" + oObj.aData[0] + "' class='contest_entry' href='contest/view.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[1] + "</a></div>";
 						},
 						"sClass": "title"
 					},
@@ -103,20 +103,11 @@ $(document).ready(function() {
 		"sPaginationType": "full_numbers"
 	});
 	
-	var query = parseUrlParameter()['q'];
-	if (query) {
-		setTimeout(function(){
-			oTable.fnFilter(query);
-		}, 300);
-	}
-
 	$("div.head_status").insertBefore("div#listContest_processing").show();
 	$("div.dataTables_filter").css("width", "250px");
 
 	$("input[type='checkbox']").change(function() {
-//		alert("checked_" + $(this).attr("name") + "     " +  ($(this).prop("checked")));
 		$.cookie("checked_" + $(this).attr("name"), $(this).prop("checked"), {expires:7});
-//		$("[name='"+$(this).attr("name")+"']").attr("checked", $(this).attr("checked"));
 		oTable.fnDraw();
 	});
 	
@@ -124,11 +115,70 @@ $(document).ready(function() {
 		$.cookie("contestType", $(this).val(), {expires:7});
 		oTable.fnDraw();
 	});
+	
+	$( "#dialog-form-contest-login" ).dialog({
+		autoOpen: false,
+		height: 200,
+		width: 350,
+		modal: true,
+		buttons: {
+			"Login": function() {
+				var cid = $("#cid").val(), info = {password: $("#contest_password").val(), cid: cid};
+				$.post('contest/loginContest.action', info, function(data) {
+					if (data == "success") {
+						$( this ).dialog( "close" );
+						window.location.href = "contest/view.action?cid=" + cid;
+					} else {
+						updateTips(data);						
+					}
+				});
+			},
+			"Cancel": function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			$("p.validateTips").html("");
+			$( this ).find(":input").val("");
+		}
+	}).keyup(function(e){
+		if (e.keyCode == 13) {
+			$(this).dialog('option', 'buttons')['Login']();
+		}
+	});
 
+	$("a.contest_entry").live('click', function(){
+		attemptLoginContest($(this).attr("cid"));
+		return false;
+	});
+	
+	var para = parseUrlParameter();
+	var query = para['q'];
+	if (query) {
+		setTimeout(function(){
+			oTable.fnFilter(query);
+		}, 300);
+	}
+	var cid = para['cid'];
+	if (cid) {
+		attemptLoginContest(cid);
+	}
+	
 });
 
 function comfirmDeleteContest(cid){
 	if (confirm("Sure to delete this contest?")){
 		location = 'contest/deleteContest.action?cid=' + cid;
 	}
+}
+
+function attemptLoginContest(cid) {
+	$("#cid").val(cid);
+	$.get("contest/checkAuthorizeStatus.action?cid=" + cid, function(authorizeStatus){
+		if (authorizeStatus == "success") {
+			window.location.href = "contest/view.action?cid=" + cid;
+		} else {
+			$("#dialog-form-contest-login").dialog('open');
+		}
+	});
 }

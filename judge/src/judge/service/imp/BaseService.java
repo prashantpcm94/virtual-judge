@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+
 import judge.dao.IBaseDao;
 import judge.service.IBaseService;
 
@@ -90,6 +92,14 @@ public class BaseService implements IBaseService {
 
 	public void execute(String hql, Map parMap) {
 		BaseService.baseDao.execute(hql, parMap);
+	}
+	
+	public Session getSession() {
+		return baseDao.createSession();
+	}
+
+	public void releaseSession(Session session) {
+		baseDao.closeSession(session);
 	}
 	
 	//////////////////////////////////////////////

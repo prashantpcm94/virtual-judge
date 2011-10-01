@@ -2,13 +2,13 @@
 <%@ page import="org.apache.struts2.ServletActionContext" %>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%
-String basePath = (String)application.getAttribute("basePath");
 String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
+		<s:include value="/header.jsp" />
 		<title>Virtual Judge -- Source code</title>
 		<script type="text/javascript" src="shjs/sh_main.min.js" ></script>
 		<script type="text/javascript" src="<%=langFile%>" ></script>
@@ -22,21 +22,9 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 
 	<body onload="sh_highlightDocument();">
 		<s:include value="/top.jsp" />
-		
-		<center><font color=#333399 size=5 >Source Code</font></center><br />
+		<div class="ptt" style="color:black;font-weight:normal;margin-bottom:12px"><a href="user/profile.action?uid=${uid}">${un}</a> 's source code for <a href="problem/viewProblem.action?id=${submission.problem.id}">${problem.originOJ} ${problem.originProb}</a></div>
 		<div class="plm" style="text-align:left">
 			<table align="center" style="font-size:10pt">
-				<tr>
-					<td>
-						<b>Problem: </b>
-						<a href="problem/viewProblem.action?id=${submission.problem.id}">${problem.originOJ} ${problem.originProb}</a>
-					</td>
-					<td width=10px></td>
-					<td>
-						<b>User: </b>
-						<a href="user/profile.action?uid=${uid}">${un}</a>
-					</td>
-				</tr>
 				<tr>
 					<td>
 						<b>Memory: </b>${submission.memory} KB

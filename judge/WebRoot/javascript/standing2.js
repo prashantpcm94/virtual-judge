@@ -29,10 +29,11 @@ var standingTableSetting = {
 	"bInfo": false,
 	"bAutoWidth": false,
 	"aoColumnDefs": [
-		{"sType":"rank", "bSortable":false, "aTargets": [0]},
-		{"sType":"string", "bSortable":false, "aTargets": [1]},
-		{"sType":"numeric", "bSortable":false, "aTargets": [2]},
-		{"sType":"date", "bSortable":false, "aTargets": [3]}
+		{"sType":"rank", "aTargets": [0]},
+		{"sType":"string", "aTargets": [1]},
+		{"sType":"numeric", "aTargets": [2]},
+		{"sType":"date", "aTargets": [3]},
+		{"bSortable":false, "aTargets": ["_all"]}
 	]
 };
 
@@ -331,7 +332,7 @@ function calcScoreBoard() {
 		sbHtml.push("</tr>");
 	}
 	if (sbHtml.length > 0) {
-		sbHtml.push("<tr><td style='background-color:#EAEBFF' /><td style='background-color:#EAEBFF'>Submission</td><td style='background-color:#EAEBFF'>statistics</td><td style='background-color:#EAEBFF' />");
+		sbHtml.push("<tr style='background:transparent'><td style='background:transparent'/><td /><td /><td />");
 		var maxCorrectNumber = 0, totalNumber = 0, totalCorrectNumber = 0;
 		for (var j = 0; j < pnum; ++j) {
 			totalNumber += totalSubmission[j];
@@ -342,7 +343,7 @@ function calcScoreBoard() {
 		}
 		for (var j = 0; j < pnum; ++j) {
 			if (!totalSubmission[j]) {
-				sbHtml.push("<td style='background-color:white'/>");
+				sbHtml.push("<td style='background:transparent'/>");
 			} else {
 				var ratio = maxCorrectNumber ? correctSubmission[j] / maxCorrectNumber : 0.0;
 				sbHtml.push("<td style='background-color:" + grayDepth(ratio) + ";color:" + (ratio < .5 ? "black" : "white") + "'>" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + Math.floor(100 * correctSubmission[j] / totalSubmission[j]) + "%</td>")

@@ -19,14 +19,20 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.Session;
+
+import com.opensymphony.xwork2.ActionContext;
+
 import judge.action.BaseAction;
 import judge.bean.Contest;
 import judge.bean.Problem;
 import judge.bean.ReplayStatus;
 import judge.bean.Submission;
+import judge.bean.User;
 import judge.service.imp.BaseService;
 import judge.submitter.Submitter;
 import judge.tool.ApplicationContainer;
+import judge.tool.OnlineTool;
 import judge.tool.Tools;
 
 @SuppressWarnings("unchecked")
@@ -553,7 +559,36 @@ public class JudgeService extends BaseService {
 		}
 		return sum;
 	}
-
-
+	
+	/**
+	 * 判断当前登录用户是否对某比赛有进入权限
+	 * @param cid 比赛ID
+	 * @return
+	 */
+	public boolean checkAuthorizeStatus(int cid) {
+		Map httpSession = ActionContext.getContext().getSession();
+		if (httpSession.containsKey("C" + cid)) {
+			return true;
+		}
+		User user = OnlineTool.getCurrentUser();
+		if (user != null && user.getSup() != 0) {
+			httpSession.put("C" + cid, 1);
+			return true;
+		}
+		Session session = this.getSession();
+		Object[] info = (Object[]) session.createQuery("select c.manager.id, c.password from Contest c where c.id = " + cid).uniqueResult();
+		this.releaseSession(session);
+		if (info == null) {
+			return false;
+		}
+		Integer managerId = (Integer) info[0];
+		String encryptedPassword = (String) info[1];
+		if (encryptedPassword == null || user != null && user.getId() == managerId) {
+			httpSession.put("C" + cid, 1);
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 }

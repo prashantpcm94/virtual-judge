@@ -19,6 +19,7 @@ import java.util.TreeMap;
 import javax.servlet.ServletContext;
 
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.Session;
 
 import judge.bean.Contest;
 import judge.bean.Cproblem;
@@ -191,7 +192,7 @@ public class ContestAction extends BaseAction {
 		if (user == null) {
 			return ERROR;
 		}
-		if (cid > 0 && session.get("C" + cid) != null) {
+		if (cid > 0 && judgeService.checkAuthorizeStatus(cid)) {
 			contest = (Contest) baseService.query(Contest.class, cid);
 			
 			//比赛结束后才能clone
@@ -426,6 +427,14 @@ public class ContestAction extends BaseAction {
 		}
 		return SUCCESS;
 	}
+	
+	public String view() {
+		if (!judgeService.checkAuthorizeStatus(cid)) {
+			return ERROR;
+		} else {
+			return SUCCESS;
+		}
+	}
 
 		
 	public String viewContest() {
@@ -465,17 +474,23 @@ public class ContestAction extends BaseAction {
 		return SUCCESS;
 	}
 	
+	public String checkAuthorizeStatus() {
+		jsonInfo = judgeService.checkAuthorizeStatus(cid) ? SUCCESS : ERROR;
+		return SUCCESS;
+	}
+	
 	public String loginContest(){
-		contest = (Contest) baseService.query("select c from Contest c left join fetch c.manager where c.id = " + cid).get(0);
-		Map session = ActionContext.getContext().getSession();
-		User user = (User) session.get("visitor");
-		if ((user != null && user.getSup() != 0) || MD5.getMD5(password).equals(contest.getPassword())){
-			session.put("C" + cid, 1);
-			return SUCCESS;
+		Map httpSession = ActionContext.getContext().getSession();
+		Session session = baseService.getSession();
+		String encryptedPassword = (String) session.createQuery("select c.password from Contest c where c.id = " + cid).uniqueResult();
+		baseService.releaseSession(session);
+		if (encryptedPassword == null || MD5.getMD5(password).equals(encryptedPassword)) {
+			httpSession.put("C" + cid, 1);
+			jsonInfo = SUCCESS;
+		} else {
+			jsonInfo = "Password is not correct!";
 		}
-		this.addActionError("Password is not correct!");
-		curDate = new Date();
-		return INPUT;
+		return SUCCESS;
 	}
 	
 	public String viewProblem(){

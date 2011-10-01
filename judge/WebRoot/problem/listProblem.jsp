@@ -39,7 +39,7 @@
 			</s:if>
 			<s:else>
 				OJ:&nbsp;&nbsp;<s:select id="OJId" name="OJId" list="OJListAll" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="user/toLogin.action"><font color="red">Login to add problems!</font></a>
+				<a class="login" href="javascript:void(0)"><font color="red">Login to add problems!</font></a>
 			</s:else>
 		</div>
 		

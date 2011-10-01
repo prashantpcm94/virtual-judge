@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+
 @SuppressWarnings("unchecked")
 public interface IBaseDao {
 	public void addOrModify(Object entity);
@@ -20,4 +22,6 @@ public interface IBaseDao {
 	public void execute(String statement);
 	public void execute(String statement, Map parMap);
 
+	public Session createSession();
+	public void closeSession(Session session);
 }

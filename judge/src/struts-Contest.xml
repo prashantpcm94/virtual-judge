@@ -9,6 +9,7 @@
 			<result name="success">/contest/listContest.jsp</result>
 		</action>
 
+		<!-- 获取比赛列表数据 -->
 		<action name="listContest" class="contestAction" method="listContest">
 			<result type="json">
 				<param name="root">dataTablesPage</param>
@@ -21,7 +22,7 @@
 		<!-- 进入添加比赛 -->
 		<action name="toAddContest" class="contestAction" method="toAddContest">
 			<result name="success">/contest/addContest.jsp</result>
-			<result name="error" type="redirect">../user/toLogin.action</result>		
+			<result name="error" type="redirect">toListContest.action</result>		
 		</action>
 
 		<!-- 添加比赛 -->
@@ -72,6 +73,26 @@
 			<result name="error" type="redirect">toListContest.action</result>
 		</action>
 
+		<!-- 检查比赛授权状态 -->
+		<action name="checkAuthorizeStatus" class="contestAction" method="checkAuthorizeStatus">
+			<result type="json">
+				<param name="root">jsonInfo</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">true</param>
+				<param name="contentType">application/json-rpc</param>
+			</result>
+		</action>
+
+		<!-- 进入比赛 -->
+		<action name="view" class="contestAction" method="view">
+			<result name="success">/contest/viewContest.jsp</result>		
+			<result name="error" type="redirectAction">
+				<param name="actionName">toListContest</param>
+				<param name="namespace">/contest</param>
+				<param name="cid">${cid}</param>
+			</result>
+		</action>
+
 		<!-- 进入比赛 -->
 		<action name="viewContest" class="contestAction" method="viewContest">
 			<result name="success">/contest/viewContest.jsp</result>		
@@ -80,12 +101,12 @@
 
 		<!-- 登陆比赛 -->
 		<action name="loginContest" class="contestAction" method="loginContest">
-			<result name="success" type="redirectAction">
-				<param name="actionName">viewContest</param>
-				<param name="namespace">/contest</param>
-				<param name="cid">${cid}</param>
+			<result type="json">
+				<param name="root">jsonInfo</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">true</param>
+				<param name="contentType">application/json-rpc</param>
 			</result>
-			<result name="input">/contest/loginContest.jsp</result>		
 		</action>
 		
 		<!-- 查看题目 -->
@@ -137,18 +158,6 @@
 				<param name="excludeNullProperties">false</param>
 				<param name="contentType">application/json-rpc</param>
 			</result>
-		</action>
-
-		<!-- 显示提交(上一页) -->
-		<action name="statusPrev" class="contestAction" method="statusPrev">
-			<result name="success">/contest/status.jsp</result>
-			<result name="input">/contest/loginContest.jsp</result>		
-		</action>
-
-		<!-- 显示提交(下一页) -->
-		<action name="statusNext" class="contestAction" method="statusNext">
-			<result name="success">/contest/status.jsp</result>
-			<result name="input">/contest/loginContest.jsp</result>		
 		</action>
 
 		<!-- 排名页面 -->

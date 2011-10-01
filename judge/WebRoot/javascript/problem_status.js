@@ -18,6 +18,7 @@ $(document).ready(function() {
 		"bInfo": false,
 		"bAutoWidth": false,
 		"bStateSave": true,
+//		"sDom": '<pfr>t<il>',
 		"sPaginationType": "full_numbers",
 
 		"aoColumns": [
@@ -57,7 +58,7 @@ $(document).ready(function() {
 					},
 					{ 
 						"fnRender": function ( oObj ) {
-							return oObj.aData[10] ? "<a " + (oObj.aData[10] == 2 ? "class='shared'" : "") + " href='problem/viewSource.action?id=" + oObj.aData[0] + "'>" + oObj.aData[6] + "</a>" : oObj.aData[6];
+							return oObj.aData[10] ? "<a " + (oObj.aData[10] == 2 ? "class='shared'" : "") + " target='_blank' href='problem/viewSource.action?id=" + oObj.aData[0] + "'>" + oObj.aData[6] + "</a>" : oObj.aData[6];
 						},
 						"sClass": "language"
 					},

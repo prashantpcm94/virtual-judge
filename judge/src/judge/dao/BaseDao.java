@@ -197,6 +197,14 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
 		}
 	}
 
+	public Session createSession() {
+		return super.getSession();
+	}
+
+	public void closeSession(Session session) {
+		super.releaseSession(session);
+	}
+
 	
 	
 

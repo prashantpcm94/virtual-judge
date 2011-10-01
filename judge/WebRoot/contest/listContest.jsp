@@ -35,7 +35,7 @@
 				<a href="contest/toAddContest.action">Add a contest</a>
 			</s:if>
 			<s:else>
-				<a href="user/toLogin.action"><font color="red">Login to add contests!</font></a>
+				<a class="login" href="contest/toAddContest.action"><font color="red">Login to add contests!</font></a>
 			</s:else>
 			<br /><br />
 		</div>
@@ -50,6 +50,15 @@
 				</tr>
 			</tbody>
 		</table>
+		
+		<s:hidden name="cid" id="cid" />
+		<div id="dialog-form-contest-login" style="display:none" title="Login contest">
+			<p class="validateTips"></p>
+			<fieldset>
+				<label for="contest_password">Password *</label>
+				<input type="password" id="contest_password" class="text ui-widget-content ui-corner-all" />
+			</fieldset>
+		</div>
 
 		<s:include value="/bottom.jsp" />
 	</body>

@@ -1,8 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%
-String basePath = (String)application.getAttribute("basePath");
-%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -10,8 +7,11 @@ String basePath = (String)application.getAttribute("basePath");
 		<s:include value="/header.jsp" />
 		<title>Virtual Judge -- Problem</title>
 		<link href="facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
-		<script type="text/javascript" src="facebox/facebox.js"></script>
+		<style type="text/css" media="screen">
+			.dataTables_paginate {float: right; text-align: right}
+		</style>
 
+		<script type="text/javascript" src="facebox/facebox.js"></script>
 		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
 		<script type='text/javascript' src='dwr/util.js'></script>

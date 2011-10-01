@@ -35,16 +35,17 @@ Date.prototype.format = function(format){
 	return format;
 }
 
-$(function(){
-	var allFields = $( [] ).add( $( "input.text" ) ).add( $( "#blog" ) ),
-		tips = $( ".validateTips" );
+var nextUrl;
 
-	function updateTips( t ) {
-		tips.text( t ).addClass( "ui-state-highlight" );
-		setTimeout(function() {
-			tips.removeClass( "ui-state-highlight", 1500 );
-		}, 500 );
-	}
+function updateTips( t ) {
+	var tips = $( "p.validateTips" );
+	tips.text( t ).addClass( "ui-state-highlight" );
+	setTimeout(function() {
+		tips.removeClass( "ui-state-highlight", 1500 );
+	}, 500 );
+}
+
+$(function(){
 
 	$( "#dialog-form-login" ).dialog({
 		autoOpen: false,
@@ -57,7 +58,11 @@ $(function(){
 				$.post('user/login.action', info, function(data) {
 					if (data == "success") {
 						$( this ).dialog( "close" );
-						window.location.reload();
+						if (nextUrl != "javascript:void(0)") {
+							window.location.href = nextUrl;
+						} else {
+							window.location.reload();
+						}
 					} else {
 						updateTips(data);						
 					}
@@ -68,14 +73,19 @@ $(function(){
 			}
 		},
 		close: function() {
-			allFields.val( "" );
+			$("p.validateTips").html("");
+			$( this ).find("input").val("");
+		}
+	}).keyup(function(e){
+		if (e.keyCode == 13) {
+			$(this).dialog('option', 'buttons')['Login']();
 		}
 	});
 	
 	$( "#dialog-form-register" ).dialog({
 		autoOpen: false,
 		height: 570,
-		width: 480,
+		width: 500,
 		modal: true,
 		buttons: {
 			"Register": function() {
@@ -104,18 +114,25 @@ $(function(){
 			}
 		},
 		close: function() {
-			allFields.val( "" );
+			$("p.validateTips").html("");
+			$( this ).find(":input").val("");
+			$( this ).find("textarea").val("");
+		}
+	}).keyup(function(e){
+		if (e.keyCode == 13) {
+			$(this).dialog('option', 'buttons')['Register']();
 		}
 	});
 
-	$("#login").click(function(){
-		tips.html("Fill the blank");
+	$("a.login").click(function(){
+		nextUrl = $(this)[0].href;
 		$( "#dialog-form-login" ).dialog( "open" );
+		return false;
 	});
 
-	$("#register").click(function(){
-		tips.html("Fill the blank");
+	$("a.register").click(function(){
 		$( "#dialog-form-register" ).dialog( "open" );
+		return false;
 	});
 
 	$("#logout").click(function(){

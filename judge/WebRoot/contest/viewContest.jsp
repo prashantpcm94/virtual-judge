@@ -4,7 +4,6 @@
 String basePath = (String)application.getAttribute("basePath");
 %>
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -14,7 +13,8 @@ String basePath = (String)application.getAttribute("basePath");
 	</head>
 
 	<body>
-		<s:include value="/contest/top.jsp" />
+		<s:include value="/top.jsp" />
+		<s:if test="contest.announcement != null && !contest.announcement.isEmpty()"><marquee id="contest_announcement" height="25" style="text-align:center;color:red;font-weight:bold" onmouseout="this.start()" onmouseover="this.stop()" scrollamount="2" scrolldelay="1" behavior="alternate">${contest.announcement}</marquee><script type="text/javascript">$("table.banner").css("margin-bottom", "5px");if ($.browser.safari)$("#contest_announcement").removeAttr("behavior");</script></s:if>
 		
 		<div class="ptt">
 			<s:if test="contest.replayStatus != null"><img height="25" title="Replay" src="images/replay.png"></s:if>
