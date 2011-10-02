@@ -31,10 +31,10 @@
 				<li><a href="#status">Status</a></li>
 				<li><a href="#rank">Rank</a></li>
 			</ul>
-			<s:include value="/contest/overview_div.jsp" />
-			<s:include value="/contest/problem_div.jsp" />
-			<s:include value="/contest/status_div.jsp" />
-			<s:include value="/contest/rank_div.jsp" />
+			<s:include value="/contest/div_overview.jsp" />
+			<s:include value="/contest/div_problem.jsp" />
+			<s:include value="/contest/div_status.jsp" />
+			<s:include value="/contest/div_rank.jsp" />
 			
 			<div id="problem"><s:include value="/contest/problem_div.jsp" /></div>
 			<div id="status"><s:include value="/contest/status_div.jsp" /></div>

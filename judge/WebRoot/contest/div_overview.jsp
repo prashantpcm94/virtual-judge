@@ -68,21 +68,9 @@
 						</s:if>
 					</td>
 					<td class="title">
-						<s:url id="viewProblem" action="viewProblem" namespace="/contest">
-							<s:param name="pid" value="dataList[#stat.index][4]" />
-						</s:url>
-						<a href="${viewProblem}">
+						<a href="#problem/<s:property value='dataList[#stat.index][1]' />">
 							<s:property value="dataList[#stat.index][2]" escape="false" />
 						</a>
-					</td>
-					<td class="center">
-						<s:if test="contest.replayStatus == null"><s:property value="dataList[#stat.index][3]" /></s:if>
-					</td>
-					<td>
-						<s:url id="toSubmit" action="toSubmit" namespace="/contest">
-							<s:param name="pid" value="dataList[#stat.index][4]" />
-						</s:url>
-						<a href="${toSubmit}">Submit</a>						
 					</td>
 				</tr>
 			</s:iterator>
