@@ -35,22 +35,30 @@ Date.prototype.format = function(format){
 	return format;
 }
 
+function doIfLoggedIn(func) {
+	
+	
+}
+
 var nextUrl;
 
-function updateTips( t ) {
-	var tips = $( "p.validateTips" );
-	tips.text( t ).addClass( "ui-state-highlight" );
-	setTimeout(function() {
-		tips.removeClass( "ui-state-highlight", 1500 );
-	}, 500 );
-}
+
 
 $(function(){
 
+	var updateTips = function ( t ) {
+		var tips = $( "p.validateTips" );
+		tips.text( t ).addClass( "ui-state-highlight" );
+		setTimeout(function() {
+			tips.removeClass( "ui-state-highlight", 1500 );
+		}, 500 );
+	}
+	
 	$( "#dialog-form-login" ).dialog({
 		autoOpen: false,
 		height: 270,
 		width: 350,
+		position: ['top', 50],
 		modal: true,
 		buttons: {
 			"Login": function() {
@@ -86,6 +94,7 @@ $(function(){
 		autoOpen: false,
 		height: 570,
 		width: 500,
+		position: ['top', 50],
 		modal: true,
 		buttons: {
 			"Register": function() {
@@ -117,10 +126,6 @@ $(function(){
 			$("p.validateTips").html("");
 			$( this ).find(":input").val("");
 			$( this ).find("textarea").val("");
-		}
-	}).keyup(function(e){
-		if (e.keyCode == 13) {
-			$(this).dialog('option', 'buttons')['Register']();
 		}
 	});
 
