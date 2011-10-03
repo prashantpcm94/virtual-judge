@@ -51,8 +51,7 @@ public class UVASpider extends Spider {
 			throw new Exception();
 		}
 
-		html = html.replaceAll("((SRC=\")|(src=\"))(?!http)", "src=\"http://uva.onlinejudge.org/external/" + category + "/");
-		html = html.replaceAll("((SRC=)|(src=))(?!\"*http)", "src=http://uva.onlinejudge.org/external/" + category + "/");
+		html = html.replaceAll("(?i)(src|href)\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "$1=$2http://uva.onlinejudge.org/external/" + category + "/");
 
 		problem.setMemoryLimit(0);
 		description.setDescription(Tools.regFind(html, "<body[\\s\\S]*?>([\\s\\S]*)</body>", 1).replaceAll("(?i)</?html>", ""));

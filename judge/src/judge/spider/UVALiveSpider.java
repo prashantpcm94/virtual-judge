@@ -47,7 +47,7 @@ public class UVALiveSpider extends Spider {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			html = Tools.getHtml(getMethod, null).replaceAll("(?i)src\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "src=$1http://livearchive.onlinejudge.org/external/" + category + "/");
+			html = Tools.getHtml(getMethod, null).replaceAll("(?i)(src|href)\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "$1=$2http://livearchive.onlinejudge.org/external/" + category + "/");
 			description.setDescription(pdfLink + Tools.regFind(html, "^([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
 			description.setInput(Tools.regFind(html, "Int?put</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
 			description.setOutput(Tools.regFind(html, "Output</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
