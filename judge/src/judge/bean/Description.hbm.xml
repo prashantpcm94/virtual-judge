@@ -41,9 +41,14 @@
 		    <column name="C_VOTE" />
 		</property>
 
-
 		<many-to-one name="problem" class="judge.bean.Problem" fetch="select">
 			<column name="C_PROBLEM_ID" />
 		</many-to-one>
+		<set name="cproblems" lazy="true" inverse="true">
+			<key>
+				<column name="C_DESCRIPTION_ID" />
+			</key>
+			<one-to-many class="judge.bean.Cproblem" />
+		</set>		
     </class>
 </hibernate-mapping>

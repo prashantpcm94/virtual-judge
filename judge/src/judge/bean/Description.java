@@ -1,6 +1,7 @@
 package judge.bean;
 
 import java.util.Date;
+import java.util.Set;
 
 public class Description {
 	
@@ -13,12 +14,14 @@ public class Description {
 	private String hint;		//提示
 
 	private Date updateTime;	//更新时间
-	private String author;		//作者	
+	private String author;		//作者
 	private String remarks;		//备注
 	private int vote;			//like票数
 	
 	private Problem problem;
 	
+	private Set<Cproblem> cproblems;
+
 	
 	/**
 	 * 去除空标签
@@ -105,6 +108,12 @@ public class Description {
 	}
 	public void setVote(int vote) {
 		this.vote = vote;
+	}
+	public Set<Cproblem> getCproblems() {
+		return cproblems;
+	}
+	public void setCproblems(Set<Cproblem> cproblems) {
+		this.cproblems = cproblems;
 	}
 
 

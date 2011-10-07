@@ -58,7 +58,7 @@ public class BaseAction extends ActionSupport{
 	protected String sSortDir_0;
 	protected String sEcho;
 	
-	protected String jsonInfo;
+	protected Object json;
 
 	protected IBaseService baseService;
 	protected JudgeService judgeService;
@@ -210,11 +210,11 @@ public class BaseAction extends ActionSupport{
 	public void setJudgeService(JudgeService judgeService) {
 		this.judgeService = judgeService;
 	}
-	public String getJsonInfo() {
-		return jsonInfo;
+	public Object getJson() {
+		return json;
 	}
-	public void setJsonInfo(String jsonInfo) {
-		this.jsonInfo = jsonInfo;
+	public void setJson(Object json) {
+		this.json = json;
 	}
 	
 }

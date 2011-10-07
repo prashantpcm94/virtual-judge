@@ -31,6 +31,7 @@ public class SPOJSpider extends Spider {
 		}
 
 		html = html.replaceAll("src=\"/", "src=\"http://www.spoj.pl/");
+		html = html.replaceAll("(?i)src=([\"']?)[\\./]{2,}content", "src=$1http://www.spoj.pl/content");
 		
 		problem.setTitle(Tools.regFind(html, "<h1>\\d+\\.([\\s\\S]*?)</h1>").trim());
 		if (problem.getTitle().isEmpty()){

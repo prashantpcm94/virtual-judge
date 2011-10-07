@@ -14,6 +14,9 @@ public class Cproblem {
 	
 	private Problem problem;
 	private Contest contest;
+
+	private Description description;
+
 	
 	public String getNum() {
 		return num;
@@ -45,7 +48,11 @@ public class Cproblem {
 	public void setContest(Contest contest) {
 		this.contest = contest;
 	}
-	
-	
+	public Description getDescription() {
+		return description;
+	}
+	public void setDescription(Description description) {
+		this.description = description;
+	}
 
 }

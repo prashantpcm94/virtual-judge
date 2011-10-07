@@ -1,30 +1,26 @@
 $(function(){
 	
 	///////////////////// miscellaneous ///////////////////////
+
+	$(window).hashchange( function(){
+		tabNavigate();
+
+	});
+	
 	$( "#contest_tabs" ).tabs({
 		show: function(event, ui) {
-			if (ui.index == 0){
-				onlyCid = 0;
-				$("div#contestTitle").text("　");
-				getRemoteData();
-				setTimeout(function(){
-					if (!oFH) {
-						oFH = new FixedHeader( standingTable );
-					} else {
-						oFH.fnUpdate();
-					}
-				}, 100);
-			}
 		},
 		select: function(event, ui) {
-			if (ui.index != 0) {
-				clearTimeout(autoRefresh);
-				$("div.FixedHeader_Cloned").hide();
-			} else {
-				$("div.FixedHeader_Cloned").show();
+			if (ui.index == 0){
+				location.hash = "#overview";
+			} else if (ui.index == 1){
+				location.hash = "#problem";
+			} else if (ui.index == 2){
+				location.hash = "#status";
+			} else if (ui.index == 3){
+				location.hash = "#standing";
 			}
-		},
-		cookie: { expires: 30 }
+		}
 	});
 
 	
@@ -55,6 +51,18 @@ $(function(){
 	
 });
 
+function tabNavigate() {
+	var hash = location.hash.split("/");
+	if (hash[0] == "#problem") {
+		showProblem(hash);
+	} else if (hash[0] == "#status") {
+		showStatus(hash);
+	} else if (hash[0] == "#rank") {
+		showRank(hash);
+	} else {
+		showOverview();
+	}
+}
 
 function comfirmDeleteContest(cid){
 	if (confirm("Sure to delete this contest?")){

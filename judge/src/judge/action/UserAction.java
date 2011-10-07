@@ -15,6 +15,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 import judge.bean.User;
 import judge.service.IUserService;
 import judge.tool.MD5;
+import judge.tool.OnlineTool;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -131,9 +132,9 @@ public class UserAction extends BaseAction implements ServletRequestAware {
 		Map session = ActionContext.getContext().getSession();
 		User user = userService.getByUsername(username);
 		if (user == null || !user.getPassword().equals(MD5.getMD5(password))) {
-			jsonInfo = "Username and password don't match!";
+			json = "Username and password don't match!";
 		} else {
-			jsonInfo = "success";
+			json = "success";
 			session.put("visitor", user);
 		}
 		return SUCCESS;
@@ -145,29 +146,29 @@ public class UserAction extends BaseAction implements ServletRequestAware {
 	}
 
 	public String register(){
-		jsonInfo = null;
+		json = null;
 		if (!username.matches("[0-9a-zA-Z_]+")){
-			jsonInfo = "Username should only contain digits, letters, or '_'s !";
+			json = "Username should only contain digits, letters, or '_'s !";
 		} else if (username.length() < 2 || username.length() > 16){
-			jsonInfo = "Username should have at least 2 characters and at most 16 characters!";
+			json = "Username should have at least 2 characters and at most 16 characters!";
 		} else if (nickname.length() > 20){
-			jsonInfo = "Nickname should have at most 20 characters!";
+			json = "Nickname should have at most 20 characters!";
 		} else if (password.length() < 4 || password.length() > 30){
-			jsonInfo = "Password should have at least 4 characters and at most 30 characters!";
+			json = "Password should have at least 4 characters and at most 30 characters!";
 		} else if (!password.equals(repassword)){
-			jsonInfo = "Two passwords are not the same!";
+			json = "Two passwords are not the same!";
 		} else if (userService.checkUsername(username)){
-			jsonInfo = "Username has been registered!";
+			json = "Username has been registered!";
 		} else if (qq.length() > 15){
-			jsonInfo = "QQ is too long!";
+			json = "QQ is too long!";
 		} else if (school.length() > 95){
-			jsonInfo = "School is too long!";
+			json = "School is too long!";
 		} else if (email.length() > 95){
-			jsonInfo = "Email is too long!";
+			json = "Email is too long!";
 		} else if (blog.length() > 995){
-			jsonInfo = "Blog is too long!";
+			json = "Blog is too long!";
 		}
-		if (jsonInfo != null){
+		if (json != null){
 			return SUCCESS;
 		}
 		User user = new User(username, MD5.getMD5(password));
@@ -180,7 +181,7 @@ public class UserAction extends BaseAction implements ServletRequestAware {
 		userService.addOrModify(user);
 		Map session = ActionContext.getContext().getSession();
 		session.put("visitor", user);
-		jsonInfo = "success";
+		json = "success";
 		return SUCCESS;
 	}
 	
@@ -251,6 +252,11 @@ public class UserAction extends BaseAction implements ServletRequestAware {
 	public String profile() {
 		user = (User) userService.query(User.class, uid);
 		return SUCCESS;		
+	}
+	
+	public String checkLogInStatus() {
+		json = OnlineTool.getCurrentUser() == null ? "false" : "true";
+		return SUCCESS;
 	}
 
 }

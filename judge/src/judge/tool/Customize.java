@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import judge.bean.Contest;
+import judge.bean.Cproblem;
 import judge.bean.Description;
 import judge.bean.ReplayStatus;
 import judge.bean.Submission;
@@ -16,6 +17,19 @@ public class Customize {
 	
 	static public ServletContext sc = ApplicationContainer.sc;
 	static public IBaseService baseService = (IBaseService) SpringBean.getBean("baseService", sc);
+	
+	static public void initCproblemDescription() {
+		Description[] bestDescription = new Description[50000];
+		List<Description> list = baseService.query("select d from Description d order by d.vote asc");
+		for (Description description : list) {
+			bestDescription[description.getProblem().getId()] = description;
+		}
+		List<Cproblem> list1 = baseService.query("select cp from Cproblem cp");
+		for (Cproblem cproblem : list1) {
+			cproblem.setDescription(bestDescription[cproblem.getProblem().getId()]);
+		}
+		baseService.addOrModify(list1);
+	}
 	
 	static public void transReplay() {
 		List<ReplayStatus> list = baseService.query("select rs from ReplayStatus rs");

@@ -76,7 +76,7 @@
 		<!-- 检查比赛授权状态 -->
 		<action name="checkAuthorizeStatus" class="contestAction" method="checkAuthorizeStatus">
 			<result type="json">
-				<param name="root">jsonInfo</param>
+				<param name="root">json</param>
 				<param name="noCache">true</param>
 				<param name="excludeNullProperties">true</param>
 				<param name="contentType">application/json-rpc</param>
@@ -85,7 +85,7 @@
 
 		<!-- 进入比赛 -->
 		<action name="view" class="contestAction" method="view">
-			<result name="success">/contest/viewContest.jsp</result>		
+			<result name="success">/contest/view.jsp</result>		
 			<result name="error" type="redirectAction">
 				<param name="actionName">toListContest</param>
 				<param name="namespace">/contest</param>
@@ -102,7 +102,7 @@
 		<!-- 登陆比赛 -->
 		<action name="loginContest" class="contestAction" method="loginContest">
 			<result type="json">
-				<param name="root">jsonInfo</param>
+				<param name="root">json</param>
 				<param name="noCache">true</param>
 				<param name="excludeNullProperties">true</param>
 				<param name="contentType">application/json-rpc</param>

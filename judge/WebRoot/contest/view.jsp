@@ -6,6 +6,7 @@
 	<head>
 		<s:include value="/header.jsp" />
 		<title>Virtual Judge -- Contest</title>
+		<script type="text/javascript" src="javascript/jquery.ba-hashchange.min.js"></script>
 		<script type="text/javascript" src="javascript/viewContest.js"></script>
 	</head>
 

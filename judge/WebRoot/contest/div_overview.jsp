@@ -48,16 +48,12 @@
 					<th></th>
 					<th style="text-align: left">Title</th>
 					<th><s:if test="contest.replayStatus == null">Ratio(AC/att)</s:if></th>
-					<th></th>
 				</tr>
 			</thead>
 			
 			<s:iterator value="dataList" status="stat">
 				<tr>
-					<td class="id">
-						<s:if test="dataList[#stat.index][0] != null">
-							Yes
-						</s:if>
+					<td class="solved_tried">
 					</td>
 					<td class="title center">
 						Problem <s:property value="dataList[#stat.index][1]" />
@@ -72,6 +68,7 @@
 							<s:property value="dataList[#stat.index][2]" escape="false" />
 						</a>
 					</td>
+					<td></td>
 				</tr>
 			</s:iterator>
 		</table>

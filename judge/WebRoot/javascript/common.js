@@ -35,13 +35,17 @@ Date.prototype.format = function(format){
 	return format;
 }
 
-function doIfLoggedIn(func) {
-	
-	
+var nextUrl;	//to go when just logged in
+function doIfLoggedIn(func, url) {
+	$.get("user/checkLogInStatus.action", function(logInStatus){
+		if (logInStatus == "true") {
+			func();
+		} else {
+			nextUrl = !url ? null : url;
+			$("#dialog-form-login").dialog('open');
+		}
+	});
 }
-
-var nextUrl;
-
 
 
 $(function(){
@@ -66,10 +70,11 @@ $(function(){
 				$.post('user/login.action', info, function(data) {
 					if (data == "success") {
 						$( this ).dialog( "close" );
-						if (nextUrl != "javascript:void(0)") {
-							window.location.href = nextUrl;
-						} else {
+						if (!nextUrl) {
 							window.location.reload();
+						} else {
+							alert("'" + nextUrl + "'");
+							window.location.href = nextUrl;
 						}
 					} else {
 						updateTips(data);						
@@ -130,7 +135,7 @@ $(function(){
 	});
 
 	$("a.login").click(function(){
-		nextUrl = $(this)[0].href;
+		nextUrl = null;
 		$( "#dialog-form-login" ).dialog( "open" );
 		return false;
 	});

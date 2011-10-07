@@ -475,7 +475,7 @@ public class ContestAction extends BaseAction {
 	}
 	
 	public String checkAuthorizeStatus() {
-		jsonInfo = judgeService.checkAuthorizeStatus(cid) ? SUCCESS : ERROR;
+		json = judgeService.checkAuthorizeStatus(cid) ? SUCCESS : ERROR;
 		return SUCCESS;
 	}
 	
@@ -486,9 +486,9 @@ public class ContestAction extends BaseAction {
 		baseService.releaseSession(session);
 		if (encryptedPassword == null || MD5.getMD5(password).equals(encryptedPassword)) {
 			httpSession.put("C" + cid, 1);
-			jsonInfo = SUCCESS;
+			json = SUCCESS;
 		} else {
-			jsonInfo = "Password is not correct!";
+			json = "Password is not correct!";
 		}
 		return SUCCESS;
 	}
@@ -1139,7 +1139,8 @@ public class ContestAction extends BaseAction {
 		submissionInfo = submission.getAdditionalInfo();
 		return SUCCESS;
 	}
-
+	
+	
 	public int getRes() {
 		return res;
 	}

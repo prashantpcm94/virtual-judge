@@ -24,6 +24,9 @@
 		<many-to-one name="contest" class="judge.bean.Contest" fetch="select">
 			<column name="C_CONTEST_ID" />
 		</many-to-one>
+		<many-to-one name="description" class="judge.bean.Description" fetch="select">
+			<column name="C_DESCRIPTION_ID" />
+		</many-to-one>
 
     </class>
 </hibernate-mapping>

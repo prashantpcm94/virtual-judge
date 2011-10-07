@@ -7,7 +7,7 @@
 	    <!-- 登陆 -->
         <action name="login" class="userAction" method="login">
 			<result type="json">
-				<param name="root">jsonInfo</param>
+				<param name="root">json</param>
 				<param name="noCache">true</param>
 				<param name="excludeNullProperties">true</param>
 				<param name="contentType">application/json-rpc</param>
@@ -21,7 +21,7 @@
 	    <!-- 注册 -->
         <action name="register" class="userAction" method="register">
 			<result type="json">
-				<param name="root">jsonInfo</param>
+				<param name="root">json</param>
 				<param name="noCache">true</param>
 				<param name="excludeNullProperties">true</param>
 				<param name="contentType">application/json-rpc</param>
@@ -44,5 +44,16 @@
         <action name="profile" class="userAction" method="profile">
 	        <result name="success">/user/profile.jsp</result>
 	    </action>
+
+	    <!-- 检查登陆状态 -->
+        <action name="checkLogInStatus" class="userAction" method="checkLogInStatus">
+			<result type="json">
+				<param name="root">json</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">true</param>
+				<param name="contentType">application/json-rpc</param>
+			</result>
+		</action>
+
 	</package>
 </struts>
