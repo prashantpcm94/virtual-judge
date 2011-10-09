@@ -52,7 +52,7 @@ public class Problem {
 		if (source != null){
 			source = source.trim();
 			if (source.matches("(<[^<>]*>\\s*)*")){
-				source = null;
+				source = "";
 			}
 		}
 		this.source = source;
