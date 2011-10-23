@@ -6,7 +6,6 @@ $(document).ready(function() {
 		$("select#language").val($.cookie("lang_" + oj));
 	}
 
-	
 	$("select#language").change(function(){
 		$.cookie("lang_" + oj, $(this).val(), {expires:30, path:'/'});
 	});

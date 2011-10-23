@@ -1,4 +1,5 @@
-$(document).ready(function() {
+$(function() {
+	
 	$("input[type='checkbox']").each(function(){
 		if ($.cookie("checked_" + $(this).attr("name")) == 'false') {
 			$(this).removeAttr("checked");
@@ -34,7 +35,7 @@ $(document).ready(function() {
 					},
 					{
 						"fnRender": function ( oObj ) {
-							return "<div class='title'><a cid='" + oObj.aData[0] + "' class='contest_entry' href='contest/view.action?cid=" + oObj.aData[0] + "'>" + oObj.aData[1] + "</a></div>";
+							return "<div class='title'><a cid='" + oObj.aData[0] + "' class='contest_entry' href='contest/view.action?cid=" + oObj.aData[0] + "#overview'>" + oObj.aData[1] + "</a></div>";
 						},
 						"sClass": "title"
 					},
@@ -103,8 +104,10 @@ $(document).ready(function() {
 		"sPaginationType": "full_numbers"
 	});
 	
-	$("div.head_status").insertBefore("div#listContest_processing").show();
+	$("#head_status").insertBefore("div#listContest_processing").show();
 	$("div.dataTables_filter").css("width", "250px");
+	
+	$("#add_contest").button();
 
 	$("input[type='checkbox']").change(function() {
 		$.cookie("checked_" + $(this).attr("name"), $(this).prop("checked"), {expires:7});
@@ -120,6 +123,7 @@ $(document).ready(function() {
 		autoOpen: false,
 		height: 200,
 		width: 350,
+		position: ['top', 50],
 		modal: true,
 		buttons: {
 			"Login": function() {
@@ -127,7 +131,10 @@ $(document).ready(function() {
 				$.post('contest/loginContest.action', info, function(data) {
 					if (data == "success") {
 						$( this ).dialog( "close" );
-						window.location.href = "contest/view.action?cid=" + cid;
+						if (location.hash) {
+							location.hash = "";
+						}
+						window.location.href = "contest/view.action?cid=" + cid + "#overview";
 					} else {
 						updateTips(data);						
 					}
@@ -140,6 +147,9 @@ $(document).ready(function() {
 		close: function() {
 			$("p.validateTips").html("");
 			$( this ).find(":input").val("");
+			if (location.hash) {
+				location.hash = "";
+			}
 		}
 	}).keyup(function(e){
 		if (e.keyCode == 13) {
@@ -159,11 +169,9 @@ $(document).ready(function() {
 			oTable.fnFilter(query);
 		}, 300);
 	}
-	var cid = para['cid'];
-	if (cid) {
-		attemptLoginContest(cid);
+	if (location.hash.match(/#\d+$/)) {
+		attemptLoginContest(location.hash.substring(1));
 	}
-	
 });
 
 function comfirmDeleteContest(cid){
@@ -174,9 +182,12 @@ function comfirmDeleteContest(cid){
 
 function attemptLoginContest(cid) {
 	$("#cid").val(cid);
-	$.get("contest/checkAuthorizeStatus.action?cid=" + cid, function(authorizeStatus){
+	$.post("contest/checkAuthorizeStatus.action?cid=" + cid, function(authorizeStatus){
 		if (authorizeStatus == "success") {
-			window.location.href = "contest/view.action?cid=" + cid;
+			if (location.hash) {
+				location.hash = "";
+			}
+			window.location.href = "contest/view.action?cid=" + cid + "#overview";
 		} else {
 			$("#dialog-form-contest-login").dialog('open');
 		}

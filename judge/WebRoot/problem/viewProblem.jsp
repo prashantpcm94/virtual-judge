@@ -1,14 +1,11 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%
-String basePath = (String)application.getAttribute("basePath");
-%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<s:include value="/header.jsp" />
-		<title>Virtual Judge -- Problem</title>
+		<title>${problem.title} - ${problem.originOJ} ${problem.originProb} - Virtual Judge</title>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
@@ -60,7 +57,7 @@ String basePath = (String)application.getAttribute("basePath");
 			<s:if test="problem.timeLimit != 1 && problem.timeLimit != 2">
 				<p align="center">
 					<font size="3" color="#333399">
-						[<a href="problem/toSubmit.action?id=${problem.id}">Submit</a>]&nbsp;&nbsp;
+						[<a href="problem/toSubmit.action?id=${problem.id}" class="login">Submit</a>]&nbsp;&nbsp;
 						[<a href="javascript:history.go(-1)">Go Back</a>]&nbsp;&nbsp;
 						[<a href="problem/status.action?id=${problem.id}">Status</a>]&nbsp;&nbsp; 
 					</font>
@@ -78,7 +75,7 @@ String basePath = (String)application.getAttribute("basePath");
 			<s:if test="problem.timeLimit != 1 && problem.timeLimit != 2">
 				<p align="center">
 					<font size="3" color="#333399">
-						[<a href="problem/toSubmit.action?id=${problem.id}">Submit</a>]&nbsp;&nbsp;
+						[<a href="problem/toSubmit.action?id=${problem.id}" class="login">Submit</a>]&nbsp;&nbsp;
 						[<a href="javascript:history.go(-1)">Go Back</a>]&nbsp;&nbsp;
 						[<a href="problem/status.action?id=${problem.id}">Status</a>]&nbsp;&nbsp; 
 					</font>
@@ -95,7 +92,7 @@ String basePath = (String)application.getAttribute("basePath");
 			<s:iterator value="problem.descriptions" status="stat">
 				<div class="desc_info">
 					<div id="info<s:property value="#stat.index" />">
-						<b><s:if test="#stat.index eq 0"><font color="red">System Crawler</font></s:if><s:else><s:property value="author" /></s:else></b>
+						<b><s:if test='author.equals("0")'><font color="red">System Crawler</font></s:if><s:else><s:property value="author" /></s:else></b>
 						<s:date name="updateTime" format="yyyy-MM-dd" />
 						<span class="hiddable opt">
 							<s:hidden name="vote" />
@@ -106,8 +103,8 @@ String basePath = (String)application.getAttribute("basePath");
 								<span style="float:right" ><a class="vote" id="vote_${id}" href="javascript:void(0)" style="text-decoration:none"><img height="18" src="images/thumb_up.png" border="0"/>${vote}</a></span>
 								<span style="float:right;display:none"><img height="18" src="images/thumb_up.png" border="0"/><span>${vote}</span></span>
 							</s:else>
-							<a style="padding-right:10px;float:right" href="problem/toEditDescription.action?id=${id}"><img height="18" src="images/ico_edit.gif" border="0"/></a>
-							<s:if test="#stat.index eq 0">
+							<a style="padding-right:10px;float:right" href="problem/toEditDescription.action?id=${id}" class="login"><img height="18" src="images/ico_edit.gif" border="0"/></a>
+							<s:if test='author.equals("0")'>
 								<s:if test="problem.timeLimit != 1"><a style="padding-right:10px;float:right" href="problem/addProblem.action?id=${problem.id}"><img height="18" src="images/refresh.png" border="0"/></a></s:if>
 							</s:if>
 							<s:elseif test="#session.visitor.sup == 1 || #session.visitor.username == author">

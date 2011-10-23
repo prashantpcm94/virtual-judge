@@ -10,6 +10,20 @@ $(document).ready(function(){
 		$("[name=minute]").val(beginTime.getMinutes());
 	}
 
+	var dealWithContestType = function() {
+		if ($("input[name='contestType']:checked").val() == 0) {
+			$(".real_contest_element").show();
+			$(".replay_element").hide();
+		} else {
+			$(".real_contest_element").hide();
+			$(".replay_element").show();
+		}
+	}
+	dealWithContestType();
+	$("input[name='contestType']").change(function(){
+		dealWithContestType();
+	});
+
 	$("#addBtn").click(function(){
 		addRow();
 	});
@@ -20,6 +34,12 @@ $(document).ready(function(){
 		if ($("#addTable tr.tr_problem:visible").length < 26){
 			$("#addBtn").show();
 		}
+	});
+	
+	$("tr.tr_problem").live("mouseover", function(){
+		$(this).css("background-color", "#CCEEFF")
+	}).live("mouseout", function(){
+		$(this).css("background-color", "transparent");
 	});
 	
 	$("[name=OJs]").live($.browser.msie ? 'click' : 'change', function(){
@@ -120,20 +140,6 @@ $(document).ready(function(){
 		}
 	});
 	
-
-	if ($("input[name='contestType']:checked").val() == 0) {
-		$("#ranklistData").hide();
-	} else {
-		$("#ranklistData").show();
-	}
-	$("input[name='contestType']").change(function(){
-		if ($(this).val() == 0) {
-			$("#ranklistData").hide();
-		} else {
-			$("#ranklistData").show();
-		}
-	});
-
 });
 
 var problemInfo;

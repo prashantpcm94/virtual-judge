@@ -1,7 +1,5 @@
 <%@ page language="java" import="java.util.Date" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<link rel="stylesheet" type="text/css" href="css/global.css" />
-<link rel="shortcut icon" href="images/logo.ico" />
 <div style="text-align:center;margin-top:30px;clear:both;font-size:80%">
 	<hr />FAQ | About Virtual Judge | <a href="http://acm.hust.edu.cn/forum/forum.php?mod=forumdisplay&fid=10">Forum</a> | <a href="mailto:is.un@qq.com">Contact</a> | <a href="http://code.google.com/p/virtual-judge/">Open Source Project</a><br />
 	All Copyright Reserved ©2010-2011 <a href="http://acm.hust.edu.cn">HUST ACM/ICPC</a> TEAM
@@ -9,7 +7,6 @@
 	<br>Anything about the OJ, please ask in the <a href="http://acm.hust.edu.cn/forum/forum.php?mod=forumdisplay&fid=10">forum</a>, or contact author:<a href="mailto:is.un@qq.com">Isun</a><br>
 	Server Time: <span class="currentTime"></span>
 </div>
-<script type="text/javascript" src="javascript/common.js"></script>
 <script type="text/javascript">
 	var timeDiff = <%= new Date().getTime()%> - new Date().valueOf();
 	

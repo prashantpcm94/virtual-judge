@@ -2,12 +2,13 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
 <div id="overview">
+	
 	<table style="margin:auto" class="plm">
 		<tr>
 			<td class="alignRight"><b>Current Time: </b></td>
 			<td class="alignLeft"><span class="currentTime"></span></td>
 			<td class="alignRight"><b>Contest Type: </b></td>
-			<td class="alignLeft"><s:if test="contest.password == null"><font color="blue"> Public</font></s:if><s:else><font color="red">Private</font></s:else></td>
+			<td class="alignLeft"><s:if test="contest.password == null"><font color="blue">Public</font></s:if><s:else><font color="red">Private</font></s:else></td>
 		</tr>
 		<tr>
 			<td class="alignRight"><b>Start Time: </b></td>
@@ -27,51 +28,42 @@
 		</tr>
 	</table>
 
+
 	<s:if test="dataList != null">
-		<div style="text-align:center;padding:10px">
-			<s:if test="#session.visitor.sup == 1 || curDate.compareTo(contest.endTime) > 0">
-				<button id="clone_button">Clone</button>
-				[<a href="contest/toAddContest.action?cid=${cid}" title="Create a contest using the same problems, in which you can see the original score board.">Clone this contest</a>]
-			</s:if>
-			<s:if test="#session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
-				<button id="edit_button">Edit</button>
-				[<a href="contest/toEditContest.action?cid=${cid}">Edit</a>]
-				<button id="delete_button">Delete</button>
-				[<a href='javascript:void(0)' onclick='comfirmDeleteContest(${cid})'>Delete</a>]
-			</s:if>
-		</div>
-		<table style="width:960px" cellpadding="0" cellspacing="0" border="0" class="display" id="viewContest">
-			<thead>
-				<tr>
-					<th>Solved</th>
-					<th>ID</th>
-					<th></th>
-					<th style="text-align: left">Title</th>
-					<th><s:if test="contest.replayStatus == null">Ratio(AC/att)</s:if></th>
-				</tr>
-			</thead>
-			
-			<s:iterator value="dataList" status="stat">
-				<tr>
-					<td class="solved_tried">
-					</td>
-					<td class="title center">
-						Problem <s:property value="dataList[#stat.index][1]" />
-					</td>
-					<td>
-						<s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
-							<a href="<s:property value="dataList[#stat.index][7]" />"><s:property value="dataList[#stat.index][5]" /> <s:property value="dataList[#stat.index][6]" /></a>
-						</s:if>
-					</td>
-					<td class="title">
-						<a href="#problem/<s:property value='dataList[#stat.index][1]' />">
-							<s:property value="dataList[#stat.index][2]" escape="false" />
-						</a>
-					</td>
-					<td></td>
-				</tr>
-			</s:iterator>
-		</table>
+	<div id="contest_opt" style="text-align:center;margin-top:10px">
+		<s:if test="curDate.compareTo(contest.endTime) > 0">
+			<a id="clone_contest" href="contest/toAddContest.action?cid=${cid}" title="Create a contest using the same problems, in which you can see the original score board.">Clone this contest</a>
+		</s:if>
+		<s:if test="#session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
+			<a href="contest/toEditContest.action?cid=${cid}">Edit</a>
+			<a href='javascript:void(0)' onclick='comfirmDeleteContest(${cid})'>Delete</a>
+		</s:if>
+	</div>
+	<table style="width:960px;margin-top:20px" cellpadding="0" cellspacing="0" border="0" class="display" id="viewContest">
+		<thead>
+			<tr>
+				<th style="text-align: right;width:120px">ID</th>
+				<th style="width:250px"><s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">Origin</s:if></th>
+				<th style="text-align: left">Title</th>
+			</tr>
+		</thead>
+		
+		<s:iterator value="dataList" status="stat">
+			<tr>
+				<td style="text-align: right">Problem <s:property value="dataList[#stat.index][0]" /></td>
+				<td class="center">
+					<s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
+						<a target="_blank" href="<s:property value="dataList[#stat.index][3]" />"><s:property value="dataList[#stat.index][1]" /> <s:property value="dataList[#stat.index][2]" /></a>
+					</s:if>
+				</td>
+				<td>
+					<a href="contest/view.action?cid=${cid}#problem/<s:property value='dataList[#stat.index][0]' />">
+						<s:property value="dataList[#stat.index][4]" escape="false" />
+					</a>
+				</td>
+			</tr>
+		</s:iterator>
+	</table>
 	</s:if>
 	
 	<div class="description">

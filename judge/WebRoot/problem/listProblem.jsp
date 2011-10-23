@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<s:include value="/header.jsp" />
-		<title>Virtual Judge -- Problem</title>
+		<title>Problems - Virtual Judge</title>
 		<style type="text/css" media="screen">
 			.dataTables_info { padding-top: 0; }
 			.dataTables_paginate { padding-top: 0; }
@@ -26,14 +26,13 @@
 		<s:include value="/top.jsp" />
 		<s:actionerror />
 		
-		<div class="ptt">Problem List</div>
-		<br />
+		<div class="ptt" style="margin-bottom:12px">Problem List</div>
 
 		<div class="plm">
 			<s:if test="#session.visitor != null">
 				<form id="addProblem" action="problem/addProblem.action" method="post">
-					Add a problem:<s:select id="OJId" name="OJId" list="OJListAll" />
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Problem number:<s:textfield id="ProbNum1" name="ProbNum1" size="10" />---<s:textfield id="ProbNum2" name="ProbNum2" size="10" />
+					Add a problem:<s:select id="OJId" name="OJId" list="OJListAll" cssStyle="margin-right:20px"/>
+					Problem number:<s:textfield id="ProbNum1" name="ProbNum1" size="10" />---<s:textfield id="ProbNum2" name="ProbNum2" size="10" />
 					<input type="submit" value="Add" id="addBtn"/>
 				</form>
 			</s:if>

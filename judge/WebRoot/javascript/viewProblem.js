@@ -16,7 +16,7 @@ $(document).ready(function() {
 	});
 	
 	$("a.vote").click(function(){
-		$.get("problem/vote4Description.action", {id: $(this)[0].id.substring(5)});
+		$.post("problem/vote4Description.action", {id: $(this)[0].id.substring(5)});
 		$(this).parent().next().children().eq(1).html(parseInt($(this).parent().next().children().eq(1).html()) + 1);
 		$("a.vote").each(function(){
 			$(this).parent().next().show();
@@ -26,7 +26,7 @@ $(document).ready(function() {
 	
 	$("a.delete_desc").click(function(){
 		if (confirm("Sure to delete this description?")){
-			$.get("problem/deleteDescription.action", {id: $(this)[0].id.substring(4)}, function() {
+			$.post("problem/deleteDescription.action", {id: $(this)[0].id.substring(4)}, function() {
 				location.reload();
 			});
 		}

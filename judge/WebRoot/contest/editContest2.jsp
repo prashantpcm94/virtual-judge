@@ -1,14 +1,11 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%
-String basePath = (String)application.getAttribute("basePath");
-%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<s:include value="/header.jsp" />
-		<title>Virtual Judge -- Contest</title>
+		<title><s:property value="contest.title" escape="false" /> - Virtual Judge</title>
 	</head>
 
 	<body>

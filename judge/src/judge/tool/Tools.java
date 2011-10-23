@@ -234,5 +234,59 @@ public class Tools {
 		}
 		return new String(c);
 	}
+	
+	/**
+	 * 将一段时间从毫秒数转换为通用的表示方式
+	 * @param length 毫秒数
+	 * @param hasDay 转换结果是否含有"天"
+	 * @return
+	 */
+	public static String transPeriod(Long length, boolean hasDay){
+		long d = length / 86400000;
+		long h = (hasDay ? length % 86400000 : length) / 3600000;
+		long m = length % 3600000 / 60000;
+		long s = length % 60000 / 1000;
+		return (hasDay && d > 0 ? (d + "天") : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;    
+	}
+	
+	/**
+	 * 为shjs寻找正确的class
+	 * @param srcLang
+	 * @return
+	 */
+	public static String findClass4SHJS(String srcLang) {
+		srcLang = " " + srcLang.toLowerCase() + " ";
+		if (srcLang.contains("c++") || srcLang.contains("cpp") || srcLang.contains("g++")){
+			return "sh_cpp";
+		} else if (srcLang.contains(" c ") || srcLang.contains("gcc")){
+			return "sh_c";
+		} else if (srcLang.contains("c#")){
+			return "sh_csharp";
+		} else if (srcLang.contains("java ")){
+			return "sh_java";
+		} else if (srcLang.contains("pascal") || srcLang.contains("fpc")){
+			return "sh_pascal";
+		} else if (srcLang.contains("tcl")){
+			return "sh_tcl";
+		} else if (srcLang.contains("scala")){
+			return "sh_scala";
+		} else if (srcLang.contains("perl")){
+			return "sh_perl";
+		} else if (srcLang.contains("python")){
+			return "sh_python";
+		} else if (srcLang.contains("ruby")){
+			return "sh_ruby";
+		} else if (srcLang.contains("php")){
+			return "sh_php";
+		} else if (srcLang.contains("prolog")){
+			return "sh_prolog";
+		} else if (srcLang.contains("javascript")){
+			return "sh_javascript";
+		} else {
+			return "sh_c";
+		}
+	}
+	
+
 
 }

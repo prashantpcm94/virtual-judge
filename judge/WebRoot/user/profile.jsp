@@ -1,16 +1,11 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%
-String basePath = (String)application.getAttribute("basePath");
-%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-    	<base href="<%=basePath%>" />
-	    <title>Virtual Judge -- User</title>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<script type="text/javascript" src="javascript/jquery-1.5.min.js"></script>
+		<s:include value="/header.jsp" />
+	    <title>${user.username}'s profile - Virtual Judge</title>
 	</head>
 
 	<body>
@@ -37,7 +32,7 @@ String basePath = (String)application.getAttribute("basePath");
 				<td><s:property value="user.email"/></td>
 			</tr>
 			<tr>
-				<td class="form_title">Blog:</td>
+				<td>Blog:</td>
 				<td height="100	"><s:property value="user.blog"/></td>
 			</tr>
 		</table>

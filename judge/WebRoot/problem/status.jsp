@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<s:include value="/header.jsp" />
-		<title>Virtual Judge -- Problem</title>
+		<title>Status - Virtual Judge</title>
 		<link href="facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
 		<style type="text/css" media="screen">
 			.dataTables_paginate {float: right; text-align: right}

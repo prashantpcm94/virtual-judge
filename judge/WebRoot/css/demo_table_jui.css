@@ -41,6 +41,7 @@
 	padding: 2px 6px;
 	cursor: pointer;
 	* cursor: hand;
+	margin-right: 0;
 }
 
 .fg-toolbar {
@@ -174,7 +175,7 @@ table.display thead th {
 
 table.display tfoot th {
 	padding: 3px 18px 3px 10px;
-	border-top: 1px solid black;
+/*	border-top: 1px solid black;*/
 	font-weight: bold;
 }
 
@@ -223,38 +224,35 @@ table.display td.center {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables row classes
  */
-table.display tr.odd.gradeA {
+table.display tr.odd.yes {
 	background-color: #ddffdd;
 }
 
-table.display tr.even.gradeA {
+table.display tr.even.yes {
 	background-color: #eeffee;
 }
 
-table.display tr.odd.gradeC {
+table.display tr.odd.pending {
 	background-color: #ddddff;
 }
 
-table.display tr.even.gradeC {
+table.display tr.even.pending {
 	background-color: #eeeeff;
 }
 
-table.display tr.odd.gradeX {
+tr.pending td.time {
+	padding-left: auto;
+	padding-right: auto;
+	background: url("../images/loader.gif") no-repeat 90% 50%;
+}
+
+table.display tr.odd.no {
 	background-color: #ffdddd;
 }
 
-table.display tr.even.gradeX {
+table.display tr.even.no {
 	background-color: #ffeeee;
 }
-
-table.display tr.odd.gradeU {
-	background-color: #ddd;
-}
-
-table.display tr.even.gradeU {
-	background-color: #eee;
-}
-
 
 tr.odd {
 	background-color: #E2E4FF;

@@ -3,6 +3,8 @@ package judge.bean;
 import java.util.Date;
 import java.util.Set;
 
+import org.apache.struts2.json.annotations.JSON;
+
 public class Description {
 	
 	private int id;				//Hibernate统编ID
@@ -37,6 +39,7 @@ public class Description {
 		}
 		return string;
 	}
+	@JSON(deserialize=false,serialize=false)
 	public Problem getProblem() {
 		return problem;
 	}
@@ -85,6 +88,7 @@ public class Description {
 	public void setHint(String hint) {
 		this.hint = trans(hint);
 	}
+	@JSON(format="yyyy-MM-dd")
 	public Date getUpdateTime() {
 		return updateTime;
 	}
@@ -109,6 +113,7 @@ public class Description {
 	public void setVote(int vote) {
 		this.vote = vote;
 	}
+	@JSON(deserialize=false,serialize=false)
 	public Set<Cproblem> getCproblems() {
 		return cproblems;
 	}

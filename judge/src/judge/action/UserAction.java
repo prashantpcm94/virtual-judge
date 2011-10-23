@@ -4,6 +4,7 @@
 
 package judge.action;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -136,6 +137,12 @@ public class UserAction extends BaseAction implements ServletRequestAware {
 		} else {
 			json = "success";
 			session.put("visitor", user);
+			for (Iterator iterator = session.keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				if (key.matches("C\\d+")) {
+					session.remove(key);
+				}
+			}
 		}
 		return SUCCESS;
 	}

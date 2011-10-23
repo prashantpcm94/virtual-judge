@@ -31,6 +31,9 @@
 		<property name="hashCode" type="java.lang.String">
 		    <column name="C_HASH_CODE" />
 		</property>
+		<property name="enableTimeMachine" type="java.lang.Integer">
+		    <column name="C_ENABLE_TIME_MACHINE" />
+		</property>
 		
 		<many-to-one name="manager" class="judge.bean.User" fetch="select">
 			<column name="C_MANAGER_ID" />

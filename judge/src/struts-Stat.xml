@@ -7,12 +7,14 @@
 	    <!-- 查看在线用户 -->
         <action name="listOL" class="statAction" method="listOnlineUsers">
 	        <result name="success">/stat/listOnlineUsers.jsp</result>
+			<result name="error" type="redirect">/toIndex.action</result>
 	    </action>		
 
 	    <!-- 查看session详情 -->
         <action name="viewOL" class="statAction" method="viewOL">
 	        <result name="success">/stat/viewOL.jsp</result>
-	    </action>	
+			<result name="error" type="redirect">/toIndex.action</result>
+	    </action>
 
 	</package>
 </struts>

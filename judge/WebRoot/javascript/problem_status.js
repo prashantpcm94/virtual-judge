@@ -76,7 +76,7 @@ $(document).ready(function() {
 					},
 					{
 						"fnRender": function ( oObj ) {
-							return oObj.aData[13] > 0 ? "<a href='contest/viewContest.action?cid=" + oObj.aData[13] + "'>*</a>" : "";
+							return oObj.aData[13] > 0 ? "<a href='contest/view.action?cid=" + oObj.aData[13] + "#overview'>*</a>" : "";
 						}
 					},
 					{"bVisible": false},
@@ -152,7 +152,7 @@ $(document).ready(function() {
 		$row.removeClass("no");
 		$row.removeClass("yes");
 		$row.addClass("pending");
-		$.get("problem/rejudge.action", {id: id}, function() {
+		$.post("problem/rejudge.action", {id: id}, function() {
 			getResult(id);
 		});
 		return false;

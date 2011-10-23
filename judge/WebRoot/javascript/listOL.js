@@ -38,6 +38,7 @@ $(document).ready(function() {
 		"aoColumns": [{"sType": "html"},
 		              {"sType": "html"},
 		              {"sType": "html"},
+		              {"sType": "html"},
 		              {"sType": "custom-time"},
 		              {"sType": "custom-time"},
 		              {"sType": "custom-time"},

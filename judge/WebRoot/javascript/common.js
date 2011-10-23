@@ -1,63 +1,4 @@
-if(typeof String.prototype.trim !== 'function') {
-	String.prototype.trim = function() {
-		return this.replace(/^\s+|\s+$/g, '');
-	}
-}
-
-function parseUrlParameter() {
-	var params = new Object();
-	var startpos = window.location.href.indexOf("?");
-	var pieces = window.location.href.substring(startpos + 1).split("&");
-	for(var i = 0; i < pieces.length; i++) {
-		try {
-			var keyvalue = pieces[i].split("=");
-			params[keyvalue[0]] = keyvalue[1];
-		} catch(e){}
-	}
-	return params;
-}
-
-Date.prototype.format = function(format){
-	var o = {
-		"M+": this.getMonth() + 1, //month
-		"d+": this.getDate(), //day
-		"h+": this.getHours(), //hour
-		"m+": this.getMinutes(), //minute
-		"s+": this.getSeconds(), //second
-		"q+": Math.floor((this.getMonth() + 3) / 3), //quarter
-		"S": this.getMilliseconds() //millisecond
-	}
-	if (/(y+)/.test(format))
-		format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-	for (var k in o)
-		if (new RegExp("(" + k + ")").test(format))
-			format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
-	return format;
-}
-
-var nextUrl;	//to go when just logged in
-function doIfLoggedIn(func, url) {
-	$.get("user/checkLogInStatus.action", function(logInStatus){
-		if (logInStatus == "true") {
-			func();
-		} else {
-			nextUrl = !url ? null : url;
-			$("#dialog-form-login").dialog('open');
-		}
-	});
-}
-
-
 $(function(){
-
-	var updateTips = function ( t ) {
-		var tips = $( "p.validateTips" );
-		tips.text( t ).addClass( "ui-state-highlight" );
-		setTimeout(function() {
-			tips.removeClass( "ui-state-highlight", 1500 );
-		}, 500 );
-	}
-	
 	$( "#dialog-form-login" ).dialog({
 		autoOpen: false,
 		height: 270,
@@ -67,13 +8,13 @@ $(function(){
 		buttons: {
 			"Login": function() {
 				var info = {username: $("#username").val(), password: $("#password").val()};
+				$("#login_form").submit();
 				$.post('user/login.action', info, function(data) {
 					if (data == "success") {
 						$( this ).dialog( "close" );
-						if (!nextUrl) {
+						if (nextUrl == "javascript:void(0)") {
 							window.location.reload();
 						} else {
-							alert("'" + nextUrl + "'");
 							window.location.href = nextUrl;
 						}
 					} else {
@@ -135,8 +76,10 @@ $(function(){
 	});
 
 	$("a.login").click(function(){
-		nextUrl = null;
-		$( "#dialog-form-login" ).dialog( "open" );
+		var url = this.href;
+		doIfLoggedIn(function(){
+			location.href = url;
+		}, url);
 		return false;
 	});
 
@@ -146,9 +89,62 @@ $(function(){
 	});
 
 	$("#logout").click(function(){
-		$.get("user/logout.action", function(){
+		$.post("user/logout.action", function(res){
 			window.location.reload();
 		});
+		return false;
 	});
 
 });
+
+function parseUrlParameter() {
+	var params = new Object();
+	var paramString = window.location.href.replace(/#.+$/, "");
+	var startpos = paramString.indexOf("?");
+	var pieces = paramString.substring(startpos + 1).split("&");
+	for(var i = 0; i < pieces.length; i++) {
+		try {
+			var keyvalue = pieces[i].split("=");
+			params[keyvalue[0]] = keyvalue[1];
+		} catch(e){}
+	}
+	return params;
+}
+
+Date.prototype.format = function(format){
+	var o = {
+		"M+": this.getMonth() + 1, //month
+		"d+": this.getDate(), //day
+		"h+": this.getHours(), //hour
+		"m+": this.getMinutes(), //minute
+		"s+": this.getSeconds(), //second
+		"q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+		"S": this.getMilliseconds() //millisecond
+	}
+	if (/(y+)/.test(format))
+		format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+	for (var k in o)
+		if (new RegExp("(" + k + ")").test(format))
+			format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+	return format;
+}
+
+var nextUrl;	//to go when just logged in
+function doIfLoggedIn(func, url) {
+	$.post("user/checkLogInStatus.action", function(logInStatus){
+		if (logInStatus == "true") {
+			func();
+		} else {
+			nextUrl = !url ? "javascript:void(0)" : url;
+			$("#dialog-form-login").dialog('open');
+		}
+	});
+}
+
+function updateTips ( t ) {
+	var tips = $( "p.validateTips" );
+	tips.text( t ).addClass( "ui-state-highlight" );
+	setTimeout(function() {
+		tips.removeClass( "ui-state-highlight", 1500 );
+	}, 500 );
+}

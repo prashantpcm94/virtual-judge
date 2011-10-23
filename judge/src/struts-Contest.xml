@@ -27,11 +27,7 @@
 
 		<!-- 添加比赛 -->
 		<action name="addContest" class="contestAction" method="addContest">
-			<result name="success" type="redirectAction">
-				<param name="actionName">viewContest</param>
-				<param name="namespace">/contest</param>
-				<param name="cid">${cid}</param>
-			</result>
+			<result name="success" type="redirect">/contest/view.action?cid=${cid}#overview</result>
 			<result name="choose_meaning">/contest/chooseMeaning.jsp</result>		
 			<result name="input">/contest/addContest.jsp</result>
 			<result name="error">/contest/addContest.jsp</result>
@@ -57,11 +53,7 @@
 
 		<!-- 修改比赛 -->
 		<action name="editContest" class="contestAction" method="editContest">
-			<result name="success" type="redirectAction">
-				<param name="actionName">viewContest</param>
-				<param name="namespace">/contest</param>
-				<param name="cid">${cid}</param>
-			</result>
+			<result name="success" type="redirect">/contest/view.action?cid=${cid}#overview</result>
 			<result name="choose_meaning">/contest/chooseMeaning.jsp</result>		
 			<result name="detail_edit">/contest/editContest1.jsp</result>
 			<result name="brief_edit">/contest/editContest2.jsp</result>
@@ -83,22 +75,6 @@
 			</result>
 		</action>
 
-		<!-- 进入比赛 -->
-		<action name="view" class="contestAction" method="view">
-			<result name="success">/contest/view.jsp</result>		
-			<result name="error" type="redirectAction">
-				<param name="actionName">toListContest</param>
-				<param name="namespace">/contest</param>
-				<param name="cid">${cid}</param>
-			</result>
-		</action>
-
-		<!-- 进入比赛 -->
-		<action name="viewContest" class="contestAction" method="viewContest">
-			<result name="success">/contest/viewContest.jsp</result>		
-			<result name="input">/contest/loginContest.jsp</result>		
-		</action>
-
 		<!-- 登陆比赛 -->
 		<action name="loginContest" class="contestAction" method="loginContest">
 			<result type="json">
@@ -108,41 +84,40 @@
 				<param name="contentType">application/json-rpc</param>
 			</result>
 		</action>
-		
-		<!-- 查看题目 -->
-		<action name="viewProblem" class="contestAction" method="viewProblem">
-			<result name="success">/contest/viewProblem.jsp</result>
-			<result name="input">/contest/loginContest.jsp</result>		
-			<result name="notbegin" type="redirectAction">
-				<param name="actionName">viewContest</param>
-				<param name="namespace">/contest</param>
-				<param name="cid">${cid}</param>
+
+		<!-- 进入比赛 -->
+		<action name="view" class="contestAction" method="view">
+			<result name="success">/contest/view.jsp</result>		
+			<result name="error" type="redirect">/contest/toListContest.action#${cid}</result>
+		</action>
+
+		<!-- 获取题目信息 -->
+		<action name="showProblem" class="contestAction" method="showProblem">
+			<result type="json">
+				<param name="root">json</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">true</param>
+				<param name="contentType">application/json-rpc</param>
 			</result>
 		</action>
 		
-		<!-- 进入提交页面 -->
-		<action name="toSubmit" class="contestAction" method="toSubmit">
-			<result name="success">/contest/submit.jsp</result>		
-			<result name="input">/contest/loginContest.jsp</result>		
-			<result name="error" type="redirect">../user/toLogin.action</result>		
+		<!-- 指定比赛用题的描述 -->
+		<action name="appointDescription" class="contestAction" method="appointDescription">
+		</action>
+		
+		<!-- 进入rank设置页面 -->
+		<action name="showRankSetting" class="contestAction" method="showRankSetting">
+			<result name="success">/contest/rank_setting.jsp</result>		
 		</action>
 		
 		<!-- 提交 -->
 		<action name="submit" class="contestAction" method="submit">
-			<result name="success" type="redirectAction">
-				<param name="actionName">status</param>
-				<param name="namespace">/contest</param>
-				<param name="cid">${cid}</param>
-				<param name="reset">1</param>
+			<result type="json">
+				<param name="root">json</param>
+				<param name="noCache">true</param>
+				<param name="excludeNullProperties">true</param>
+				<param name="contentType">application/json-rpc</param>
 			</result>
-			<result name="practice" type="redirectAction">
-				<param name="actionName">status</param>
-				<param name="namespace">/problem</param>
-				<param name="reset">1</param>
-			</result>
-			<result name="login">/contest/loginContest.jsp</result>
-			<result name="input">/contest/submit.jsp</result>
-			<result name="error" type="redirect">../user/toLogin.action</result>		
 		</action>
 		
 		<!-- 显示提交 -->
@@ -160,37 +135,15 @@
 			</result>
 		</action>
 
-		<!-- 排名页面 -->
-		<action name="standing" class="contestAction" method="standing">
-			<result name="success">/contest/standing.jsp</result>
-			<result name="input">/contest/loginContest.jsp</result>		
-		</action>
-
-		<!-- 排名页面2 -->
-		<action name="standing2" class="contestAction" method="standing2">
-			<result name="success">/contest/standing2.jsp</result>
-			<result name="input">/contest/loginContest.jsp</result>		
-		</action>
-		
 		<!-- 查看代码 -->
 		<action name="viewSource" class="contestAction" method="viewSource">
 			<result name="success">/contest/viewSource.jsp</result>
-			<result name="error" type="redirect">status.action?cid=${cid}</result>		
-		</action>
-		
-		<!-- 切换代码公开性 -->
-		<action name="toggleOpen" class="contestAction" method="toggleOpen">
-			<result name="success" type="redirectAction">
-				<param name="actionName">viewSource</param>
-				<param name="namespace">/contest</param>
-				<param name="id">${id}</param>
-			</result>
-			<result name="error" type="redirect">status.action</result>		
+			<result name="error" type="redirect">/toIndex.action</result>		
 		</action>
 		
 		<!-- 重判代码 -->
 		<action name="rejudge" class="contestAction" method="rejudge">
-			<result name="success">/index.jsp</result>
+			<result name="success" type="redirect">/toIndex.action</result>
 		</action>
 		
 		<!-- 获取提交信息 -->
@@ -202,7 +155,24 @@
 				<param name="contentType">application/json-rpc</param>
 			</result>
 		</action>
+
+
+		<!-- deprecated -->
+
+		<!-- 进入比赛 -->
+		<action name="viewContest" class="contestAction" method="viewContest">
+			<result name="redirect">/contest/view.action?cid=${cid}#overview</result>
+		</action>
 		
+		<!-- 查看题目 -->
+		<action name="viewProblem" class="contestAction" method="viewProblem">
+			<result name="redirect">/contest/view.action?cid=${cid}#problem/${num}</result>
+		</action>
+		
+		<!-- 排名页面2 -->
+		<action name="standing2" class="contestAction" method="standing2">
+			<result name="redirect">/contest/view.action?cid=${cid}#rank</result>
+		</action>
 		
 	</package>
 </struts>

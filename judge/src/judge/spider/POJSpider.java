@@ -13,6 +13,7 @@ public class POJSpider extends Spider {
 		
 		String html = "";
 		HttpClient httpClient = new HttpClient();
+		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
 		GetMethod getMethod = new GetMethod("http://poj.org/problem?id=" + problem.getOriginProb());
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
@@ -22,8 +23,10 @@ public class POJSpider extends Spider {
 			}
 			html = Tools.getHtml(getMethod, null);
 		} catch(Exception e) {
-			getMethod.releaseConnection();
+			e.printStackTrace();
 			throw new Exception();
+		} finally {
+			getMethod.releaseConnection();
 		}
 
 		if (html.contains("<li>Can not find problem")){

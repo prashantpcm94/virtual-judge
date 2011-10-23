@@ -132,7 +132,7 @@ $(document).ready(function() {
 		$row.removeClass("no");
 		$row.removeClass("yes");
 		$row.addClass("pending");
-		$.get("problem/rejudge.action", {id: id}, function() {
+		$.post("problem/rejudge.action", {id: id}, function() {
 			getResult(id);
 		});
 		return false;

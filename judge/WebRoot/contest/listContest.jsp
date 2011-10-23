@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<s:include value="/header.jsp" />
-		<title>Virtual Judge -- Contest</title>
+		<title>Contests - Virtual Judge</title>
 		<style type="text/css" media="screen">
 			.dataTables_info { padding-top: 0; }
 			.dataTables_paginate { padding-top: 0; }
@@ -20,7 +20,7 @@
 		<s:include value="/top.jsp" />
 		<s:actionerror />
 		
-		<div class="head_status" style="float:right;display:none">
+		<div id="head_status" style="float:right;display:none">
 			<input name="contestType" id="contestType0" checked="checked" value="0" onclick="this.blur()" type="radio" /><label for="contestType0"><img src="images/contest.jpg" height="20" title="Real contest" /></label>
 			<input name="contestType" id="contestType1" value="1" onclick="this.blur()" type="radio" /><label for="contestType1"><img src="images/replay.png" height="20" title="Replay" /></label>
 			<span class="Scheduled">&nbsp;&nbsp;&nbsp;&nbsp;Scheduled:</span><input type="checkbox" name="scheduled" checked="checked" value="1" />  
@@ -28,16 +28,11 @@
 			<span class="Ended">&nbsp;&nbsp;Ended:</span><input type="checkbox" name="ended" checked="checked" value="3" />  
 		</div>
 		
-		<div class="ptt">Contest List</div>
-		<div class="plm">
-			<br />
-			<s:if test="#session.visitor != null">
-				<a href="contest/toAddContest.action">Add a contest</a>
-			</s:if>
-			<s:else>
-				<a class="login" href="contest/toAddContest.action"><font color="red">Login to add contests!</font></a>
-			</s:else>
-			<br /><br />
+		<div class="ptt" style="margin-bottom:12px;position:relative;">
+			Contest List
+			<div style="float:right;position:absolute;right:0px;top:0">
+				<a href="contest/toAddContest.action" class="login" id="add_contest" style="color:black">Add a contest</a>
+			</div>
 		</div>
 		
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="listContest">

@@ -33,7 +33,7 @@ public abstract class Submitter extends Thread implements Cloneable {
 	private void updateStanding() {
 		if (submission.getContest() != null){
 			try {
-				judgeService.updateStandingData(submission.getContest().getId(), true);
+				judgeService.updateRankData(submission.getContest().getId(), true);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

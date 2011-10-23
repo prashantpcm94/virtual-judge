@@ -17,6 +17,7 @@ public class Contest {
 	private Date beginTime;
 	private Date endTime;
 	private String hashCode;	//按原题title
+	private int enableTimeMachine;
 
 	private User manager;		//管理员
 	private ReplayStatus replayStatus;
@@ -96,5 +97,11 @@ public class Contest {
 	}
 	public void setAnnouncement(String announcement) {
 		this.announcement = announcement;
+	}
+	public int getEnableTimeMachine() {
+		return enableTimeMachine;
+	}
+	public void setEnableTimeMachine(int enableTimeMachine) {
+		this.enableTimeMachine = enableTimeMachine;
 	}
 }

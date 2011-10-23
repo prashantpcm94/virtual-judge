@@ -8,20 +8,17 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<s:include value="/header.jsp" />
-		<title>Virtual Judge -- Source Code</title>
+		<title>Source Code - Virtual Judge</title>
 		<script type="text/javascript" src="shjs/sh_main.min.js" ></script>
 		<script type="text/javascript" src="<%=langFile%>" ></script>
 		<link type="text/css" rel="stylesheet" href="shjs/css/sh_style.min.css" />
-		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
-		<script type='text/javascript' src='javascript/engine.js'></script>
-		<script type='text/javascript' src='dwr/util.js'></script>
 
 		<script type="text/javascript" src="javascript/viewSource.js"></script>
 	</head>
 
 	<body onload="sh_highlightDocument();">
 		<s:include value="/top.jsp" />
-		<div class="ptt" style="color:black;font-weight:normal;margin-bottom:12px"><a href="user/profile.action?uid=${uid}">${un}</a> 's source code for <a href="contest/viewProblem.action?pid=${cproblem.id}">${cproblem.num}</a></div>
+		<div class="ptt" style="color:black;font-weight:normal;margin-bottom:12px"><a href="user/profile.action?uid=${uid}">${submission.username}</a> 's source code for <a href="contest/view.action?cid=${contest.id}#problem/${cproblem.num}">${cproblem.num}</a></div>
 		
 		<div class="plm" style="text-align:left">
 			<table align="center" style="font-size:10pt">
@@ -36,7 +33,7 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 				</tr>
 				<tr>
 					<td>
-						<b>Language: </b>${submission.language}
+						<b>Language: </b>${submission.dispLanguage}
 					</td>
 					<td width=10px></td>
 					<td>
@@ -57,7 +54,7 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 			</table>
 			<s:hidden name="sid" value="%{submission.id}" />
 		</div>
-		<p id="info" style="text-align:center;font-size:15pt;color:green;visibility:hidden">This source is shared by <b>${un}</b></p>
+		<p id="info" style="text-align:center;font-size:15pt;color:green;visibility:hidden">This source is shared by <b>${submission.username}</b></p>
 		<pre class="${language}" style="font-family:Courier New,Courier,monospace">${submission.source}</pre>
 		<s:include value="/bottom.jsp" />
 	</body>

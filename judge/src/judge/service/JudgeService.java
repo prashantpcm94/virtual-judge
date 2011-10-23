@@ -152,16 +152,22 @@ public class JudgeService extends BaseService {
 	 * 更新比赛排行数据
 	 * @param cid 比赛id
 	 * @param force 是否强制更新，为false则只有当文件不存在时才更新
-	 * @return 0:比赛id		1:数据文件url
+	 * @return 0:比赛id		1:数据文件url		2:还有多少ms比赛结束		3:开始时间		4:比赛长度
 	 * @throws Exception
 	 */
-	public Object[] updateStandingData(Integer cid, boolean force) throws Exception{
+	public Object[] updateRankData(Integer cid, boolean force) throws Exception{
 		Contest contest = (Contest) this.query("select contest from Contest contest left join fetch contest.replayStatus where contest.id = " + cid).get(0);
 
 		String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
 		String path = ApplicationContainer.sc.getRealPath(relativePath);
 		File data = new File(path, cid.toString());
-		Object[] res = new Object[]{cid, relativePath.substring(1) + "/" + cid.toString()};
+		Object[] res = new Object[]{
+			cid,
+			relativePath.substring(1) + "/" + cid.toString(),
+			contest.getEndTime().getTime() - new Date().getTime(),
+			contest.getBeginTime().getTime(),
+			contest.getEndTime().getTime() - contest.getBeginTime().getTime()
+		};
 		if (data.exists()){
 			if (!force) {
 				return res;
@@ -189,10 +195,10 @@ public class JudgeService extends BaseService {
 				userMap.put(info[0], new Object[]{info[4], info[5]});
 			}
 			
-			Iterator it = userMap.entrySet().iterator();    
-			while (it.hasNext())    
-			{    
-				Map.Entry entry = (Map.Entry) it.next();    
+			Iterator it = userMap.entrySet().iterator();
+			while (it.hasNext())
+			{
+				Map.Entry entry = (Map.Entry) it.next();
 				Integer uid = (Integer) entry.getKey();
 				Object[] name = (Object[]) entry.getValue();
 				if (nameData.length() > 0) {
@@ -201,7 +207,7 @@ public class JudgeService extends BaseService {
 				nameData.append("\"").append(uid).append("\":[\"").append(name[0]).append("\",\"").append(((String)name[1]).replace("\\", "\\\\").replace("\"", "\\\"")).append("\"]");
 			}
 			
-			StringBuffer standingData = new StringBuffer("[{").append(nameData).append("}").append(submissionData).append("]");
+			StringBuffer standingData = new StringBuffer("[").append(cid).append(",{").append(nameData).append("}").append(submissionData).append("]");
 
 			out.write(standingData.toString());
 		}
@@ -211,8 +217,8 @@ public class JudgeService extends BaseService {
 		return res;
 	}
 	
-	public Object[] getStandingData(Integer cid) throws Exception{
-		return updateStandingData(cid, false);
+	public Object[] getRankInfo(Integer cid) throws Exception{
+		return updateRankData(cid, false);
 	}
 	
 	/**
@@ -225,8 +231,8 @@ public class JudgeService extends BaseService {
 		Long beginTime = ((Date) list.get(0)[0]).getTime();
 		Long endTime = ((Date) list.get(0)[1]).getTime();
 		Long totalTime = endTime - beginTime;
-		Long elapsedTime = Math.max(new Date().getTime() - beginTime, 0L);
-		return new Long[]{totalTime / 1000L, Math.min(totalTime, elapsedTime) / 1000L};
+		Long elapsedTime = new Date().getTime() - beginTime;
+		return new Long[]{totalTime, Math.min(totalTime, elapsedTime)};
 	}
 	
 	/**
@@ -234,9 +240,12 @@ public class JudgeService extends BaseService {
 	 * @param sid source ID
 	 */
 	public void toggleOpen(Integer sid) {
+		User user = OnlineTool.getCurrentUser();
 		Submission submission = (Submission) this.query(Submission.class, sid);
-		submission.setIsOpen(1 - submission.getIsOpen());
-		this.addOrModify(submission);
+		if (submission != null && user != null && (user.getSup() != 0 || user.getId() == submission.getUser().getId())){
+			submission.setIsOpen(1 - submission.getIsOpen());
+			this.addOrModify(submission);
+		}
 	}
 
 
@@ -563,31 +572,32 @@ public class JudgeService extends BaseService {
 	/**
 	 * 判断当前登录用户是否对某比赛有进入权限
 	 * @param cid 比赛ID
-	 * @return
+	 * @return 0:没权限    1:有权限查看、无权限管理    2:有权限查看、有权限管理
 	 */
-	public boolean checkAuthorizeStatus(int cid) {
+	public int checkAuthorizeStatus(int cid) {
 		Map httpSession = ActionContext.getContext().getSession();
-		if (httpSession.containsKey("C" + cid)) {
-			return true;
-		}
 		User user = OnlineTool.getCurrentUser();
-		if (user != null && user.getSup() != 0) {
-			httpSession.put("C" + cid, 1);
-			return true;
+		Integer authorizeStatus = (Integer) httpSession.get("C" + cid);
+		if (authorizeStatus != null) {
+			return authorizeStatus;
 		}
+
 		Session session = this.getSession();
 		Object[] info = (Object[]) session.createQuery("select c.manager.id, c.password from Contest c where c.id = " + cid).uniqueResult();
 		this.releaseSession(session);
 		if (info == null) {
-			return false;
+			return 0;
 		}
 		Integer managerId = (Integer) info[0];
 		String encryptedPassword = (String) info[1];
-		if (encryptedPassword == null || user != null && user.getId() == managerId) {
+		if (user != null && (user.getSup() != 0 || user.getId() == managerId)) {
+			httpSession.put("C" + cid, 2);
+			return 2;
+		} else if (encryptedPassword == null || httpSession.containsKey("P" + cid)) {
 			httpSession.put("C" + cid, 1);
-			return true;
+			return 1;
 		} else {
-			return false;
+			return 0;
 		}
 	}
 	

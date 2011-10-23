@@ -1,7 +1,3 @@
-/**
- * 处理题目相关功能
- */
-
 package judge.action;
 
 import java.io.UnsupportedEncodingException;
@@ -15,7 +11,10 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
+import judge.bean.Cproblem;
 import judge.bean.DataTablesPage;
 import judge.bean.Description;
 import judge.bean.Problem;
@@ -24,13 +23,20 @@ import judge.bean.User;
 import judge.spider.Spider;
 import judge.submitter.Submitter;
 import judge.tool.ApplicationContainer;
+import judge.tool.OnlineTool;
 import judge.tool.Tools;
 
 import com.opensymphony.xwork2.ActionContext;
 
-@SuppressWarnings({ "unchecked", "serial" })
+/**
+ * 处理 题库/练习 前端相关功能
+ * @author Isun
+ *
+ */
+@SuppressWarnings("unchecked")
 public class ProblemAction extends BaseAction{
 
+	private static final long serialVersionUID = 5557740709776919006L;
 	private int id;	//problemId
 	private int uid;
 	private int isOpen;
@@ -172,6 +178,8 @@ public class ProblemAction extends BaseAction{
 				problem = new Problem();
 				problem.setOriginOJ(OJId.trim());
 				problem.setOriginProb(probNum.toUpperCase());
+				problem.setTitle("Crawling……");
+				baseService.addOrModify(problem);
 			} else {
 				for (Description desc : problem.getDescriptions()){
 					if ("0".equals(desc.getAuthor())){
@@ -182,17 +190,18 @@ public class ProblemAction extends BaseAction{
 			}
 			if (description == null){
 				description = new Description();
-				description.setUpdateTime(new Date());
-				description.setAuthor("0");
-				description.setRemarks("Initialization.");
-				description.setVote(0);
 			}
-			if (problem.getTitle() == null) {
-				problem.setTitle("Crawling……");
-			}
+			description.setUpdateTime(new Date());
+			description.setAuthor("0");
+			description.setRemarks("Initialization.");
+			description.setVote(0);
+			description.setProblem(problem);
+			baseService.addOrModify(description);
+
 			problem.setTimeLimit(1);
 			problem.setTriggerTime(new Date());
 			baseService.addOrModify(problem);
+
 			Spider spider = (Spider) spiderMap.get(OJId).clone();
 			spider.setProblem(problem);
 			spider.setDescription(description);
@@ -421,13 +430,38 @@ public class ProblemAction extends BaseAction{
 	}
 
 	public String deleteDescription(){
-		Map session = ActionContext.getContext().getSession();
-		User user = (User) session.get("visitor");
-		if (user != null){
-			description = (Description) baseService.query(Description.class, id);
+		User user = OnlineTool.getCurrentUser();
+		if (user == null) {
+			return ERROR;
+		}
+		Session session = baseService.getSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			description = (Description) session.get(Description.class, id);
 			if (!description.getAuthor().equals("0") && (user.getSup() == 1 || user.getUsername().equals(description.getAuthor()))){
-				baseService.delete(description);
+				Set<Cproblem> cproblems = description.getCproblems();
+				if (cproblems.size() > 0) {
+					//需要把引用该描述的cproblem置为引用system crawler对应的描述
+					Set<Description> descriptions = description.getProblem().getDescriptions();
+					Description sysDescription = null;
+					for (Description description : descriptions) {
+						if (description.getAuthor().equals("0")) {
+							sysDescription = description;
+							break;
+						}
+					}
+					for (Cproblem cproblem : cproblems) {
+						cproblem.setDescription(sysDescription);
+					}
+				}
+				session.delete(description);
 			}
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		} finally {
+			baseService.releaseSession(session);
 		}
 		return SUCCESS;
 	}
@@ -453,56 +487,12 @@ public class ProblemAction extends BaseAction{
 		un = submission.getUser().getUsername();
 
 		//这里language用作为shjs提供语言识别所需要的class名
-		language = findClass4SHJS(submission.getLanguage());
+		language = Tools.findClass4SHJS(submission.getLanguage());
 
 		return SUCCESS;
 	}
 
-	public String toggleOpen(){
-		Map session = ActionContext.getContext().getSession();
-		User user = (User) session.get("visitor");
-		submission = (Submission) baseService.query(Submission.class, id);
-		if (user == null || user.getSup() == 0 && user.getId() != submission.getUser().getId()){
-			session.put("error", "No access to this code!");
-			return ERROR;
-		}
-		submission.setIsOpen(1 - submission.getIsOpen());
-		baseService.addOrModify(submission);
-		return SUCCESS;
-	}
 
-	private String findClass4SHJS(String srcLang) {
-		srcLang = " " + srcLang.toLowerCase() + " ";
-		if (srcLang.contains("c++") || srcLang.contains("cpp") || srcLang.contains("g++")){
-			return "sh_cpp";
-		} else if (srcLang.contains(" c ") || srcLang.contains("gcc")){
-			return "sh_c";
-		} else if (srcLang.contains("c#")){
-			return "sh_csharp";
-		} else if (srcLang.contains("java ")){
-			return "sh_java";
-		} else if (srcLang.contains("pascal") || srcLang.contains("fpc")){
-			return "sh_pascal";
-		} else if (srcLang.contains("tcl")){
-			return "sh_tcl";
-		} else if (srcLang.contains("scala")){
-			return "sh_scala";
-		} else if (srcLang.contains("perl")){
-			return "sh_perl";
-		} else if (srcLang.contains("python")){
-			return "sh_python";
-		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
-		} else if (srcLang.contains("php")){
-			return "sh_php";
-		} else if (srcLang.contains("prolog")){
-			return "sh_prolog";
-		} else if (srcLang.contains("javascript")){
-			return "sh_javascript";
-		} else {
-			return "sh_c";
-		}
-	}
 	
 	public String rejudge(){
 		Map session = ActionContext.getContext().getSession();
@@ -515,6 +505,11 @@ public class ProblemAction extends BaseAction{
 			return ERROR;
 		}
 		judgeService.rejudge(submission);
+		return SUCCESS;
+	}
+	
+	public String toggleOpen() {
+		judgeService.toggleOpen(id);
 		return SUCCESS;
 	}
 	

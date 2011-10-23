@@ -15,6 +15,7 @@ String basePath = (String)application.getAttribute("basePath");
 	</head>
 
 	<body>
+		<s:debug />
 		<table width="100%" border="0" class="banner">
 			<tr>
 				<td>

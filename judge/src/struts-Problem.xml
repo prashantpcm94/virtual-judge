@@ -96,19 +96,13 @@
 			<result name="error" type="redirect">status.action</result>		
 		</action>
 		
-		<!-- 切换代码公开性 -->
-		<action name="toggleOpen" class="problemAction" method="toggleOpen">
-			<result name="success" type="redirectAction">
-				<param name="actionName">viewSource</param>
-				<param name="namespace">/problem</param>
-				<param name="id">${id}</param>
-			</result>
-			<result name="error" type="redirect">status.action</result>		
-		</action>
-
 		<!-- 重判代码 -->
 		<action name="rejudge" class="problemAction" method="rejudge">
-			<result name="success">/index.jsp</result>
+			<result name="success" type="redirect">/toIndex.action</result>
+		</action>
+
+		<!-- 切花代码公开性 -->
+		<action name="toggleOpen" class="problemAction" method="toggleOpen">
 		</action>
 
 		<!-- 获取提交信息 -->

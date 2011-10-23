@@ -28,7 +28,7 @@
 		<property name="hint" type="java.lang.String">
 		    <column name="C_HINT" />
 		</property>
-		<property name="updateTime" type="java.util.Date">
+		<property name="updateTime" type="java.sql.Timestamp">
 		    <column name="C_UPDATE_TIME" />
 		</property>
 		<property name="author" type="java.lang.String">

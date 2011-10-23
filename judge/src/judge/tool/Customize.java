@@ -1,9 +1,13 @@
 package judge.tool;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import judge.bean.Contest;
 import judge.bean.Cproblem;
@@ -17,7 +21,29 @@ public class Customize {
 	
 	static public ServletContext sc = ApplicationContainer.sc;
 	static public IBaseService baseService = (IBaseService) SpringBean.getBean("baseService", sc);
-	
+
+	static public void deleteRedundantDescription() {
+		List<Description> list = baseService.query("select d from Description d where d.author = '0' order by d.problem.id asc");
+		Session session = baseService.getSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			for (int i = 0; i < list.size() - 1; i++) {
+				Description thisDescription = list.get(i);
+				Description nextDescription = list.get(i + 1);
+				//System.out.println(thisDescription.getProblem().getId());
+				if (thisDescription.getId() == nextDescription.getId()) {
+					System.out.println(thisDescription.getProblem().getId());
+					session.delete(thisDescription);
+				}
+			}
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+		} finally {
+			baseService.releaseSession(session);
+		}
+	}
+
 	static public void initCproblemDescription() {
 		Description[] bestDescription = new Description[50000];
 		List<Description> list = baseService.query("select d from Description d order by d.vote asc");
@@ -31,10 +57,19 @@ public class Customize {
 		baseService.addOrModify(list1);
 	}
 	
-	static public void transReplay() {
-		List<ReplayStatus> list = baseService.query("select rs from ReplayStatus rs");
+	static public void transReplay() throws Exception {
+		List<ReplayStatus> list = baseService.query("select rs from ReplayStatus rs left join fetch rs.contests");
 		for (ReplayStatus replayStatus : list) {
-			replayStatus.setData("[{}," + replayStatus.getData().substring(1));
+			int cid = 0;
+			for (Iterator iterator = replayStatus.getContests().iterator(); iterator.hasNext();) {
+				Contest contest = (Contest) iterator.next();
+				cid = contest.getId();
+			}
+			if (cid > 0) {
+				replayStatus.setData("[" + cid + "," + replayStatus.getData().substring(1));
+			} else {
+				throw new Exception();
+			}
 		}
 		baseService.addOrModify(list);
 	}

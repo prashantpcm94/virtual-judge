@@ -10,6 +10,8 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import judge.bean.User;
+import judge.tool.OnlineTool;
+import judge.tool.PhysicalAddressTool;
 import judge.tool.SessionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -31,6 +33,10 @@ public class StatAction extends ActionSupport {
 	private SessionContext myc = SessionContext.getInstance();
 
 	public String listOnlineUsers() {
+		user = OnlineTool.getCurrentUser();
+		if (user == null || user.getSup() == 0) {
+			return ERROR;
+		}
 
 		List<HttpSession> sessionList = myc.getSessionList();
 		dataList = new ArrayList();
@@ -55,6 +61,7 @@ public class StatAction extends ActionSupport {
 				row.add(null);
 			}
 			row.add(ip);
+			row.add(PhysicalAddressTool.getPhysicalAddressTool(ip));
 			row.add(new Date(session.getCreationTime()));
 			
 			long al = (session.getLastAccessedTime() - session.getCreationTime()) / 1000;

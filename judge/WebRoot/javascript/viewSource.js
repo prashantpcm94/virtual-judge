@@ -1,13 +1,14 @@
 $(document).ready(function() {
+	
+	var showInfo = function() {
+		if ($("input[name=open]:checked").val() == 1){
+			$("p#info").css("visibility", "visible");
+		} else {
+			$("p#info").css("visibility", "hidden");
+		}
+	};
+	showInfo();
 	$("input[name=open]").change(function(){
-		judgeService.toggleOpen($("[name=sid]").val(), dispInfo);
+		$.post("problem/toggleOpen.action?id=" + $("[name=sid]").val(), showInfo);
 	});
 });
-
-function dispInfo(){
-	if ($("input[name=open]:checked").val() == 1){
-		$("p#info").css("visibility", "visible");
-	} else {
-		$("p#info").css("visibility", "hidden");
-	}
-}
