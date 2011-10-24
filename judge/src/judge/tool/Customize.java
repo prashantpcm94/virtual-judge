@@ -1,7 +1,6 @@
 package judge.tool;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -60,16 +59,8 @@ public class Customize {
 	static public void transReplay() throws Exception {
 		List<ReplayStatus> list = baseService.query("select rs from ReplayStatus rs left join fetch rs.contests");
 		for (ReplayStatus replayStatus : list) {
-			int cid = 0;
-			for (Iterator iterator = replayStatus.getContests().iterator(); iterator.hasNext();) {
-				Contest contest = (Contest) iterator.next();
-				cid = contest.getId();
-			}
-			if (cid > 0) {
-				replayStatus.setData("[" + cid + "," + replayStatus.getData().substring(1));
-			} else {
-				throw new Exception();
-			}
+			String old = replayStatus.getData();
+			replayStatus.setData(old.replaceFirst("\\[\\d+,\\{", "[{"));
 		}
 		baseService.addOrModify(list);
 	}

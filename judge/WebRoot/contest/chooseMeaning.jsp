@@ -17,7 +17,7 @@
 			<table class="display" cellpadding="0" cellspacing="2" border="0">
 				<s:iterator value="cellMeaningOptions" status="stat">
 				<tr>
-					<td class="form_title" style="text-align: center; background-color:#CCDDFF;"><s:property value="key"/></td>
+					<td style="text-align: center; background-color:#CCDDFF;"><s:property value="key"/></td>
 					<td style="line-height:40px">: <s:select list="%{value}" name="selectedCellMeaning" cssStyle="width:450px"/></td>
 				</tr>
 				</s:iterator>	

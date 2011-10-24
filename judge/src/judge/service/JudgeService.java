@@ -179,7 +179,8 @@ public class JudgeService extends BaseService {
 		Writer out = new OutputStreamWriter(fos, "UTF-8");
 		
 		if (contest.getReplayStatus() != null) {
-			out.write(contest.getReplayStatus().getData());
+			//原data内无contest ID信息，特此加上
+			out.write("[" + contest.getId() + "," + contest.getReplayStatus().getData().substring(1));
 		} else {
 			List<Object[]> submissionList = this.query("select s.user.id, cp.num, s.status, s.subTime, s.username, s.user.nickname from Submission s, Cproblem cp where s.contest.id = " + cid + " and s.problem.id = cp.problem.id and s.contest.id = cp.contest.id order by s.id asc");
 			long beginTime = contest.getBeginTime().getTime();
