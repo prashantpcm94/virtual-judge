@@ -11,7 +11,7 @@ var hash;
 var oldProblemHash = "#problem/A";
 var oldStatusHash;
 var rankTable;
-var replays = {};
+var ranks = {};
 var rankUpdater;
 var sliderUpdater;
 var statusTimeoutInstance = {};	//status fetch
@@ -245,6 +245,20 @@ $(function(){
 		});
 	}
 
+	$("td.meta_td").live("click", function() {
+		var curCid = $(this).parent().attr("cid");
+		var rank = ranks[curCid];
+		var end = new Date().valueOf() > rank.endTime;
+		$.facebox("<table><tr><td style='font-weight:bold;padding:5px'>Title</td><td>" + (end && rank.cid != cid ? "<a href='contest/view.action?cid=" + rank.cid + "#overview' target='_blank'>" : "") + (rank.isReplay ? "<img src='images/replay.png' height='18' /> " : "") + rank.title + (end && rank.cid != cid ? "</a>" : "") + "</td></tr><tr><td style='font-weight:bold;padding:5px'>Begin Time</td><td>" + new Date(rank.beginTime).format("yyyy-MM-dd hh:mm:ss") + "</td></tr><tr><td style='font-weight:bold;padding:5px'>Length</td><td>" + dateFormat(rank.length) + "</td></tr><tr><td style='font-weight:bold;padding:5px'>Manager</td><td><a href='user/profile.action?uid=" + rank.managerId + "' target='_blank'>" + rank.managerName + "</a></td></tr></table>");
+		$("#facebox").css({
+			"z-index": "999999",
+			"position": "fixed",
+			"top": $(window).height() - 250 + "px",
+			"left": $(window).width() / 2 - 250 + "px"
+		});
+		$("#facebox .content").css("width", "500px");
+	});
+	
 	$("td.penalty_td").live({
 		mouseenter: function() {
 			$(this).text($(this).attr("v0"));
@@ -555,15 +569,20 @@ function updateRankInfo() {
 
 	var cnt = 0;
 	for (var i = 0; i < cids.length; i++) {
-		if (replays[cids[i]] == undefined) {
-			replays[cids[i]] = {};
+		if (ranks[cids[i]] == undefined) {
 			judgeService.getRankInfo(cids[i], function(res){
-				var curCid = res[0];
-				replays[curCid].dataURL = res[1];
-				replays[curCid].endTime = new Date().valueOf() + res[2];	//locally
-				replays[curCid].beginTime = res[3];	//server side
-				replays[curCid].length = res[4];
-				replays[curCid].lastFetchTime = 0;
+				ranks[res.cid] = {
+					cid: res.cid,
+					dataURL: res.dataURL,
+					isReplay: res.isReplay,
+					title: res.title,
+					managerId: res.managerId,
+					managerName: res.managerName,
+					endTime: new Date().valueOf() + res.remainingLength,	//locally
+					beginTime: res.beginTime,	//server side
+					length: res.length,
+					lastFetchTime: 0
+				};
 				if (++cnt == cids.length) {
 					updateRankData();
 				}
@@ -577,11 +596,11 @@ function updateRankInfo() {
 function updateRankData() {
 	var cnt = 0;
 	for (var i = 0; i < cids.length; i++) {
-		if (!replays[cids[i]].data || replays[cids[i]].lastFetchTime < Math.min(startTime + selectedTime - ti[1], replays[cids[i]].endTime)) {
-			$.getJSON(replays[cids[i]].dataURL + "?" + new Date().valueOf(), function(rankData) {
+		if (!ranks[cids[i]].data || ranks[cids[i]].lastFetchTime < Math.min(startTime + selectedTime - ti[1], ranks[cids[i]].endTime)) {
+			$.getJSON(ranks[cids[i]].dataURL + "?" + new Date().valueOf(), function(rankData) {
 				var curCid = rankData[0];
-				replays[curCid].data = rankData;
-				replays[curCid].lastFetchTime = new Date().valueOf();
+				ranks[curCid].data = rankData;
+				ranks[curCid].lastFetchTime = new Date().valueOf();
 				if (++cnt == cids.length){
 					calcRankTable();
 				}
@@ -610,7 +629,7 @@ function calcRankTable() {
 		if (isNaN(curCid)) {
 			return;
 		}
-		$.each(replays[curCid].data, function(key, s) {
+		$.each(ranks[curCid].data, function(key, s) {
 			if (key == 0) {
 				return;
 			} else if (key == 1) {

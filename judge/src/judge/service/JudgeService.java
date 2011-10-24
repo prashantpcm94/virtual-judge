@@ -152,22 +152,27 @@ public class JudgeService extends BaseService {
 	 * 更新比赛排行数据
 	 * @param cid 比赛id
 	 * @param force 是否强制更新，为false则只有当文件不存在时才更新
-	 * @return 0:比赛id		1:数据文件url		2:还有多少ms比赛结束		3:开始时间		4:比赛长度
+	 * @return 0:比赛id		1:数据文件url		2:还有多少ms比赛结束		3:开始时间		4:比赛长度		5:是否replay		6:比赛标题
 	 * @throws Exception
 	 */
-	public Object[] updateRankData(Integer cid, boolean force) throws Exception{
-		Contest contest = (Contest) this.query("select contest from Contest contest left join fetch contest.replayStatus where contest.id = " + cid).get(0);
+	public Map updateRankData(Integer cid, boolean force) throws Exception{
+		Contest contest = (Contest) this.query("select contest from Contest contest left join fetch contest.replayStatus left join fetch contest.manager where contest.id = " + cid).get(0);
 
 		String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
 		String path = ApplicationContainer.sc.getRealPath(relativePath);
 		File data = new File(path, cid + ".json");
-		Object[] res = new Object[]{
-			cid,
-			relativePath.substring(1) + "/" + cid + ".json",
-			contest.getEndTime().getTime() - new Date().getTime(),
-			contest.getBeginTime().getTime(),
-			contest.getEndTime().getTime() - contest.getBeginTime().getTime()
-		};
+
+		Map res = new HashMap();
+		res.put("cid", cid);
+		res.put("dataURL", relativePath.substring(1) + "/" + cid + ".json");
+		res.put("isReplay", contest.getReplayStatus() == null ? 0 : 1);
+		res.put("title", contest.getTitle());
+		res.put("managerId", contest.getManager().getId());
+		res.put("managerName", contest.getManager().getUsername());
+		res.put("remainingLength", contest.getEndTime().getTime() - new Date().getTime());
+		res.put("beginTime", contest.getBeginTime().getTime());
+		res.put("length", contest.getEndTime().getTime() - contest.getBeginTime().getTime());
+
 		if (data.exists()){
 			if (!force) {
 				return res;
@@ -218,7 +223,7 @@ public class JudgeService extends BaseService {
 		return res;
 	}
 	
-	public Object[] getRankInfo(Integer cid) throws Exception{
+	public Map getRankInfo(Integer cid) throws Exception{
 		return updateRankData(cid, false);
 	}
 	
