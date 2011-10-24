@@ -32,7 +32,7 @@ public class SGUSpider extends Spider {
 			throw new Exception();
 		}
 		
-		html = html.replaceAll("src\\s*=\\s*(['\"]?)/?images[/\\\\]", "src=$1http://acm.sgu.ru/images/");
+		html = html.replaceAll("src\\s*=\\s*(['\"]?)/?(images|problems)[/\\\\]", "src=$1http://acm.sgu.ru/$2/");
 		
 		String tl = Tools.regFind(html, "ime limit per test: ([\\d\\.]*)");
 		if (tl.length() > 0){
