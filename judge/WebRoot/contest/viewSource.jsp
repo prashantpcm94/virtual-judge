@@ -18,7 +18,7 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 
 	<body onload="sh_highlightDocument();">
 		<s:include value="/top.jsp" />
-		<div class="ptt" style="color:black;font-weight:normal;margin-bottom:12px"><a href="user/profile.action?uid=${uid}">${submission.username}</a> 's source code for <a href="contest/view.action?cid=${contest.id}#problem/${cproblem.num}">${cproblem.num}</a></div>
+		<div class="ptt" style="color:black;font-weight:normal;margin-bottom:12px"><a href="user/profile.action?uid=${submission.user.id}">${submission.username}</a> 's source code for <a href="contest/view.action?cid=${contest.id}#problem/${cproblem.num}">${cproblem.num}</a></div>
 		
 		<div class="plm" style="text-align:left">
 			<table align="center" style="font-size:10pt">

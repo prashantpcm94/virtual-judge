@@ -8,6 +8,7 @@ var slider;
 var problemSet = {};
 var statusTable;
 var hash;
+var oldProblemHash = "#problem/A";
 var oldStatusHash;
 var rankTable;
 var replays = {};
@@ -73,7 +74,11 @@ $(function(){
 	tabs = $("#contest_tabs").tabs({
 		select: function(event, ui) {
 			if (location.hash.indexOf(ui.tab.rel) != 0) {
-				location.hash = ui.tab.rel;
+				if (ui.tab.rel == "#problem") {
+					location.hash = oldProblemHash;
+				} else {
+					location.hash = ui.tab.rel;
+				}
 			}
 			//deal with rank update
 			if (location.hash.indexOf("#rank") != 0) {
@@ -333,6 +338,7 @@ function showProblem() {
 	tabs.tabs( "select" , "problem" );
 	resetTimeSlider();
 
+	oldProblemHash = location.hash;
 	var $numRadio = $("#problem_number_container > input[value=" + hash[1] + "]");
 	if ($numRadio.length) {
 		$numRadio.prop("checked", "checked");
