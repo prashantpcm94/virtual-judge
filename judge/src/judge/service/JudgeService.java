@@ -160,10 +160,10 @@ public class JudgeService extends BaseService {
 
 		String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
 		String path = ApplicationContainer.sc.getRealPath(relativePath);
-		File data = new File(path, cid.toString());
+		File data = new File(path, cid + ".json");
 		Object[] res = new Object[]{
 			cid,
-			relativePath.substring(1) + "/" + cid.toString(),
+			relativePath.substring(1) + "/" + cid + ".json",
 			contest.getEndTime().getTime() - new Date().getTime(),
 			contest.getBeginTime().getTime(),
 			contest.getEndTime().getTime() - contest.getBeginTime().getTime()

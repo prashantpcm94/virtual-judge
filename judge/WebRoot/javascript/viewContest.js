@@ -526,8 +526,9 @@ function showRank() {
 	
 	if (selectedTime >= 0) {
 		updateRankInfo();
+	} else {
+		$("div.FixedHeader_Cloned").show();
 	}
-	$("div.FixedHeader_Cloned").show();
 
 }
 
@@ -739,14 +740,14 @@ function calcRankTable() {
 	} else {
 		oFH.fnUpdate();
 	}
-
+	$("div.FixedHeader_Cloned").show();
+	
 	adjustRankTool();
 	
 	if (sliderUpdater) {
 		clearTimeout(rankUpdater);
 		rankUpdater = setTimeout(updateRankInfo, 15000);
 	}
-
 }
 
 function showDescription(num, desc_index) {
