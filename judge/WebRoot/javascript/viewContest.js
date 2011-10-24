@@ -295,7 +295,7 @@ $(function(){
 	$(window).scroll(adjustRankTool);
 
 	$("#img_find_me").click(function(){
-		$.scrollTo( $("tr.my_tr")[0], 800 );
+		$.scrollTo( $("tr.my_tr")[0], 800, {offset: {top:115-$(window).height(), left:0} } );
 		return false;
 	});
 

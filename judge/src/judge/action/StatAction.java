@@ -47,8 +47,8 @@ public class StatAction extends ActionSupport {
 			String ua = (String) session.getAttribute("user-agent");
 			user = (User) session.getAttribute("visitor");
 			
-			if (ip == null || ip.isEmpty()){
-				continue;
+			if (ip == null){
+				ip = "";
 			}
 			
 			List row = new ArrayList<Object>();

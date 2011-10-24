@@ -67,7 +67,7 @@ public class MyFilter implements Filter{
 	}
 	
 	private boolean legalIP(String ip) {
-		if (ip == null || ip.isEmpty() || ip.equals("220.181.94.224")){
+		if (ip == null || ip.isEmpty()){
 			return false;
 		}
 		return true;
