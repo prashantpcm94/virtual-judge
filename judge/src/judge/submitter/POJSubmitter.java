@@ -56,7 +56,6 @@ public class POJSubmitter extends Submitter {
 		clientList = new HttpClient[usernameList.length];
 		for (int i = 0; i < clientList.length; i++){
 			clientList[i] = new HttpClient();
-			clientList[i].getHostConfiguration().setProxy("127.0.0.1", 8087);
 			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
 		}
 		
@@ -122,14 +121,14 @@ public class POJSubmitter extends Submitter {
 	}
 	
 	private void login(String username, String password) throws Exception{
-        PostMethod postMethod = new PostMethod("http://poj.org/login");
-        postMethod.addParameter("B1", "login");
-        postMethod.addParameter("password1", password);
-        postMethod.addParameter("url", "/");
-        postMethod.addParameter("user_id1", username);
-        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		PostMethod postMethod = new PostMethod("http://poj.org/login");
+		postMethod.addParameter("B1", "login");
+		postMethod.addParameter("password1", password);
+		postMethod.addParameter("url", "/");
+		postMethod.addParameter("user_id1", username);
+		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
-        System.out.println("login...");
+		System.out.println("login...");
 		int statusCode = httpClient.executeMethod(postMethod);
 		System.out.println("statusCode = " + statusCode);
 
@@ -141,7 +140,7 @@ public class POJSubmitter extends Submitter {
 	
 	public void getResult(String username) throws Exception{
 		String reg = "<td>(\\d{7,})</td>[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font>[\\s\\S]*?<td>([\\s\\S]*?)</td><td>([\\s\\S]*?)</td>", result;
-        Pattern p = Pattern.compile(reg);
+		Pattern p = Pattern.compile(reg);
 
 		GetMethod getMethod = new GetMethod("http://poj.org/status?user_id=" + username);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
@@ -157,16 +156,16 @@ public class POJSubmitter extends Submitter {
 				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
 				submission.setRealRunId(m.group(1));
-    			if (!result.contains("ing")){
-    				if (result.equals("Accepted")){
-	    				submission.setMemory(Integer.parseInt(m.group(3).replaceAll("K", "")));
-	    				submission.setTime(Integer.parseInt(m.group(4).replaceAll("MS", "")));
-    				} else if (result.contains("Compile Error")) {
+				if (!result.contains("ing")){
+					if (result.equals("Accepted")){
+						submission.setMemory(Integer.parseInt(m.group(3).replaceAll("K", "")));
+						submission.setTime(Integer.parseInt(m.group(4).replaceAll("MS", "")));
+					} else if (result.contains("Compile Error")) {
 						getAdditionalInfo(submission.getRealRunId());
 					}
-    				baseService.addOrModify(submission);
-    				return;
-    			}
+					baseService.addOrModify(submission);
+					return;
+				}
 				baseService.addOrModify(submission);
 			}
 			Thread.sleep(interval);
