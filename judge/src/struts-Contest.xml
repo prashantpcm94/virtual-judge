@@ -161,17 +161,17 @@
 
 		<!-- 进入比赛 -->
 		<action name="viewContest" class="contestAction" method="viewContest">
-			<result name="redirect">/contest/view.action?cid=${cid}#overview</result>
+			<result type="redirect">/contest/view.action?cid=${cid}#overview</result>
 		</action>
 		
 		<!-- 查看题目 -->
 		<action name="viewProblem" class="contestAction" method="viewProblem">
-			<result name="redirect">/contest/view.action?cid=${cid}#problem/${num}</result>
+			<result type="redirect">/contest/view.action?cid=${cid}#problem/${num}</result>
 		</action>
 		
 		<!-- 排名页面2 -->
 		<action name="standing2" class="contestAction" method="standing2">
-			<result name="redirect">/contest/view.action?cid=${cid}#rank</result>
+			<result type="redirect">/contest/view.action?cid=${cid}#rank</result>
 		</action>
 		
 	</package>

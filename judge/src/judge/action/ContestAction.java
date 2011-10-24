@@ -1040,6 +1040,7 @@ public class ContestAction extends BaseAction {
 		if (contest.getBeginTime().compareTo(new Date()) > 0) {
 			return ERROR;
 		} else {
+			cid = contest.getId();
 			num = cproblem.getNum();
 			return SUCCESS;
 		}
