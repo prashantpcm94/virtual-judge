@@ -333,11 +333,12 @@ function showProblem() {
 	tabs.tabs( "select" , "problem" );
 	resetTimeSlider();
 
-	if (hash[1] && $("#problem_number_container > input[value=" + hash[1] + "]").length) {
-		$(":radio[name=problem_number][value=" + hash[1] + "]").prop("checked", "checked");
+	var $numRadio = $("#problem_number_container > input[value=" + hash[1] + "]");
+	if ($numRadio.length) {
+		$numRadio.prop("checked", "checked");
 		$("#problem_number_container").buttonset("refresh");
 	}
-	var num = hash[1] || 'A';
+	var num = $("#problem_number_container input:checked").val();
 	if (!problemSet[num]) {
 		$.ajax({
 			url: "contest/showProblem.action?cid=" + cid + "&num=" + num,
