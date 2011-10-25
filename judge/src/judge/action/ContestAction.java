@@ -510,10 +510,10 @@ public class ContestAction extends BaseAction {
 			try {
 				String hql = "select cp from Cproblem cp left join fetch cp.problem left join fetch cp.description left join fetch cp.contest where cp.contest.id = :cid and cp.num = :num";
 				cproblem = (Cproblem) session.createQuery(hql).setParameter("cid", cid).setParameter("num", num).uniqueResult();
-				problem = cproblem.getProblem();
 				if (cproblem == null || authorizeStatus != 2 && new Date().compareTo(cproblem.getContest().getBeginTime()) < 0) {
 					json.put("title", "<script type='text/javascript'>window.location.hash='#overview';window.location.reload()</script>");
 				} else {
+					problem = cproblem.getProblem();
 					List<Description> descriptions = new ArrayList<Description>();
 					if (authorizeStatus == 2) {
 						descriptions = new ArrayList<Description>(problem.getDescriptions());
