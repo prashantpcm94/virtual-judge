@@ -251,7 +251,7 @@ $(function(){
 		var end = new Date().valueOf() > rank.endTime;
 		$.facebox("<table><tr><td style='font-weight:bold;padding:5px'>Title</td><td>" + (end && rank.cid != cid ? "<a href='contest/view.action?cid=" + rank.cid + "#overview' target='_blank'>" : "") + (rank.isReplay ? "<img src='images/replay.png' height='18' /> " : "") + rank.title + (end && rank.cid != cid ? "</a>" : "") + "</td></tr><tr><td style='font-weight:bold;padding:5px'>Begin Time</td><td>" + new Date(rank.beginTime).format("yyyy-MM-dd hh:mm:ss") + "</td></tr><tr><td style='font-weight:bold;padding:5px'>Length</td><td>" + dateFormat(rank.length) + "</td></tr><tr><td style='font-weight:bold;padding:5px'>Manager</td><td><a href='user/profile.action?uid=" + rank.managerId + "' target='_blank'>" + rank.managerName + "</a></td></tr></table>");
 		$("#facebox").css({
-			"z-index": "999999",
+			"z-index": "1000000",
 			"position": "fixed",
 			"top": $(window).height() - 250 + "px",
 			"left": $(window).width() / 2 - 250 + "px"
@@ -869,13 +869,13 @@ function resetTimeSlider () {
 };
 
 function isScrolledIntoView(elem) {
-    var docViewTop = $(window).scrollTop();
-    var docViewBottom = docViewTop + $(window).height();
+	var docViewTop = $(window).scrollTop();
+	var docViewBottom = docViewTop + $(window).height();
 
-    var elemTop = $(elem).offset().top;
-    var elemBottom = elemTop + $(elem).height();
+	var elemTop = $(elem).offset().top;
+	var elemBottom = elemTop + $(elem).height();
 
-    return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
+	return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
 }
 
 function adjustRankTool() {
