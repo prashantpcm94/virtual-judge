@@ -654,10 +654,8 @@ public class ContestAction extends BaseAction {
 		Submission submission = new Submission();
 		submission.setSubTime(new Date());
 		submission.setProblem(problem);
-		if (contest.getEndTime().compareTo(new Date()) > 0){
-			submission.setContest(contest);
-			submission.setIsPrivate(contest.getPassword() == null ? 0 : 1);
-		}
+		submission.setContest(contest);
+		submission.setIsPrivate(contest.getPassword() == null ? 0 : 1);
 		submission.setUser(user);
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
@@ -680,7 +678,7 @@ public class ContestAction extends BaseAction {
 			e.printStackTrace();
 			return ERROR;
 		}
-		json = contest.getEndTime().compareTo(new Date()) > 0 ? SUCCESS : "practice";
+		json = SUCCESS;
 		return SUCCESS;
 	}
 	
