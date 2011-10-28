@@ -253,7 +253,7 @@ $(function(){
 		$("#facebox").css({
 			"z-index": "1000000",
 			"position": "fixed",
-			"top": $(window).height() - 250 + "px",
+			"top": "200px",
 			"left": $(window).width() / 2 - 250 + "px"
 		});
 		$("#facebox .content").css("width", "500px");
