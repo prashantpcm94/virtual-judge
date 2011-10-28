@@ -31,6 +31,7 @@ public class StatAction extends ActionSupport {
 	private String userAgent;
 	
 	private int loginUsers;
+	private int ipMapCnt;
 	
 	private SessionContext myc = SessionContext.getInstance();
 
@@ -43,6 +44,7 @@ public class StatAction extends ActionSupport {
 		List<HttpSession> sessionList = myc.getSessionList();
 		dataList = new ArrayList();
 		loginUsers = 0;
+		ipMapCnt = PhysicalAddressTool.addressMap.size();
 		
 		for (int i = 0; i < sessionList.size(); ++i) {
 			HttpSession session = sessionList.get(i);
@@ -190,5 +192,11 @@ public class StatAction extends ActionSupport {
 	}
 	public void setLoginUsers(int loginUsers) {
 		this.loginUsers = loginUsers;
+	}
+	public int getIpMapCnt() {
+		return ipMapCnt;
+	}
+	public void setIpMapCnt(int ipMapCnt) {
+		this.ipMapCnt = ipMapCnt;
 	}
 }

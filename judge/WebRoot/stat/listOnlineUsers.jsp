@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" import="judge.tool.PhysicalAddressTool" pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -25,7 +25,7 @@
 			</tr>
 			<tr>
 				<td style="font-weight:bold;text-align:right;padding-right:5px">IP map size: </td>
-				<td><%=PhysicalAddressTool.addressMap.size()%></td>
+				<td><s:property value="ipMapCnt" /></td>
 			</tr>
 		</table>
 		
