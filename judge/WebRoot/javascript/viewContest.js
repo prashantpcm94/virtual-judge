@@ -597,9 +597,9 @@ function updateRankData() {
 	var cnt = 0;
 	for (var i = 0; i < cids.length; i++) {
 		if (ranks[cids[i]].length && (!ranks[cids[i]].data || ranks[cids[i]].lastFetchTime < Math.min(startTime + selectedTime - ti[1], ranks[cids[i]].endTime))) {
-			//var curTime = new Date().valueOf();
-			//var url = ranks[cids[i]].dataURL + (ranks[cids[i]].endTime < curTime ? "" : "?" + curTime);
-			var url = ranks[cids[i]].dataURL;
+			var curTime = new Date().valueOf();
+			var url = ranks[cids[i]].dataURL + (ranks[cids[i]].endTime < curTime ? "" : "?" + curTime);
+			//var url = ranks[cids[i]].dataURL;
 			$.getJSON(url, function(rankData) {
 				var curCid = rankData[0];
 				ranks[curCid].data = rankData;

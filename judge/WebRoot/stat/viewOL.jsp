@@ -18,7 +18,7 @@
 			<tr>
 				<td>IP:</td>
 				<td>
-					<a href="http://www.ip138.com/ips.asp?ip=${ip} ">
+					<a href="http://www.ip138.com/ips.asp?ip=${ip}">
 						${ip}
 					</a>
 				</td>

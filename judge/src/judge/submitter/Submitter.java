@@ -1,5 +1,7 @@
 package judge.submitter;
 
+import java.util.Date;
+
 import javax.servlet.ServletContext;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -31,7 +33,7 @@ public abstract class Submitter extends Thread implements Cloneable {
 	}
 	
 	private void updateStanding() {
-		if (submission.getContest() != null){
+		if (submission.getContest() != null && new Date().compareTo(submission.getContest().getEndTime()) <= 0){
 			try {
 				judgeService.updateRankData(submission.getContest().getId(), true);
 			} catch (Exception e) {
