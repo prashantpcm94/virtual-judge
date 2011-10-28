@@ -4,7 +4,6 @@ import javax.servlet.http.HttpSession;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -46,14 +45,7 @@ public class SessionContext {
 	}
 	
 	public synchronized List getSessionList() {
-		if (mymap == null){
-			return null;
-		}
-		List result = new ArrayList();
-		for (Iterator i = mymap.values().iterator(); i.hasNext();) {
-			result.add(i.next());
-		}
-		return result;
+		return mymap == null ? null : new ArrayList(mymap.values());
 	}
 
 }
