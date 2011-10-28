@@ -24,6 +24,9 @@ public class PhysicalAddressTool {
 				try {
 					httpClient.executeMethod(getMethod);
 					String physicalAddress = Tools.getHtml(getMethod, "GB2312").replaceAll(".+来自：", "").trim();
+					if (addressMap.size() >= 500) {
+						addressMap.clear();
+					}
 					addressMap.put(ip, physicalAddress);
 				} catch (HttpException e) {
 					e.printStackTrace();

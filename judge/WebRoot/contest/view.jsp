@@ -23,7 +23,7 @@
 		<script type='text/javascript' src='javascript/engine.js'></script>
 		<script type='text/javascript' src='dwr/util.js'></script>
 
-		<script type="text/javascript" src="javascript/viewContest.js"></script>
+		<script type="text/javascript" src="javascript/viewContest.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 
 	<body>

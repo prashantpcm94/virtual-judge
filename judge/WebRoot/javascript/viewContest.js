@@ -1,6 +1,6 @@
 var cid;	//current contest
 var cids;	//cid concerned in rank
-var startTime;	//contest start time locally
+var startTime;	//page loaded time locally
 var selectedTime;	//slider
 var ti;	//Time Info
 var tabs;
@@ -580,7 +580,7 @@ function updateRankInfo() {
 					managerName: res.managerName,
 					endTime: new Date().valueOf() + res.remainingLength,	//locally
 					beginTime: res.beginTime,	//server side
-					length: res.length,
+					length: parseInt(res.length),
 					lastFetchTime: 0
 				};
 				if (++cnt == cids.length) {
@@ -596,8 +596,11 @@ function updateRankInfo() {
 function updateRankData() {
 	var cnt = 0;
 	for (var i = 0; i < cids.length; i++) {
-		if (!ranks[cids[i]].data || ranks[cids[i]].lastFetchTime < Math.min(startTime + selectedTime - ti[1], ranks[cids[i]].endTime)) {
-			$.getJSON(ranks[cids[i]].dataURL + "?" + new Date().valueOf(), function(rankData) {
+		if (ranks[cids[i]].length && (!ranks[cids[i]].data || ranks[cids[i]].lastFetchTime < Math.min(startTime + selectedTime - ti[1], ranks[cids[i]].endTime))) {
+			//var curTime = new Date().valueOf();
+			//var url = ranks[cids[i]].dataURL + (ranks[cids[i]].endTime < curTime ? "" : "?" + curTime);
+			var url = ranks[cids[i]].dataURL;
+			$.getJSON(url, function(rankData) {
 				var curCid = rankData[0];
 				ranks[curCid].data = rankData;
 				ranks[curCid].lastFetchTime = new Date().valueOf();
@@ -626,7 +629,7 @@ function calcRankTable() {
 		totalSubmission[j] = correctSubmission[j] = 0;
 	}
 	$.each(cids, function(i, curCid) {
-		if (isNaN(curCid)) {
+		if (isNaN(curCid) || !ranks[curCid].length) {
 			return;
 		}
 		$.each(ranks[curCid].data, function(key, s) {

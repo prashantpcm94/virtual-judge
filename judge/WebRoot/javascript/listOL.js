@@ -27,7 +27,7 @@ $(document).ready(function() {
 	};
 	
 	$('#listOL').dataTable({
-		"aaSorting": [[ 5, "asc" ]],
+		"aaSorting": [[ 6, "asc" ]],
 		"bPaginate": false,
 		"bLengthChange": false,
 		"bFilter": true,

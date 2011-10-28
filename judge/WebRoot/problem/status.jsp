@@ -16,7 +16,7 @@
 		<script type='text/javascript' src='javascript/engine.js'></script>
 		<script type='text/javascript' src='dwr/util.js'></script>
 
-		<script type="text/javascript" src="javascript/problem_status.js"></script>
+		<script type="text/javascript" src="javascript/problem_status.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 
 	<body>

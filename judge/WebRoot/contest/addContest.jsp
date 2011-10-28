@@ -14,7 +14,7 @@
 		<script type="text/javascript" src="dwr/interface/judgeService.js"></script>
 		<script type='text/javascript' src='javascript/engine.js'></script>
 		<script type='text/javascript' src='dwr/util.js'></script>
-		<script type="text/javascript" src="javascript/editContest.js"></script>
+		<script type="text/javascript" src="javascript/editContest.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 
 	<body>

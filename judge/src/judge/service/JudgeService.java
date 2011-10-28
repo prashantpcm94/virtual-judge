@@ -156,7 +156,16 @@ public class JudgeService extends BaseService {
 	 * @throws Exception
 	 */
 	public Map updateRankData(Integer cid, boolean force) throws Exception{
-		Contest contest = (Contest) this.query("select contest from Contest contest left join fetch contest.replayStatus left join fetch contest.manager where contest.id = " + cid).get(0);
+		Contest contest = null;
+		try {
+			contest = (Contest) this.query("select contest from Contest contest left join fetch contest.replayStatus left join fetch contest.manager where contest.id = " + cid).get(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map res = new HashMap();
+			res.put("cid", cid);
+			res.put("length", 0);
+			return res;
+		}
 
 		String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
 		String path = ApplicationContainer.sc.getRealPath(relativePath);

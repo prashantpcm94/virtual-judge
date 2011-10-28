@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*" import="judge.tool.PhysicalAddressTool" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -6,13 +6,29 @@
 	<head>
 		<s:include value="/header.jsp" />
 	    <title>Online Users - Virtual Judge</title>
-		<script type="text/javascript" src="javascript/listOL.js"></script>
+		<script type="text/javascript" src="javascript/listOL.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 
 	<body>
 		<s:include value="/top.jsp" />
 		
 		<div class="ptt">Online Users</div>
+		
+		<table>
+			<tr>
+				<td style="font-weight:bold;text-align:right;padding-right:5px">Session number: </td>
+				<td><s:property value="%{dataList.size()}" /></td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;text-align:right;padding-right:5px">User number: </td>
+				<td><s:property value="loginUsers" /></td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;text-align:right;padding-right:5px">IP map size: </td>
+				<td><%=PhysicalAddressTool.addressMap.size()%></td>
+			</tr>
+		</table>
+		
 		
 		<table id="listOL" cellpadding="0" cellspacing="0" border="0" class="display" style="text-align:center" >
 			<thead>

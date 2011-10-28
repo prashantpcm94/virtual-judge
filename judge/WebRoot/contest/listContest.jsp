@@ -13,7 +13,7 @@
 			#theme_links span { float: left; padding: 2px 10px; }
 		</style>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
-		<script type="text/javascript" src="javascript/listContest.js"></script>
+		<script type="text/javascript" src="javascript/listContest.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 
 	<body>

@@ -19,7 +19,7 @@
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
 		<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
 
-		<script type="text/javascript" src="javascript/editDescription.js"></script>
+		<script type="text/javascript" src="javascript/editDescription.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 
 	<body>

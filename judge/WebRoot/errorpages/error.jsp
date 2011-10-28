@@ -11,7 +11,7 @@ String basePath = (String)application.getAttribute("basePath");
 	    <title>Virtual Judge</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<link rel="shortcut icon" href="<%=basePath%>images/logo.ico" />
-		<link rel="stylesheet" type="text/css" href="css/global.css" />
+		<link rel="stylesheet" type="text/css" href="css/global.css?<%=application.getAttribute("version")%>" />
 	</head>
 
 	<body>

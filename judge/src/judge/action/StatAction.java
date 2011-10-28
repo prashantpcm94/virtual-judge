@@ -30,6 +30,8 @@ public class StatAction extends ActionSupport {
 	private String referer;
 	private String userAgent;
 	
+	private int loginUsers;
+	
 	private SessionContext myc = SessionContext.getInstance();
 
 	public String listOnlineUsers() {
@@ -40,6 +42,7 @@ public class StatAction extends ActionSupport {
 
 		List<HttpSession> sessionList = myc.getSessionList();
 		dataList = new ArrayList();
+		loginUsers = 0;
 		
 		for (int i = 0; i < sessionList.size(); ++i) {
 			HttpSession session = sessionList.get(i);
@@ -56,6 +59,7 @@ public class StatAction extends ActionSupport {
 			if (user != null) {
 				row.add(user.getUsername());
 				row.add(user.getId());
+				++loginUsers;
 			} else {
 				row.add(null);
 				row.add(null);
@@ -466,5 +470,11 @@ public class StatAction extends ActionSupport {
 	}
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+	public int getLoginUsers() {
+		return loginUsers;
+	}
+	public void setLoginUsers(int loginUsers) {
+		this.loginUsers = loginUsers;
 	}
 }

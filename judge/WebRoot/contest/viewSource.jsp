@@ -13,7 +13,7 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 		<script type="text/javascript" src="<%=langFile%>" ></script>
 		<link type="text/css" rel="stylesheet" href="shjs/css/sh_style.min.css" />
 
-		<script type="text/javascript" src="javascript/viewSource.js"></script>
+		<script type="text/javascript" src="javascript/viewSource.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 
 	<body onload="sh_highlightDocument();">

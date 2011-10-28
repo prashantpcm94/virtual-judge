@@ -2,6 +2,7 @@ package judge.tool;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -32,6 +33,7 @@ public class StartUpListener implements ServletContextListener {
 		}
 		
 		sc.setAttribute("StandingDataPath", "/data/standing");
+		sc.setAttribute("version", new Date().getTime() + "");
 		
 		JudgeService judgeService = (JudgeService) SpringBean.getBean("judgeService", sc);
 		judgeService.initJudge();
