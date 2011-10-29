@@ -53,6 +53,35 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="sessionCleaner" class="judge.tool.SessionCleaner" />
+
+   	<bean id="jobDetailBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="sessionCleaner" />
+		</property>
+		<property name="targetMethod">
+			<value>clean</value>
+		</property>
+	</bean>
+
+	<bean id="cronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="jobDetailBean" /> 
+		</property>
+		<property name="cronExpression">
+			<value>0 0/5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTriggerBean" />
+			</list>
+		</property> 
+	</bean>
+
 	 
 	<!-- 配置Dao -->
 	<bean id="baseDao" class="judge.dao.BaseDao">
