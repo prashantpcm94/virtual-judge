@@ -4,8 +4,8 @@ $(document).ready(function() {
 		var a = x.split(/\D+/), b = y.split(/\D+/), v1, v2;
 		if (a.length != b.length) return a.length < b.length ? -1 : 1;
 		for (var i = 0; i < a.length && i < b.length; i++){
-			v1 = parseInt(a[i]);
-			v2 = parseInt(b[i]);
+			v1 = parseInt(a[i], 10);
+			v2 = parseInt(b[i], 10);
 			if (v1 != v2){
 				return v1 < v2 ? -1 : 1;
 			}
@@ -17,8 +17,8 @@ $(document).ready(function() {
 		var a = x.split(/\D+/), b = y.split(/\D+/), v1, v2;
 		if (a.length != b.length) return a.length > b.length ? -1 : 1;
 		for (var i = 0; i < a.length && i < b.length; i++){
-			v1 = parseInt(a[i]);
-			v2 = parseInt(b[i]);
+			v1 = parseInt(a[i], 10);
+			v2 = parseInt(b[i], 10);
 			if (v1 != v2){
 				return v1 > v2 ? -1 : 1;
 			}

@@ -749,7 +749,7 @@ public class ContestAction extends BaseAction {
 			paraMap.put("hashCode", contest.getHashCode());
 			paraMap.put("beginTime", contest.getBeginTime());
 			paraMap.put("curTime", new Date());
-			sameContests = baseService.query("select c.id, c.replayStatus.id, c.title, c.beginTime, c.endTime, c.manager.username, c.manager.id, c.id from Contest c where c.id <> :cid and c.hashCode = :hashCode and (c.beginTime <= :beginTime or c.endTime <= :curTime) order by c.beginTime desc ", paraMap);
+			sameContests = baseService.query("select c.id, c.replayStatus.id, c.title, c.beginTime, c.endTime, c.manager.username, c.manager.id, c.id from Contest c where c.id <> :cid and c.password is null and c.hashCode = :hashCode and (c.beginTime <= :beginTime or c.endTime <= :curTime) order by c.beginTime desc ", paraMap);
 			for (int i = 0; i < sameContests.size(); i++){
 				sameContests.get(i)[7] = (curDate.compareTo((Date) sameContests.get(i)[3]) < 0 ? "Scheduled" : curDate.compareTo((Date) sameContests.get(i)[4]) > 0 ? "Ended" : "Running");
 				sameContests.get(i)[4] = Tools.transPeriod(((Date)sameContests.get(i)[4]).getTime() - ((Date)sameContests.get(i)[3]).getTime(), true);
