@@ -194,7 +194,7 @@ public class CodeForcesSubmitter extends Submitter {
 
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
-				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge", "judging").replaceAll("queue", "queueing");
+				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replaceAll("judge\\b", "judging").replaceAll("queue", "queueing");
 				if (result.isEmpty()) {
 					result = "processing";
 				}
