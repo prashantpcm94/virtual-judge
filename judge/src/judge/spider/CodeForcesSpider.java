@@ -30,8 +30,8 @@ public class CodeForcesSpider extends Spider {
 		if (problem.getTitle().isEmpty()){
 			throw new Exception();
 		}
-		
-		problem.setTimeLimit(1000 * Integer.parseInt(Tools.regFind(html, "</div>(\\d+) seconds?</div>")));
+		Double timeLimit = 1000 * Double.parseDouble(Tools.regFind(html, "</div>([\\d\\.]+) seconds?</div>"));
+		problem.setTimeLimit(timeLimit.intValue());
 		problem.setMemoryLimit(1024 * Integer.parseInt(Tools.regFind(html, "</div>(\\d+) megabytes</div>")));
 		description.setDescription(Tools.regFind(html, "<div class=\"legend\">([\\s\\S]*?)</div><div class=\"input-specification\">"));
 		description.setInput(Tools.regFind(html, "<div class=\"section-title\">Input</div>([\\s\\S]*?)</div><div class=\"output-specification\">"));
