@@ -1,5 +1,7 @@
 package judge.spider;
 
+import java.util.Date;
+
 import judge.tool.Tools;
 
 import org.apache.commons.httpclient.*;
@@ -8,7 +10,29 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 public class UVALiveSpider extends Spider {
 
+	public static String problemNumberMap[];
+	public static Long lastTime = 0L;
+
 	public void crawl() throws Exception{
+		if (new Date().getTime() - lastTime > 7 * 86400 * 1000L) {
+			problemNumberMap = null;
+			lastTime = new Date().getTime();
+		}
+		if (problemNumberMap == null || problemNumberMap[5358] == null) {
+			new UVaLiveSpiderInitializer("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=1").start();
+		}
+		do {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} while (UVaLiveSpiderInitializer.threadCnt > 0);
+
+		String realProblemNumber = problemNumberMap[Integer.parseInt(problem.getOriginProb())];
+		if (realProblemNumber == null) {
+			throw new Exception();
+		}
 
 		String html = "";
 		HttpClient httpClient = new HttpClient();
@@ -16,8 +40,8 @@ public class UVALiveSpider extends Spider {
 			throw new Exception();
 		}
 		
-		//抓描述
-		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + (Integer.parseInt(problem.getOriginProb()) - 1999));
+		//抓标题、时限
+		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
 			int statusCode = httpClient.executeMethod(getMethod);
@@ -33,9 +57,9 @@ public class UVALiveSpider extends Spider {
 		problem.setTitle(Tools.regFind(html, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>").trim());
 		problem.setTimeLimit(Integer.parseInt(Tools.regFind(html, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
 		problem.setMemoryLimit(0);
-		problem.setUrl("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + (Integer.parseInt(problem.getOriginProb()) - 1999));
+		problem.setUrl("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
 
-		//抓标题、时限
+		//抓描述
 		int category = Integer.parseInt(problem.getOriginProb()) / 100;
 		String pdfLink = "<span style='float:right'><a target='_blank' href='http://livearchive.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".pdf'><img width='100' height='26' border='0' title='Download as PDF' alt='Download as PDF' src='http://livearchive.onlinejudge.org/components/com_onlinejudge/images/button_pdf.png'></a></span><div style='clear:both'></div>";
 		description.setDescription(pdfLink);
@@ -48,6 +72,10 @@ public class UVALiveSpider extends Spider {
 				throw new Exception();
 			}
 			html = Tools.getHtml(getMethod, null).replaceAll("(?i)(src|href)\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "$1=$2http://livearchive.onlinejudge.org/external/" + category + "/");
+			
+			//some problems' description are fucking long, only get the body.innerHTML
+			html = html.replaceAll("(?i)^[\\s\\S]*<body[^>]*>", "").replaceAll("(?i)</body>[\\s\\S]*", "");
+			
 			description.setDescription(pdfLink + Tools.regFind(html, "^([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
 			description.setInput(Tools.regFind(html, "Int?put</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
 			description.setOutput(Tools.regFind(html, "Output</A>&nbsp;</FONT>\\s*</H2>([\\s\\S]*?)<H2><FONT size=4 COLOR=#ff0000><A NAME=\"SECTION000100\\d000000000000000\">"));
