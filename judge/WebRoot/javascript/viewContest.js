@@ -10,6 +10,7 @@ var statusTable;
 var hash;
 var oldProblemHash = "#problem/A";
 var oldStatusHash;
+var oldRankHash = "#rank";
 var rankTable;
 var ranks = {};
 var rankUpdater;
@@ -76,14 +77,18 @@ $(function(){
 			if (location.hash.indexOf(ui.tab.rel) != 0) {
 				if (ui.tab.rel == "#problem") {
 					location.hash = oldProblemHash;
+				} else if (ui.tab.rel == "#rank") {
+					location.hash = oldRankHash;
 				} else {
 					location.hash = ui.tab.rel;
 				}
 			}
 			//deal with rank update
-			if (location.hash.indexOf("#rank") != 0) {
+			if (location.hash.indexOf("#rank") == 0) {
+				$("#contest_tabs").css("min-width", 340 + $("table#viewContest tr").length * 80 + "px");
+			} else {
 				clearTimeout(rankUpdater);
-				$("div.FixedHeader_Cloned").hide();
+				$("#contest_tabs").css("min-width", 0);
 			}
 		}
 	});
@@ -161,6 +166,9 @@ $(function(){
 		modal: true,
 		buttons: {
 			"Submit": function() {
+				updateTips("Submitting...");
+				$( "#dialog-form-submit" ).parent().find("button:first").hide();
+
 				var num = $(":input[name=problem_number]:checked").val();
 				var data = {
 					cid: cid,
@@ -170,21 +178,32 @@ $(function(){
 					source: $("[name=source]").val()
 				};
 				$.cookie("lang_" + problemSet[num].oj, $("select#language").val(), {expires:30, path:'/'});
-				$.post('contest/submit.action', data, function(res) {
-					if (res == "success") {
-						$( "#dialog-form-submit" ).dialog( "close" );
-						showStatus();
-						$("#reset").trigger("click");
-					} else if (res == "practice") {
-						$( "#dialog-form-submit" ).dialog( "close" );
-						location.href = "problem/status.action";
-					} else {
-						updateTips(res);
+				$.ajax({
+					type : "POST",
+					url : "contest/submit.action",
+					data : data,
+					success : function(res){
+						if (res == "success") {
+							$( "#dialog-form-submit" ).dialog( "close" );
+							showStatus();
+							$("#reset").trigger("click");
+						} else if (res == "practice") {
+							$( "#dialog-form-submit" ).dialog( "close" );
+							location.href = "problem/status.action";
+						} else {
+							updateTips(res);
+							$( "#dialog-form-submit" ).parent().find("button:first").show();
+						}
+					},
+					error : function(){
+						updateTips("Connection timeout.");
+						$( "#dialog-form-submit" ).parent().find("button:first").show();
 					}
 				});
 			},
 			"Cancel": function() {
 				$( this ).dialog( "close" );
+				$( "#dialog-form-submit" ).parent().find("button:first").show();
 			}
 		},
 		close: function() {
@@ -231,21 +250,21 @@ $(function(){
 	});
 	
 	/////////////////////     Rank      //////////////////////
-
+	
 	if (!$.browser.msie) {
-		$("td.meta_td").live({
+		$("div.meta_td").live({
 			mouseenter: function() {
 				var curCid = $(this).parent().attr("cid");
-				$("tr[cid=" + curCid + "] td.meta_td").addClass("same_td");
+				$("div[cid=" + curCid + "] div.meta_td").addClass("same_td");
 			},
 			mouseleave:	function() {
 				var curCid = $(this).parent().attr("cid");
-				$("tr[cid=" + curCid + "] td.meta_td").removeClass("same_td");
+				$("div[cid=" + curCid + "] div.meta_td").removeClass("same_td");
 			}
 		});
 	}
 
-	$("td.meta_td").live("click", function() {
+	$("div.meta_td").live("click", function() {
 		var curCid = $(this).parent().attr("cid");
 		var rank = ranks[curCid];
 		var end = new Date().valueOf() > rank.endTime;
@@ -259,7 +278,7 @@ $(function(){
 		$("#facebox .content").css("width", "500px");
 	});
 	
-	$("td.penalty_td").live({
+	$("div.penalty_td").live({
 		mouseenter: function() {
 			$(this).text($(this).attr("v0"));
 		},
@@ -268,14 +287,14 @@ $(function(){
 		}
 	});
 	
-	$("tr.disp").live({
-		mouseenter: function() {
-			$(this).css("background-color", "#CCEEFF")
-		},
-		mouseleave:	function() {
-			$(this).css("background-color", "transparent");
-		}
-	});
+//	$("div.disp").live({
+//		mouseenter: function() {
+//			$(this).css("border", "1px solid black")
+//		},
+//		mouseleave:	function() {
+//			$(this).css("border", "");
+//		}
+//	});
 
 	$( "#dialog-form-rank-setting" ).dialog({
 		autoOpen: false,
@@ -290,10 +309,12 @@ $(function(){
 				});
 				var showTeams = $.browser.msie ? 0 : $("[name=showTeams]:checked").val();
 				var showNick = $("[name=showNick]:checked").val();
+				var showAnimation = $("[name=showAnimation]:checked").val();
 
 				$.cookie("contest_" + cid, ids, { expires: 3 });
 				$.cookie("show_all_teams", showTeams, { expires: 30 });
 				$.cookie("show_nick", showNick, { expires: 30 });
+				$.cookie("show_animation", showAnimation, { expires: 30 });
 				$( this ).dialog( "close" );
 				showRank();
 			},
@@ -303,7 +324,7 @@ $(function(){
 		}
 	});	
 	
-	$("#rank_setting").button().click(function(){
+	$("input.rank_setting").button().live("click", function(){
 		var $inst = $( "#dialog-form-rank-setting" )
 		$inst.dialog('open');
 		if (!$inst.html()) {
@@ -314,7 +335,7 @@ $(function(){
 	$(window).scroll(adjustRankTool);
 
 	$("#img_find_me").click(function(){
-		$.scrollTo( $("tr.my_tr")[0], 800, {offset: {top:115-$(window).height(), left:0} } );
+		$.scrollTo( $("div.my_tr")[0], 800, {offset: {top:120-$(window).height(), left:-100} } );
 		return false;
 	});
 
@@ -513,7 +534,7 @@ function showStatus() {
 			}
 		});
 		$("#table_status_last").remove();
-	} else if (location.hash != oldStatusHash) {
+	} else if (location.hash != oldStatusHash || statusTable.fnSettings()._iDisplayStart == 0) {
 		statusTable.fnPageChange( 'first' );
 		oldStatusHash = location.hash;
 	}
@@ -521,6 +542,8 @@ function showStatus() {
 
 function showRank() {
 	tabs.tabs( "select" , "rank" );
+	oldRankHash = location.hash;
+
 	clearInterval(sliderUpdater);
 	if (/#rank\/\d+/.test(location.hash) == false) {
 		resetTimeSlider();
@@ -543,11 +566,12 @@ function showRank() {
 	if ($.cookie("show_nick") == undefined){
 		$.cookie("show_nick", 0, { expires: 30 });
 	}
-	
+	if ($.cookie("show_animation") == undefined){
+		$.cookie("show_animation", 1, { expires: 30 });
+	}
+
 	if (selectedTime >= 0) {
 		updateRankInfo();
-	} else {
-		$("div.FixedHeader_Cloned").show();
 	}
 
 }
@@ -691,6 +715,7 @@ function calcRankTable() {
 	var showNick = $.cookie("show_nick");
 	var showAllTeams = $.cookie("show_all_teams");
 	var sbHtml = [];
+	
 	for (var i = 0; i < result.length; ++i) {
 		var curInfo = result[i];
 		var splitIdx = curInfo[0].lastIndexOf("_");
@@ -699,47 +724,43 @@ function calcRankTable() {
 		if (showAllTeams == 0 && i >= 50 && (cid != curCid || !username[uid])) {
 			continue;
 		}
-		sbHtml.push("<tr class='disp");
+		sbHtml.push("<div data-id='" + curInfo[0].replace(/\W/g, "_") + "' class='disp");
 		if (cid == curCid) {
 			sbHtml.push(" cur_tr");
 			if (my_uid_cid == curInfo[0]) {
 				sbHtml.push(" my_tr");
 			}
 		}
-		sbHtml.push("' style='background:transparent");
-		sbHtml.push(";' cid='" + curCid + "'><td class='meta_td'>" + (i + 1) + "</td><td class='meta_td");
+		sbHtml.push("' cid='" + curCid + "'><div class='meta_td rank'>" + (i + 1) + "</div><div class='meta_td id");
 		if (username[uid]) {
-			sbHtml.push("'><a target='_blank' href='user/profile.action?uid=" + uid + "'>" + (showNick > 0 ? nickname[uid] || username[uid] : username[uid]) + "</a></td><td class='meta_td");
+			sbHtml.push("'><a target='_blank' href='user/profile.action?uid=" + uid + "'>" + (showNick > 0 ? nickname[uid] || username[uid] : username[uid]) + "</a></div>");
 		} else {
-			sbHtml.push(" replay'>" + uid + "</td><td class='meta_td");
+			sbHtml.push(" replay'>" + uid + "</div>");
 		}
 		var penaltyInHMS = dateFormat(curInfo[2], 0, 1);
 		var penaltyInMinute = dateFormat(curInfo[2], 1, 1);
-		sbHtml.push("'>" + curInfo[1] + "</td><td class='meta_td penalty_td' v0='" + penaltyInHMS + "' v1='" + penaltyInMinute + "'>" + penaltyInMinute + "</td>");
+		sbHtml.push("<div class='meta_td solve'>" + curInfo[1] + "</div><div class='meta_td penalty_td standing_time' v0='" + penaltyInHMS + "' v1='" + penaltyInMinute + "'>" + penaltyInMinute + "</div>");
 
 		var thisSb = sb[curInfo[0]];
 		for (var j = 0; j <= pnum; ++j) {
 			var probInfo = thisSb[j];
 			if (!probInfo) {
-				sbHtml.push("<td />");
+				sbHtml.push("<div class='standing_time'/>");
 			} else {
-				sbHtml.push("<td ");
+				sbHtml.push("<div ");
 				if (probInfo[0] < 0) {
-					sbHtml.push("class='red'");
+					sbHtml.push("class='red");
 				} else if (firstSolveTime[j] == probInfo[0]) {
-					sbHtml.push("class='solvedfirst'");
+					sbHtml.push("class='solvedfirst");
 				} else {
-					sbHtml.push("class='green'");
+					sbHtml.push("class='green");
 				}
-				sbHtml.push(">" + dateFormat(probInfo[0], 0, 1) + "<br />" + (probInfo[1] ? "<span>(-" + probInfo[1] + ")</span>" : "　") + "</td>");
+				sbHtml.push(" standing_time'>" + dateFormat(probInfo[0], 0, 1) + "<br />" + (probInfo[1] ? "<span>(-" + probInfo[1] + ")</span>" : "　") + "</div>");
 			}
 		}
-		sbHtml.push("</tr>");
+		sbHtml.push("</div>");
 	}
-	$("#rank_tbody").html(sbHtml.join(""));
 
-	sbHtml = [];
-	sbHtml.push("<tr style='background:transparent'><th/><th/><th/><th/>");
 	var maxCorrectNumber = 0, totalNumber = 0, totalCorrectNumber = 0;
 	for (var j = 0; j < pnum; ++j) {
 		totalNumber += totalSubmission[j];
@@ -749,32 +770,45 @@ function calcRankTable() {
 		}
 	}
 	for (var j = 0; j < pnum; ++j) {
-		if (!totalSubmission[j]) {
-			sbHtml.push("<th style='background:transparent'/>");
-		} else {
+		if (totalSubmission[j]) {
 			var ratio = maxCorrectNumber ? correctSubmission[j] / maxCorrectNumber : 0.0;
-			sbHtml.push("<th style='background-color:" + grayDepth(ratio) + ";color:" + (ratio < .5 ? "black" : "white") + "'>" + (myStatus[j] == 2 ? "<img src='images/yes.png' height='20'/>" : myStatus[j] == 1 ? "<img src='images/no.png' height='20'/>" : "　") + 	"<br />" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + Math.floor(100 * correctSubmission[j] / totalSubmission[j]) + "%</th>")
+			$("#rank_foot div").eq(j + 4).css("background-color", grayDepth(ratio)).css("color", ratio < .5 ? "black" : "white").html((myStatus[j] == 2 ? "<img src='images/yes.png' height='20'/>" : myStatus[j] == 1 ? "<img src='images/no.png' height='20'/>" : "　") + 	"<br />" + correctSubmission[j] + "/" + totalSubmission[j] + "<br />" + Math.floor(100 * correctSubmission[j] / totalSubmission[j]) + "%");
+		} else {
+			$("#rank_foot div").eq(j + 4).css("background", "transparent").html("");
 		}
 	}
 	if (totalNumber) {
-		sbHtml.push("<th style='background-color:#D3D6FF'>　<br />" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%</th></tr>");
+		$("#rank_foot div").eq(pnum + 4).html("　<br />" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%");
 	} else {
-		sbHtml.push("<th/>");
+		$("#rank_foot div").eq(pnum + 4).html("");
 	}
-	$("#rank_tfoot").html(sbHtml.join(""));
-
-	if (!oFH) {
-		oFH = new FixedHeader( document.getElementById('rank_table'), { "bottom": true } );
-	} else {
-		oFH.fnUpdate();
-	}
-	$("div.FixedHeader_Cloned").show();
 	
-	adjustRankTool();
+	$("#rank_header").width($("#contest_tabs").css("width"));
+	$("#rank_foot").width($("#contest_tabs").css("width"));
+
+	$("#rank_data_destination").html(sbHtml.join(""))
+	.prepend($("#rank_header").clone().css({"position": "", "top": "", "z-index": ""}).attr("id", "rank_header_1").show())
+	.append($("#rank_foot").clone().css({"position": "", "bottom": "", "z-index": ""}).attr("id", "rank_foot_1").show());
+	
+	if ($("#rank_data_source > div").length > 2 && $.cookie("show_animation") > 0 && $("#rank_data_destination > div").length <= ($.browser.msie ? $.browser.version > 6 ? 35 : 0 : 70)) {
+		$('#rank_data_destination > div').each(function(){
+			$("#rank_data_source > div[data-id=" + $(this).attr("data-id") + "]").html(this.innerHTML);
+		});
+		$('#rank_data_source').quicksand( $('#rank_data_destination > div'), {
+			"duration": 1000
+		}, function() {
+			$("#rank_data_destination").html("");
+			adjustRankTool();
+		});
+	} else {
+		$('#rank_data_source').removeAttr("style").html($('#rank_data_destination').html());
+		$("#rank_data_destination").html("");
+		adjustRankTool();
+	}
 	
 	if (sliderUpdater) {
 		clearTimeout(rankUpdater);
-		rankUpdater = setTimeout(updateRankInfo, 15000);
+		rankUpdater = setTimeout(updateRankInfo, 10000);
 	}
 }
 
@@ -882,16 +916,34 @@ function isScrolledIntoView(elem) {
 }
 
 function adjustRankTool() {
-	var $myRow = $("tr.my_tr");
+	if (hash[0] != "#rank") {
+		return;
+	}
+	var scrollLeft = $(window).scrollLeft();
+	var $myRow = $("div.my_tr");
 	if ($myRow.length && !isScrolledIntoView($myRow[0])) {
 		$("#img_find_me").css("visibility", "visible");
 	} else {
 		$("#img_find_me").css("visibility", "hidden");
 	}
 
-	if (!isScrolledIntoView("#contest_title")) {
+	if (scrollLeft > 0 || !isScrolledIntoView("#contest_title")) {
 		$("#img_go_top").css("visibility", "visible");
 	} else {
 		$("#img_go_top").css("visibility", "hidden");
+	}
+	
+	var marginLeft = $("#contest_tabs").offset().left;
+	$("#rank_header").css("left", 3+marginLeft-scrollLeft + "px");
+	$("#rank_foot").css("left", 3+marginLeft-scrollLeft + "px");
+	if (!isScrolledIntoView("#rank_header_1")) {
+		$("#rank_header").show();
+	} else {
+		$("#rank_header").hide();
+	}
+	if (!isScrolledIntoView("#rank_foot_1")) {
+		$("#rank_foot").show();
+	} else {
+		$("#rank_foot").hide();
 	}
 }

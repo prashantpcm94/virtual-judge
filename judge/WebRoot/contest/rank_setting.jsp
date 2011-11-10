@@ -51,6 +51,13 @@
 			<input name="showNick" id="showNick1" value="1" onclick="this.blur()" type="radio"><label for="showNick1">Nickname</label>
 		</td>	
 	</tr>
+	<tr>
+		<td style="width:150px;text-align:center"><b>Show Animation</b>:</td>
+		<td colspan="3">
+			<input name="showAnimation" id="showAnimation0" value="0" onclick="this.blur()" type="radio"><label for="showAnimation0">No</label><br>
+			<input name="showAnimation" id="showAnimation1" value="1" onclick="this.blur()" type="radio"><label for="showAnimation1">Yes <span style="color:gray">(when not too many teams)</span></label>
+		</td>
+	</tr>
 </table>
 
 <script type="text/javascript">
@@ -71,6 +78,7 @@ for (var i = 0; i < ids.length; i++){
 
 $("[name=showTeams]").eq($.cookie("show_all_teams")).prop("checked", "checked");
 $("[name=showNick]").eq($.cookie("show_nick")).prop("checked", "checked");
+$("[name=showAnimation]").eq($.cookie("show_animation")).prop("checked", "checked");
 
 $("[name=showTeams]").change(function(){
 	if ($.browser.msie && $("[name=showTeams]:checked").val() == 1) {

@@ -259,10 +259,11 @@ public class ContestAction extends BaseAction {
 		}
 		
 		/**
-		 * Replay的比赛必须为public
+		 * Replay的比赛必须为public,且启用Time Machine
 		 */
 		if (contestType != 0) {
 			contest.setPassword("");
+			contest.setEnableTimeMachine(1);
 		}
 
 		/**
