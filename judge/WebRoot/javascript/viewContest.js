@@ -778,9 +778,9 @@ function calcRankTable() {
 		}
 	}
 	if (totalNumber) {
-		$("#rank_foot div").eq(pnum + 4).html("　<br />" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%");
+		$("#rank_foot div").eq(pnum + 4).css("background-color", "#D3D6FF").html("　<br />" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%");
 	} else {
-		$("#rank_foot div").eq(pnum + 4).html("");
+		$("#rank_foot div").eq(pnum + 4).css("background-color", "transparent").html("");
 	}
 	
 	$("#rank_header").width($("#contest_tabs").css("width"));
