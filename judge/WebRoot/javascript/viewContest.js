@@ -85,7 +85,7 @@ $(function(){
 			}
 			//deal with rank update
 			if (location.hash.indexOf("#rank") == 0) {
-				$("#contest_tabs").css("min-width", 340 + $("table#viewContest tr").length * 80 + "px");
+				$("#contest_tabs").css("min-width", 400 + $("table#viewContest tr").length * 80 + "px");
 			} else {
 				clearTimeout(rankUpdater);
 				$("#contest_tabs").css("min-width", 0);
