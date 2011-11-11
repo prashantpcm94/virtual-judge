@@ -61,6 +61,7 @@ $(function(){
 				exceedMax = false;
 				if (location.hash.indexOf("#rank") == 0 && location.hash != "#rank") {
 					location.hash = "#rank";
+					$.scrollTo( {top: '0px',left:'0px'}, 0 );
 				}
 			} else {
 				selectedTime = parseInt(ui.value);
