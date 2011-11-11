@@ -742,7 +742,7 @@ function calcRankTable() {
 		if (username[uid]) {
 			sbHtml.push("'><a target='_blank' href='user/profile.action?uid=" + uid + "'>" + (showNick > 0 ? nickname[uid] || username[uid] : username[uid]) + "</a></div>");
 		} else {
-			sbHtml.push(" replay'>" + uid + "</div>");
+			sbHtml.push(" replay' title='" + uid + "'>" + uid + "</div>");
 		}
 		var penaltyInHMS = dateFormat(curInfo[2], 0, 1);
 		var penaltyInMinute = dateFormat(curInfo[2], 1, 1);
