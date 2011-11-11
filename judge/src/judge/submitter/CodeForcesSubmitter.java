@@ -122,8 +122,7 @@ public class CodeForcesSubmitter extends Submitter {
 			}
 		}
 		
-		String probNum = submission.getOriginProb();
-		getMethod = new GetMethod("http://codeforces.com/problemset/problem/" + probNum.substring(0, probNum.length() - 1) + "/" + probNum.substring(probNum.length() - 1));
+		getMethod = new GetMethod("http://codeforces.com/problemset/submit");
 		httpClient.executeMethod(getMethod);
 		
 		String source = submission.getSource() + "\n";
@@ -135,7 +134,7 @@ public class CodeForcesSubmitter extends Submitter {
 		PostMethod postMethod = new PostMethod("http://codeforces.com/problemset/submit");
 		postMethod.addParameter("action", "submitSolutionFormSubmitted");
 		postMethod.addParameter("submittedProblemCode", submission.getOriginProb());
-		postMethod.addParameter("language", submission.getLanguage());
+		postMethod.addParameter("programTypeId", submission.getLanguage());
 		postMethod.addParameter("source", source);
 		postMethod.addParameter("sourceFile", "");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
