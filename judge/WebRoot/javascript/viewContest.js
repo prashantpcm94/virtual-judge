@@ -325,7 +325,7 @@ $(function(){
 		}
 	});	
 	
-	$("input.rank_setting").button().live("click", function(){
+	$("#rank_setting").click(function(){
 		var $inst = $( "#dialog-form-rank-setting" )
 		$inst.dialog('open');
 		if (!$inst.html()) {
@@ -345,6 +345,11 @@ $(function(){
 		return false;
 	});
 	
+	$("#div_rank_tool > img").mouseover(function() {
+		$(this).css("background", "#CCEEFF");
+	}).mouseout(function() {
+		$(this).css("background", "transparent");
+	});
 	
 	//////////////////////////////////////////////////////////
 
@@ -545,6 +550,7 @@ function showRank() {
 	tabs.tabs( "select" , "rank" );
 	oldRankHash = location.hash;
 
+	$("#contest_tabs").css("min-width", 400 + $("table#viewContest tr").length * 80 + "px");
 	clearInterval(sliderUpdater);
 	if (/#rank\/\d+/.test(location.hash) == false) {
 		resetTimeSlider();

@@ -11,7 +11,7 @@
 		<s:iterator value="numList" status="stat">
 			<div class="standing_time"><a href="contest/view.action?cid=${cid}#problem/${key}">${key}</a></div>
 		</s:iterator>
-		<div style="text-align:right"><input type="button" class="rank_setting" value="Setting" style="font-size:12px"></div>
+		<div style="text-align:right"></div>
 	</div>
 	
 	<div id="rank_data_destination" style="display:none"></div>
@@ -31,6 +31,7 @@
 	<div id="div_rank_tool" style="text-align:right;position:fixed;bottom:80px;right:15px;z-index:999999">
 		<img src="images/find_me.png" id="img_find_me" title="Find me" height="55" style="visibility:hidden;cursor: pointer" />
 		<img src="images/go_top.png" id="img_go_top" title="Go to top" height="60" style="visibility:hidden;cursor: pointer" />
+		<img src="images/config.png" id="rank_setting" title="Rank config" height="60" style="cursor: pointer" />
 	</div>
 	
 	<div id="dialog-form-rank-setting" style="display:none" title="Rank Setting"></div>
