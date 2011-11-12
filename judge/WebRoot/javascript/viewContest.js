@@ -188,9 +188,6 @@ $(function(){
 							$( "#dialog-form-submit" ).dialog( "close" );
 							showStatus();
 							$("#reset").trigger("click");
-						} else if (res == "practice") {
-							$( "#dialog-form-submit" ).dialog( "close" );
-							location.href = "problem/status.action";
 						} else {
 							updateTips(res);
 							$( "#dialog-form-submit" ).parent().find("button:first").show();
@@ -204,10 +201,10 @@ $(function(){
 			},
 			"Cancel": function() {
 				$( this ).dialog( "close" );
-				$( "#dialog-form-submit" ).parent().find("button:first").show();
 			}
 		},
 		close: function() {
+			$( "#dialog-form-submit" ).parent().find("button:first").show();
 			$("p.validateTips").html("");
 			$( this ).find("textarea").val("");
 		}
