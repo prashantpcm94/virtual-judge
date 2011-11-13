@@ -58,6 +58,8 @@ public class UVASpider extends Spider {
 		if (description.getDescription().isEmpty()) {
 			description.setDescription(html);
 		}
+		description.setDescription("<style type=\"text/css\">h1,h2,h3,h4,h5,h6{margin-bottom:0;}div.textBG p{margin: 0 0 0.0001pt;}</style>" + description.getDescription());
+		
 		problem.setUrl("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
 
 		getMethod = new GetMethod(problem.getUrl());
