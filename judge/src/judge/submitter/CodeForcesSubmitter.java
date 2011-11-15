@@ -121,19 +121,20 @@ public class CodeForcesSubmitter extends Submitter {
 				throw new Exception();
 			}
 		}
-		
-		getMethod = new GetMethod("http://codeforces.com/problemset/submit");
-		httpClient.executeMethod(getMethod);
-		
+
 		String source = submission.getSource() + "\n";
 		int random = (int) (Math.random() * 87654321);
 		while (random > 0) {
 			source += random % 2 == 0 ? ' ' : '\t';
 			random /= 2;
 		}
+		String contestId = submission.getOriginProb().substring(0, submission.getOriginProb().length() - 1);
+		String problemNum = submission.getOriginProb().substring(submission.getOriginProb().length() - 1);
+
 		PostMethod postMethod = new PostMethod("http://codeforces.com/problemset/submit");
 		postMethod.addParameter("action", "submitSolutionFormSubmitted");
-		postMethod.addParameter("submittedProblemCode", submission.getOriginProb());
+		postMethod.addParameter("contestId", contestId);
+		postMethod.addParameter("submittedProblemShortName", problemNum);
 		postMethod.addParameter("programTypeId", submission.getLanguage());
 		postMethod.addParameter("source", source);
 		postMethod.addParameter("sourceFile", "");
@@ -145,7 +146,7 @@ public class CodeForcesSubmitter extends Submitter {
 		System.out.println("statusCode = " + statusCode);
 		
 		String tLine = new String(postMethod.getResponseBody(), "UTF-8");
-		if (tLine.contains("error for__language")) {
+		if (tLine.contains("error for__programTypeId")) {
 			throw new Exception("judge_exception:Language Error");
 		}
 		if (tLine.contains("error for__source")) {
