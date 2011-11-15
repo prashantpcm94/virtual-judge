@@ -121,7 +121,7 @@ public class URALSubmitter extends Submitter {
 			Matcher m = p.matcher(tLine);
 			
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId){
-				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
+				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim().replace("floating-point", "float-point");
 				submission.setStatus(result);
 				submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
