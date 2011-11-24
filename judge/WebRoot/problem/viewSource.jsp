@@ -74,8 +74,8 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 		<div id="disqus_thread" style="width:900px;margin-top:100px"></div>
 		<script type="text/javascript">
 		    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-		    var disqus_shortname = 'vjudge'; // required: replace example with your forum shortname
-		    var disqus_developer = 1;
+		    var disqus_shortname = '<%=application.getAttribute("disqusShortname")%>'; // required: replace example with your forum shortname
+		    var disqus_developer = <%=application.getAttribute("disqusDeveloper")%>;
 			var disqus_identifier = "source/${submission.id}";
 			
 		    /* * * DON'T EDIT BELOW THIS LINE * * */

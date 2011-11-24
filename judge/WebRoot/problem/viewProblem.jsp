@@ -123,8 +123,8 @@
 
 			<script type="text/javascript">
 		    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-		    var disqus_shortname = 'vjudge'; // required: replace example with your forum shortname
-		    var disqus_developer = 1;
+		    var disqus_shortname = '<%=application.getAttribute("disqusShortname")%>'; // required: replace example with your forum shortname
+		    var disqus_developer = <%=application.getAttribute("disqusDeveloper")%>;
 			var disqus_identifier = "problem/${problem.id}";
 			
 		    /* * * DON'T EDIT BELOW THIS LINE * * */

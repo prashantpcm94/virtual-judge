@@ -3,6 +3,7 @@ package judge.tool;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -15,6 +16,7 @@ import judge.service.JudgeService;
 public class StartUpListener implements ServletContextListener {
 
 	/* 监听服务器启动 */
+	@SuppressWarnings("unchecked")
 	public void contextInitialized(ServletContextEvent event) {
 		System.out.println("系统启动");
 		
@@ -26,8 +28,10 @@ public class StartUpListener implements ServletContextListener {
 		try {
 			in = new FileInputStream(sc.getRealPath("WEB-INF" + File.separator + "web.properties"));
 			prop.load(in);
-			String basePath = prop.getProperty("basePath").trim();
-			sc.setAttribute("basePath", basePath);
+			for (Enumeration e = prop.propertyNames(); e.hasMoreElements(); ) {
+				String key = (String)e.nextElement();
+				sc.setAttribute(key, prop.getProperty(key).trim());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
