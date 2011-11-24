@@ -56,7 +56,7 @@
 		    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
 		    var disqus_shortname = '<%=application.getAttribute("disqusShortname")%>'; // required: replace example with your forum shortname
 		    var disqus_developer = <%=application.getAttribute("disqusDeveloper")%>;
-			var disqus_identifier = "index";
+			var disqus_identifier = '<%=application.getAttribute("disqusShortname")%>';
 			
 		    /* * * DON'T EDIT BELOW THIS LINE * * */
 		    $("#suggestion").click(function(){
