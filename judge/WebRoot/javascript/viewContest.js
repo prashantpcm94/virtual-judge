@@ -358,6 +358,8 @@ $(function(){
 			showStatus();
 		} else if (hash[0] == "#rank") {
 			showRank();
+		} else if (hash[0] == "#discuss") {
+			showDiscuss();
 		} else {
 			showOverview();
 		}
@@ -577,7 +579,15 @@ function showRank() {
 	if (selectedTime >= 0) {
 		updateRankInfo();
 	}
+}
 
+function showDiscuss() {
+	tabs.tabs( "select" , "discuss" );
+	resetTimeSlider();
+
+	if (!$("#disqus_thread").html()) {
+		_showDiscuss();
+	}
 }
 
 function displayTime() {

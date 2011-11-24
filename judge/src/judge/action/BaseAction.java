@@ -12,6 +12,7 @@ import judge.spider.CodeForcesSpider;
 import judge.spider.HDUSpider;
 import judge.spider.HUSTSpider;
 import judge.spider.HYSBZSpider;
+import judge.spider.LightOJSpider;
 import judge.spider.POJSpider;
 import judge.spider.SGUSpider;
 import judge.spider.SPOJSpider;
@@ -26,6 +27,7 @@ import judge.submitter.CodeForcesSubmitter;
 import judge.submitter.HDUSubmitter;
 import judge.submitter.HUSTSubmitter;
 import judge.submitter.HYSBZSubmitter;
+import judge.submitter.LightOJSubmitter;
 import judge.submitter.POJSubmitter;
 import judge.submitter.SGUSubmitter;
 import judge.submitter.SPOJSubmitter;
@@ -78,6 +80,7 @@ public class BaseAction extends ActionSupport{
 		OJList.add("CodeForces");
 		OJList.add("Z-Trening");
 		OJList.add("Aizu");
+		OJList.add("LightOJ");
 	}
 	
 	static private List<String> OJListAll = new ArrayList<String>();
@@ -101,6 +104,7 @@ public class BaseAction extends ActionSupport{
 		spiderMap.put("CodeForces", new CodeForcesSpider());
 		spiderMap.put("Z-Trening", new ZTreningSpider());
 		spiderMap.put("Aizu", new AizuSpider());
+		spiderMap.put("LightOJ", new LightOJSpider());
 	}
 	
 	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
@@ -118,6 +122,7 @@ public class BaseAction extends ActionSupport{
 		submitterMap.put("CodeForces", new CodeForcesSubmitter());
 		submitterMap.put("Z-Trening", new ZTreningSubmitter());
 		submitterMap.put("Aizu", new AizuSubmitter());
+		submitterMap.put("LightOJ", new LightOJSubmitter());
 	}
 	
 	static public Map<String, String> lf = new HashMap<String, String>();
@@ -135,6 +140,7 @@ public class BaseAction extends ActionSupport{
 		lf.put("CodeForces", "%I64d & %I64u");
 		lf.put("Z-Trening", "%lld & %llu");
 		lf.put("Aizu", "%lld & %llu");
+		lf.put("LightOJ", "unknown");
 	}
 	
 

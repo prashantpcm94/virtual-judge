@@ -31,6 +31,7 @@
 				<a href="http://codeforces.com/" target="_blank">CodeForces</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://www.z-trening.com/" target="_blank">Z-Trening</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://judge.u-aizu.ac.jp/" target="_blank">Aizu</a>&nbsp;&nbsp;&nbsp;
+				<a href="http://lightoj.com/" target="_blank">LightOJ</a>&nbsp;&nbsp;&nbsp;
 			</p>
 			<br />
 			<b>Change Log:</b>
@@ -47,7 +48,27 @@
 				<li>2010-08-17 : Post-contest submitting is enabled. Try it yourself :)</li>
 				<li>2010-10-07 : Refer to <a href="http://code.google.com/p/virtual-judge/updates/list">this page</a>, and this section will not update.</li>
 			</ul>
+			<img id='suggestion' title='Suggestion' src='images/btn_suggestion_1.png' style="float:right" onmouseover='javascript:this.src="images/btn_suggestion_2.png"' onmouseout='javascript:this.src="images/btn_suggestion_1.png"' />
+			<div id="disqus_thread"></div>
 		</div>
+		
+		<script type="text/javascript">
+		    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+		    var disqus_shortname = 'vjudge'; // required: replace example with your forum shortname
+		    var disqus_developer = 1;
+			var disqus_identifier = "index";
+			
+		    /* * * DON'T EDIT BELOW THIS LINE * * */
+		    $("#suggestion").click(function(){
+		    	$(this).remove();
+			    (function() {
+			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			    })();
+		    }); 
+		</script>
+		<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 		
 		<s:include value="/bottom.jsp" />
 	</body>

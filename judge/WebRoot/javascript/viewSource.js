@@ -11,4 +11,7 @@ $(document).ready(function() {
 	$("input[name=open]").change(function(){
 		$.post("problem/toggleOpen.action?id=" + $("[name=sid]").val(), showInfo);
 	});
+	
+	sh_highlightDocument();
+	_showDiscuss();
 });

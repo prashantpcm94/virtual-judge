@@ -53,7 +53,7 @@ public class StatAction extends ActionSupport {
 			user = (User) session.getAttribute("visitor");
 			
 			if (ip == null){
-				ip = "";
+				continue;
 			}
 			
 			List row = new ArrayList<Object>();

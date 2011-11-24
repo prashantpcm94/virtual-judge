@@ -53,6 +53,9 @@
 					<li><a href="#status" rel="#status">Status</a></li>
 					<li><a href="#rank" rel="#rank">Rank</a></li>
 				</s:if>
+				<s:if test="contestOver == 1 || #session.visitor.sup == 1 || #session.visitor.id == contest.id">
+					<li><a href="#discuss" rel="#discuss">Discuss</a></li>
+				</s:if>
 			</ul>
 			<s:include value="/contest/div_overview.jsp" />
 			<s:if test="dataList != null">
@@ -60,8 +63,10 @@
 				<s:include value="/contest/div_status.jsp" />
 				<s:include value="/contest/div_rank.jsp" />
 			</s:if>
+			<s:if test="contestOver == 1 || #session.visitor.sup == 1 || #session.visitor.id == contest.id">
+				<s:include value="/contest/div_discuss.jsp" />
+			</s:if>
 		</div>		
-
 		<s:include value="/bottom.jsp" />
 	</body>
 </html>
