@@ -133,8 +133,7 @@ public class CodeForcesSubmitter extends Submitter {
 
 		PostMethod postMethod = new PostMethod("http://codeforces.com/problemset/submit");
 		postMethod.addParameter("action", "submitSolutionFormSubmitted");
-		postMethod.addParameter("contestId", contestId);
-		postMethod.addParameter("submittedProblemShortName", problemNum);
+		postMethod.addParameter("submittedProblemCode", contestId + problemNum);
 		postMethod.addParameter("programTypeId", submission.getLanguage());
 		postMethod.addParameter("source", source);
 		postMethod.addParameter("sourceFile", "");
