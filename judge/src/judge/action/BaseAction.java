@@ -135,7 +135,7 @@ public class BaseAction extends ActionSupport{
 		lf.put("HUST", "%lld & %llu");
 		lf.put("SPOJ", "%lld & %llu");
 		lf.put("HDU", "%I64d & %I64u");
-		lf.put("HYSBZ", "%I64d & %I64u");
+		lf.put("HYSBZ", "%lld & %llu");
 		lf.put("UVA", "%lld & %llu");
 		lf.put("CodeForces", "%I64d & %I64u");
 		lf.put("Z-Trening", "%lld & %llu");
