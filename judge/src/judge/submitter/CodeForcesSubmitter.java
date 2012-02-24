@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import judge.tool.ApplicationContainer;
 import judge.tool.Tools;
 
+import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -132,10 +133,11 @@ public class CodeForcesSubmitter extends Submitter {
 		String problemNum = submission.getOriginProb().substring(submission.getOriginProb().length() - 1);
 
 		PostMethod postMethod = new PostMethod("http://codeforces.com/problemset/submit");
+		postMethod.addParameter("_tta", getTTA());
 		postMethod.addParameter("action", "submitSolutionFormSubmitted");
 		postMethod.addParameter("submittedProblemCode", contestId + problemNum);
 		postMethod.addParameter("programTypeId", submission.getLanguage());
-		postMethod.addParameter("source", source);
+		postMethod.addParameter("source", source.replace("%lld", "%I64d").replace("%llu", "%I64u"));
 		postMethod.addParameter("sourceFile", "");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.getParams().setContentCharset("UTF-8"); 
@@ -162,6 +164,7 @@ public class CodeForcesSubmitter extends Submitter {
 	
 	private void login(String username, String password) throws Exception{
 		PostMethod postMethod = new PostMethod("http://codeforces.com/enter");
+		postMethod.addParameter("_tta", getTTA());
 		postMethod.addParameter("handle", username);
 		postMethod.addParameter("password", password);
 		postMethod.addParameter("remember", "on");
@@ -176,6 +179,35 @@ public class CodeForcesSubmitter extends Submitter {
 		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
 			throw new Exception();
 		}
+	}
+	
+	private String getTTA() throws HttpException, IOException {
+		String _39ce7 = null;
+		for (Cookie cookie : httpClient.getState().getCookies()) {
+			if (cookie.getName().equals("39ce7")) {
+				_39ce7 = cookie.getValue();
+			}
+		}
+		if (_39ce7 == null) {
+			GetMethod getMethod = new GetMethod("http://codeforces.com");
+			httpClient.executeMethod(getMethod);
+			for (Cookie cookie : httpClient.getState().getCookies()) {
+				if (cookie.getName().equals("39ce7")) {
+					_39ce7 = cookie.getValue();
+				}
+			}
+		}
+		
+	    Integer tta  = 0;
+	    for(int c = 0; c < _39ce7.length(); c++){
+	    	tta = (tta + (c + 1) * (c + 2) * _39ce7.charAt(c)) % 1009;
+	        if(c % 3 == 0) tta++;
+	        if(c % 2 == 0) tta *= 2;
+	        if(c > 0) tta -= ((int)(_39ce7.charAt(c / 2) / 2)) * (tta % 5);
+	        while(tta < 0) tta += 1009;
+	        while(tta >= 1009) tta -= 1009;
+	    }
+	    return tta.toString();
 	}
 	
 	public void getResult(String username) throws Exception{
