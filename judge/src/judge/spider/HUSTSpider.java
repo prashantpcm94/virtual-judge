@@ -13,7 +13,7 @@ public class HUSTSpider extends Spider {
 		
 		String html = "";
 		HttpClient httpClient = new HttpClient();
-		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/problem.php?id=" + problem.getOriginProb());
+		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/problem.php?id=" + problem.getOriginProb());
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
 			int statusCode = httpClient.executeMethod(getMethod);
@@ -30,9 +30,9 @@ public class HUSTSpider extends Spider {
 			throw new Exception();
 		}
 
-		html = html.replaceAll("src=/thx", "src=http://acm.hust.edu.cn/thx");
-		html = html.replaceAll("src='/thx", "src='http://acm.hust.edu.cn/thx");
-		html = html.replaceAll("src=\"/thx", "src=\"http://acm.hust.edu.cn/thx");
+		html = html.replaceAll("src=/", "src=http://acm.hust.edu.cn");
+		html = html.replaceAll("src='/", "src='http://acm.hust.edu.cn");
+		html = html.replaceAll("src=\"/", "src=\"http://acm.hust.edu.cn");
 		
 		problem.setTitle(Tools.regFind(html, "<title>[\\s\\S]*?-- ([\\s\\S]*?)</title>").trim());
 		if (problem.getTitle().isEmpty()){
@@ -48,6 +48,6 @@ public class HUSTSpider extends Spider {
 		description.setSampleOutput(Tools.regFind(html, "<h2>Sample Output</h2>([\\s\\S]*?)<h2>"));
 		description.setHint(Tools.regFind(html, "<h2>HINT</h2>([\\s\\S]*?)<h2>"));
 		problem.setSource(Tools.regFind(html, "<h2>Source</h2>([\\s\\S]*?)<center>").replaceAll("<[\\s\\S]*?>", ""));
-		problem.setUrl("http://acm.hust.edu.cn/thx/problem.php?id=" + problem.getOriginProb());
+		problem.setUrl("http://acm.hust.edu.cn/problem.php?id=" + problem.getOriginProb());
 	}
 }

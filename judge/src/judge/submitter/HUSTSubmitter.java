@@ -67,7 +67,7 @@ public class HUSTSubmitter extends Submitter {
 	}
 	
 	private void getMaxRunId() throws Exception {
-		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/status.php");
+		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/status.php");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("class='evenrow'><td>(\\d+)");
 
@@ -86,7 +86,7 @@ public class HUSTSubmitter extends Submitter {
 	private void submit() throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		
-        PostMethod postMethod = new PostMethod("http://acm.hust.edu.cn/thx/submit.php");
+        PostMethod postMethod = new PostMethod("http://acm.hust.edu.cn/submit.php");
         postMethod.addParameter("language", submission.getLanguage());
         postMethod.addParameter("id", problem.getOriginProb());
         postMethod.addParameter("source", submission.getSource());
@@ -101,7 +101,7 @@ public class HUSTSubmitter extends Submitter {
 	}
 	
 	private void login(String username, String password) throws Exception{
-        PostMethod postMethod = new PostMethod("http://acm.hust.edu.cn/thx/login.php");
+        PostMethod postMethod = new PostMethod("http://acm.hust.edu.cn/login.php");
   
         postMethod.addParameter("password", password);
         postMethod.addParameter("submit", "Submit");
@@ -120,7 +120,7 @@ public class HUSTSubmitter extends Submitter {
 	public void getResult(String username) throws Exception{
 		String reg = "class='evenrow'><td>(\\d+)[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font>[\\s\\S]*?<td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
 		Pattern p = Pattern.compile(reg);
-		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/thx/status.php?user_id=" + username);
+		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/status.php?user_id=" + username);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
@@ -153,7 +153,7 @@ public class HUSTSubmitter extends Submitter {
 	}
 	
 	private void getAdditionalInfo(String runId) throws HttpException, IOException {
-		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/JudgeOnline/ceinfo.php?sid=" + runId);
+		GetMethod getMethod = new GetMethod("http://acm.hust.edu.cn/ceinfo.php?sid=" + runId);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
 		httpClient.executeMethod(getMethod);
