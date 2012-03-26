@@ -56,7 +56,7 @@
 			</tr>
 			<tr>
 				<td style="text-align:right;padding:5px">Public:</td>
-				<td><s:radio name="isOpen" list="#{'0':'No', '1':'Yes'}"></s:radio></td>
+				<td><s:radio name="isOpen" list="#{'0':'No', '1':'Yes'}" value="#session.visitor.share"></s:radio></td>
 			</tr>
 		</table>
 		<textarea name="source" class="text ui-widget-content ui-corner-all" style="width:100%;height:360px;background:#F4F4F4;font-family: Courier New,Courier,monospace"></textarea>
