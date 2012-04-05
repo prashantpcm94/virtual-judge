@@ -17,7 +17,7 @@ public class HYSBZSpider extends Spider {
 		
 		String html = "";
 		HttpClient httpClient = new HttpClient();
-		GetMethod getMethod = new GetMethod("http://www.zybbs.org/JudgeOnline/problem.php?id=" + problem.getOriginProb());
+		GetMethod getMethod = new GetMethod("http://www.lydsy.com/JudgeOnline/problem.php?id=" + problem.getOriginProb());
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
 			int statusCode = httpClient.executeMethod(getMethod);
@@ -34,9 +34,9 @@ public class HYSBZSpider extends Spider {
 			throw new Exception();
 		}
 		
-		html = html.replaceAll("src=images", "src=http://www.zybbs.org/JudgeOnline/images");
-		html = html.replaceAll("src='images", "src='http://www.zybbs.org/JudgeOnline/images");
-		html = html.replaceAll("src=\"images", "src=\"http://www.zybbs.org/JudgeOnline/images");
+		html = html.replaceAll("src=images", "src=http://www.lydsy.com/JudgeOnline/images");
+		html = html.replaceAll("src='images", "src='http://www.lydsy.com/JudgeOnline/images");
+		html = html.replaceAll("src=\"images", "src=\"http://www.lydsy.com/JudgeOnline/images");
 		
 		problem.setTitle(Tools.regFind(html, "<center><h2>([\\s\\S]*?)</h2>").replaceAll(problem.getOriginProb() + ": ", "").trim());
 		if (problem.getTitle().isEmpty()){
@@ -58,6 +58,6 @@ public class HYSBZSpider extends Spider {
 		description.setSampleInput(Tools.regFind(html, "<h2>Sample Input</h2>([\\s\\S]*?)<h2>Sample Output</h2>").replaceAll("<span", "<pre").replaceAll("</span>", "</pre>"));
 		description.setSampleOutput(Tools.regFind(html, "<h2>Sample Output</h2>([\\s\\S]*?)<h2>HINT</h2>").replaceAll("<span", "<pre").replaceAll("</span>", "</pre>"));
 		description.setHint(Tools.regFind(html, "<h2>HINT</h2>([\\s\\S]*?)<h2>Source</h2>"));
-		problem.setUrl("http://www.zybbs.org/JudgeOnline/problem.php?id=" + problem.getOriginProb());
+		problem.setUrl("http://www.lydsy.com/JudgeOnline/problem.php?id=" + problem.getOriginProb());
 	}
 }

@@ -67,7 +67,7 @@ public class HYSBZSubmitter extends Submitter {
 	}
 	
 	private void getMaxRunId() throws Exception {
-		GetMethod getMethod = new GetMethod("http://www.zybbs.org/JudgeOnline/status.php");
+		GetMethod getMethod = new GetMethod("http://www.lydsy.com/JudgeOnline/status.php");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("class='evenrow'><td>(\\d+)");
 
@@ -86,7 +86,7 @@ public class HYSBZSubmitter extends Submitter {
 	private void submit() throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 
-		PostMethod postMethod = new PostMethod("http://www.zybbs.org/JudgeOnline/submit.php");
+		PostMethod postMethod = new PostMethod("http://www.lydsy.com/JudgeOnline/submit.php");
 		postMethod.addParameter("id", problem.getOriginProb());
 		postMethod.addParameter("language", submission.getLanguage());
 		postMethod.addParameter("source", submission.getSource());
@@ -103,7 +103,7 @@ public class HYSBZSubmitter extends Submitter {
 	}
 	
 	private void login(String username, String password) throws Exception{
-        PostMethod postMethod = new PostMethod("http://www.zybbs.org/JudgeOnline/login.php");
+        PostMethod postMethod = new PostMethod("http://www.lydsy.com/JudgeOnline/login.php");
         postMethod.addParameter("password", password);
         postMethod.addParameter("submit", "Submit");
         postMethod.addParameter("user_id", username);
@@ -125,7 +125,7 @@ public class HYSBZSubmitter extends Submitter {
 		String reg = "class='evenrow'><td>(\\d+)[\\s\\S]*?<font[\\s\\S]*?>([\\s\\S]*?)</font>[\\s\\S]*?<td>([\\s\\S]*?)<td>([\\s\\S]*?)<td>", result;
 		Pattern p = Pattern.compile(reg);
 
-		GetMethod getMethod = new GetMethod("http://www.zybbs.org/JudgeOnline/status.php?user_id=" + username);
+		GetMethod getMethod = new GetMethod("http://www.lydsy.com/JudgeOnline/status.php?user_id=" + username);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
@@ -158,7 +158,7 @@ public class HYSBZSubmitter extends Submitter {
 	}
 	
 	private void getAdditionalInfo(String runId) throws HttpException, IOException {
-		GetMethod getMethod = new GetMethod("http://www.zybbs.org/JudgeOnline/ceinfo.php?sid=" + runId);
+		GetMethod getMethod = new GetMethod("http://www.lydsy.com/JudgeOnline/ceinfo.php?sid=" + runId);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
 		httpClient.executeMethod(getMethod);
