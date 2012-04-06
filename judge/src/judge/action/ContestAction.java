@@ -353,13 +353,13 @@ public class ContestAction extends BaseAction {
 		}
 
 		/**
-		 * 结束时间必须比开始时间晚,持续时间必须短于30天
+		 * 结束时间必须比开始时间晚,持续时间必须短于60天
 		 */
 		if (dur < 1) {
 			this.addActionError("End time should be later than begin time!");
 			return;
-		} else if (dur > 2592000000L) {
-			this.addActionError("Contest duration should be shorter than 30 days!");
+		} else if (dur > 2 * 2592000000L) {
+			this.addActionError("Contest duration should be shorter than 60 days!");
 			return;
 		}
 
@@ -842,8 +842,8 @@ public class ContestAction extends BaseAction {
 		if (oContest.getReplayStatus() == null && curDate.compareTo(oContest.getBeginTime()) > 0){
 			long dur = d_day * 86400000L + d_hour * 3600000L + d_minute * 60000L;
 			oContest.setEndTime(new Date(oContest.getBeginTime().getTime() + dur));
-			if (dur > 2592000000L){
-				this.addActionError("Contest duration should be shorter than 30 days!");
+			if (dur > 2 * 2592000000L){
+				this.addActionError("Contest duration should be shorter than 60 days!");
 				beiju = true;
 			}
 			
