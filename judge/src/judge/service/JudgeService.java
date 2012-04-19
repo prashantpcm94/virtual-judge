@@ -73,6 +73,16 @@ public class JudgeService extends BaseService {
 		"Not solved, with [3] wrong submissions, the last one at [0] hour [1] minute [2] second",	//4		25
 
 		"Not solved, with one wrong submission, at [0] minute",										//1		26
+
+		"Solved at [0] minute [1] second with no wrong submisson",						//2		27
+		"Solved at [0] minute [1] second with one wrong submission",					//2		28
+		"Solved at [0] minute [1] second with [2] submission(s)",						//3		29
+		"Solved at [0] minute [1] second with [2] wrong submission(s)",					//3		30
+		"Solved at [1] minute [2] second with [0] submission(s)",						//3		31
+		"Solved at [1] minute [2] second with [0] wrong submission(s)",					//3		32
+		"Not solved, with [0] wrong submissions, the last one at [1] minute [2] second",//3		33
+		"Not solved, with [2] wrong submissions, the last one at [0] minute [1] second"	//3		34
+
 	};
 	
 	/**
@@ -285,9 +295,9 @@ public class JudgeService extends BaseService {
 					} else if (numberSegments.length == 1) {
 						curSet.addAll(Arrays.asList(new Integer[]{2, 3, 4, 26}));
 					} else if (numberSegments.length == 2) {
-						curSet.addAll(Arrays.asList(new Integer[]{5, 6, 7, 8, 9, 10, 20, 23}));
+						curSet.addAll(Arrays.asList(new Integer[]{5, 6, 7, 8, 9, 10, 20, 23, 27, 28}));
 					} else if (numberSegments.length == 3) {
-						curSet.addAll(Arrays.asList(new Integer[]{11, 12, 13, 14, 15, 21, 24}));
+						curSet.addAll(Arrays.asList(new Integer[]{11, 12, 13, 14, 15, 21, 24, 29, 30, 31, 32, 33, 34}));
 					} else if (numberSegments.length == 4) {
 						curSet.addAll(Arrays.asList(new Integer[]{16, 17, 18, 19, 22, 25}));
 					}
@@ -299,51 +309,66 @@ public class JudgeService extends BaseService {
 				}
 
 				//时间错误
-				if (numberSegments.length > 0 && numberSegments[0] * 60000 > contestLength) {
+				if (numberSegments.length > 0 && numberSegments[0] * 60000L > contestLength) {
 					curSet.remove(2);
 					curSet.remove(3);
 					curSet.remove(23);
 					curSet.remove(26);
 				}
-				if (numberSegments.length > 1 && numberSegments[1] * 60000 > contestLength) {
+				if (numberSegments.length > 1 && numberSegments[1] * 60000L > contestLength) {
 					curSet.remove(9);
 					curSet.remove(10);
 					curSet.remove(20);
 				}
-				if (numberSegments.length > 1 && (numberSegments[1] > 59 || numberSegments[0] * 3600000 + numberSegments[1] * 60000 > contestLength)) {
+				if (numberSegments.length > 1 && (numberSegments[1] > 59 || numberSegments[0] * 3600000L + numberSegments[1] * 60000L > contestLength)) {
 					curSet.remove(5);
 					curSet.remove(6);
 					curSet.remove(12);
 					curSet.remove(13);
 					curSet.remove(24);
 				}
-				if (numberSegments.length > 2 && (numberSegments[2] > 59 || numberSegments[1] * 3600000 + numberSegments[2] * 60000 > contestLength)) {
+				if (numberSegments.length > 2 && (numberSegments[2] > 59 || numberSegments[1] * 3600000L + numberSegments[2] * 60000L > contestLength)) {
 					curSet.remove(14);
 					curSet.remove(15);
 					curSet.remove(21);
 				}
-				if (numberSegments.length > 2 && (numberSegments[1] > 59 || numberSegments[2] > 59 || numberSegments[0] * 3600000 + numberSegments[1] * 60000 + numberSegments[2] * 1000 > contestLength)) {
+				if (numberSegments.length > 2 && (numberSegments[1] > 59 || numberSegments[2] > 59 || numberSegments[0] * 3600000L + numberSegments[1] * 60000L + numberSegments[2] * 1000L > contestLength)) {
 					curSet.remove(11);
 					curSet.remove(16);
 					curSet.remove(17);
 					curSet.remove(25);
 				}
-				if (numberSegments.length > 3 && (numberSegments[2] > 59 || numberSegments[3] > 59 || numberSegments[1] * 3600000 + numberSegments[2] * 60000 + numberSegments[3] * 1000 > contestLength)) {
+				if (numberSegments.length > 3 && (numberSegments[2] > 59 || numberSegments[3] > 59 || numberSegments[1] * 3600000L + numberSegments[2] * 60000L + numberSegments[3] * 1000L > contestLength)) {
 					curSet.remove(18);
 					curSet.remove(19);
 					curSet.remove(22);
 				}
+				if (numberSegments.length > 1 && (numberSegments[1] > 59 || numberSegments[0] * 60000L + numberSegments[1] * 1000L > contestLength)) {
+					curSet.remove(27);
+					curSet.remove(28);
+					curSet.remove(29);
+					curSet.remove(30);
+					curSet.remove(34);
+				}
+				if (numberSegments.length > 2 && (numberSegments[2] > 59 || numberSegments[1] * 60000L + numberSegments[2] * 1000L > contestLength)) {
+					curSet.remove(31);
+					curSet.remove(32);
+					curSet.remove(33);
+				}
+
 				//提交次数错误(0次总提交却solved)
 				if (numberSegments.length > 0 && numberSegments[0] == 0) {
 					curSet.remove(9);
 					curSet.remove(14);
 					curSet.remove(18);
+					curSet.remove(31);
 				}
 				if (numberSegments.length > 1 && numberSegments[1] == 0) {
 					curSet.remove(7);
 				}
 				if (numberSegments.length > 2 && numberSegments[2] == 0) {
 					curSet.remove(12);
+					curSet.remove(29);
 				}
 				if (numberSegments.length > 3 && numberSegments[3] == 0) {
 					curSet.remove(16);
@@ -500,55 +525,71 @@ public class JudgeService extends BaseService {
 		case 1:
 			return new long[]{contestLength, 1, 0};
 		case 2:
-			return new long[]{val[0] * 60000, 1, 1};
+			return new long[]{val[0] * 60000L, 1, 1};
 		case 3:
-			return new long[]{val[0] * 60000, 2, 1};
+			return new long[]{val[0] * 60000L, 2, 1};
 		case 4:
 			return new long[]{contestLength, val[0], 0};
 		case 5:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, 1, 1};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L, 1, 1};
 		case 6:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, 2, 1};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L, 2, 1};
 		case 7:
-			return new long[]{val[0] * 60000, val[1], 1};
+			return new long[]{val[0] * 60000L, val[1], 1};
 		case 8:
-			return new long[]{val[0] * 60000, val[1] + 1, 1};
+			return new long[]{val[0] * 60000L, val[1] + 1, 1};
 		case 9:
-			return new long[]{val[1] * 60000, val[0], 1};
+			return new long[]{val[1] * 60000L, val[0], 1};
 		case 10:
-			return new long[]{val[1] * 60000, val[0] + 1, 1};
+			return new long[]{val[1] * 60000L, val[0] + 1, 1};
 		case 11:
-			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, 1, 1};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L + val[2] * 1000L, 1, 1};
 		case 12:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2], 1};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L, val[2], 1};
 		case 13:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2] + 1, 1};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L, val[2] + 1, 1};
 		case 14:
-			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0], 1};
+			return new long[]{val[1] * 3600000L + val[2] * 60000L, val[0], 1};
 		case 15:
-			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0] + 1, 1};
+			return new long[]{val[1] * 3600000L + val[2] * 60000L, val[0] + 1, 1};
 		case 16:
-			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3], 1};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L + val[2] * 1000L, val[3], 1};
 		case 17:
-			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3] + 1, 1};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L + val[2] * 1000L, val[3] + 1, 1};
 		case 18:
-			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0], 1};
+			return new long[]{val[1] * 3600000L + val[2] * 60000L + val[3] * 1000L, val[0], 1};
 		case 19:
-			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0] + 1, 1};
+			return new long[]{val[1] * 3600000L + val[2] * 60000L + val[3] * 1000L, val[0] + 1, 1};
 		case 20:
-			return new long[]{val[1] * 60000, val[0], 0};
+			return new long[]{val[1] * 60000L, val[0], 0};
 		case 21:
-			return new long[]{val[1] * 3600000 + val[2] * 60000, val[0], 0};
+			return new long[]{val[1] * 3600000L + val[2] * 60000L, val[0], 0};
 		case 22:
-			return new long[]{val[1] * 3600000 + val[2] * 60000 + val[3] * 1000, val[0], 0};
+			return new long[]{val[1] * 3600000L + val[2] * 60000L + val[3] * 1000L, val[0], 0};
 		case 23:
-			return new long[]{val[0] * 60000, val[1], 0};
+			return new long[]{val[0] * 60000L, val[1], 0};
 		case 24:
-			return new long[]{val[0] * 3600000 + val[1] * 60000, val[2], 0};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L, val[2], 0};
 		case 25:
-			return new long[]{val[0] * 3600000 + val[1] * 60000 + val[2] * 1000, val[3], 0};
+			return new long[]{val[0] * 3600000L + val[1] * 60000L + val[2] * 1000L, val[3], 0};
 		case 26:
-			return new long[]{val[0] * 60000, 1, 0};
+			return new long[]{val[0] * 60000L, 1, 0};
+		case 27:
+			return new long[]{val[0] * 60000L + val[1] * 1000L, 1, 1};
+		case 28:
+			return new long[]{val[0] * 60000L + val[1] * 1000L, 2, 1};
+		case 29:
+			return new long[]{val[0] * 60000L + val[1] * 1000L, val[2], 1};
+		case 30:
+			return new long[]{val[0] * 60000L + val[1] * 1000L, val[2] + 1, 1};
+		case 31:
+			return new long[]{val[1] * 60000L + val[2] * 1000L, val[0], 1};
+		case 32:
+			return new long[]{val[1] * 60000L + val[2] * 1000L, val[0] + 1, 1};
+		case 33:
+			return new long[]{val[1] * 60000L + val[2] * 1000L, val[0], 0};
+		case 34:
+			return new long[]{val[0] * 60000L + val[1] * 1000L, val[2], 0};
 		default:
 			throw new Exception("Error occured!");
 		}
