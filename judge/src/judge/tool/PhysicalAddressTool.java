@@ -1,11 +1,11 @@
 package judge.tool;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 public class PhysicalAddressTool {
@@ -20,18 +20,20 @@ public class PhysicalAddressTool {
 		new Thread(new Runnable() {
 			public void run() {
 				HttpClient httpClient = new HttpClient();
-				GetMethod getMethod = new GetMethod("http://ip.cn/getip2.php?action=queryip&ip_url=" + ip);
+				GetMethod getMethod = new GetMethod("http://ip.cn/getip.php?action=queryip&ip_url=" + ip);
 				try {
 					httpClient.executeMethod(getMethod);
-					String physicalAddress = Tools.getHtml(getMethod, "GB2312").replaceAll(".+来自：", "").trim();
+					String responceString = Tools.getHtml(getMethod, "GB2312");
+					Matcher matcher = Pattern.compile("来自：(.+?)\\s*</p>").matcher(responceString);
+					matcher.find();
+					String physicalAddress = matcher.group(1);
 					if (addressMap.size() >= 500) {
 						addressMap.clear();
 					}
 					addressMap.put(ip, physicalAddress);
-				} catch (HttpException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+					addressMap.remove(ip);
 				}
 			}
 		}).start();
