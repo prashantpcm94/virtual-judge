@@ -52,8 +52,8 @@ public class LightOJSpider extends Spider {
 		description.setDescription("<link rel='stylesheet' type='text/css' href='css/light_oj.css' />" + Tools.regFind(html, "<div class=Section1>([\\s\\S]*?)<h1>Input</h1>"));
 		description.setInput(Tools.regFind(html, "<h1>Input</h1>([\\s\\S]*?)<h1>Output</h1>"));
 		description.setOutput(Tools.regFind(html, "<h1>Output</h1>([\\s\\S]*?)<table class=MsoTableGrid"));
-		description.setSampleInput(Tools.regFind(html, "<table class=MsoTableGrid[\\s\\S]*?<td[\\s\\S]*?<td[\\s\\S]*?<td[^>]*?>([\\s\\S]*?)</td>"));
-		description.setSampleOutput(Tools.regFind(html, "<table class=MsoTableGrid[\\s\\S]*?<td[\\s\\S]*?<td[\\s\\S]*?<td[\\s\\S]*?<td[^>]*?>([\\s\\S]*?)</td>"));
+		description.setSampleInput(Tools.regFind(html, "<h1>Output</h1>[\\s\\S]*<table class=MsoTableGrid[\\s\\S]*?<td[\\s\\S]*?<td[\\s\\S]*?<td[^>]*?>([\\s\\S]*?)</td>"));
+		description.setSampleOutput(Tools.regFind(html, "<h1>Output</h1>[\\s\\S]*<table class=MsoTableGrid[\\s\\S]*?<td[\\s\\S]*?<td[\\s\\S]*?<td[\\s\\S]*?<td[^>]*?>([\\s\\S]*?)</td>"));
 		description.setHint(Tools.regFind(html, "Note</h1>([\\s\\S]*?)</div>\\s+</body>"));
 
 		problem.setSource(Tools.regFind(html, "(<div id=\"problem_setter\">[\\s\\S]*?)</div>\\s*</div>\\s*<span id=\"showNavigation\""));
