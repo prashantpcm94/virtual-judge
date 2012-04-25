@@ -20,11 +20,11 @@ public class PhysicalAddressTool {
 		new Thread(new Runnable() {
 			public void run() {
 				HttpClient httpClient = new HttpClient();
-				GetMethod getMethod = new GetMethod("http://ip.cn/getip.php?action=queryip&ip_url=" + ip);
+				GetMethod getMethod = new GetMethod("http://ip138.com/ips138.asp?ip=" + ip);
 				try {
 					httpClient.executeMethod(getMethod);
 					String responceString = Tools.getHtml(getMethod, "GB2312");
-					Matcher matcher = Pattern.compile("来自：(.+?)\\s*</p>").matcher(responceString);
+					Matcher matcher = Pattern.compile("<li>本站主数据：(.+?)</li>").matcher(responceString);
 					matcher.find();
 					String physicalAddress = matcher.group(1);
 					if (addressMap.size() >= 500) {
