@@ -156,6 +156,11 @@
 			</result>
 		</action>
 
+		<!-- statistic -->
+		<action name="statistic" class="contestAction" method="statistic">
+			<result name="success">/contest/statistic.jsp</result>
+		</action>
+
 
 		<!-- deprecated -->
 

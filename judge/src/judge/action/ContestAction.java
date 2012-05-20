@@ -4,14 +4,16 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import java.util.TreeSet;
 
 import judge.bean.Contest;
 import judge.bean.Cproblem;
@@ -28,13 +30,15 @@ import judge.tool.MD5;
 import judge.tool.OnlineTool;
 import judge.tool.Tools;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import com.opensymphony.xwork2.ActionContext;
 
 /**
  * 处理比赛前端相关功能
  * @author Isun
  */
-@SuppressWarnings("unchecked")
 public class ContestAction extends BaseAction {
 
 	private static final long serialVersionUID = -3594499743692326065L;
@@ -80,7 +84,10 @@ public class ContestAction extends BaseAction {
 	private Map cellMeaningOptions;
 
 	private String submissionInfo;
-
+	
+	private String cids;
+	private List<Integer> contestIds;
+	private List statisticRank;
 
 	
 	public String toListContest(){
@@ -1022,6 +1029,50 @@ public class ContestAction extends BaseAction {
 		}
 		return SUCCESS;
 	}
+	
+	public String statistic() {
+		if (cids == null || cids.trim().isEmpty()) {
+			return SUCCESS;
+		}
+		String[] tmp = cids.split("\\D+");
+		contestIds = new ArrayList<Integer>();
+		Map<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
+		for (int i = 0; i < tmp.length; i++) {
+			int cid = Integer.parseInt(tmp[i]);
+			contestIds.add(cid);
+			indexMap.put(cid, i);
+		}
+
+		Map paraMap = new HashMap();
+		paraMap.put("cids", contestIds);
+		List<Object[]> submissions = baseService.query("select submission.username, submission.contest.id, cproblem.num, submission.problem.id from Submission submission, Cproblem cproblem where cproblem.problem.id = submission.problem.id and cproblem.contest.id = submission.contest.id and submission.status = 'Accepted' and submission.contest.id in :cids", paraMap);
+		
+		HashMap<String, Object[]> rank = new HashMap<String, Object[]>();
+		for (Object[] submission : submissions) {
+			Object[] userDetail = rank.get(submission[0]);
+			if (userDetail == null) {
+				userDetail = new Object[tmp.length + 2];
+				userDetail[0] = submission[0];
+				for (int i = 1; i < userDetail.length; i++) {
+					userDetail[i] = new TreeSet();
+				}
+				rank.put((String) submission[0], userDetail);
+			}
+			((Set)userDetail[1 + indexMap.get(submission[1])]).add(submission[2]);
+			((Set)userDetail[1 + tmp.length]).add(submission[3]);
+		}
+		statisticRank = new ArrayList(rank.values());
+		
+		Collections.sort(statisticRank, new Comparator<Object[]>() {
+			public int compare(Object[] o1, Object[] o2) {
+				Integer v1 = ((Set)o1[o1.length - 1]).size();
+				Integer v2 = ((Set)o2[o2.length - 1]).size();
+				return v2.compareTo(v1);
+			}
+		});
+		
+		return SUCCESS;
+	}
 
 	/////////////////////  deprecated  //////////////////////////
 	
@@ -1306,6 +1357,25 @@ public class ContestAction extends BaseAction {
 	public void setSubmissionInfo(String submissionInfo) {
 		this.submissionInfo = submissionInfo;
 	}
+	public String getCids() {
+		return cids;
+	}
+	public void setCids(String cids) {
+		this.cids = cids;
+	}
+	public List getStatisticRank() {
+		return statisticRank;
+	}
+	public void setStatisticRank(List statisticRank) {
+		this.statisticRank = statisticRank;
+	}
+	public List<Integer> getContestIds() {
+		return contestIds;
+	}
+	public void setContestIds(List<Integer> contestIds) {
+		this.contestIds = contestIds;
+	}
+
 }
 
 
