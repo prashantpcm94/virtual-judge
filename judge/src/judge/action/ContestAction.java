@@ -1045,6 +1045,7 @@ public class ContestAction extends BaseAction {
 		if (contestIds.isEmpty()) {
 			return SUCCESS;
 		}
+		Collections.sort(contestIds);
 
 		Map paraMap = new HashMap();
 		paraMap.put("cids", contestIds);
