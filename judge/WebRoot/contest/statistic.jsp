@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<s:include value="/header.jsp" />
-		<title><s:property value="contest.title" escape="false" /> - Virtual Judge</title>
+		<title>Contest Statistic - Virtual Judge</title>
 		<style type="text/css" media="screen">
 			table#statistic_table td {border:1px solid #A6C9E2;width:50px;height:10px;text-align:center;}
 			table#statistic_table {border-collapse:collapse;}
@@ -32,22 +32,7 @@
 				</s:iterator>
 				<td>Total</td>
 			</tr>
-		<s:iterator value="statisticRank" status="rowstatus_out">
-			<tr>
-				<s:iterator value="statisticRank[#rowstatus_out.index]" status="rowstatus_in">
-				<td>
-					<s:if test="#rowstatus_in.index == 0">
-						<s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index]" />
-					</s:if>
-					<s:else>
-						<a href="javascript:void(0)" title='<s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index]" />'>
-							<s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index].size()" />
-						</a>
-					</s:else>
-				</td>
-				</s:iterator>
-			</tr>
-		</s:iterator>
+		<s:iterator value="statisticRank" status="rowstatus_out"><tr><s:iterator value="statisticRank[#rowstatus_out.index]" status="rowstatus_in"><td><s:if test="#rowstatus_in.index == 0"><s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index]" /></s:if><s:else><a href="javascript:void(0)" title='<s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index]" />'><s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index].size()" /></a></s:else></td></s:iterator></tr></s:iterator>
 		</table>
 
 		<s:include value="/bottom.jsp" />
