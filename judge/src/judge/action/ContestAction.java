@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import judge.bean.Contest;
 import judge.bean.Cproblem;
@@ -85,6 +87,7 @@ public class ContestAction extends BaseAction {
 	private String submissionInfo;
 	
 	private String cids;
+	private int afterContest;
 	private List<Integer> contestIds;
 	private List statisticRank;
 
@@ -1030,27 +1033,28 @@ public class ContestAction extends BaseAction {
 	}
 	
 	public String statistic() {
-		if (cids == null || cids.trim().isEmpty()) {
-			return SUCCESS;
-		}
-		String[] tmp = cids.split("\\D+");
 		contestIds = new ArrayList<Integer>();
 		Map<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
-		for (int i = 0; i < tmp.length; i++) {
-			int cid = Integer.parseInt(tmp[i]);
+		
+		Matcher matcher = Pattern.compile("\\d+").matcher(cids + "");
+		while (matcher.find() && contestIds.size() < 20) {
+			int cid = Integer.parseInt(matcher.group());
 			contestIds.add(cid);
-			indexMap.put(cid, i);
+			indexMap.put(cid, contestIds.size() - 1);
+		}
+		if (contestIds.isEmpty()) {
+			return SUCCESS;
 		}
 
 		Map paraMap = new HashMap();
 		paraMap.put("cids", contestIds);
-		List<Object[]> submissions = baseService.query("select submission.username, submission.contest.id, cproblem.num, submission.problem.id from Submission submission, Cproblem cproblem where cproblem.problem.id = submission.problem.id and cproblem.contest.id = submission.contest.id and submission.status = 'Accepted' and submission.contest.id in :cids", paraMap);
+		List<Object[]> submissions = baseService.query("select submission.username, submission.contest.id, cproblem.num, submission.problem.id from Submission submission, Cproblem cproblem where submission.status = 'Accepted' and submission.contest.id in :cids and cproblem.problem.id = submission.problem.id and cproblem.contest.id = submission.contest.id " + (afterContest == 0 ? " and submission.subTime < submission.contest.endTime" : ""), paraMap);
 		
 		HashMap<String, Object[]> rank = new HashMap<String, Object[]>();
 		for (Object[] submission : submissions) {
 			Object[] userDetail = rank.get(submission[0]);
 			if (userDetail == null) {
-				userDetail = new Object[tmp.length + 2];
+				userDetail = new Object[contestIds.size() + 2];
 				userDetail[0] = submission[0];
 				for (int i = 1; i < userDetail.length; i++) {
 					userDetail[i] = new TreeSet();
@@ -1058,7 +1062,7 @@ public class ContestAction extends BaseAction {
 				rank.put((String) submission[0], userDetail);
 			}
 			((Set)userDetail[1 + indexMap.get(submission[1])]).add(submission[2]);
-			((Set)userDetail[1 + tmp.length]).add(submission[3]);
+			((Set)userDetail[1 + contestIds.size()]).add(submission[3]);
 		}
 		statisticRank = new ArrayList(rank.values());
 		
@@ -1373,6 +1377,12 @@ public class ContestAction extends BaseAction {
 	}
 	public void setContestIds(List<Integer> contestIds) {
 		this.contestIds = contestIds;
+	}
+	public int getAfterContest() {
+		return afterContest;
+	}
+	public void setAfterContest(int afterContest) {
+		this.afterContest = afterContest;
 	}
 
 }
