@@ -31,6 +31,7 @@
 		<div class="ptt" style="margin-bottom:12px;position:relative;">
 			Contest List
 			<div style="float:right;position:absolute;right:0px;top:0">
+				<a href="contest/statistic.action" id="statistic_contest" style="color:black">Statistic</a>
 				<a href="contest/toAddContest.action" class="login" id="add_contest" style="color:black">Add a contest</a>
 			</div>
 		</div>

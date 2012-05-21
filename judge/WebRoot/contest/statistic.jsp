@@ -15,7 +15,7 @@
 
 	<body>
 		<s:include value="/top.jsp" />
-		<form action="contest/statistic.action" method="post">
+		<form action="contest/statistic.action" method="get">
 			Contest Ids (you can use any separator):<br />
 			<s:textarea cols="60" rows="10" name="cids" /><br />
 			Include submissions after contest:<s:radio name="afterContest" list="#{'0':'No', '1':'Yes'}"></s:radio>
@@ -35,7 +35,7 @@
 				<th>Total</th>
 			</tr>
 		</thead>
-		<s:iterator value="statisticRank" status="rowstatus_out"><tr><s:iterator value="statisticRank[#rowstatus_out.index]" status="rowstatus_in"><td><s:if test="#rowstatus_in.index == 0"><s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index]" /></s:if><s:elseif test="statisticRank[#rowstatus_out.index][#rowstatus_in.index].size() > 0"><a href="javascript:void(0)" title='<s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index]" />'><s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index].size()" /></a></s:elseif></td></s:iterator></tr></s:iterator>
+		<s:iterator value="statisticRank" status="rowstatus_out"><tr><s:iterator value="statisticRank[#rowstatus_out.index]" status="rowstatus_in"><td><s:if test="#rowstatus_in.index == 0"><s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index]" /></s:if><s:elseif test="statisticRank[#rowstatus_out.index][#rowstatus_in.index].size() > 0"><a target="_blank" href="contest/view.action?cid=<s:property value='contestIds[#rowstatus_in.index-1]' />#status/<s:property value="statisticRank[#rowstatus_out.index][0]" />/-/1" title='<s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index]" />'><s:property value="statisticRank[#rowstatus_out.index][#rowstatus_in.index].size()" /></a></s:elseif></td></s:iterator></tr></s:iterator>
 		</table>
 
 		<s:include value="/bottom.jsp" />

@@ -107,7 +107,7 @@ $(function() {
 	$("#head_status").insertBefore("div#listContest_processing").show();
 	$("div.dataTables_filter").css("width", "250px");
 	
-	$("#add_contest").button();
+	$("#add_contest, #statistic_contest").button();
 
 	$("input[type='checkbox']").change(function() {
 		$.cookie("checked_" + $(this).attr("name"), $(this).prop("checked"), {expires:7});

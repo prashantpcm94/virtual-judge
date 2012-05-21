@@ -1040,12 +1040,14 @@ public class ContestAction extends BaseAction {
 		while (matcher.find() && contestIds.size() < 20) {
 			int cid = Integer.parseInt(matcher.group());
 			contestIds.add(cid);
-			indexMap.put(cid, contestIds.size() - 1);
 		}
 		if (contestIds.isEmpty()) {
 			return SUCCESS;
 		}
 		Collections.sort(contestIds);
+		for (int i = 0; i < contestIds.size(); i++) {
+			indexMap.put(contestIds.get(i), i);
+		}
 
 		Map paraMap = new HashMap();
 		paraMap.put("cids", contestIds);
