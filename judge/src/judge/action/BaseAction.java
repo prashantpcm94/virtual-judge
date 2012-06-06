@@ -17,6 +17,7 @@ import judge.spider.POJSpider;
 import judge.spider.SGUSpider;
 import judge.spider.SPOJSpider;
 import judge.spider.Spider;
+import judge.spider.UESTCSpider;
 import judge.spider.URALSpider;
 import judge.spider.UVALiveSpider;
 import judge.spider.UVASpider;
@@ -32,6 +33,7 @@ import judge.submitter.POJSubmitter;
 import judge.submitter.SGUSubmitter;
 import judge.submitter.SPOJSubmitter;
 import judge.submitter.Submitter;
+import judge.submitter.UESTCSubmitter;
 import judge.submitter.URALSubmitter;
 import judge.submitter.UVALiveSubmitter;
 import judge.submitter.UVASubmitter;
@@ -45,7 +47,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Isun
  *
  */
-@SuppressWarnings("unchecked")
 public class BaseAction extends ActionSupport{
 
 	private static final long serialVersionUID = 1L;
@@ -81,6 +82,7 @@ public class BaseAction extends ActionSupport{
 		OJList.add("Z-Trening");
 		OJList.add("Aizu");
 		OJList.add("LightOJ");
+		OJList.add("UESTC");
 	}
 	
 	static private List<String> OJListAll = new ArrayList<String>();
@@ -105,6 +107,7 @@ public class BaseAction extends ActionSupport{
 		spiderMap.put("Z-Trening", new ZTreningSpider());
 		spiderMap.put("Aizu", new AizuSpider());
 		spiderMap.put("LightOJ", new LightOJSpider());
+		spiderMap.put("UESTC", new UESTCSpider());
 	}
 	
 	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
@@ -123,6 +126,7 @@ public class BaseAction extends ActionSupport{
 		submitterMap.put("Z-Trening", new ZTreningSubmitter());
 		submitterMap.put("Aizu", new AizuSubmitter());
 		submitterMap.put("LightOJ", new LightOJSubmitter());
+		submitterMap.put("UESTC", new UESTCSubmitter());
 	}
 	
 	static public Map<String, String> lf = new HashMap<String, String>();
@@ -141,6 +145,7 @@ public class BaseAction extends ActionSupport{
 		lf.put("Z-Trening", "%lld & %llu");
 		lf.put("Aizu", "%lld & %llu");
 		lf.put("LightOJ", "unknown");
+		lf.put("UESTC", "%lld & %llu");
 	}
 	
 
