@@ -598,6 +598,7 @@ public class ContestAction extends BaseAction {
 		baseService.releaseSession(session);
 		if (MD5.getMD5(password).equals(encryptedPassword)) {
 			httpSession.put("P" + cid, 1);
+			httpSession.put("lpc", 1);	//Logged into Private Contest
 			json = SUCCESS;
 		} else {
 			json = "Password is not correct!";

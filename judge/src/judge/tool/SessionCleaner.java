@@ -22,7 +22,7 @@ public class SessionCleaner {
 			long freezeLength = new Date().getTime() - httpSession.getLastAccessedTime();
 			if (httpSession.getAttribute("remoteAddr") == null) {
 				httpSession.invalidate();
-			} else if (httpSession.getAttribute("visitor") == null && freezeLength > 3 * Math.max(activeLength, ONE_MINUTE)) {
+			} else if (httpSession.getAttribute("visitor") == null && httpSession.getAttribute("lpc") == null && freezeLength > 3 * Math.max(activeLength, ONE_MINUTE)) {
 				httpSession.invalidate();
 			}
 		}
