@@ -70,7 +70,7 @@ public class FZUSubmitter extends Submitter {
 	private void getMaxRunId() throws Exception {
 		GetMethod getMethod = new GetMethod("http://acm.fzu.edu.cn/log.php");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		Pattern p = Pattern.compile("<tr onmouseover=\"hl\\(this\\);\" onmouseout=\"unhl\\(this\\);\" >\\s*<td>([0-9]+)</td>");
+		Pattern p = Pattern.compile("<tr onmouseover=\"hl\\(this\\);\" onmouseout=\"unhl\\(this\\);\" >\\s*<td>(\\d+)</td>");
 
 		httpClient.executeMethod(getMethod);
 		byte[] responseBody = getMethod.getResponseBody();
@@ -127,12 +127,13 @@ public class FZUSubmitter extends Submitter {
 				"<td>.*?</td>\\s*" +
 				"<td>([\\s\\S]*?)</td>\\s*" +
 				"<td>.*?</td>\\s*" +
+				"<td>.*?</td>\\s*" +
 				"<td>(.*?)</td>\\s*" +
 				"<td>(.*?)</td>\\s*";
 		String result;
 		Pattern p = Pattern.compile(reg);
 
-		GetMethod getMethod = new GetMethod("http://acm.fzu.edu.cn/log.php?language=99&state=99&user=" + username);
+		GetMethod getMethod = new GetMethod("http://acm.fzu.edu.cn/log.php?user=" + username);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
@@ -143,13 +144,13 @@ public class FZUSubmitter extends Submitter {
 
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
-				result = m.group(3).replaceAll("<[\\s\\S]*?>", "").trim();
+				result = m.group(2).replaceAll("<[\\s\\S]*?>", "").trim();
 				submission.setStatus(result);
 				submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
 					if (result.equals("Accepted")){
-						submission.setMemory(Integer.parseInt(m.group(6).replaceAll("K", "")));
-						submission.setTime(Integer.parseInt(m.group(5).replaceAll("MS", "")));
+						submission.setTime(Integer.parseInt(m.group(3).replaceAll("\\D+", "")));
+						submission.setMemory(Integer.parseInt(m.group(4).replaceAll("\\D+", "")));
 					} else if (result.contains("Compile Error")) {
 						getAdditionalInfo(submission.getRealRunId());
 					}
