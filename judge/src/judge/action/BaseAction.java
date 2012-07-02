@@ -9,10 +9,12 @@ import judge.service.IBaseService;
 import judge.service.JudgeService;
 import judge.spider.AizuSpider;
 import judge.spider.CodeForcesSpider;
+import judge.spider.FZUSpider;
 import judge.spider.HDUSpider;
 import judge.spider.HUSTSpider;
 import judge.spider.HYSBZSpider;
 import judge.spider.LightOJSpider;
+import judge.spider.NBUTSpider;
 import judge.spider.POJSpider;
 import judge.spider.SGUSpider;
 import judge.spider.SPOJSpider;
@@ -25,10 +27,12 @@ import judge.spider.ZOJSpider;
 import judge.spider.ZTreningSpider;
 import judge.submitter.AizuSubmitter;
 import judge.submitter.CodeForcesSubmitter;
+import judge.submitter.FZUSubmitter;
 import judge.submitter.HDUSubmitter;
 import judge.submitter.HUSTSubmitter;
 import judge.submitter.HYSBZSubmitter;
 import judge.submitter.LightOJSubmitter;
+import judge.submitter.NBUTSubmitter;
 import judge.submitter.POJSubmitter;
 import judge.submitter.SGUSubmitter;
 import judge.submitter.SPOJSubmitter;
@@ -83,6 +87,8 @@ public class BaseAction extends ActionSupport{
 		OJList.add("Aizu");
 		OJList.add("LightOJ");
 		OJList.add("UESTC");
+		OJList.add("NBUT");
+		OJList.add("FZU");
 	}
 	
 	static private List<String> OJListAll = new ArrayList<String>();
@@ -108,6 +114,8 @@ public class BaseAction extends ActionSupport{
 		spiderMap.put("Aizu", new AizuSpider());
 		spiderMap.put("LightOJ", new LightOJSpider());
 		spiderMap.put("UESTC", new UESTCSpider());
+		spiderMap.put("NBUT", new NBUTSpider());
+		spiderMap.put("FZU", new FZUSpider());
 	}
 	
 	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
@@ -127,6 +135,8 @@ public class BaseAction extends ActionSupport{
 		submitterMap.put("Aizu", new AizuSubmitter());
 		submitterMap.put("LightOJ", new LightOJSubmitter());
 		submitterMap.put("UESTC", new UESTCSubmitter());
+		submitterMap.put("NBUT", new NBUTSubmitter());
+		submitterMap.put("FZU", new FZUSubmitter());
 	}
 	
 	static public Map<String, String> lf = new HashMap<String, String>();
@@ -146,6 +156,8 @@ public class BaseAction extends ActionSupport{
 		lf.put("Aizu", "%lld & %llu");
 		lf.put("LightOJ", "unknown");
 		lf.put("UESTC", "%lld & %llu");
+		lf.put("NBUT", "%I64d & %I64u");
+		lf.put("FZU", "%I64d & %I64u");
 	}
 	
 
