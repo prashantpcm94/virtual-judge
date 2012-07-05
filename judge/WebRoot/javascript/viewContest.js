@@ -299,7 +299,7 @@ $(function(){
 		autoOpen: false,
 		width: 950,
 		position: ['top', 50],
-		modal: true,
+		modal: false,
 		buttons: {
 			"Save": function() {
 				var ids = cid;

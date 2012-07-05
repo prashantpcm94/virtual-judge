@@ -73,8 +73,14 @@ public class URALSubmitter extends Submitter {
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("<TD class=\"id\">(\\d+)");
 
-		httpClient.executeMethod(getMethod);
-		byte[] responseBody = getMethod.getResponseBody();
+		byte[] responseBody;
+		try {
+			httpClient.executeMethod(getMethod);
+			responseBody = getMethod.getResponseBody();
+		} finally {
+			getMethod.releaseConnection();
+		}
+
 		String tLine = new String(responseBody, "UTF-8");
 		Matcher m = p.matcher(tLine);
 		if (m.find()) {
@@ -99,11 +105,15 @@ public class URALSubmitter extends Submitter {
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.getParams().setContentCharset("UTF-8"); 
 
-		System.out.println("submit...");
-		int statusCode = httpClient.executeMethod(postMethod);
-		System.out.println("statusCode = " + statusCode);
-		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
-			throw new Exception();
+		try {
+			System.out.println("submit...");
+			int statusCode = httpClient.executeMethod(postMethod);
+			System.out.println("statusCode = " + statusCode);
+			if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
+				throw new Exception();
+			}
+		} finally {
+			postMethod.releaseConnection();
 		}
 	}
 	
@@ -115,8 +125,13 @@ public class URALSubmitter extends Submitter {
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			System.out.println("getResult...");
-			httpClient.executeMethod(getMethod);
-			byte[] responseBody = getMethod.getResponseBody();
+			byte[] responseBody;
+			try {
+				httpClient.executeMethod(getMethod);
+				responseBody = getMethod.getResponseBody();
+			} finally {
+				getMethod.releaseConnection();
+			}
 			String tLine = new String(responseBody, "UTF-8");
 			Matcher m = p.matcher(tLine);
 			
@@ -186,7 +201,7 @@ public class URALSubmitter extends Submitter {
 			errorCode = 2;
 			submission.setStatus("Running & Judging");
 			baseService.addOrModify(submission);
-			Thread.sleep(2000);
+			Thread.sleep(6000);
 			getResult(passwordList[idx]);
 		} catch (Exception e) {
 			e.printStackTrace();
