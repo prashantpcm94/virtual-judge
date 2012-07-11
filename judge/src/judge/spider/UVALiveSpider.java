@@ -91,6 +91,7 @@ public class UVALiveSpider extends Spider {
 			}
 			description.setDescription("<style type=\"text/css\">h1,h2,h3,h4,h5,h6{margin-bottom:0;}div.textBG p{margin: 0 0 0.0001pt;}</style>" + description.getDescription());
 		} catch (Exception e) {
+		} finally {
 			getMethod.releaseConnection();
 		}
 	}
