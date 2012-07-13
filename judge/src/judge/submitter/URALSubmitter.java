@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -120,16 +121,25 @@ public class URALSubmitter extends Submitter {
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "aspx/(\\d+)[\\s\\S]*?class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
-		Pattern p = Pattern.compile(reg);
 		GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx?author=" + username.substring(0, 5));
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(6, true));
+		String reg = "aspx/(\\d+)[\\s\\S]*?class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
+		Pattern p = Pattern.compile(reg);
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			System.out.println("getResult...");
 			byte[] responseBody;
 			try {
-				httpClient.executeMethod(getMethod);
+				int tryTimes = 6;
+				while (tryTimes-- > 0) {
+					try {
+						httpClient.executeMethod(getMethod);
+					} catch (SocketTimeoutException e) {
+						System.err.println("Read time out. Try again.");
+						continue;
+					}
+					break;
+				}
 				responseBody = getMethod.getResponseBody();
 			} finally {
 				getMethod.releaseConnection();
