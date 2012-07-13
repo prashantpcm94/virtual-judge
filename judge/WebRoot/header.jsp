@@ -10,3 +10,4 @@
 <script type="text/javascript" src="jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js?<%=application.getAttribute("version")%>"></script>
 <script type="text/javascript" src="javascript/jquery.dataTables.min.js?<%=application.getAttribute("version")%>"></script>
 <script type="text/javascript" src="javascript/common.js?<%=application.getAttribute("version")%>"></script>
+<script type="text/javascript">var basePath = "<%=application.getAttribute("basePath")%>";</script>

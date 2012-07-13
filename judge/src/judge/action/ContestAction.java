@@ -969,6 +969,7 @@ public class ContestAction extends BaseAction {
 		try {
 			submission = (Submission) session.get(Submission.class, id);
 			contest = submission.getContest();
+			contest.getTitle();
 			cproblem = (Cproblem) session.createQuery("select cp from Cproblem cp where cp.contest.id = " + contest.getId() + " and cp.problem.id = " + submission.getProblem().getId()).uniqueResult();
 			int authorizeStatus = judgeService.checkAuthorizeStatus(contest.getId());
 			if (userId != submission.getUser().getId() && authorizeStatus != 2 && (submission.getIsOpen() == 0 || new Date().compareTo(contest.getEndTime()) < 0)) {

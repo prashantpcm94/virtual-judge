@@ -61,7 +61,7 @@
 					<td class="form_title">Ranklist<br />(xls/csv):</td>
 					<td class="form_value">
 						<s:file name="ranklistFile" />
-						&nbsp;<a href="http://acm.hust.edu.cn/forum/forum.php?mod=viewthread&tid=119" target="_blank"><img src="http://www.iconpng.com/png/cristal-intense/aide.png" border="0" height="20" /></a>
+						&nbsp;<a href="http://hi.baidu.com/xh176233756/item/a0bf0f3304afc3c11a9696f7" target="_blank"><img src="http://www.iconpng.com/png/cristal-intense/aide.png" border="0" height="20" /></a>
 					</td>
 				</tr>
 				<tr class="real_contest_element">

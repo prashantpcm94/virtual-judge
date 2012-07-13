@@ -77,6 +77,7 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 		    var disqus_shortname = '<%=application.getAttribute("disqusShortname")%>'; // required: replace example with your forum shortname
 		    var disqus_developer = <%=application.getAttribute("disqusDeveloper")%>;
 			var disqus_identifier = "source/${submission.id}";
+			var disqus_title = "Source Code - ${un}'s code for ${problem.originOJ} ${problem.originProb}";
 			
 		    /* * * DON'T EDIT BELOW THIS LINE * * */
 		    var _showDiscuss = function() {

@@ -23,5 +23,10 @@
 	        <result name="success">/index.jsp</result>
 	    </action>
 
+	    <!-- 跳转至主页 -->
+        <action name="discuss" class="mainAction" method="discuss">
+	        <result name="success">/discuss.jsp</result>
+	    </action>
+
 	</package>
 </struts>

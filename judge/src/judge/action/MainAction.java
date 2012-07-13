@@ -10,4 +10,8 @@ public class MainAction extends ActionSupport{
 		return SUCCESS;
 	}
 
+	public String discuss(){
+		return SUCCESS;
+	}
+
 }

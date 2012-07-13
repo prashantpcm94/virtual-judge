@@ -126,6 +126,7 @@
 		    var disqus_shortname = '<%=application.getAttribute("disqusShortname")%>'; // required: replace example with your forum shortname
 		    var disqus_developer = <%=application.getAttribute("disqusDeveloper")%>;
 			var disqus_identifier = "problem/${problem.id}";
+			var disqus_title = "Problem - ${problem.originOJ} ${problem.originProb} - ${problem.title}";
 			
 		    /* * * DON'T EDIT BELOW THIS LINE * * */
 		    $("#show_discuss").click(function(){

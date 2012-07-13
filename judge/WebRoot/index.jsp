@@ -26,7 +26,7 @@
 				<a href="http://acm.hust.edu.cn/thx/" target="_blank">HUST</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://www.spoj.pl" target="_blank">SPOJ</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://acm.hdu.edu.cn" target="_blank">HDU</a>&nbsp;&nbsp;&nbsp;
-				<a href="http://www.zybbs.org/JudgeOnline/" target="_blank">HYSBZ</a>&nbsp;&nbsp;&nbsp;
+				<a href="http://www.lydsy.com/JudgeOnline/" target="_blank">HYSBZ</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://uva.onlinejudge.org/" target="_blank">UVA</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://codeforces.com/" target="_blank">CodeForces</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://www.z-trening.com/" target="_blank">Z-Trening</a>&nbsp;&nbsp;&nbsp;
@@ -51,27 +51,7 @@
 				<li>2010-08-17 : Post-contest submitting is enabled. Try it yourself :)</li>
 				<li>2010-10-07 : Refer to <a href="http://code.google.com/p/virtual-judge/updates/list">this page</a>, and this section will not update.</li>
 			</ul>
-			<img id='suggestion' title='Suggestion' src='images/btn_suggestion_1.png' style="float:right" onmouseover='javascript:this.src="images/btn_suggestion_2.png"' onmouseout='javascript:this.src="images/btn_suggestion_1.png"' />
-			<div id="disqus_thread"></div>
 		</div>
-		
-		<script type="text/javascript">
-		    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-		    var disqus_shortname = '<%=application.getAttribute("disqusShortname")%>'; // required: replace example with your forum shortname
-		    var disqus_developer = <%=application.getAttribute("disqusDeveloper")%>;
-			var disqus_identifier = '<%=application.getAttribute("disqusShortname")%>';
-			
-		    /* * * DON'T EDIT BELOW THIS LINE * * */
-		    $("#suggestion").click(function(){
-		    	$(this).remove();
-			    (function() {
-			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-			    })();
-		    }); 
-		</script>
-		<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 		
 		<s:include value="/bottom.jsp" />
 	</body>

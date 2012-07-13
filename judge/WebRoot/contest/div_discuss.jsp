@@ -8,6 +8,8 @@
 		var disqus_shortname = '<%=application.getAttribute("disqusShortname")%>'; // required: replace example with your forum shortname
 		var disqus_developer = <%=application.getAttribute("disqusDeveloper")%>;
 		var disqus_identifier = "contest/${cid}";
+		var disqus_url = basePath + "contest/view.action?cid=${cid}#discuss";
+		var disqus_title = "Contest - <s:property value="contest.title" escape="false" />";
 		
 	    /* * * DON'T EDIT BELOW THIS LINE * * */
 	    var _showDiscuss = function() {
