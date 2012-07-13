@@ -56,6 +56,8 @@ public class URALSubmitter extends Submitter {
 		for (int i = 0; i < clientList.length; i++){
 			clientList[i] = new HttpClient();
 			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
+			clientList[i].getHttpConnectionManager().getParams().setConnectionTimeout(10000);
+			clientList[i].getHttpConnectionManager().getParams().setSoTimeout(10000);  
 		}
 
 		Map<String, String> languageList = new TreeMap<String, String>();
@@ -70,7 +72,7 @@ public class URALSubmitter extends Submitter {
 	
 	private void getMaxRunId() throws Exception {
 		GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(6, true));
 		Pattern p = Pattern.compile("<TD class=\"id\">(\\d+)");
 
 		byte[] responseBody;
@@ -121,7 +123,7 @@ public class URALSubmitter extends Submitter {
 		String reg = "aspx/(\\d+)[\\s\\S]*?class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
 		Pattern p = Pattern.compile(reg);
 		GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx?author=" + username.substring(0, 5));
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(6, true));
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			System.out.println("getResult...");
@@ -159,7 +161,7 @@ public class URALSubmitter extends Submitter {
 	
 	private void getAdditionalInfo(String runId) throws HttpException, IOException {
 		GetMethod getMethod = new GetMethod("http://acm.timus.ru/ce.aspx?id=" + runId);
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(6, true));
 
 		httpClient.executeMethod(getMethod);
 		String additionalInfo = Tools.getHtml(getMethod, null);
