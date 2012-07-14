@@ -7,7 +7,7 @@ import org.apache.commons.io.FileUtils;
 
 
 /**
- * 销毁垃圾httpSession
+ * 销毁临时文件
  * @author Isun
  *
  */
