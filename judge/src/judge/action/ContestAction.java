@@ -1112,7 +1112,7 @@ public class ContestAction extends BaseAction {
 		
 		File dir = new File(basePath + "/" + cid);
 		FileUtils.deleteDirectory(dir);
-		dir.mkdir();
+		dir.mkdirs();
 		
 		List<Object[]> submissions = baseService.query("select submission.id, submission.username, cproblem.num, submission.status, submission.dispLanguage, submission.source from Submission submission, Cproblem cproblem where submission.contest.id = " + cid + " and submission.status = 'Accepted' and submission.problem.id = cproblem.problem.id and cproblem.contest.id = " + cid);
 		for (Object[] submission : submissions) {
