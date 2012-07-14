@@ -56,7 +56,7 @@
 	
 	<bean id="sessionCleaner" class="judge.tool.SessionCleaner" />
 
-   	<bean id="jobDetailBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   	<bean id="sessionCleanerJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
 			<ref bean="sessionCleaner" />
 		</property>
@@ -65,19 +65,40 @@
 		</property>
 	</bean>
 
-	<bean id="cronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="sessionCleanerTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
-			<ref bean="jobDetailBean" /> 
+			<ref bean="sessionCleanerJobDetail" /> 
 		</property>
 		<property name="cronExpression">
 			<value>0 0/5 * * * ?</value>
 		</property>
 	</bean>
 
+	<bean id="tempFileCleaner" class="judge.tool.TempFileCleaner" />
+
+   	<bean id="tempFileCleanerJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="tempFileCleaner" />
+		</property>
+		<property name="targetMethod">
+			<value>clean</value>
+		</property>
+	</bean>
+
+	<bean id="tempFileCleanerTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="tempFileCleanerJobDetail" /> 
+		</property>
+		<property name="cronExpression">
+			<value>0 0 3 * * ?</value>
+		</property>
+	</bean>
+
 	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="cronTriggerBean" />
+				<ref bean="sessionCleanerTriggerBean" />
+				<ref bean="tempFileCleanerTriggerBean" />
 			</list>
 		</property> 
 	</bean>

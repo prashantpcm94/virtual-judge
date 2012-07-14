@@ -179,7 +179,11 @@ public class JudgeService extends BaseService {
 
 		String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
 		String path = ApplicationContainer.sc.getRealPath(relativePath);
-		File data = new File(path, cid + ".json");
+		File dir = new File(path);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		File data = new File(dir, cid + ".json");
 
 		Map res = new HashMap();
 		res.put("cid", cid);

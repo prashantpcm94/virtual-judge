@@ -1,6 +1,10 @@
 package judge.action;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +34,9 @@ import judge.tool.ApplicationContainer;
 import judge.tool.MD5;
 import judge.tool.OnlineTool;
 import judge.tool.Tools;
+import judge.tool.ZipUtil;
 
+import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -90,7 +96,12 @@ public class ContestAction extends BaseAction {
 	private int afterContest;
 	private List<Integer> contestIds;
 	private List statisticRank;
-
+	
+	private File sourceFile;
+	
+	public InputStream getSourceInputStream() throws FileNotFoundException {
+		 return new FileInputStream(sourceFile);
+	}
 	
 	public String toListContest(){
 		curDate = new Date();
@@ -1081,6 +1092,76 @@ public class ContestAction extends BaseAction {
 		
 		return SUCCESS;
 	}
+	
+	public String exportSource() throws Exception {
+		if (judgeService.checkAuthorizeStatus(cid) != 2) {
+			return ERROR;
+		}
+		contest = (Contest) baseService.query(Contest.class, cid);
+		if (new Date().compareTo(contest.getEndTime()) < 0) {
+			return ERROR;
+		}
+		
+		String relativePath = (String) ApplicationContainer.sc.getAttribute("ContestSourceCodeZipFilePath");
+		String basePath = ApplicationContainer.sc.getRealPath(relativePath);
+
+		sourceFile = new File(basePath + "/" + cid + ".zip");
+		if (sourceFile.exists()) {
+			return SUCCESS;
+		}
+		
+		File dir = new File(basePath + "/" + cid);
+		FileUtils.deleteDirectory(dir);
+		dir.mkdir();
+		
+		List<Object[]> submissions = baseService.query("select submission.id, submission.username, cproblem.num, submission.status, submission.dispLanguage, submission.source from Submission submission, Cproblem cproblem where submission.contest.id = " + cid + " and submission.status = 'Accepted' and submission.problem.id = cproblem.problem.id and cproblem.contest.id = " + cid);
+		for (Object[] submission : submissions) {
+			Integer id = (Integer) submission[0];
+			String username = (String) submission[1];
+			String pnum = (String) submission[2];
+//			String status = (String) submission[3];
+			String language = (String) submission[4];
+			String source = (String) submission[5];
+
+			String extensionName = Tools.findClass4SHJS(language);
+			
+			if (extensionName.equals("sh_cpp")) {
+				extensionName = ".cpp";
+			} else if (extensionName.equals("sh_c")) {
+				extensionName = ".c";
+			} else if (extensionName.equals("sh_csharp")) {
+				extensionName = ".cs";
+			} else if (extensionName.equals("sh_java")) {
+				extensionName = ".java";
+			} else if (extensionName.equals("sh_pascal")) {
+				extensionName = ".pas";
+			} else if (extensionName.equals("sh_python")) {
+				extensionName = ".py";
+			} else if (extensionName.equals("sh_ruby")) {
+				extensionName = ".rb";
+			}
+			
+			File problemDir = new File(basePath + "/" + cid + "/" + pnum);
+			if (!problemDir.exists()) {
+				problemDir.mkdirs();
+			}
+			File file = new File(problemDir, id + "_" + username + "_" + pnum + extensionName);
+			try{
+				FileWriter filewriter = new FileWriter(file, false);
+				filewriter.write(source);
+				filewriter.close();
+			}catch (Exception e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		sourceFile = new File(basePath + "/" + cid + ".zip");
+		ZipUtil.zip(sourceFile, dir);
+		FileUtils.deleteDirectory(dir);
+		
+		return SUCCESS;
+	}
 
 	/////////////////////  deprecated  //////////////////////////
 	
@@ -1388,6 +1469,12 @@ public class ContestAction extends BaseAction {
 	}
 	public void setAfterContest(int afterContest) {
 		this.afterContest = afterContest;
+	}
+	public File getSourceFile() {
+		return sourceFile;
+	}
+	public void setSourceFile(File sourceFile) {
+		this.sourceFile = sourceFile;
 	}
 
 }
