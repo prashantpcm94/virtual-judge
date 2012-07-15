@@ -1114,7 +1114,7 @@ public class ContestAction extends BaseAction {
 		FileUtils.deleteDirectory(dir);
 		dir.mkdirs();
 		
-		List<Object[]> submissions = baseService.query("select submission.id, submission.username, cproblem.num, submission.status, submission.dispLanguage, submission.source from Submission submission, Cproblem cproblem where submission.contest.id = " + cid + " and submission.status = 'Accepted' and submission.problem.id = cproblem.problem.id and cproblem.contest.id = " + cid);
+		List<Object[]> submissions = baseService.query("select submission.id, submission.username, cproblem.num, submission.status, submission.dispLanguage, submission.source from Submission submission, Cproblem cproblem where submission.contest.id = " + cid + " and submission.status = 'Accepted' and submission.subTime <= submission.contest.endTime and submission.problem.id = cproblem.problem.id and cproblem.contest.id = " + cid);
 		for (Object[] submission : submissions) {
 			Integer id = (Integer) submission[0];
 			String username = (String) submission[1];
