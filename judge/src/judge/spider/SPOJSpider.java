@@ -49,7 +49,7 @@ public class SPOJSpider extends Spider {
 			description.getInput().isEmpty() || 
 			description.getOutput().isEmpty() || 
 			description.getSampleInput().isEmpty()) {
-			description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<hr|<script)"));
+			description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)<script type=\"text/javascript\"><!--\\s*google_ad_client"));
 			description.setInput(null);
 			description.setOutput(null);
 			description.setSampleInput(null);
