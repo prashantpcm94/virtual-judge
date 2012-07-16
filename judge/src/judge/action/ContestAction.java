@@ -417,10 +417,10 @@ public class ContestAction extends BaseAction {
 			}
 			cproblem.setNum((char)('A' + i) + "");
 			dataList.add(cproblem);
-			hashCode.append(problem.getTitle().toLowerCase().replaceAll("\\W", ""));
+			hashCode.append(problem.getTitle().toLowerCase().replaceAll("&#\\d+", "").replaceAll("\\W", ""));
 		}
 		hashCode.append(pids.size());
-		contest.setHashCode(MD5.getMD5(hashCode.toString().replaceAll("&#\\d+;", "")));
+		contest.setHashCode(MD5.getMD5(hashCode.toString()));
 		
 		if (contestType == 0) {
 			baseService.addOrModify(dataList);
@@ -466,7 +466,7 @@ public class ContestAction extends BaseAction {
 			//删除原有的replayStatus文件
 			String relativePath = (String) ApplicationContainer.sc.getAttribute("StandingDataPath");
 			String path = ApplicationContainer.sc.getRealPath(relativePath);
-			File data = new File(path, contest.getId() + "");
+			File data = new File(path, contest.getId() + ".json");
 			if (data.exists()) {
 				data.delete();
 			}
@@ -941,10 +941,10 @@ public class ContestAction extends BaseAction {
 			}
 			cproblem.setNum((char)('A' + i) + "");
 			dataList.add(cproblem);
-			hashCode.append(problem.getTitle().toLowerCase().replaceAll("\\W", ""));
+			hashCode.append(problem.getTitle().toLowerCase().replaceAll("&#\\d+;", "").replaceAll("\\W", ""));
 		}
 		hashCode.append(pids.size());
-		oContest.setHashCode(MD5.getMD5(hashCode.toString().replaceAll("&#\\d+;", "")));
+		oContest.setHashCode(MD5.getMD5(hashCode.toString()));
 
 		if (contestType == 0 || ranklistFile == null) {
 			if (contestType == 0 && oContest.getReplayStatus() != null) {

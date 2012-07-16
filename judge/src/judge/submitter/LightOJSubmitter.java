@@ -160,7 +160,7 @@ public class LightOJSubmitter extends Submitter {
 		httpClient.executeMethod(getMethod);
 		String additionalInfo = Tools.getHtml(getMethod, null);
 		
-		submission.setAdditionalInfo(Tools.regFind(additionalInfo, "<textarea style=[^>]+>([\\s\\S]*?)</textarea>"));
+		submission.setAdditionalInfo("<pre>" + Tools.regFind(additionalInfo, "<textarea style=[^>]+>([\\s\\S]*?)</textarea>") + "</pre>");
 	}
 
 	private int getIdleClient() {

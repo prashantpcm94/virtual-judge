@@ -1,6 +1,8 @@
 package judge.tool;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -20,6 +22,37 @@ public class Customize {
 	
 	static public ServletContext sc = ApplicationContainer.sc;
 	static public IBaseService baseService = (IBaseService) SpringBean.getBean("baseService", sc);
+	
+	static public void recalculateContestHash() {
+		Session session = baseService.getSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			List<Contest> contests = session.createQuery("select contest from Contest contest where exists (select cp from Cproblem where cp.contest.id = contest.id and cp.problem.title like '%&#%')").list();
+			for (Contest contest : contests) {
+				System.out.println(contest.getId() + " - " + contest.getTitle());
+				List<Cproblem> cps = new ArrayList<Cproblem>(contest.getCproblems());
+				Collections.sort(cps, new Comparator<Cproblem>() {
+					public int compare(Cproblem o1, Cproblem o2) {
+						return o1.getNum().compareTo(o2.getNum());
+					}
+				});
+				
+				StringBuffer hashCode = new StringBuffer();
+				for (Cproblem cproblem : cps) {
+					hashCode.append(cproblem.getProblem().getTitle().toLowerCase().replaceAll("&#\\d+;", "").replaceAll("\\W", ""));
+				}
+				hashCode.append(cps.size());
+				contest.setHashCode(MD5.getMD5(hashCode.toString()));
+				
+				session.flush();
+			}
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+		} finally {
+			baseService.releaseSession(session);
+		}
+	}
 
 	static public void deleteRedundantDescription() {
 		List<Description> list = baseService.query("select d from Description d where d.author = '0' order by d.problem.id asc");
