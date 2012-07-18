@@ -8,6 +8,7 @@ import java.util.Map;
 import judge.service.IBaseService;
 import judge.service.JudgeService;
 import judge.spider.AizuSpider;
+import judge.spider.CSUSpider;
 import judge.spider.CodeForcesSpider;
 import judge.spider.FZUSpider;
 import judge.spider.HDUSpider;
@@ -26,6 +27,7 @@ import judge.spider.UVASpider;
 import judge.spider.ZOJSpider;
 import judge.spider.ZTreningSpider;
 import judge.submitter.AizuSubmitter;
+import judge.submitter.CSUSubmitter;
 import judge.submitter.CodeForcesSubmitter;
 import judge.submitter.FZUSubmitter;
 import judge.submitter.HDUSubmitter;
@@ -89,6 +91,7 @@ public class BaseAction extends ActionSupport{
 		OJList.add("UESTC");
 		OJList.add("NBUT");
 		OJList.add("FZU");
+		OJList.add("CSU");
 	}
 	
 	static private List<String> OJListAll = new ArrayList<String>();
@@ -116,6 +119,7 @@ public class BaseAction extends ActionSupport{
 		spiderMap.put("UESTC", new UESTCSpider());
 		spiderMap.put("NBUT", new NBUTSpider());
 		spiderMap.put("FZU", new FZUSpider());
+		spiderMap.put("CSU", new CSUSpider());
 	}
 	
 	static public Map<String, Submitter> submitterMap = new HashMap<String, Submitter>();
@@ -137,6 +141,7 @@ public class BaseAction extends ActionSupport{
 		submitterMap.put("UESTC", new UESTCSubmitter());
 		submitterMap.put("NBUT", new NBUTSubmitter());
 		submitterMap.put("FZU", new FZUSubmitter());
+		submitterMap.put("CSU", new CSUSubmitter());
 	}
 	
 	static public Map<String, String> lf = new HashMap<String, String>();
@@ -158,6 +163,7 @@ public class BaseAction extends ActionSupport{
 		lf.put("UESTC", "%lld & %llu");
 		lf.put("NBUT", "%I64d & %I64u");
 		lf.put("FZU", "%I64d & %I64u");
+		lf.put("CSU", "%lld & %llu");
 	}
 	
 

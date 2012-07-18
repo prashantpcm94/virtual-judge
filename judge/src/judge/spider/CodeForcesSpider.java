@@ -11,8 +11,12 @@ public class CodeForcesSpider extends Spider {
 
 		String html = "";
 		HttpClient httpClient = new HttpClient();
-		String contestNum = problem.getOriginProb().substring(0, problem.getOriginProb().length() - 1);
-		String problemNum = problem.getOriginProb().substring(problem.getOriginProb().length() - 1);
+		int splitIndex = 0;
+		while (problem.getOriginProb().charAt(splitIndex) <= '9') {
+			++splitIndex;
+		}
+		String contestNum = problem.getOriginProb().substring(0, splitIndex);
+		String problemNum = problem.getOriginProb().substring(splitIndex);
 		GetMethod getMethod = new GetMethod("http://codeforces.com/problemset/problem/" + contestNum + "/" + problemNum);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
