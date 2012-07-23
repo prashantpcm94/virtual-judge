@@ -681,7 +681,7 @@ public class ContestAction extends BaseAction {
 		submission.setUser(user);
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
-		submission.setSource(source);
+		submission.setSource(source.replace("__comment_start__", "/*").replace("__comment_end__", "*/"));
 		submission.setIsOpen(isOpen);
 		submission.setDispLanguage(languageList.get(language));
 		submission.setUsername(user.getUsername());

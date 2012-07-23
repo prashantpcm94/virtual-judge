@@ -134,6 +134,7 @@ public class JudgeService extends BaseService {
 		}
 		submission.setStatus("Pending Rejudge");
 		submission.setAdditionalInfo(null);
+		submission.setSource(submission.getSource().replaceAll("/\\*[\\s\\S]*?\\*/", ""));
 		this.addOrModify(submission);
 		try {
 			Submitter submitter = (Submitter) BaseAction.submitterMap.get(submission.getOriginOJ()).clone();

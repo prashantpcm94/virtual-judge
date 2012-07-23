@@ -287,7 +287,7 @@ public class ProblemAction extends BaseAction{
 		submission.setUser(user);
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
-		submission.setSource(source);
+		submission.setSource(source.replace("__comment_start__", "/*").replace("__comment_end__", "*/"));
 		submission.setIsOpen(isOpen);
 		submission.setDispLanguage(((Map<String, String>)sc.getAttribute(problem.getOriginOJ())).get(language));
 		submission.setUsername(user.getUsername());

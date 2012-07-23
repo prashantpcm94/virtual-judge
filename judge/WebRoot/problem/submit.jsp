@@ -30,7 +30,8 @@
 						</td>
 					</tr>
 				</table>
-				<s:textarea name="source" rows="25" cols="100" />
+				<s:textarea name="tmp_source" rows="25" cols="100" />
+				<input name="source" type="hidden" />
 				<br />
 				<input style="float:left" class="bnt1" type="submit" id="submit" value="Submit" />
 				<input style="margin-left:20px;float:left" class="bnt1" type="button" value="Cancel" onclick="history.go(-1)" />

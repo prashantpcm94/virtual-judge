@@ -12,6 +12,8 @@ $(document).ready(function() {
 	
 	$("#form").submit(function(){
 		$("#submit").attr("disabled", true);
+		$("textarea[name='tmp_source']").attr("disabled", true);
+		$("input[name='source']").val($("textarea[name='tmp_source']").val().replace("/*", "__comment_start__").replace("*/", "__comment_end__"));
 		return true;
 	});
 });

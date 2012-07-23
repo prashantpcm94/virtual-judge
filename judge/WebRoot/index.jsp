@@ -35,6 +35,7 @@
 				<a href="http://acm.uestc.edu.cn/" target="_blank">UESTC</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://cdn.ac.nbutoj.com/" target="_blank">NBUT</a>&nbsp;&nbsp;&nbsp;
 				<a href="http://acm.fzu.edu.cn/" target="_blank">FZU</a>&nbsp;&nbsp;&nbsp;
+				<a href="http://acm.csu.edu.cn/OnlineJudge/" target="_blank">CSU</a>&nbsp;&nbsp;&nbsp;
 			</p>
 			<br />
 			<b>Change Log:</b>
