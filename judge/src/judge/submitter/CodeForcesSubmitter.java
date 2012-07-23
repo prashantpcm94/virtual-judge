@@ -57,6 +57,8 @@ public class CodeForcesSubmitter extends Submitter {
 		for (int i = 0; i < clientList.length; i++){
 			clientList[i] = new HttpClient();
 			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.17) Gecko/20110420 Firefox/3.6.17");
+			clientList[i].getHttpConnectionManager().getParams().setConnectionTimeout(60000);
+			clientList[i].getHttpConnectionManager().getParams().setSoTimeout(60000);  
 		}
 		
 		Map<String, String> languageList = new TreeMap<String, String>();
@@ -137,8 +139,10 @@ public class CodeForcesSubmitter extends Submitter {
 		postMethod.addParameter("action", "submitSolutionFormSubmitted");
 		postMethod.addParameter("submittedProblemCode", contestId + problemNum);
 		postMethod.addParameter("programTypeId", submission.getLanguage());
-		postMethod.addParameter("source", source.replace("%lld", "%I64d").replace("%llu", "%I64u"));
+		postMethod.addParameter("source", source);
 		postMethod.addParameter("sourceFile", "");
+		postMethod.addParameter("sourceCodeConfirmed", "true");
+		postMethod.addParameter("doNotShowWarningAgain", "on");
 		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		httpClient.getParams().setContentCharset("UTF-8"); 
 
