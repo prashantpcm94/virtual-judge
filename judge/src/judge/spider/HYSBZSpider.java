@@ -35,8 +35,9 @@ public class HYSBZSpider extends Spider {
 		}
 		
 		html = html.replaceAll("src=images", "src=http://www.lydsy.com/JudgeOnline/images");
-		html = html.replaceAll("src='images", "src='http://www.lydsy.com/JudgeOnline/images");
-		html = html.replaceAll("src=\"images", "src=\"http://www.lydsy.com/JudgeOnline/images");
+		html = html.replaceAll("(['\"])images", "$1http://www.lydsy.com/JudgeOnline/images");
+		html = html.replaceAll("(['\"])/JudgeOnline", "$1http://www.lydsy.com/JudgeOnline");
+
 		
 		problem.setTitle(Tools.regFind(html, "<center><h2>([\\s\\S]*?)</h2>").replaceAll(problem.getOriginProb() + ": ", "").trim());
 		if (problem.getTitle().isEmpty()){
