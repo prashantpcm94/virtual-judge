@@ -161,7 +161,7 @@ public class UVALiveSubmitter extends Submitter {
 		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
-		while (new Date().getTime() - cur < 900000){
+		while (new Date().getTime() - cur < 3600000) {
 			System.out.println("getResult...");
 			httpClient.executeMethod(getMethod);
 			byte[] responseBody = getMethod.getResponseBody();

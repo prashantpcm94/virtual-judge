@@ -5,6 +5,10 @@ import judge.tool.Tools;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 
 public class AizuSpider extends Spider {
@@ -21,16 +25,31 @@ public class AizuSpider extends Spider {
 				System.err.println("Method failed: "+getMethod.getStatusLine());
 			}
 			html = Tools.getHtml(getMethod, null);
+			
+			String[][] pairs = new String[][]{
+				{"img", "src"},
+				{"script", "src"},
+				{"link", "href"},
+				{"a", "href"}
+			};
+
+			Document doc = Jsoup.parse(html, getMethod.getURI().toString());
+			for (String[] pair : pairs) {
+				Elements links = doc.select(pair[0]);
+				for (Element element : links) {
+					element.attr(pair[1], element.absUrl(pair[1]));
+				}
+			}
+			
+			html = doc.toString();
 		} catch(Exception e) {
 			getMethod.releaseConnection();
 			throw new Exception();
 		}
 
-		if (html.contains("Time Limit :  sec, Memory Limit :  KB")){
+		if (html.contains("Time Limit :  sec, Memory Limit :  KB")) {
 			throw new Exception();
 		}
-		
-		html = html.replaceAll("src=(['\"]?)IMAGE(\\d+)", "src=$1http://judge.u-aizu.ac.jp/onlinejudge/IMAGE$2");
 		
 		problem.setTitle(Tools.regFind(html, "<h1 class=\"title\">([\\s\\S]*?)</h1>").trim());
 		if (problem.getTitle().isEmpty()){
@@ -39,10 +58,7 @@ public class AizuSpider extends Spider {
 		
 		problem.setTimeLimit(1000 * Integer.parseInt(Tools.regFind(html, "Time Limit : (\\d+) sec")));
 		problem.setMemoryLimit(Integer.parseInt(Tools.regFind(html, "Memory Limit : (\\d+) KB")));
-		description.setDescription(Tools.regFind(html, "<div class=\"description\">[\\s\\S]*?</h1>([\\s\\S]*?)<hr>"));
-		if (description.getDescription().isEmpty()) {
-			description.setDescription(Tools.regFind(html, "<div class=\"description\">([\\s\\S]*?)<hr>"));
-		}
+		description.setDescription(Tools.regFind(html, "<div class=\"description\">([\\s\\S]*?)<hr />").replaceAll("^[\\s\\S]*</h1>", ""));
 		problem.setSource(Tools.regFind(html, "style=\"font-size:10pt\">\\s*Source:([\\s\\S]*?)</div>"));
 		problem.setUrl("http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=" + problem.getOriginProb());
 	}

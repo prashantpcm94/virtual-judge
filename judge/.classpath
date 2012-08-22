@@ -48,5 +48,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-lang3-3.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ognl-3.0.5.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jsoup-1.6.3.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
