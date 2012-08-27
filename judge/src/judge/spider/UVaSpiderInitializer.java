@@ -41,6 +41,7 @@ public class UVaSpiderInitializer extends Thread {
 		String html = null;
 		GetMethod getMethod = new GetMethod(rootUrl);
 		HttpClient httpClient = new HttpClient();
+		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(30, true));
 		try {
 			int statusCode = httpClient.executeMethod(getMethod);

@@ -36,6 +36,7 @@ public class UVALiveSpider extends Spider {
 
 		String html = "";
 		HttpClient httpClient = new HttpClient();
+		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
 		if (!problem.getOriginProb().matches("\\d+")) {
 			throw new Exception();
 		}
