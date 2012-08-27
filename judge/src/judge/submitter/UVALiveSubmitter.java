@@ -90,6 +90,9 @@ public class UVALiveSubmitter extends Submitter {
 			throw new Exception();
 		}
 		String submissionId = Tools.regFind(headerLocation, "with\\+ID\\+(\\d+)");
+		if (submissionId.isEmpty()) {
+			throw new Exception();
+		}
 		submission.setRealRunId(submissionId);
 		baseService.addOrModify(submission);
 	}
