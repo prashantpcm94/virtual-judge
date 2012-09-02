@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,24 +13,36 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import judge.tool.ApplicationContainer;
-import judge.tool.Tools;
 
-import org.apache.commons.httpclient.Cookie;
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.Consts;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.util.EntityUtils;
+
 
 public class CodeForcesSubmitter extends Submitter {
 
 	static final String OJ_NAME = "CodeForces";
-	static private HttpClient clientList[];
+	static private DefaultHttpClient clientList[];
 	static private boolean using[];
 	static private String[] usernameList;
 	static private String[] passwordList;
+	
+	private DefaultHttpClient httpClient;
+	private HttpEntity entity;
 
 	static {
 		List<String> uList = new ArrayList<String>(), pList = new ArrayList<String>();
@@ -53,12 +64,14 @@ public class CodeForcesSubmitter extends Submitter {
 		usernameList = uList.toArray(new String[0]);
 		passwordList = pList.toArray(new String[0]);
 		using = new boolean[usernameList.length];
-		clientList = new HttpClient[usernameList.length];
+		clientList = new DefaultHttpClient[usernameList.length];
+		HttpHost proxy = new HttpHost("127.0.0.1", 8087);
 		for (int i = 0; i < clientList.length; i++){
-			clientList[i] = new HttpClient();
-			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.17) Gecko/20110420 Firefox/3.6.17");
-			clientList[i].getHttpConnectionManager().getParams().setConnectionTimeout(60000);
-			clientList[i].getHttpConnectionManager().getParams().setSoTimeout(60000);  
+			clientList[i] = new DefaultHttpClient();
+			clientList[i].getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1");
+			clientList[i].getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 60000);
+			clientList[i].getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000);
+			clientList[i].getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		}
 		
 		Map<String, String> languageList = new TreeMap<String, String>();
@@ -73,56 +86,48 @@ public class CodeForcesSubmitter extends Submitter {
 		languageList.put("9", "C# Mono 2.6+");
 		languageList.put("10", "GNU C 4");
 		languageList.put("12", "Haskell GHC 6.12");
+		languageList.put("13", "Perl 5.12+");
 		languageList.put("14", "ActiveTcl 8.5");
 		languageList.put("15", "Io-2008-01-07 (Win32)");
 		languageList.put("16", "GNU C++0x 4");
 		languageList.put("17", "Pike 7.8");
+		languageList.put("19", "OCaml 3.12");
+		languageList.put("20", "Scala 2.9");
+		languageList.put("23", "Java 7");
+		languageList.put("28", "D DMD32 Compiler v2");
 		sc.setAttribute("CodeForces", languageList);
 	}
 	
 	private void getMaxRunId() throws Exception {
-		GetMethod getMethod = new GetMethod("http://codeforces.com/problemset/status");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		Pattern p = Pattern.compile("submissionId=\"(\\d+)\"");
+		try {
+			HttpGet req = new HttpGet("http://codeforces.com/problemset/status");
+			HttpResponse rsp = httpClient.execute(req);
+			entity = rsp.getEntity();
 
-		int count = 0;
-		while (true) {
-			try {
-				httpClient.executeMethod(getMethod);
-				break;
-			} catch (SocketException e) {
-				if (!e.getMessage().contains("reset") || ++count > 5) {
-					getMethod.releaseConnection();
-					throw e;
-				}
-				Thread.sleep(4000);
+			Matcher m = Pattern.compile("submissionId=\"(\\d+)\"").matcher(EntityUtils.toString(entity));
+			
+			if (m.find()) {
+				maxRunId = Integer.parseInt(m.group(1));
+				System.out.println("maxRunId : " + maxRunId);
+			} else {
+				throw new Exception();
 			}
-		}
-		
-		byte[] responseBody = getMethod.getResponseBody();
-		String tLine = new String(responseBody, "UTF-8");
-		Matcher m = p.matcher(tLine);
-		if (m.find()) {
-			maxRunId = Integer.parseInt(m.group(1));
-			System.out.println("maxRunId : " + maxRunId);
-		} else {
-			throw new Exception();
+		} finally {
+			EntityUtils.consume(entity);
 		}
 	}
 	
 	private void submit() throws Exception{
-		GetMethod getMethod = new GetMethod("http://codeforces.com/profile");
-		int statusCode = httpClient.executeMethod(getMethod);
-		if (statusCode == HttpStatus.SC_OK) {
-			byte[] responseBody = getMethod.getResponseBody();
-			String tLine = new String(responseBody, "UTF-8");
-			if (tLine.contains("Login - Codeforces")) {
+		try {
+			HttpGet get = new HttpGet("http://codeforces.com/");
+			HttpResponse rsp = httpClient.execute(get);
+			entity = rsp.getEntity();
+			
+			if (!EntityUtils.toString(entity).contains("<a href=\"/logout\">")) {
 				throw new Exception();
 			}
-		} else if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
-			if (getMethod.getResponseHeader("Location").getValue().contains("enter")) {
-				throw new Exception();
-			}
+		} finally {
+			EntityUtils.consume(entity);
 		}
 
 		String source = submission.getSource() + "\n";
@@ -134,98 +139,117 @@ public class CodeForcesSubmitter extends Submitter {
 		String contestId = submission.getOriginProb().substring(0, submission.getOriginProb().length() - 1);
 		String problemNum = submission.getOriginProb().substring(submission.getOriginProb().length() - 1);
 
-		PostMethod postMethod = new PostMethod("http://codeforces.com/problemset/submit");
-		postMethod.addParameter("_tta", getTTA());
-		postMethod.addParameter("action", "submitSolutionFormSubmitted");
-		postMethod.addParameter("submittedProblemCode", contestId + problemNum);
-		postMethod.addParameter("programTypeId", submission.getLanguage());
-		postMethod.addParameter("source", source);
-		postMethod.addParameter("sourceFile", "");
-		postMethod.addParameter("sourceCodeConfirmed", "true");
-		postMethod.addParameter("doNotShowWarningAgain", "on");
-		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		httpClient.getParams().setContentCharset("UTF-8"); 
+		HttpPost httpPost = new HttpPost("http://codeforces.com/problemset/submit");
+
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("_tta", getTTA()));
+		nvps.add(new BasicNameValuePair("action", "submitSolutionFormSubmitted"));
+		nvps.add(new BasicNameValuePair("submittedProblemCode", contestId + problemNum));
+		nvps.add(new BasicNameValuePair("programTypeId", submission.getLanguage()));
+		nvps.add(new BasicNameValuePair("source", source));
+		nvps.add(new BasicNameValuePair("sourceFile", ""));
+		nvps.add(new BasicNameValuePair("sourceCodeConfirmed", "true"));
+		nvps.add(new BasicNameValuePair("doNotShowWarningAgain", "on"));
+		httpPost.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
 
 		System.out.println("submit...");
-		statusCode = httpClient.executeMethod(postMethod);
-		System.out.println("statusCode = " + statusCode);
 		
-		String tLine = new String(postMethod.getResponseBody(), "UTF-8");
-		if (tLine.contains("error for__programTypeId")) {
-			throw new Exception("judge_exception:Language Error");
-		}
-		if (tLine.contains("error for__source")) {
-			throw new Exception("judge_exception:Source Code Error");
-		}
-		
-		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
-			throw new Exception();
-		}
-		if (!postMethod.getResponseHeader("Location").getValue().contains("status")) {
-			throw new Exception();
+		try {
+			HttpResponse response = httpClient.execute(httpPost);
+			entity = response.getEntity();
+			
+			String tLine = EntityUtils.toString(entity);
+			if (tLine.contains("error for__programTypeId")) {
+				throw new Exception("judge_exception:Language Error");
+			}
+			if (tLine.contains("error for__source")) {
+				throw new Exception("judge_exception:Source Code Error");
+			}
+			
+			int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
+				throw new Exception();
+			}
+			if (!response.getFirstHeader("Location").getValue().contains("status")) {
+				throw new Exception();
+			}
+		} finally {
+			EntityUtils.consume(entity);
 		}
 	}
 	
 	private void login(String username, String password) throws Exception{
-		PostMethod postMethod = new PostMethod("http://codeforces.com/enter");
-		postMethod.addParameter("_tta", getTTA());
-		postMethod.addParameter("handle", username);
-		postMethod.addParameter("password", password);
-		postMethod.addParameter("remember", "on");
-		postMethod.addParameter("submitted", "true");
-		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		try {
+			HttpPost httpost = new HttpPost("http://codeforces.com/enter");
 
-		System.out.println("login...");
-		int statusCode = httpClient.executeMethod(postMethod);
-		System.out.println("statusCode = " + statusCode);
+			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+			nvps.add(new BasicNameValuePair("_tta", getTTA()));
+			nvps.add(new BasicNameValuePair("handle", username));
+			nvps.add(new BasicNameValuePair("password", password));
+			nvps.add(new BasicNameValuePair("remember", "on"));
+			nvps.add(new BasicNameValuePair("submitted", "true"));
 
-		//注意:此处判断登陆成功条件并不充分,相当于默认成功
-		if (statusCode != HttpStatus.SC_MOVED_TEMPORARILY){
-			throw new Exception();
+			httpost.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
+
+			HttpResponse response = httpClient.execute(httpost);
+			entity = response.getEntity();
+
+		} finally {
+			EntityUtils.consume(entity);
 		}
 	}
 	
 	private String getTTA() throws HttpException, IOException {
 		String _39ce7 = null;
-		for (Cookie cookie : httpClient.getState().getCookies()) {
+		for (Cookie cookie : httpClient.getCookieStore().getCookies()) {
 			if (cookie.getName().equals("39ce7")) {
 				_39ce7 = cookie.getValue();
 			}
 		}
 		if (_39ce7 == null) {
-			GetMethod getMethod = new GetMethod("http://codeforces.com");
-			httpClient.executeMethod(getMethod);
-			for (Cookie cookie : httpClient.getState().getCookies()) {
+			HttpGet req = new HttpGet("http://codeforces.com");
+			HttpResponse rsp = httpClient.execute(req);
+			HttpEntity entity = rsp.getEntity();
+			for (Cookie cookie : httpClient.getCookieStore().getCookies()) {
 				if (cookie.getName().equals("39ce7")) {
 					_39ce7 = cookie.getValue();
 				}
 			}
+			EntityUtils.consume(entity);
 		}
-		
-	    Integer tta  = 0;
-	    for(int c = 0; c < _39ce7.length(); c++){
-	    	tta = (tta + (c + 1) * (c + 2) * _39ce7.charAt(c)) % 1009;
-	        if(c % 3 == 0) tta++;
-	        if(c % 2 == 0) tta *= 2;
-	        if(c > 0) tta -= ((int)(_39ce7.charAt(c / 2) / 2)) * (tta % 5);
-	        while(tta < 0) tta += 1009;
-	        while(tta >= 1009) tta -= 1009;
-	    }
-	    return tta.toString();
+
+		Integer tta = 0;
+		for (int c = 0; c < _39ce7.length(); c++) {
+			tta = (tta + (c + 1) * (c + 2) * _39ce7.charAt(c)) % 1009;
+			if (c % 3 == 0)
+				tta++;
+			if (c % 2 == 0)
+				tta *= 2;
+			if (c > 0)
+				tta -= ((int) (_39ce7.charAt(c / 2) / 2)) * (tta % 5);
+			while (tta < 0)
+				tta += 1009;
+			while (tta >= 1009)
+				tta -= 1009;
+		}
+		return tta.toString();
 	}
 	
 	public void getResult(String username) throws Exception{
 		String reg = username + "</a>    </td>[\\s\\S]*?submissionId=\"(\\d+)\" >([\\s\\S]*?)</td>[\\s\\S]*?(\\d+)[\\s\\S]*?(\\d+)", result;
 		Pattern p = Pattern.compile(reg);
 
-		GetMethod getMethod = new GetMethod("http://codeforces.com/problemset/status");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		HttpGet get = new HttpGet("http://codeforces.com/problemset/status");
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
-			System.out.println("getResult...");
-			httpClient.executeMethod(getMethod);
-			byte[] responseBody = getMethod.getResponseBody();
-			String tLine = new String(responseBody, "UTF-8");
+			String tLine = null;
+			try {
+				HttpResponse rsp = httpClient.execute(get);
+				entity = rsp.getEntity();
+				tLine = EntityUtils.toString(entity);
+			} finally {
+				EntityUtils.consume(entity);
+			}
 
 			Matcher m = p.matcher(tLine);
 			if (m.find() && Integer.parseInt(m.group(1)) > maxRunId) {
@@ -254,14 +278,21 @@ public class CodeForcesSubmitter extends Submitter {
 	}
 	
 	private void getAdditionalInfo(String runId) throws HttpException, IOException {
-		PostMethod postMethod = new PostMethod("http://codeforces.com/data/judgeProtocol");
-		postMethod.addParameter("submissionId", runId);
-		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		HttpPost post = new HttpPost("http://codeforces.com/data/judgeProtocol");
 
-		httpClient.executeMethod(postMethod);
-		String additionalInfo = Tools.getHtml(postMethod, null);
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("submissionId", runId));
+		post.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
+
+		try {
+			HttpResponse rsp = httpClient.execute(post);
+			entity = rsp.getEntity();
+			String additionalInfo = EntityUtils.toString(entity);
+			submission.setAdditionalInfo("<pre>" + additionalInfo.replaceAll("(\\\\r)?\\\\n", "\n").replaceAll("\\\\\\\\", "\\\\") + "</pre>");
+		} finally {
+			EntityUtils.consume(entity);
+		}
 		
-		submission.setAdditionalInfo("<pre>" + additionalInfo.replaceAll("(\\\\r)?\\\\n", "\n").replaceAll("\\\\\\\\", "\\\\") + "</pre>");
 	}
 
 	private int getIdleClient() {

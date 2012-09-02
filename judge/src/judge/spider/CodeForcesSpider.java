@@ -11,6 +11,7 @@ public class CodeForcesSpider extends Spider {
 
 		String html = "";
 		HttpClient httpClient = new HttpClient();
+		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
 		int splitIndex = 0;
 		while (problem.getOriginProb().charAt(splitIndex) <= '9') {
 			++splitIndex;
