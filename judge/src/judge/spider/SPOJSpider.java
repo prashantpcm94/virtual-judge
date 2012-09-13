@@ -39,23 +39,13 @@ public class SPOJSpider extends Spider {
 		}
 		Double timeLimit = 1000 * Double.parseDouble(Tools.regFind(html, "Time limit:</td><td>([\\s\\S]*?)s"));
 		problem.setTimeLimit(timeLimit.intValue());
-		description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)(<h3|<hr|<script)"));
-		description.setInput(Tools.regFind(html, "<h3[^<>]*>Input</h3>([\\s\\S]*?)(<h3|<hr|<script)"));
-		description.setOutput(Tools.regFind(html, "<h3[^<>]*>Output</h3>([\\s\\S]*?)(<h3|<hr|<script)"));
-		description.setSampleInput(Tools.regFind(html, "<h3[^<>]*>Example</h3>([\\s\\S]*?)(<h3|<hr|<script)"));
-		description.setHint(Tools.regFind(html, "<h3[^<>]*>Explanation</h3>([\\s\\S]*?)(<h3|<hr|<script)") + Tools.regFind(html, "<h3[^<>]*>Hints*</h3>([\\s\\S]*?)(<h3|<hr|<script)"));
-		
-		if (description.getDescription().isEmpty() || 
-			description.getInput().isEmpty() || 
-			description.getOutput().isEmpty() || 
-			description.getSampleInput().isEmpty()) {
-			description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)<script type=\"text/javascript\"><!--\\s*google_ad_client"));
-			description.setInput(null);
-			description.setOutput(null);
-			description.setSampleInput(null);
-			description.setSampleOutput(null);
-			description.setHint(null);
-		}
+
+		description.setDescription(Tools.regFind(html, "<p align=\"justify\">([\\s\\S]*?)<hr>\\s*<table border=0 cellspacing=0 cellpadding=0"));
+		description.setInput(null);
+		description.setOutput(null);
+		description.setSampleInput(null);
+		description.setSampleOutput(null);
+		description.setHint(null);
 		
 		problem.setSource(Tools.regFind(html, "Resource:</td><td>([\\s\\S]*?)</td></tr>"));
 		problem.setUrl("http://www.spoj.pl/problems/" + problem.getOriginProb());
