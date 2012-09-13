@@ -93,7 +93,21 @@ public class AizuSubmitter extends Submitter {
 	}
 	
 	public void getResult(String username) throws Exception{
-		String reg = "#(\\d{6,})</a></td>\\s*<td[^<>]*><a[^<>]*>" + username + "[\\s\\S]*?icon\\w+\">:([\\s\\S]*?)</span>[\\s\\S]*?text-right\">([\\s\\S]*?)<[\\s\\S]*?text-right\">([\\s\\S]*?)<", result;
+		String reg =
+				"<td.*?#(\\d{6,})[\\s\\S]*?" +
+				"<td[\\s\\S]*?" +
+				"<td.*?" + username + "[\\s\\S]*?" +
+				"<td[\\s\\S]*?" +
+				"<td[\\s\\S]*?" +
+				"<td.*?icon\\w+\">:([\\s\\S]*?)</span>[\\s\\S]*?" +
+				"<td.*?>.*?</td>[\\s\\S]*?" +
+				"<td.*?>.*?</td>[\\s\\S]*?" +
+				"<td.*?>.*?</td>[\\s\\S]*?" +
+				"<td.*?>(.*?)</td>[\\s\\S]*?" +
+				"<td.*?>(.*?)</td>[\\s\\S]*?" +
+				"<td.*?>.*?</td>[\\s\\S]*?" +
+				"<td.*?>.*?</td>[\\s\\S]*?";
+		String result;
 		Pattern p = Pattern.compile(reg);
 
 		GetMethod getMethod = new GetMethod("http://judge.u-aizu.ac.jp/onlinejudge/status.jsp");
@@ -128,6 +142,7 @@ public class AizuSubmitter extends Submitter {
 	}
 	
 	private int calcTime(String s) {
+		System.out.println(s);
 		Matcher matcher = Pattern.compile("(\\d+):(\\d+)").matcher(s);
 		if (matcher.find()) {
 			Integer a = Integer.parseInt(matcher.group(1), 10);
