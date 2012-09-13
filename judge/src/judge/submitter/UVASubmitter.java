@@ -60,10 +60,10 @@ public class UVASubmitter extends Submitter {
 		}
 		
 		Map<String, String> languageList = new TreeMap<String, String>();
-		languageList.put("1", "ANSI C 4.1.2");
+		languageList.put("1", "ANSI C 4.5.3");
 		languageList.put("2", "JAVA 1.6.0");
-		languageList.put("3", "C++ 4.1.2");
-		languageList.put("4", "PASCAL 2.0.4");
+		languageList.put("3", "C++ 4.5.3");
+		languageList.put("4", "PASCAL 2.4.0");
 		sc.setAttribute("UVA", languageList);
 	}
 	
