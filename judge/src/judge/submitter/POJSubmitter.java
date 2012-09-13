@@ -161,7 +161,7 @@ public class POJSubmitter extends Submitter {
 				submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
 					if (result.equals("Accepted")){
-						submission.setMemory(Integer.parseInt(m.group(3).replaceAll("K", "")));
+						submission.setMemory(Math.abs(Integer.parseInt(m.group(3).replaceAll("K", ""))));
 						submission.setTime(Integer.parseInt(m.group(4).replaceAll("MS", "")));
 					} else if (result.contains("Compile Error")) {
 						getAdditionalInfo(submission.getRealRunId());
