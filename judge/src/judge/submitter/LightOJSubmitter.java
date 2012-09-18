@@ -70,7 +70,7 @@ public class LightOJSubmitter extends Submitter {
 	
 	
 	private void getMaxRunId() throws Exception {
-		GetMethod getMethod = new GetMethod("http://lightoj.com/volume_submissions.php");
+		GetMethod getMethod = new GetMethod("http://www.lightoj.com/volume_submissions.php");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("<th class=\"newone\">(\\d+)");
 
@@ -89,7 +89,7 @@ public class LightOJSubmitter extends Submitter {
 	private void submit() throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		
-        PostMethod postMethod = new PostMethod("http://lightoj.com/volume_submit.php");
+        PostMethod postMethod = new PostMethod("http://www.lightoj.com/volume_submit.php");
         postMethod.addParameter("language", submission.getLanguage());
         postMethod.addParameter("sub_problem", problem.getOriginProb());
         postMethod.addParameter("code", submission.getSource());
@@ -106,7 +106,7 @@ public class LightOJSubmitter extends Submitter {
 	}
 	
 	private void login(String username, String password) throws Exception{
-        PostMethod postMethod = new PostMethod("http://lightoj.com/login_check.php");
+        PostMethod postMethod = new PostMethod("http://www.lightoj.com/login_check.php");
         
         postMethod.addParameter("mypassword", password);
         postMethod.addParameter("myrem", "1");
@@ -120,7 +120,7 @@ public class LightOJSubmitter extends Submitter {
 	public void getResult(String username) throws Exception{
 		String reg = "newone[\\s\\S]*?sub_id=(\\d+)[\\s\\S]*?<td class=\"newone\">[\\s\\S]*?<td class=\"newone\">[\\s\\S]*?<td class=\"newone\">\\s*([-\\d\\.]+)[\\s\\S]*?<td class=\"newone\">\\s*([-\\d\\.]+)[\\s\\S]*?<td class=\"newone\">([\\s\\S]*?)</td>", result;
 		Pattern p = Pattern.compile(reg);
-		GetMethod getMethod = new GetMethod("http://lightoj.com/volume_usersubmissions.php");
+		GetMethod getMethod = new GetMethod("http://www.lightoj.com/volume_usersubmissions.php");
         getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
@@ -156,7 +156,7 @@ public class LightOJSubmitter extends Submitter {
 	}
 	
 	private void getAdditionalInfo(String runId) throws HttpException, IOException {
-		GetMethod getMethod = new GetMethod("http://lightoj.com/volume_showcode.php?sub_id=" + runId);
+		GetMethod getMethod = new GetMethod("http://www.lightoj.com/volume_showcode.php?sub_id=" + runId);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
 		httpClient.executeMethod(getMethod);
