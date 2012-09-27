@@ -1,14 +1,9 @@
 package judge.tool;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import judge.bean.Contest;
 import judge.bean.Cproblem;
@@ -16,6 +11,9 @@ import judge.bean.Description;
 import judge.bean.ReplayStatus;
 import judge.bean.Submission;
 import judge.service.IBaseService;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 @SuppressWarnings("unchecked")
 public class Customize {
@@ -27,25 +25,29 @@ public class Customize {
 		Session session = baseService.getSession();
 		Transaction tx = session.beginTransaction();
 		try {
-			List<Contest> contests = session.createQuery("select contest from Contest contest where exists (select cp from Cproblem where cp.contest.id = contest.id and cp.problem.title like '%&#%')").list();
-			for (Contest contest : contests) {
-				System.out.println(contest.getId() + " - " + contest.getTitle());
-				List<Cproblem> cps = new ArrayList<Cproblem>(contest.getCproblems());
-				Collections.sort(cps, new Comparator<Cproblem>() {
-					public int compare(Cproblem o1, Cproblem o2) {
-						return o1.getNum().compareTo(o2.getNum());
-					}
-				});
-				
-				StringBuffer hashCode = new StringBuffer();
-				for (Cproblem cproblem : cps) {
-					hashCode.append(cproblem.getProblem().getTitle().toLowerCase().replaceAll("&#\\d+;", "").replaceAll("\\W", ""));
+			List<Object[]> list = session.createQuery("select cp.contest.id, cp.problem.title from Cproblem cp order by cp.contest.id, cp.num").list();
+			String contestSign = "";
+			int problemCnt = 0;
+			for (int i = 0; i < list.size(); i++) {
+				Object[] info = list.get(i);
+				Integer contestId = (Integer) info[0];
+				String problemTitle = (String) info[1];
+
+				if (i == 0 || !contestId.equals(list.get(i - 1)[0])) {
+					problemCnt = 0;
+					contestSign = "";
 				}
-				hashCode.append(cps.size());
-				contest.setHashCode(MD5.getMD5(hashCode.toString()));
+
+				++problemCnt;
+				contestSign += problemTitle.toLowerCase().replaceAll("&#\\d+;", "").replaceAll("\\W", "");
 				
-				session.flush();
+				if (i == list.size() - 1 || !contestId.equals(list.get(i + 1)[0])) {
+					String hashCode = MD5.getMD5(contestSign + problemCnt);
+					session.createQuery("update Contest contest set contest.hashCode = :hashCode where contest.id = :contestId").setParameter("hashCode", hashCode).setParameter("contestId", contestId).executeUpdate();
+					System.out.println(i + "/" + list.size());
+				}
 			}
+			session.flush();
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
