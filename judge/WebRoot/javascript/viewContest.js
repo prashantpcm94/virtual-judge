@@ -739,7 +739,7 @@ function calcRankTable() {
 		if (showAllTeams == 0 && i >= 50 && (cid != curCid || !username[uid])) {
 			continue;
 		}
-		sbHtml.push("<div data-id='" + curInfo[0].replace(/\W/g, "_") + "' class='disp");
+		sbHtml.push("<div data-id='" + escape(curInfo[0]).replace(/\W/g, "_") + "' class='disp");
 		if (cid == curCid) {
 			sbHtml.push(" cur_tr");
 			if (my_uid_cid == curInfo[0]) {
