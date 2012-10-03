@@ -27,7 +27,7 @@ public class PhysicalAddressTool {
 					Matcher matcher = Pattern.compile("<li>本站主数据：(.+?)</li>").matcher(responceString);
 					matcher.find();
 					String physicalAddress = matcher.group(1);
-					if (addressMap.size() >= 500) {
+					if (addressMap.size() >= 1000) {
 						addressMap.clear();
 					}
 					addressMap.put(ip, physicalAddress);
