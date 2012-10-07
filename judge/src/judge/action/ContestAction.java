@@ -233,9 +233,9 @@ public class ContestAction extends BaseAction {
 			d_minute = (int) (dur % 3600000 / 60000);
 		} else {
 			contest = new Contest();
+			d_hour = 5;
 		}
 		contest.setBeginTime(new Date());
-		d_hour = 5;
 		contestType = 0;
 		return SUCCESS;
 	}
