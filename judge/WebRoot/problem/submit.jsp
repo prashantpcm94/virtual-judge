@@ -7,6 +7,7 @@
 		<s:include value="/header.jsp" />
 	    <title>Submit - Virtual Judge</title>
 		<script type="text/javascript" src="javascript/jquery.cookie.js"></script>
+		<script type="text/javascript" src="javascript/base64.js?<%=application.getAttribute("version")%>"></script>
 		<script type="text/javascript" src="javascript/submit.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 

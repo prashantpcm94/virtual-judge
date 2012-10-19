@@ -13,6 +13,7 @@
 			table.blue_border td {border:1px solid #A6C9E2;}
 		</style>
 
+		<script type="text/javascript" src="javascript/base64.js?<%=application.getAttribute("version")%>"></script>
 		<script type="text/javascript" src="javascript/jquery.quicksand.js"></script>
 		<script type="text/javascript" src="javascript/jquery.ba-hashchange.min.js"></script>
 		<script type="text/javascript" src='javascript/jquery.scrollTo-min.js'></script>

@@ -36,6 +36,7 @@ import judge.tool.OnlineTool;
 import judge.tool.Tools;
 import judge.tool.ZipUtil;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -618,7 +619,7 @@ public class ContestAction extends BaseAction {
 	}
 
 	
-	public String submit() {
+	public String submit() throws UnsupportedEncodingException {
 		User user = OnlineTool.getCurrentUser();
 		if (user == null) {
 			json = "Please login first";
@@ -659,18 +660,14 @@ public class ContestAction extends BaseAction {
 			return SUCCESS;
 		}
 
+		source = new String(Base64.decodeBase64(source), "utf-8");
 		if (source.length() < 50){
 			json = "Source code should be longer than 50 characters";
 			return SUCCESS;
 		}
-
-		try {
-			if (source.getBytes("UTF-8").length > 30000){
-				json = "Source code should be shorter than 30000 bytes in UTF-8";
-				return SUCCESS;
-			}
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+		if (source.getBytes("utf-8").length > 30000){
+			json = "Source code should be shorter than 30000 bytes in UTF-8";
+			return SUCCESS;
 		}
 
 		Submission submission = new Submission();
@@ -681,7 +678,7 @@ public class ContestAction extends BaseAction {
 		submission.setUser(user);
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
-		submission.setSource(source.replace("__comment_start__", "/*").replace("__comment_end__", "*/"));
+		submission.setSource(source);
 		submission.setIsOpen(isOpen);
 		submission.setDispLanguage(languageList.get(language));
 		submission.setUsername(user.getUsername());

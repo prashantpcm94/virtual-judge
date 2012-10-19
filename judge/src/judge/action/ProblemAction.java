@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -273,11 +275,12 @@ public class ProblemAction extends BaseAction{
 			this.addActionError("No such a language!");
 			return INPUT;
 		}
+		source = new String(Base64.decodeBase64(source), "utf-8");
 		if (source.length() < 50){
 			this.addActionError("Source code should be longer than 50 characters!");
 			return INPUT;
 		}
-		if (source.getBytes("UTF-8").length > 30000){
+		if (source.getBytes("utf-8").length > 30000){
 			this.addActionError("Source code should be shorter than 30000 bytes in UTF-8!");
 			return INPUT;
 		}
@@ -287,7 +290,7 @@ public class ProblemAction extends BaseAction{
 		submission.setUser(user);
 		submission.setStatus("Pending……");
 		submission.setLanguage(language);
-		submission.setSource(source.replace("__comment_start__", "/*").replace("__comment_end__", "*/"));
+		submission.setSource(source);
 		submission.setIsOpen(isOpen);
 		submission.setDispLanguage(((Map<String, String>)sc.getAttribute(problem.getOriginOJ())).get(language));
 		submission.setUsername(user.getUsername());

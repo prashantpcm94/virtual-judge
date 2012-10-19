@@ -177,7 +177,7 @@ $(function(){
 					num: num,
 					language: $("[name=language]").val(),
 					isOpen: $(":input[name=isOpen]:checked").val(),
-					source: $("[name=source]").val().replace("/*", "__comment_start__").replace("*/", "__comment_end__")
+					source: Base64.encode($("[name=source]").val())
 				};
 				$.cookie("lang_" + problemSet[num].oj, $("select#language").val(), {expires:30, path:'/'});
 				$.ajax({
