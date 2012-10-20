@@ -39,6 +39,9 @@ public class CodeForcesSpider extends Spider {
 		problem.setTimeLimit(timeLimit.intValue());
 		problem.setMemoryLimit(1024 * Integer.parseInt(Tools.regFind(html, "</div>(\\d+) megabytes</div>")));
 		description.setDescription(Tools.regFind(html, "standard output</div></div><div>([\\s\\S]*?)</div><div class=\"input-specification"));
+		if (description.getDescription().isEmpty()) {
+			description.setDescription("<div>" + Tools.regFind(html, "(<div class=\"input-file\">[\\s\\S]*?)</div><div class=\"input-specification"));
+		}
 		description.setInput(Tools.regFind(html, "<div class=\"section-title\">Input</div>([\\s\\S]*?)</div><div class=\"output-specification\">"));
 		description.setOutput(Tools.regFind(html, "<div class=\"section-title\">Output</div>([\\s\\S]*?)</div><div class=\"sample-tests\">"));
 		description.setSampleInput("<style type=\"text/css\">.input, .output {border: 1px solid #888888;} .output {margin-bottom:1em;position:relative;top:-1px;} .output pre,.input pre {background-color:#EFEFEF;line-height:1.25em;margin:0;padding:0.25em;} .title {background-color:#FFFFFF;border-bottom: 1px solid #888888;font-family:arial;font-weight:bold;padding:0.25em;}</style>" + Tools.regFind(html, "<div class=\"sample-test\">([\\s\\S]*?)</div>\\s*</div>\\s*</div>"));
