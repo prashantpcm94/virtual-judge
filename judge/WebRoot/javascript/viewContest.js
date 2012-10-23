@@ -46,6 +46,8 @@ $(function(){
 			sliderUpdater = 0;
 		},
 		slide: function( event, ui ) {
+			selectedTime = parseInt(ui.value);
+			displayTime();
 			if (ui.value > ti[1] + curTime - startTime) {
 				exceedMax = true;
 				return false;
