@@ -833,7 +833,11 @@ function calcRankTable() {
 		} else {
 			$("#viewContest tbody tr:eq(" + j + ") td:eq(0)").html("");
 		}
-		$("#viewContest tbody tr:eq(" + j + ") td:eq(4)").html(correctSubmission[j] + " / " + totalSubmission[j]);
+		if (totalSubmission[j] > 0) {
+			$("#viewContest tbody tr:eq(" + j + ") td:eq(1)").html("<a href='contest/view.action?cid=" + cid + "#status//" + String.fromCharCode(65 + j)+ "/1'>" + correctSubmission[j] + "</a> / <a href='contest/view.action?cid=" + cid + "#status//" + String.fromCharCode(65 + j)+ "/0'>" + totalSubmission[j] + "</a>");
+		} else {
+			$("#viewContest tbody tr:eq(" + j + ") td:eq(1)").html("");
+		}
 	}
 	if (totalNumber) {
 		$("#rank_foot div").eq(pnum + 4).css("background-color", "#D3D6FF").html("　<br />" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%");

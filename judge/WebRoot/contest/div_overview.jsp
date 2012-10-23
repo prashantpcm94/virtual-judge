@@ -31,7 +31,7 @@
 
 	<s:if test="dataList != null">
 	<div id="contest_opt" style="text-align:center;margin-top:10px">
-		<s:if test="curDate.compareTo(contest.endTime) > 0">
+		<s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
 			<a id="clone_contest" href="contest/toAddContest.action?cid=${cid}" title="Create a contest using the same problems, in which you can see the original score board.">Clone this contest</a>
 		</s:if>
 		<s:if test="#session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
@@ -46,28 +46,30 @@
 		<thead>
 			<tr>
 				<th style="text-align: right;width:20px"></th>
+				<th style="text-align: left;width:90px"></th>
 				<th style="text-align: right;width:90px">ID</th>
-				<th style="width:250px"><s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">Origin</s:if></th>
-				<th style="text-align: left">Title</th>
-				<th style="text-align: left"></th>
+				<s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
+					<th style="width:150px">Origin</th>
+				</s:if>
+				<th style="text-align: left;padding-left:50px;">Title</th>
 			</tr>
 		</thead>
 		
 		<s:iterator value="dataList" status="stat">
 			<tr>
 				<td style="text-align: right"></td>
+				<td style="text-align: center"></td>
 				<td style="text-align: right">Problem <s:property value="dataList[#stat.index][0]" /></td>
-				<td class="center">
-					<s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
+				<s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
+					<td class="center">
 						<a target="_blank" href="<s:property value="dataList[#stat.index][3]" />"><s:property value="dataList[#stat.index][1]" /> <s:property value="dataList[#stat.index][2]" /></a>
-					</s:if>
-				</td>
-				<td>
+					</td>
+				</s:if>
+				<td style="padding-left:50px;">
 					<a href="contest/view.action?cid=${cid}#problem/<s:property value='dataList[#stat.index][0]' />">
 						<s:property value="dataList[#stat.index][4]" escape="false" />
 					</a>
 				</td>
-				<td style="text-align: left"></td>
 			</tr>
 		</s:iterator>
 	</table>
