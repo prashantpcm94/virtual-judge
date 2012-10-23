@@ -10,10 +10,9 @@ var statusTable;
 var hash;
 var oldProblemHash = "#problem/A";
 var oldStatusHash;
-var oldRankHash = "#rank";
 var rankTable;
 var ranks = {};
-var rankUpdater;
+var lastRankUpdateTime = -99999999;
 var sliderUpdater;
 var statusTimeoutInstance = {};	//status fetch
 var oFH;
@@ -43,7 +42,6 @@ $(function(){
 		value: 0,
 		start: function() {
 			clearInterval(sliderUpdater);
-			clearTimeout(rankUpdater);
 			curTime = new Date().valueOf();
 			sliderUpdater = 0;
 		},
@@ -57,17 +55,20 @@ $(function(){
 			if (ui.value > ti[1] + curTime - startTime) {
 				exceedMax = true;
 			}
-			if (exceedMax || location.hash.indexOf("#rank") != 0) {
+			if (exceedMax) {
 				resetTimeSlider();
 				exceedMax = false;
-				if (location.hash.indexOf("#rank") == 0 && location.hash != "#rank") {
+				if (location.hash.indexOf("#rank") == 0) {
 					location.hash = "#rank";
 					$.scrollTo( {top: '0px',left:'0px'}, 0 );
 				}
 			} else {
 				selectedTime = parseInt(ui.value);
 				displayTime();
-				location.hash = "#rank/" + selectedTime;
+				if (location.hash.indexOf("#rank") == 0) {
+					location.hash = "#rank/" + selectedTime;
+				}
+				updateRankInfo();
 			}
 		}
 	});
@@ -79,8 +80,6 @@ $(function(){
 			if (location.hash.indexOf(ui.tab.rel) != 0) {
 				if (ui.tab.rel == "#problem") {
 					location.hash = oldProblemHash;
-				} else if (ui.tab.rel == "#rank") {
-					location.hash = oldRankHash;
 				} else {
 					location.hash = ui.tab.rel;
 				}
@@ -89,7 +88,6 @@ $(function(){
 			if (location.hash.indexOf("#rank") == 0) {
 				$("#contest_tabs").css("min-width", 400 + $("table#viewContest tr").length * 80 + "px");
 			} else {
-				clearTimeout(rankUpdater);
 				$("#contest_tabs").css("min-width", 0);
 			}
 		}
@@ -250,6 +248,8 @@ $(function(){
 	
 	/////////////////////     Rank      //////////////////////
 	
+	$("#rank").css("width", 400 + $("table#viewContest tr").length * 80 + "px");
+
 	if (!$.browser.msie) {
 		$("div.meta_td").live({
 			mouseenter: function() {
@@ -315,7 +315,8 @@ $(function(){
 				$.cookie("show_nick", showNick, { expires: 30 });
 				$.cookie("show_animation", showAnimation, { expires: 30 });
 				$( this ).dialog( "close" );
-				showRank();
+				lastRankUpdateTime = -99999999;
+				updateRankInfo();
 			},
 			"Cancel": function() {
 				$( this ).dialog( "close" );
@@ -351,6 +352,9 @@ $(function(){
 	
 	//////////////////////////////////////////////////////////
 
+	resetTimeSlider();
+	updateRankInfo();
+	
 	$(window).hashchange( function(){
 		hash = location.hash.split("/");
 		if (hash[0] == "#problem") {
@@ -372,12 +376,10 @@ $(function(){
 
 function showOverview() {
 	tabs.tabs( "select" , "overview" );
-	resetTimeSlider();
 }
 
 function showProblem() {
 	tabs.tabs( "select" , "problem" );
-	resetTimeSlider();
 
 	oldProblemHash = location.hash;
 	var $numRadio = $("#problem_number_container > input[value=" + hash[1] + "]");
@@ -430,7 +432,6 @@ function showProblem() {
 
 function showStatus() {
 	tabs.tabs( "select" , "status" );
-	resetTimeSlider();
 
 	if (hash.length >= 4) {
 		$("[name='un']").val(hash[1]);
@@ -548,43 +549,22 @@ function showStatus() {
 
 function showRank() {
 	tabs.tabs( "select" , "rank" );
-	oldRankHash = location.hash;
-
+	
 	$("#contest_tabs").css("min-width", 400 + $("table#viewContest tr").length * 80 + "px");
-	clearInterval(sliderUpdater);
-	if (/#rank\/\d+/.test(location.hash) == false) {
-		resetTimeSlider();
-	}
 
 	if (!isNaN(hash[1]) && hash[1] >= 0) {
 		if (hash[1] <= Math.min(ti[1] + new Date().valueOf() - startTime, ti[0])) {
 			selectedTime = parseInt(hash[1]);
 			slider.slider("value", selectedTime);
 			displayTime();
+			clearInterval(sliderUpdater);
+			sliderUpdater = 0;
 		}
-	}
-	
-	if ($.cookie("contest_" + cid) == undefined){
-		$.cookie("contest_" + cid, cid, { expires: 3 });
-	}
-	if ($.cookie("show_all_teams") == undefined){
-		$.cookie("show_all_teams", 0, { expires: 30 });
-	}
-	if ($.cookie("show_nick") == undefined){
-		$.cookie("show_nick", 0, { expires: 30 });
-	}
-	if ($.cookie("show_animation") == undefined){
-		$.cookie("show_animation", 1, { expires: 30 });
-	}
-
-	if (selectedTime >= 0) {
-		updateRankInfo();
 	}
 }
 
 function showDiscuss() {
 	tabs.tabs( "select" , "discuss" );
-	resetTimeSlider();
 
 	if (!$("#disqus_thread").html()) {
 		_showDiscuss();
@@ -604,6 +584,26 @@ function displayTime() {
 };
 
 function updateRankInfo() {
+	if (selectedTime < 0) {
+		return;
+	}
+	if (Math.abs(selectedTime - lastRankUpdateTime) < 10000) {
+		return;
+	}
+	
+	if ($.cookie("contest_" + cid) == undefined){
+		$.cookie("contest_" + cid, cid, { expires: 3 });
+	}
+	if ($.cookie("show_all_teams") == undefined){
+		$.cookie("show_all_teams", 0, { expires: 30 });
+	}
+	if ($.cookie("show_nick") == undefined){
+		$.cookie("show_nick", 0, { expires: 30 });
+	}
+	if ($.cookie("show_animation") == undefined){
+		$.cookie("show_animation", 1, { expires: 30 });
+	}
+
 	cids = $.cookie("contest_" + cid).split("_");
 
 	var cnt = 0;
@@ -826,6 +826,14 @@ function calcRankTable() {
 		} else {
 			$("#rank_foot div").eq(j + 4).css("background", "transparent").html("");
 		}
+		if (myStatus[j] == 2) {
+			$("#viewContest tbody tr:eq(" + j + ") td:eq(0)").html("<img src='images/yes.png' height='15'/>");
+		} else if (myStatus[j] == 1) {
+			$("#viewContest tbody tr:eq(" + j + ") td:eq(0)").html("<img src='images/no.png' height='15'/>");
+		} else {
+			$("#viewContest tbody tr:eq(" + j + ") td:eq(0)").html("");
+		}
+		$("#viewContest tbody tr:eq(" + j + ") td:eq(4)").html(correctSubmission[j] + " / " + totalSubmission[j]);
 	}
 	if (totalNumber) {
 		$("#rank_foot div").eq(pnum + 4).css("background-color", "#D3D6FF").html("　<br />" + totalCorrectNumber + "/" + totalNumber + "<br />" + Math.floor(100 * totalCorrectNumber / totalNumber) + "%");
@@ -833,8 +841,8 @@ function calcRankTable() {
 		$("#rank_foot div").eq(pnum + 4).css("background-color", "transparent").html("");
 	}
 	
-	$("#rank_header").width($("#contest_tabs").css("width"));
-	$("#rank_foot").width($("#contest_tabs").css("width"));
+	$("#rank_header").width($("#rank").css("width"));
+	$("#rank_foot").width($("#rank").css("width"));
 
 	$("#rank_data_destination").html(sbHtml.join(""))
 	.prepend($("#rank_header").clone().css({"position": "", "top": "", "z-index": ""}).attr("id", "rank_header_1").show())
@@ -856,10 +864,7 @@ function calcRankTable() {
 		adjustRankTool();
 	}
 	
-	if (sliderUpdater) {
-		clearTimeout(rankUpdater);
-		rankUpdater = setTimeout(updateRankInfo, 10000);
-	}
+	lastRankUpdateTime = selectedTime;
 }
 
 function showDescription(num, desc_index) {
@@ -950,6 +955,7 @@ function resetTimeSlider () {
 		if (selectedTime > 0 && selectedTime < 1000 && ti[0] > 0) {
 			window.location.reload();
 		}
+		updateRankInfo();
 	}
 	temp();
 	sliderUpdater = setInterval(temp, 1000);

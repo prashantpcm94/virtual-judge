@@ -45,14 +45,17 @@
 	<table style="width:960px;margin-top:20px" cellpadding="0" cellspacing="0" border="0" class="display" id="viewContest">
 		<thead>
 			<tr>
-				<th style="text-align: right;width:120px">ID</th>
+				<th style="text-align: right;width:20px"></th>
+				<th style="text-align: right;width:90px">ID</th>
 				<th style="width:250px"><s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">Origin</s:if></th>
 				<th style="text-align: left">Title</th>
+				<th style="text-align: left"></th>
 			</tr>
 		</thead>
 		
 		<s:iterator value="dataList" status="stat">
 			<tr>
+				<td style="text-align: right"></td>
 				<td style="text-align: right">Problem <s:property value="dataList[#stat.index][0]" /></td>
 				<td class="center">
 					<s:if test="curDate.compareTo(contest.endTime) > 0 || #session.visitor.sup == 1 || #session.visitor.id == contest.manager.id">
@@ -64,6 +67,7 @@
 						<s:property value="dataList[#stat.index][4]" escape="false" />
 					</a>
 				</td>
+				<td style="text-align: left"></td>
 			</tr>
 		</s:iterator>
 	</table>
