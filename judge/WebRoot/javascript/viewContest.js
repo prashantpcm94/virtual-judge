@@ -848,7 +848,7 @@ function calcRankTable() {
 	.prepend($("#rank_header").clone().css({"position": "", "top": "", "z-index": ""}).attr("id", "rank_header_1").show())
 	.append($("#rank_foot").clone().css({"position": "", "bottom": "", "z-index": ""}).attr("id", "rank_foot_1").show());
 	
-	if ($("#rank_data_source > div").length > 2 && $.cookie("show_animation") > 0 && $("#rank_data_destination > div").length <= ($.browser.msie ? $.browser.version > 6 ? 35 : 0 : 70)) {
+	if (location.hash.indexOf("#rank") == 0 && $("#rank_data_source > div").length > 2 && $.cookie("show_animation") > 0 && $("#rank_data_destination > div").length <= ($.browser.msie ? $.browser.version > 6 ? 35 : 0 : 70)) {
 		$('#rank_data_destination > div').each(function(){
 			$("#rank_data_source > div[data-id=" + $(this).attr("data-id") + "]").html(this.innerHTML);
 		});
