@@ -15,21 +15,35 @@ import java.util.regex.Pattern;
 import judge.tool.ApplicationContainer;
 import judge.tool.Tools;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.Consts;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.util.EntityUtils;
+
 
 public class UVALiveSubmitter extends Submitter {
 
 	static final String OJ_NAME = "UVALive";
-	static private HttpClient clientList[];
+	static private DefaultHttpClient clientList[];
 	static private boolean using[];
 	static private String[] usernameList;
 	static private String[] passwordList;
 	
+	private DefaultHttpClient httpClient;
+	private HttpEntity entity;
+
 	static {
 		List<String> uList = new ArrayList<String>(), pList = new ArrayList<String>();
 		try {
@@ -50,13 +64,14 @@ public class UVALiveSubmitter extends Submitter {
 		usernameList = uList.toArray(new String[0]);
 		passwordList = pList.toArray(new String[0]);
 		using = new boolean[usernameList.length];
-		clientList = new HttpClient[usernameList.length];
+		clientList = new DefaultHttpClient[usernameList.length];
+		HttpHost proxy = new HttpHost("127.0.0.1", 8087);
 		for (int i = 0; i < clientList.length; i++){
-			clientList[i] = new HttpClient();
-			clientList[i].getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8");
-			clientList[i].getHttpConnectionManager().getParams().setConnectionTimeout(60000);
-			clientList[i].getHttpConnectionManager().getParams().setSoTimeout(60000);  
-			clientList[i].getHostConfiguration().setProxy("127.0.0.1", 8087);
+			clientList[i] = new DefaultHttpClient();
+			clientList[i].getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1");
+			clientList[i].getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 60000);
+			clientList[i].getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000);
+			clientList[i].getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		}
 		
 		Map<String, String> languageList = new TreeMap<String, String>();
@@ -68,75 +83,79 @@ public class UVALiveSubmitter extends Submitter {
 	}
 	
 	private void submit() throws Exception{
-		PostMethod postMethod = new PostMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=25&page=save_submission");
-		postMethod.addParameter("problemid", "");
-		postMethod.addParameter("category", "");
-		postMethod.addParameter("localid", submission.getOriginProb());
-		postMethod.addParameter("language", submission.getLanguage());
-		postMethod.addParameter("code", submission.getSource());
-		postMethod.addParameter("codeupl", "");
-		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		httpClient.getParams().setContentCharset("UTF-8"); 
+		HttpPost httpPost = new HttpPost("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=25&page=save_submission");
+
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("problemid", ""));
+		nvps.add(new BasicNameValuePair("category", ""));
+		nvps.add(new BasicNameValuePair("localid", submission.getOriginProb()));
+		nvps.add(new BasicNameValuePair("language", submission.getLanguage()));
+		nvps.add(new BasicNameValuePair("code", submission.getSource()));
+		nvps.add(new BasicNameValuePair("codeupl", ""));
+		httpPost.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
 
 		System.out.println("submit...");
-		int statusCode = httpClient.executeMethod(postMethod);
-		System.out.println("statusCode = " + statusCode);
 		
-		if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
-			throw new Exception();
+		try {
+			HttpResponse response = httpClient.execute(httpPost);
+			entity = response.getEntity();
+			int statusCode = response.getStatusLine().getStatusCode();
+
+			if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
+				throw new RuntimeException();
+			}
+			String headerLocation = response.getFirstHeader("Location").getValue();
+			String submissionId = Tools.regFind(headerLocation, "with\\+ID\\+(\\d+)");
+			if (submissionId.isEmpty()) {
+				throw new Exception();
+			}
+			submission.setRealRunId(submissionId);
+			baseService.addOrModify(submission);
+		} finally {
+			EntityUtils.consume(entity);
 		}
-		String headerLocation = postMethod.getResponseHeader("Location").getValue();
-		if (!headerLocation.contains("Submission+received+with+ID")){
-			throw new Exception();
-		}
-		String submissionId = Tools.regFind(headerLocation, "with\\+ID\\+(\\d+)");
-		if (submissionId.isEmpty()) {
-			throw new Exception();
-		}
-		submission.setRealRunId(submissionId);
-		baseService.addOrModify(submission);
 	}
 	
-	private void login(String username, String password) throws Exception{
-		PostMethod postMethod = new PostMethod("http://livearchive.onlinejudge.org/index.php?option=com_comprofiler&task=login");
-		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-		String tLine = "";
+	private void ensureLoggedIn(String username, String password) throws Exception{
+		String indexContent = "";
 		try {
-			int statusCode = httpClient.executeMethod(getMethod);
-			if (statusCode != HttpStatus.SC_OK) {
-				System.err.println("Method failed: " + getMethod.getStatusLine());
-			}
-			byte[] responseBody = getMethod.getResponseBody();
-			tLine = new String(responseBody, "UTF-8");
-		} catch (Exception e) {
-			getMethod.releaseConnection();
-			throw new Exception();
+			HttpGet httpGet = new HttpGet("http://livearchive.onlinejudge.org/index.php");
+			HttpResponse response = httpClient.execute(httpGet);
+			entity = response.getEntity();
+			indexContent = EntityUtils.toString(entity);
+		} finally {
+			EntityUtils.consume(entity);
 		}
 		
-		String reg = "<input type=\"hidden\" name=\"([\\s\\S]*?)\" value=\"([\\s\\S]*?)\" />";
-		Matcher matcher = Pattern.compile(reg).matcher(tLine);
-		int number = 0;
-		while (matcher.find()){
-			String name = matcher.group(1);
-			String value = matcher.group(2);
-			if (number > 0 && number < 9) {
-				postMethod.addParameter(name, value);
-			}
-			++number;
+		if (indexContent.contains("mod_login_logoutform")) {
+			return;
 		}
-		postMethod.addParameter("remember", "yes");
-		postMethod.addParameter("username", username);
-		postMethod.addParameter("passwd", password);
-		postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
-		System.out.println("login...");
-		int statusCode = httpClient.executeMethod(postMethod);
-		System.out.println("statusCode = " + statusCode);
+		try {
+			HttpPost httpost = new HttpPost("http://livearchive.onlinejudge.org/index.php?option=com_comprofiler&task=login");
 
-		//注意:此处判断登陆成功条件并不充分,相当于默认成功
-		if (statusCode != HttpStatus.SC_MOVED_PERMANENTLY){
-			throw new Exception();
+			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+			String reg = "<input type=\"hidden\" name=\"([\\s\\S]*?)\" value=\"([\\s\\S]*?)\" />";
+			Matcher matcher = Pattern.compile(reg).matcher(indexContent);
+			int number = 0;
+			while (matcher.find()){
+				String name = matcher.group(1);
+				String value = matcher.group(2);
+				if (number > 0 && number < 9) {
+					nvps.add(new BasicNameValuePair(name, value));
+				}
+				++number;
+			}
+			nvps.add(new BasicNameValuePair("remember", "yes"));
+			nvps.add(new BasicNameValuePair("username", username));
+			nvps.add(new BasicNameValuePair("passwd", password));
+
+			httpost.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
+
+			HttpResponse response = httpClient.execute(httpost);
+			entity = response.getEntity();
+		} finally {
+			EntityUtils.consume(entity);
 		}
 	}
 	
@@ -144,15 +163,17 @@ public class UVALiveSubmitter extends Submitter {
 		String reg = "<td>" + submission.getRealRunId() + "</td>[\\s\\S]*?</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>", result;
 		Pattern p = Pattern.compile(reg);
 
-		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		HttpGet get = new HttpGet("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
 		long cur = new Date().getTime(), interval = 2000;
-		while (new Date().getTime() - cur < 3600000) {
-			System.out.println("getResult...");
-			login(usernameList[idx], passwordList[idx]);
-			httpClient.executeMethod(getMethod);
-			byte[] responseBody = getMethod.getResponseBody();
-			String tLine = new String(responseBody, "UTF-8");
+		while (new Date().getTime() - cur < 600000){
+			String tLine = null;
+			try {
+				HttpResponse rsp = httpClient.execute(get);
+				entity = rsp.getEntity();
+				tLine = EntityUtils.toString(entity);
+			} finally {
+				EntityUtils.consume(entity);
+			}
 
 			Matcher m = p.matcher(tLine);
 			if (m.find()) {
@@ -161,7 +182,6 @@ public class UVALiveSubmitter extends Submitter {
 					result = "processing";
 				}
 				submission.setStatus(result);
-				//submission.setRealRunId(m.group(1));
 				if (!result.contains("ing")){
 					if (result.equals("Accepted")){
 						submission.setTime(Integer.parseInt(m.group(2).replaceAll("\\.", "")));
@@ -179,15 +199,18 @@ public class UVALiveSubmitter extends Submitter {
 		throw new Exception();
 	}
 	
-	private void getAdditionalInfo(String runId) throws Exception {
-		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9&page=show_compilationerror&submission=" + runId);
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+	private void getAdditionalInfo(String runId) throws HttpException, IOException {
+		HttpGet httpGet = new HttpGet("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9&page=show_compilationerror&submission=" + runId);
 
-		login(usernameList[idx], passwordList[idx]);
-		httpClient.executeMethod(getMethod);
-		String additionalInfo = Tools.getHtml(getMethod, null);
+		try {
+			HttpResponse rsp = httpClient.execute(httpGet);
+			entity = rsp.getEntity();
+			String additionalInfo = EntityUtils.toString(entity);
+			submission.setAdditionalInfo(Tools.regFind(additionalInfo, "Compilation error for submission " + runId + "</div>\\s*(<pre>[\\s\\S]*?</pre>)"));
+		} finally {
+			EntityUtils.consume(entity);
+		}
 		
-		submission.setAdditionalInfo(Tools.regFind(additionalInfo, "Compilation error for submission " + runId + "</div>\\s*(<pre>[\\s\\S]*?</pre>)"));
 	}
 
 	private int getIdleClient() {
@@ -218,8 +241,7 @@ public class UVALiveSubmitter extends Submitter {
 		int errorCode = 1;
 
 		try {
-			login(usernameList[idx], passwordList[idx]);
-			Thread.sleep(2000);
+			ensureLoggedIn(usernameList[idx], passwordList[idx]);
 			submit();
 			errorCode = 2;
 			submission.setStatus("Running & Judging");
@@ -231,7 +253,6 @@ public class UVALiveSubmitter extends Submitter {
 			submission.setStatus("Judging Error " + errorCode);
 			baseService.addOrModify(submission);
 		}
-		
 	}
 
 	@Override
@@ -240,7 +261,7 @@ public class UVALiveSubmitter extends Submitter {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}	//UVa Live限制每两次提交之间至少隔?秒
+		}	//UVa Live貌似不限制每两次提交之间的提交间隔
 		synchronized (using) {
 			using[idx] = false;
 		}
