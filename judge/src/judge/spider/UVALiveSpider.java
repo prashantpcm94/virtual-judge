@@ -2,16 +2,29 @@ package judge.spider;
 
 import java.util.Date;
 
-import judge.tool.Tools;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import judge.submitter.UVALiveSubmitter;
+import judge.tool.Tools;
 
 public class UVALiveSpider extends Spider {
 
 	public static String problemNumberMap[];
 	public static Long lastTime = 0L;
+	
+	static {
+		try {
+			Class.forName("judge.submitter.UVALiveSubmitter");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void crawl() throws Exception{
 		if (new Date().getTime() - lastTime > 7 * 86400 * 1000L) {
@@ -19,7 +32,7 @@ public class UVALiveSpider extends Spider {
 			lastTime = new Date().getTime();
 		}
 		if (problemNumberMap == null || problemNumberMap[5358] == null) {
-			new UVaLiveSpiderInitializer("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=1").start();
+			new UVaLiveSpiderInitializer("https://icpcarchive.ecs.baylor.edu/index.php?option=com_onlinejudge&Itemid=8&category=1").start();
 		}
 		do {
 			try {
@@ -35,44 +48,44 @@ public class UVALiveSpider extends Spider {
 		}
 
 		String html = "";
-		HttpClient httpClient = new HttpClient();
-		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
+		HttpClient httpClient = new DefaultHttpClient(UVALiveSubmitter.cm, UVALiveSubmitter.params);
+//		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
 		if (!problem.getOriginProb().matches("\\d+")) {
 			throw new Exception();
 		}
 		
 		//抓标题、时限
-		GetMethod getMethod = new GetMethod("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		HttpGet getMethod = new HttpGet("https://icpcarchive.ecs.baylor.edu/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
+		HttpEntity entity = null;
 		try {
-			int statusCode = httpClient.executeMethod(getMethod);
+			HttpResponse response = httpClient.execute(getMethod);
+			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != HttpStatus.SC_OK) {
-				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			html = Tools.getHtml(getMethod, null);
-		} catch (Exception e) {
-			getMethod.releaseConnection();
-			throw new Exception();
+			entity = response.getEntity();
+			html = EntityUtils.toString(entity);
+		} finally {
+			EntityUtils.consume(entity);
 		}
 		problem.setTitle(Tools.regFind(html, "<h3>" + problem.getOriginProb() + " - ([\\s\\S]+?)</h3>").trim());
 		problem.setTimeLimit(Integer.parseInt(Tools.regFind(html, "Time limit: ([\\d\\.]+)").replaceAll("\\.", "")));
 		problem.setMemoryLimit(0);
-		problem.setUrl("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
+		problem.setUrl("https://icpcarchive.ecs.baylor.edu/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=" + realProblemNumber);
 
 		//抓描述
 		int category = Integer.parseInt(problem.getOriginProb()) / 100;
-		String pdfLink = "<span style='float:right'><a target='_blank' href='http://livearchive.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".pdf'><img width='100' height='26' border='0' title='Download as PDF' alt='Download as PDF' src='http://livearchive.onlinejudge.org/components/com_onlinejudge/images/button_pdf.png'></a></span><div style='clear:both'></div>";
+		String pdfLink = "<span style='float:right'><a target='_blank' href='https://icpcarchive.ecs.baylor.edu/external/" + category + "/" + problem.getOriginProb() + ".pdf'><img width='100' height='26' border='0' title='Download as PDF' alt='Download as PDF' src='https://icpcarchive.ecs.baylor.edu/components/com_onlinejudge/images/button_pdf.png'></a></span><div style='clear:both'></div>";
 		description.setDescription(pdfLink);
-		getMethod = new GetMethod("http://livearchive.onlinejudge.org/external/" + category + "/" + problem.getOriginProb() + ".html");
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+		getMethod = new HttpGet("https://icpcarchive.ecs.baylor.edu/external/" + category + "/" + problem.getOriginProb() + ".html");
 		try {
-			int statusCode = httpClient.executeMethod(getMethod);
+			HttpResponse response = httpClient.execute(getMethod);
+			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != HttpStatus.SC_OK) {
-				System.err.println("Method failed: " + getMethod.getStatusLine());
 				throw new Exception();
 			}
-			html = Tools.getHtml(getMethod, null).replaceAll("(?i)(src|href)\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "$1=$2http://livearchive.onlinejudge.org/external/" + category + "/");
+			entity = response.getEntity();
+			html = EntityUtils.toString(entity).replaceAll("(?i)(src|href)\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "$1=$2https://icpcarchive.ecs.baylor.edu/external/" + category + "/");
 			
 			//some problems' description are fucking long, only get the body.innerHTML
 			html = html.replaceAll("(?i)^[\\s\\S]*<body[^>]*>", "").replaceAll("(?i)</body>[\\s\\S]*", "");

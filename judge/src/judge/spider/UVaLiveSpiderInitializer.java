@@ -5,13 +5,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import judge.tool.Tools;
+import judge.submitter.UVALiveSubmitter;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 public class UVaLiveSpiderInitializer extends Thread {
 	
@@ -19,6 +21,14 @@ public class UVaLiveSpiderInitializer extends Thread {
 	private static ConcurrentHashMap<String, Long> map = new ConcurrentHashMap<String, Long>();
 	private String rootUrl;
 	
+	static {
+		try {
+			Class.forName("judge.submitter.UVALiveSubmitter");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public UVaLiveSpiderInitializer(String url) {
 		if (UVALiveSpider.problemNumberMap == null) {
 			UVALiveSpider.problemNumberMap = new String[20000];
@@ -39,24 +49,27 @@ public class UVaLiveSpiderInitializer extends Thread {
 		++threadCnt;
 
 		String html = null;
-		GetMethod getMethod = new GetMethod(rootUrl);
-		HttpClient httpClient = new HttpClient();
-		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(60, true));
+		HttpGet getMethod = new HttpGet(rootUrl);
+		HttpClient httpClient = new DefaultHttpClient(UVALiveSubmitter.cm, UVALiveSubmitter.params);
+		HttpEntity entity = null;
 		try {
 			System.out.println("start: " + rootUrl);
-			int statusCode = httpClient.executeMethod(getMethod);
-			System.out.println("over : " + rootUrl);
-			if (statusCode != HttpStatus.SC_OK) {
-				System.err.println("Method failed: " + getMethod.getStatusLine());
-				throw new Exception();
+			try {
+				HttpResponse response = httpClient.execute(getMethod);
+				int statusCode = response.getStatusLine().getStatusCode();
+				if (statusCode != HttpStatus.SC_OK) {
+					throw new Exception();
+				}
+				entity = response.getEntity();
+				html = EntityUtils.toString(entity);
+			} finally {
+				EntityUtils.consume(entity);
 			}
-			html = Tools.getHtml(getMethod, null);
 			html = html.substring(html.indexOf("Total Users / Solving"));
 
 			Matcher matcher = Pattern.compile("category=(\\d+)\">").matcher(html);
 			while (matcher.find()) {
-				new UVaLiveSpiderInitializer("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=" + matcher.group(1)).start();
+				new UVaLiveSpiderInitializer("https://icpcarchive.ecs.baylor.edu/index.php?option=com_onlinejudge&Itemid=8&category=" + matcher.group(1)).start();
 			}
 			
 			matcher = Pattern.compile("page=show_problem&amp;problem=(\\d+)\">(\\d+)").matcher(html);
@@ -67,7 +80,6 @@ public class UVaLiveSpiderInitializer extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			getMethod.releaseConnection();
 			--threadCnt;
 		}
 	}

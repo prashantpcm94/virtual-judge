@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,31 +15,43 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import judge.tool.ApplicationContainer;
 import judge.tool.Tools;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 
+@SuppressWarnings("deprecation")
 public class UVALiveSubmitter extends Submitter {
 
 	static final String OJ_NAME = "UVALive";
 	static private DefaultHttpClient clientList[];
+	static public HttpParams params;
+	static public ClientConnectionManager cm;
 	static private boolean using[];
 	static private String[] usernameList;
 	static private String[] passwordList;
@@ -61,17 +76,46 @@ public class UVALiveSubmitter extends Submitter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		try {
+			X509TrustManager tm = new X509TrustManager() {
+				public void checkClientTrusted(X509Certificate[] xcs, String string) {}
+				public void checkServerTrusted(X509Certificate[] xcs, String string) {}
+				public X509Certificate[] getAcceptedIssuers() {return null;}
+			};
+
+			SSLContext sslcontext;
+			sslcontext = SSLContext.getInstance("TLS");
+
+			sslcontext.init(null, new TrustManager[]{tm}, null);
+
+			SSLSocketFactory socketFactory = new SSLSocketFactory(sslcontext,SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
+			// 不校验域名
+			socketFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+			Scheme sch = new Scheme("https", 443, socketFactory);
+
+			SchemeRegistry schemeRegistry = new SchemeRegistry();
+			schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+			schemeRegistry.register(sch);
+
+			cm = new PoolingClientConnectionManager(schemeRegistry);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (KeyManagementException e) {
+			e.printStackTrace();
+		}
+		
 		usernameList = uList.toArray(new String[0]);
 		passwordList = pList.toArray(new String[0]);
 		using = new boolean[usernameList.length];
 		clientList = new DefaultHttpClient[usernameList.length];
-		HttpHost proxy = new HttpHost("127.0.0.1", 8087);
+//		HttpHost proxy = new HttpHost("127.0.0.1", 8087);
 		for (int i = 0; i < clientList.length; i++){
-			clientList[i] = new DefaultHttpClient();
+			clientList[i] = new DefaultHttpClient(cm, params);
 			clientList[i].getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1");
 			clientList[i].getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 60000);
 			clientList[i].getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000);
-			clientList[i].getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+//			clientList[i].getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		}
 		
 		Map<String, String> languageList = new TreeMap<String, String>();
@@ -83,7 +127,7 @@ public class UVALiveSubmitter extends Submitter {
 	}
 	
 	private void submit() throws Exception{
-		HttpPost httpPost = new HttpPost("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=25&page=save_submission");
+		HttpPost httpPost = new HttpPost("https://icpcarchive.ecs.baylor.edu/index.php?option=com_onlinejudge&Itemid=25&page=save_submission");
 
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("problemid", ""));
@@ -119,7 +163,7 @@ public class UVALiveSubmitter extends Submitter {
 	private void ensureLoggedIn(String username, String password) throws Exception{
 		String indexContent = "";
 		try {
-			HttpGet httpGet = new HttpGet("http://livearchive.onlinejudge.org/index.php");
+			HttpGet httpGet = new HttpGet("https://icpcarchive.ecs.baylor.edu/index.php");
 			HttpResponse response = httpClient.execute(httpGet);
 			entity = response.getEntity();
 			indexContent = EntityUtils.toString(entity);
@@ -132,7 +176,7 @@ public class UVALiveSubmitter extends Submitter {
 		}
 
 		try {
-			HttpPost httpost = new HttpPost("http://livearchive.onlinejudge.org/index.php?option=com_comprofiler&task=login");
+			HttpPost httpost = new HttpPost("https://icpcarchive.ecs.baylor.edu/index.php?option=com_comprofiler&task=login");
 
 			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 			String reg = "<input type=\"hidden\" name=\"([\\s\\S]*?)\" value=\"([\\s\\S]*?)\" />";
@@ -163,7 +207,7 @@ public class UVALiveSubmitter extends Submitter {
 		String reg = "<td>" + submission.getRealRunId() + "</td>[\\s\\S]*?</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>[\\s\\S]*?</td>[\\s\\S]*?<td>([\\s\\S]*?)</td>", result;
 		Pattern p = Pattern.compile(reg);
 
-		HttpGet get = new HttpGet("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9");
+		HttpGet get = new HttpGet("https://icpcarchive.ecs.baylor.edu/index.php?option=com_onlinejudge&Itemid=9");
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
 			String tLine = null;
@@ -200,7 +244,7 @@ public class UVALiveSubmitter extends Submitter {
 	}
 	
 	private void getAdditionalInfo(String runId) throws HttpException, IOException {
-		HttpGet httpGet = new HttpGet("http://livearchive.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9&page=show_compilationerror&submission=" + runId);
+		HttpGet httpGet = new HttpGet("https://icpcarchive.ecs.baylor.edu/index.php?option=com_onlinejudge&Itemid=9&page=show_compilationerror&submission=" + runId);
 
 		try {
 			HttpResponse rsp = httpClient.execute(httpGet);
