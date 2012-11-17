@@ -9,10 +9,10 @@ String langFile = "shjs/lang/" + request.getAttribute("language") + ".min.js";
 	<head>
 		<s:include value="/header.jsp" />
 		<title>Source Code - Virtual Judge</title>
-		<script type="text/javascript" src="shjs/sh_main.min.js" ></script>
-		<script type="text/javascript" src="<%=langFile%>" ></script>
-		<link type="text/css" rel="stylesheet" href="shjs/css/sh_style.min.css" />
-
+		<link rel="stylesheet" href="shjsx/shx_main.min.css" type="text/css" media="all"/>
+		<link rel="stylesheet" href="shjsx/css/sh_typical.min.css" type="text/css" media="all"/>
+		<link rel="stylesheet" href="shjsx/css/sh_print.min.css" type="text/css" media="print" />
+		<script type="text/javascript" src="shjsx/sh_main.min.js"></script>
 		<script type="text/javascript" src="javascript/viewSource.js?<%=application.getAttribute("version")%>"></script>
 	</head>
 

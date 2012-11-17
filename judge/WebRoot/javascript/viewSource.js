@@ -12,6 +12,6 @@ $(document).ready(function() {
 		$.post("problem/toggleOpen.action?id=" + $("[name=sid]").val(), showInfo);
 	});
 	
-	sh_highlightDocument();
+	sh_highlightDocument('shjsx/', '.min.js');
 	_showDiscuss();
 });
