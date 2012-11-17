@@ -257,33 +257,33 @@ public class Tools {
 	public static String findClass4SHJS(String srcLang) {
 		srcLang = " " + srcLang.toLowerCase() + " ";
 		if (srcLang.contains("c++") || srcLang.contains("cpp") || srcLang.contains("g++")){
-			return "sh_cpp";
+			return "sh-cpp";
 		} else if (srcLang.contains(" c ") || srcLang.contains("gcc")){
-			return "sh_c";
+			return "sh-c";
 		} else if (srcLang.contains("c#")){
-			return "sh_csharp";
+			return "sh-csharp";
 		} else if (srcLang.contains("java ")){
-			return "sh_java";
+			return "sh-java";
 		} else if (srcLang.contains("pascal") || srcLang.contains("fpc")){
-			return "sh_pascal";
+			return "sh-pascal";
 		} else if (srcLang.contains("tcl")){
-			return "sh_tcl";
+			return "sh-tcl";
 		} else if (srcLang.contains("scala")){
-			return "sh_scala";
+			return "sh-scala";
 		} else if (srcLang.contains("perl")){
-			return "sh_perl";
+			return "sh-perl";
 		} else if (srcLang.contains("python")){
-			return "sh_python";
+			return "sh-python";
 		} else if (srcLang.contains("ruby")){
-			return "sh_ruby";
+			return "sh-ruby";
 		} else if (srcLang.contains("php")){
-			return "sh_php";
+			return "sh-php";
 		} else if (srcLang.contains("prolog")){
-			return "sh_prolog";
+			return "sh-prolog";
 		} else if (srcLang.contains("javascript")){
-			return "sh_javascript";
+			return "sh-javascript";
 		} else {
-			return "sh_c";
+			return "sh-c";
 		}
 	}
 	
