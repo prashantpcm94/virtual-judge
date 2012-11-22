@@ -1122,19 +1122,19 @@ public class ContestAction extends BaseAction {
 
 			String extensionName = Tools.findClass4SHJS(language);
 			
-			if (extensionName.equals("sh_cpp")) {
+			if (extensionName.equals("sh-cpp")) {
 				extensionName = ".cpp";
-			} else if (extensionName.equals("sh_c")) {
+			} else if (extensionName.equals("sh-c")) {
 				extensionName = ".c";
-			} else if (extensionName.equals("sh_csharp")) {
+			} else if (extensionName.equals("sh-csharp")) {
 				extensionName = ".cs";
-			} else if (extensionName.equals("sh_java")) {
+			} else if (extensionName.equals("sh-java")) {
 				extensionName = ".java";
-			} else if (extensionName.equals("sh_pascal")) {
+			} else if (extensionName.equals("sh-pascal")) {
 				extensionName = ".pas";
-			} else if (extensionName.equals("sh_python")) {
+			} else if (extensionName.equals("sh-python")) {
 				extensionName = ".py";
-			} else if (extensionName.equals("sh_ruby")) {
+			} else if (extensionName.equals("sh-ruby")) {
 				extensionName = ".rb";
 			}
 			
