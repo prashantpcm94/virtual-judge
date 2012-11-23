@@ -17,7 +17,7 @@ public class POJSpider extends Spider {
 
 		String html = "";
 		HttpClient httpClient = new HttpClient();
-		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
+//		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087);
 		GetMethod getMethod = new GetMethod("http://poj.org/problem?id=" + problem.getOriginProb());
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {

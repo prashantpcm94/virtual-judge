@@ -13,7 +13,7 @@ public class URALSpider extends Spider {
 		
 		String html = "";
 		HttpClient httpClient = new HttpClient();
-		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087); 
+//		httpClient.getHostConfiguration().setProxy("127.0.0.1", 8087); 
 		GetMethod getMethod = new GetMethod("http://acm.timus.ru/print.aspx?space=1&num=" + problem.getOriginProb());
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
