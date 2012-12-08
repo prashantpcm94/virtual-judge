@@ -106,7 +106,7 @@ public class SPOJSubmitter extends Submitter {
 	
 	private void getMaxRunId() throws Exception {
 		// 获取当前最大RunID
-		GetMethod getMethod = new GetMethod("http://www.spoj.pl/status");
+		GetMethod getMethod = new GetMethod("http://www.spoj.com/status");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("id=\"max_id\" value=\"(\\d+)");
 
@@ -125,7 +125,7 @@ public class SPOJSubmitter extends Submitter {
 	
 	private void submit(String username, String password) throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
-		PostMethod postMethod = new PostMethod("http://www.spoj.pl/submit/complete/");
+		PostMethod postMethod = new PostMethod("http://www.spoj.com/submit/complete/");
 
 		postMethod.addParameter("lang", submission.getLanguage());
 		postMethod.addParameter("login_user", username);
@@ -153,7 +153,7 @@ public class SPOJSubmitter extends Submitter {
 	public void getResult(String username) throws Exception{
 		String reg = "id=\"max_id\" value=\"(\\d+)[\\s\\S]*?<td class=\"statusres\"[\\s\\S]*?>([\\s\\S]*?)</td>\n<td[\\s\\S]*?>([\\s\\S]*?)</td>\n<td[\\s\\S]*?>([\\s\\S]*?)</td>", result;
 		Pattern p = Pattern.compile(reg);
-		GetMethod getMethod = new GetMethod("http://www.spoj.pl/status/" + username);
+		GetMethod getMethod = new GetMethod("http://www.spoj.com/status/" + username);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
@@ -188,7 +188,7 @@ public class SPOJSubmitter extends Submitter {
 	}
 	
 	private void getAdditionalInfo(String runId) throws HttpException, IOException {
-		GetMethod getMethod = new GetMethod("http://www.spoj.pl/error/" + runId);
+		GetMethod getMethod = new GetMethod("http://www.spoj.com/error/" + runId);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
 		httpClient.executeMethod(getMethod);

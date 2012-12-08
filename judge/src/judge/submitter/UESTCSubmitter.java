@@ -63,7 +63,6 @@ public class UESTCSubmitter extends Submitter {
 		Map<String, String> languageList = new TreeMap<String, String>();
 		languageList.put("0", "G++");
 		languageList.put("1", "GCC");
-		languageList.put("2", "Pascal");
 		languageList.put("3", "Java");
 		sc.setAttribute("UESTC", languageList);
 	}
