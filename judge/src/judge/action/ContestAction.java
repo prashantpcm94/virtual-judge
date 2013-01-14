@@ -702,6 +702,11 @@ public class ContestAction extends BaseAction {
 	}
 	
 	public String fetchStatus() {
+		int authorizeStatus = judgeService.checkAuthorizeStatus(cid);
+		if (authorizeStatus == 0) {
+			return ERROR;
+		}
+
 		Map session = ActionContext.getContext().getSession();
 		User user = OnlineTool.getCurrentUser();
 		int userId = user != null ? user.getId() : -1;
@@ -743,7 +748,6 @@ public class ContestAction extends BaseAction {
 		
 		List<Object[]> aaData = baseService.list(hql.toString(), iDisplayStart, iDisplayLength);
 
-		int authorizeStatus = judgeService.checkAuthorizeStatus(cid);
 		for (Object[] o : aaData) {
 			o[8] = ((Date)o[8]).getTime();
 			o[10] = (Integer)o[10] > 0 ? 2 : o[9].equals(userId) || authorizeStatus == 2 ? 1 : 0;
@@ -758,10 +762,14 @@ public class ContestAction extends BaseAction {
 	}
 	
 	public String showRankSetting() {
+		int authorizeStatus = judgeService.checkAuthorizeStatus(cid);
+		if (authorizeStatus == 0) {
+			return ERROR;
+		}
+
 		curDate = new Date();
 		contest = (Contest) baseService.query("select c from Contest c left join fetch c.manager where c.id = " + cid).get(0);
 
-		int authorizeStatus = judgeService.checkAuthorizeStatus(cid);
 		if (authorizeStatus == 2 || curDate.compareTo(contest.getEndTime()) >= 0 || contest.getEnableTimeMachine() == 1 && curDate.compareTo(contest.getBeginTime()) >= 0){
 			Map paraMap = new HashMap();
 			paraMap.put("cid", cid);
