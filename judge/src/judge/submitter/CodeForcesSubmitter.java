@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import judge.tool.ApplicationContainer;
+import judge.tool.Tools;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
@@ -21,6 +22,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -43,6 +45,9 @@ public class CodeForcesSubmitter extends Submitter {
 	
 	private DefaultHttpClient httpClient;
 	private HttpEntity entity;
+	
+	private String tta;
+	private String xsrf;
 
 	static {
 		List<String> uList = new ArrayList<String>(), pList = new ArrayList<String>();
@@ -65,13 +70,13 @@ public class CodeForcesSubmitter extends Submitter {
 		passwordList = pList.toArray(new String[0]);
 		using = new boolean[usernameList.length];
 		clientList = new DefaultHttpClient[usernameList.length];
-//		HttpHost proxy = new HttpHost("127.0.0.1", 8087);
+		HttpHost proxy = new HttpHost("127.0.0.1", 8087);
 		for (int i = 0; i < clientList.length; i++){
 			clientList[i] = new DefaultHttpClient();
 			clientList[i].getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1");
 			clientList[i].getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 60000);
 			clientList[i].getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000);
-//			clientList[i].getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+			clientList[i].getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		}
 		
 		Map<String, String> languageList = new TreeMap<String, String>();
@@ -142,6 +147,7 @@ public class CodeForcesSubmitter extends Submitter {
 		HttpPost httpPost = new HttpPost("http://codeforces.com/problemset/submit");
 
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("xsrf", getXsrf()));
 		nvps.add(new BasicNameValuePair("_tta", getTTA()));
 		nvps.add(new BasicNameValuePair("action", "submitSolutionFormSubmitted"));
 		nvps.add(new BasicNameValuePair("submittedProblemCode", contestId + problemNum));
@@ -183,23 +189,45 @@ public class CodeForcesSubmitter extends Submitter {
 			HttpPost httpost = new HttpPost("http://codeforces.com/enter");
 
 			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+			nvps.add(new BasicNameValuePair("xsrf", getXsrf()));
 			nvps.add(new BasicNameValuePair("_tta", getTTA()));
+			nvps.add(new BasicNameValuePair("action", "enter"));
 			nvps.add(new BasicNameValuePair("handle", username));
 			nvps.add(new BasicNameValuePair("password", password));
 			nvps.add(new BasicNameValuePair("remember", "on"));
-			nvps.add(new BasicNameValuePair("submitted", "true"));
 
 			httpost.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
 
 			HttpResponse response = httpClient.execute(httpost);
 			entity = response.getEntity();
-
 		} finally {
 			EntityUtils.consume(entity);
 		}
 	}
 	
+	private String getXsrf() throws ParseException, IOException {
+		if (xsrf != null) {
+			return xsrf;
+		}
+		String html = null;
+		try {
+			HttpGet req = new HttpGet("http://codeforces.com");
+			HttpResponse rsp = httpClient.execute(req);
+			entity = rsp.getEntity();
+			html = EntityUtils.toString(entity);
+		} finally {
+			EntityUtils.consume(entity);
+		}
+		xsrf = Tools.regFind(html, "data-xsrf='(\\w+)'");
+		return xsrf;
+	}
+
+	
 	private String getTTA() throws HttpException, IOException {
+		if (tta != null) {
+			return tta;
+		}
+		
 		String _39ce7 = null;
 		for (Cookie cookie : httpClient.getCookieStore().getCookies()) {
 			if (cookie.getName().equals("39ce7")) {
@@ -218,21 +246,22 @@ public class CodeForcesSubmitter extends Submitter {
 			EntityUtils.consume(entity);
 		}
 
-		Integer tta = 0;
+		Integer _tta = 0;
 		for (int c = 0; c < _39ce7.length(); c++) {
-			tta = (tta + (c + 1) * (c + 2) * _39ce7.charAt(c)) % 1009;
+			_tta = (_tta + (c + 1) * (c + 2) * _39ce7.charAt(c)) % 1009;
 			if (c % 3 == 0)
-				tta++;
+				_tta++;
 			if (c % 2 == 0)
-				tta *= 2;
+				_tta *= 2;
 			if (c > 0)
-				tta -= ((int) (_39ce7.charAt(c / 2) / 2)) * (tta % 5);
-			while (tta < 0)
-				tta += 1009;
-			while (tta >= 1009)
-				tta -= 1009;
+				_tta -= ((int) (_39ce7.charAt(c / 2) / 2)) * (_tta % 5);
+			while (_tta < 0)
+				_tta += 1009;
+			while (_tta >= 1009)
+				_tta -= 1009;
 		}
-		return tta.toString();
+		tta = _tta.toString();
+		return tta;
 	}
 	
 	public void getResult(String username) throws Exception{
