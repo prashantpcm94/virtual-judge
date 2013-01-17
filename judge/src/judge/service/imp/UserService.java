@@ -1,6 +1,8 @@
 package judge.service.imp;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import judge.bean.User;
 import judge.service.IUserService;
@@ -14,7 +16,9 @@ public class UserService extends BaseService implements IUserService {
 	// ==============================================================
 	@SuppressWarnings("unchecked")
 	public boolean checkUsername(String username) {
-		List re = this.query("select user.username from User user where user.username = '" + username + "'");
+		Map paraMap = new HashMap();
+		paraMap.put("username", username);
+		List re = this.query("select user.username from User user where user.username = :username ", paraMap);
 		return re.size() > 0;
 	}
 
@@ -26,7 +30,10 @@ public class UserService extends BaseService implements IUserService {
 	// ==============================================================
 	@SuppressWarnings("unchecked")
 	public boolean checkPassword(String username,String password){
-		List re = this.query("select user from User user where user.username = '" + username + "' and user.password = '" + password + "'");
+		Map paraMap = new HashMap();
+		paraMap.put("username", username);
+		paraMap.put("password", password);
+		List re = this.query("select user from User user where user.username = :username and user.password = :password", paraMap);
 		return re.size() > 0;
 	}
 	
@@ -38,7 +45,9 @@ public class UserService extends BaseService implements IUserService {
 	// ==============================================================
 	@SuppressWarnings("unchecked")
 	public User getByUsername(String username) {
-		List list = this.query("select user from User user where user.username = '" + username + "'");
+		Map paraMap = new HashMap();
+		paraMap.put("username", username);
+		List list = this.query("select user from User user where user.username = :username ", paraMap);
 		return  list.size() > 0 ? (User) list.get(0) : null;
 	}
 }
