@@ -236,7 +236,7 @@ dwr.engine._allowGetForSafariButMakeForgeryEasier = "false";
 dwr.engine._scriptTagProtection = "throw 'allowScriptTagRemoting is false.';";
 
 /** The default path to the DWR servlet */
-dwr.engine._defaultPath = "/judge/dwr";
+dwr.engine._defaultPath = "../dwr";
 
 /** Do we use XHR for reverse ajax because we are not streaming? */
 dwr.engine._pollWithXhr = "false";

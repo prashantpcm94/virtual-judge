@@ -24,13 +24,18 @@ public class MyFilter implements Filter{
 			
 			String ua = request.getHeader("user-agent");
 			String ip = request.getRemoteAddr();
+			
+			// get X-Real-IP if the request comes from nginx
+			String ip2 = request.getHeader("X-Real-IP");
+			if (ip2 != null) ip = ip2;
 
+			
 			if (!legalUA(ua) || !legalIP(ip)) {
 				myc = SessionContext.getInstance();
 				session.invalidate();
 				myc.DelSession(session);
 			} else if (session.getAttribute("remoteAddr") == null) {
-				session.setAttribute("remoteAddr", request.getRemoteAddr());
+				session.setAttribute("remoteAddr", ip);
 				session.setAttribute("user-agent", request.getHeader("user-agent"));
 				session.setAttribute("referer", request.getHeader("referer"));
 			}
