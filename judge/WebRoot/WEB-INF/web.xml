@@ -51,7 +51,11 @@
 		<filter-name>struts-execute</filter-name>
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
-	
+
+	<session-config>
+		<session-timeout>180</session-timeout>
+	</session-config>
+
 	<welcome-file-list>
 		<welcome-file>/welcome.jsp</welcome-file>
 	</welcome-file-list>

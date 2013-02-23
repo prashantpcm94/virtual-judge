@@ -128,7 +128,7 @@ public class CodeForcesSubmitter extends Submitter {
 			HttpResponse rsp = httpClient.execute(get);
 			entity = rsp.getEntity();
 			
-			if (!EntityUtils.toString(entity).contains("<a href=\"/logout\">")) {
+			if (!EntityUtils.toString(entity).contains("/logout\">")) {
 				throw new Exception();
 			}
 		} finally {
