@@ -86,12 +86,15 @@ public class ProblemAction extends BaseAction{
 		dataTablesPage.setITotalDisplayRecords(baseService.count(hql.toString(), paraMap));
 //		System.out.println("iSortCol_0 = " + iSortCol_0);
 		if (iSortCol_0 != null){
+			if (!"desc".equals(sSortDir_0)) {
+				sSortDir_0 = "";
+			}
 			if (iSortCol_0 == 1){
 				hql.append(" order by problem.originProb " + sSortDir_0);
 			} else if (iSortCol_0 == 2){
 				hql.append(" order by problem.title " + sSortDir_0);
 			} else if (iSortCol_0 == 3){
-				hql.append(" order by problem.triggerTime " + sSortDir_0 + " problem.originProb " + sSortDir_0);
+				hql.append(" order by problem.triggerTime " + sSortDir_0 + ", problem.originProb " + sSortDir_0);
 			} else if (iSortCol_0 == 4){
 				hql.append(" order by problem.source " + sSortDir_0);
 			}
