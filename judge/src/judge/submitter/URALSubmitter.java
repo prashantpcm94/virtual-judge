@@ -63,11 +63,21 @@ public class URALSubmitter extends Submitter {
 		}
 
 		Map<String, String> languageList = new TreeMap<String, String>();
-		languageList.put("9", "C");
-		languageList.put("10", "C++");
-		languageList.put("3", "Pascal");
-		languageList.put("7", "Java");
-		languageList.put("11", "C#");
+		languageList.put("3", "FreePascal 2.0.4");
+		languageList.put("9", "Visual C 2010");
+		languageList.put("10", "Visual C++ 2010");
+		languageList.put("11", "Visual C# 2010");
+		languageList.put("12", "Java 1.7");
+		languageList.put("14", "Go 1.0.3");
+		languageList.put("15", "VB.NET 2010");
+		languageList.put("16", "Python 2.7");
+		languageList.put("17", "Python 3.3");
+		languageList.put("18", "Ruby 1.9.3");
+		languageList.put("19", "Haskell 7.6.1");
+		languageList.put("20", "GCC 4.7.2");
+		languageList.put("21", "G++ 4.7.2");
+		languageList.put("22", "GCC 4.7.2 C11");
+		languageList.put("23", "G++ 4.7.2 C++11");
 		sc.setAttribute("URAL", languageList);
 	}
 
