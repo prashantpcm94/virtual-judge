@@ -132,7 +132,7 @@ public class URALSubmitter extends Submitter {
 	}
 	
 	public void getResult(String username) throws Exception{
-		GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx?author=" + username.substring(0, 5));
+		GetMethod getMethod = new GetMethod("http://acm.timus.ru/status.aspx?author=" + username.replaceAll("\\D", ""));
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(6, true));
 		String reg = "aspx/(\\d+)[\\s\\S]*?class=\"verdict_\\w{2,5}\">([\\s\\S]*?)</TD>[\\s\\S]*?runtime\">([\\d\\.]*)[\\s\\S]*?memory\">([\\d\\s]*)", result;
 		Pattern p = Pattern.compile(reg);
