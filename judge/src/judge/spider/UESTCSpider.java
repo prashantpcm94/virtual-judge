@@ -17,14 +17,14 @@ public class UESTCSpider extends Spider {
 		
 		String html = "";
 		HttpClient httpClient = new HttpClient();
-		GetMethod getMethod = new GetMethod("http://acm.uestc.edu.cn/problem.php?pid=" + problem.getOriginProb());
+		GetMethod getMethod = new GetMethod("http://222.197.181.5/problem.php?pid=" + problem.getOriginProb());
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		try {
 			int statusCode = httpClient.executeMethod(getMethod);
 			if(statusCode != HttpStatus.SC_OK) {
 				System.err.println("Method failed: " + getMethod.getStatusLine());
 			}
-			html = Tools.getHtml(getMethod, null).replaceAll("<div class=\"bg\">\\s*</div>", "").replaceAll("(?i)(src|href)\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "$1=$2http://acm.uestc.edu.cn/");
+			html = Tools.getHtml(getMethod, null).replaceAll("<div class=\"bg\">\\s*</div>", "").replaceAll("(?i)(src|href)\\s*=\\s*(['\"]?)\\s*(?!\\s*['\"]?\\s*http)", "$1=$2http://222.197.181.5/");
 		} finally {
 			getMethod.releaseConnection();
 		}
@@ -43,6 +43,6 @@ public class UESTCSpider extends Spider {
 		description.setSampleOutput(Tools.regFind(html, "<h2>Sample Output</h2>([\\s\\S]*?)<h2>"));
 		description.setHint(Tools.regFind(html, "<h2>Hint</h2>([\\s\\S]*?)<h2>"));
 		problem.setSource(Tools.regFind(html, "<h2>Source</h2>\\s*<p>([\\s\\S]*?)</p>\\s*</div>\\s*<div class=\"pmenu_all").trim());
-		problem.setUrl("http://acm.uestc.edu.cn/problem.php?pid=" + problem.getOriginProb());
+		problem.setUrl("http://222.197.181.5/problem.php?pid=" + problem.getOriginProb());
 	}
 }

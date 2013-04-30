@@ -68,7 +68,7 @@ public class UESTCSubmitter extends Submitter {
 	}
 	
 	private void getMaxRunId() throws Exception {
-		GetMethod getMethod = new GetMethod("http://acm.uestc.edu.cn/status.php");
+		GetMethod getMethod = new GetMethod("http://222.197.181.5/status.php");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		Pattern p = Pattern.compile("<div class=\"list\">\\s*<ul>\\s*<li>\\s*(\\d+)");
 
@@ -87,7 +87,7 @@ public class UESTCSubmitter extends Submitter {
 	private void submit() throws Exception{
 		Problem problem = (Problem) baseService.query(Problem.class, submission.getProblem().getId());
 		
-        PostMethod postMethod = new PostMethod("http://acm.uestc.edu.cn/submit_action.php?pid=" + problem.getOriginProb() + "&cid=0");
+        PostMethod postMethod = new PostMethod("http://222.197.181.5/submit_action.php?pid=" + problem.getOriginProb() + "&cid=0");
         postMethod.addParameter("language", submission.getLanguage());
         postMethod.addParameter("code", submission.getSource());
         postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
@@ -105,7 +105,7 @@ public class UESTCSubmitter extends Submitter {
 	}
 	
 	private void ensureLoggedIn() throws Exception {
-		GetMethod getMethod = new GetMethod("http://acm.uestc.edu.cn/index.php");
+		GetMethod getMethod = new GetMethod("http://222.197.181.5/index.php");
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
 		try {
@@ -121,7 +121,7 @@ public class UESTCSubmitter extends Submitter {
 	}
 	
 	private void login(String username, String password) throws Exception{
-        PostMethod postMethod = new PostMethod("http://acm.uestc.edu.cn/login_action.php");
+        PostMethod postMethod = new PostMethod("http://222.197.181.5/login_action.php");
   
         postMethod.addParameter("password", password);
         postMethod.addParameter("username", username);
@@ -149,7 +149,7 @@ public class UESTCSubmitter extends Submitter {
 				"<li.*?>([\\s\\S]*?)</li>";
 		String result;
 		Pattern p = Pattern.compile(reg);
-		GetMethod getMethod = new GetMethod("http://acm.uestc.edu.cn/status.php?id=" + username);
+		GetMethod getMethod = new GetMethod("http://222.197.181.5/status.php?id=" + username);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		long cur = new Date().getTime(), interval = 2000;
 		while (new Date().getTime() - cur < 600000){
@@ -182,7 +182,7 @@ public class UESTCSubmitter extends Submitter {
 	}
 	
 	private void getAdditionalInfo(String runId) throws HttpException, IOException {
-		GetMethod getMethod = new GetMethod("http://acm.uestc.edu.cn/submission.php?sid=" + runId);
+		GetMethod getMethod = new GetMethod("http://222.197.181.5/submission.php?sid=" + runId);
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
 		httpClient.executeMethod(getMethod);
